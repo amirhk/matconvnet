@@ -13,8 +13,8 @@ function [net, info] = cnn_amir(varargin)
   % Processor -- -- -- -- -- -- -- -- -- -- -- --
   if ~isfield(opts.train, 'gpus')
     if ispc
-      freeGPUIndex = getFreeGPUIndex();
-      % freeGPUIndex = 1;
+      % freeGPUIndex = getFreeGPUIndex();
+      freeGPUIndex = 1;
       if freeGPUIndex ~= -1
         opts.train.gpus = [freeGPUIndex];
         opts.processorString = sprintf('GPU%d', freeGPUIndex);
