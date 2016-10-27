@@ -1,0 +1,7 @@
+matconvnet-1.0-beta14
+compiled with cuda 7.0
+
+1) addpath matlab
+2) vl_compilenn % cpu
+3) vl_compilenn('enableGpu', true, 'cudaRoot', 'C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v7.0', 'cudaMethod', 'nvcc')
+4) vl_setupnn
