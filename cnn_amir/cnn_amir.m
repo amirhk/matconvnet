@@ -1,6 +1,6 @@
 function [net, info] = cnn_amir(varargin)
   run(fullfile(fileparts(mfilename('fullpath')), ...
-    '..', '..', 'matlab', 'vl_setupnn.m'));
+    '..', 'matlab', 'vl_setupnn.m'));
 
   % Setup -- -- -- -- -- -- -- -- -- -- -- --
   opts.train = struct();
