@@ -62,6 +62,7 @@ function super_sample = drawSuperSamplesFrom2DGaussian( ...
   mixing_factor, ...
   debug_flag)
 % --------------------------------------------------------------------
+  warning off;
   if nargin < 2
     mixing_factor = 10;
   end
@@ -88,9 +89,15 @@ function super_sample = drawSuperSamplesFrom2DGaussian( ...
 
   normalization_factor = max(sample(:));
   samplen = sample ./ normalization_factor;
-  tmp = randn(dim,dim);
-  super_sample = (tmp / max(abs(tmp(:))) + sign(randn(dim,dim)) .* samplen) * normalization_factor;
+  super_sample = (randn(dim,dim) + sign(randn(dim,dim)) .* samplen) * normalization_factor;
 
+  % DEP - OCT 28
+  % normalization_factor = max(sample(:));
+  % samplen = sample ./ normalization_factor;
+  % tmp = randn(dim,dim);
+  % super_sample = (tmp / max(abs(tmp(:))) + sign(randn(dim,dim)) .* samplen) * normalization_factor;
+
+  % DEP - Oct 26
   % sample_normalized = sample ./ max(sample(:));
   % super_sample =  ...
   %   sign(randn(dim, dim)) .* ...

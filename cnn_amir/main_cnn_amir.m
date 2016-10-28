@@ -1,5 +1,5 @@
 function main_cnn_amir(varargin)
-  weightInitType = 'compRand';
+  weightInitType = '2D-super';
   weightInitSource = 'load';
   backpropDepthList = [20, 18, 15, 12, 10, 7];
   % backpropDepthList = [20];
