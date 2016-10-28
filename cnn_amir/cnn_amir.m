@@ -2,15 +2,26 @@ function [net, info] = cnn_amir(varargin)
   run(fullfile(fileparts(mfilename('fullpath')), ...
     '..', 'matlab', 'vl_setupnn.m'));
 
-  % Setup -- -- -- -- -- -- -- -- -- -- -- --
+  % Setup -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
   opts.train = struct();
-  opts.networkType = 'alex-net-bottle-neck';
+  opts.networkType = 'alex-net';
   opts.dataset = 'cifar';
+  opts.backpropDepth = 20;
+  opts.weightInitType = '1D';
+  opts.weightInitSource = 'load';
+  fprintf('[INFO] networkType:\t %s\n', opts.networkType);
+  fprintf('[INFO] dataset:\t\t %s\n', opts.dataset);
+  fprintf('[INFO] backpropDepth:\t %d\n', opts.backpropDepth);
+  fprintf('[INFO] weightInitType:\t %s\n', opts.weightInitType);
+  fprintf('[INFO] weightInitSource: %s\n', opts.weightInitSource);
+  fprintf('\n');
+
+  % Paths -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
   opts.timeString = sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
   opts.processorString = '';
   [opts, varargin] = vl_argparse(opts, varargin);
 
-  % Processor -- -- -- -- -- -- -- -- -- -- -- --
+  % Processor -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   if ~isfield(opts.train, 'gpus')
     if ispc
       % freeGPUIndex = getFreeGPUIndex();
@@ -29,7 +40,7 @@ function [net, info] = cnn_amir(varargin)
   end;
   [opts, varargin] = vl_argparse(opts, varargin);
 
-  % Paths -- -- -- -- -- -- -- -- -- -- -- --
+  % More Paths -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   opts.imdbDir = fullfile(vl_rootnn, 'data', sprintf( ...
     '%s-%s', ...
     opts.dataset, ...
@@ -47,19 +58,20 @@ function [net, info] = cnn_amir(varargin)
   opts.dataDir = fullfile(vl_rootnn, 'data', opts.dataset);
   opts.imdbPath = fullfile(opts.imdbDir, 'imdb.mat');
 
-  % Other -- -- -- -- -- -- -- -- -- -- -- --
+  % Other -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
   opts.whitenData = true;
   opts.contrastNormalization = true;
-  opts.backpropDepth = 20;
   opts = vl_argparse(opts, varargin);
 
   % -------------------------------------------------------------------------
   %                                                    Prepare model and data
   % -------------------------------------------------------------------------
   net = cnn_amir_init( ...
+    'weightInitType', opts.weightInitType, ...
+    'weightInitSource', opts.weightInitSource, ...
+    'backpropDepth', opts.backpropDepth, ...
     'networkType', opts.networkType, ...
     'dataset', opts.dataset);
-  net.meta.trainOpts.backpropDepth = opts.backpropDepth;
   saveNetworkInfo(net, opts.expDir);
 
   if exist(opts.imdbPath, 'file')
@@ -80,11 +92,7 @@ function [net, info] = cnn_amir(varargin)
   % -------------------------------------------------------------------------
   %                                                                     Train
   % -------------------------------------------------------------------------
-
-  trainfn = @cnn_train;
-
-  disp(net);
-  [net, info] = trainfn(net, imdb, getBatch(opts), ...
+  [net, info] = cnn_train(net, imdb, getBatch(opts), ...
     'expDir', opts.expDir, ...
     net.meta.trainOpts, ...
     opts.train, ...

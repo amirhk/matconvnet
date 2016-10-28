@@ -19,6 +19,9 @@ function [net, info] = cnn_train(net, imdb, getBatch, varargin)
 % This file is part of the VLFeat library and is made available under
 % the terms of the BSD license (see the COPYING file).
 
+opts.weightInitType = 'compRand'; % {'compRand', '1D', '2D-super'}
+opts.weightInitSource = 'gen'; % {'load' | 'gen'}
+opts.backPropDepth = +inf;
 opts.batchSize = 256 ;
 opts.numSubBatches = 1 ;
 opts.train = [] ;
@@ -29,7 +32,6 @@ opts.learningRate = 0.001 ;
 opts.continue = false ;
 opts.expDir = fullfile('data','exp') ;
 opts.conserveMemory = false ;
-opts.backPropDepth = +inf ;
 opts.sync = false ;
 opts.prefetch = false ;
 opts.cudnn = true ;
