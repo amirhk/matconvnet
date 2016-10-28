@@ -21,9 +21,12 @@ switch opts.networkType
     % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
     % TESTING weights completely random (goes down after 50 * 0.001 to %86 then after 230 epochs to ~%60)
     % net.meta.trainOpts.learningRate = [0.001*ones(1,100) 0.0005*ones(1,25) 0.0001*ones(1,25) 0.00005*ones(1,25) 0.001*ones(1,20) 0.0005*ones(1,5) 0.0001*ones(1,15) 0.00005*ones(1,15)];
+    net.meta.trainOpts.learningRate = [0.01*ones(1,15)  0.005*ones(1,15) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
     % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
     % weights completely random from Javad
-    net.meta.trainOpts.learningRate = [0.05*ones(1,10) 0.05:-0.01:0.01 0.01*ones(1,5)  0.005*ones(1,10) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,4)];
+    % net.meta.trainOpts.learningRate = [0.05*ones(1,10) 0.05:-0.01:0.01 0.01*ones(1,5)  0.005*ones(1,10) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,4)];
+  case 'alex-net-bottle-neck'
+    net.meta.trainOpts.learningRate = [0.01*ones(1,15)  0.005*ones(1,15) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
 end
 
 layer_lr = [.1 2] ;
@@ -118,7 +121,6 @@ switch opts.networkType
     % [5, 5, 3, 96]
     % net.layers{end+1} = convLayerRandomFromPretrain(layerNumber, 2, 'load', '2D-super');
     % net.layers{end+1} = convLayerRandomFromPretrain(layerNumber, 2, 'load', '1D');
-    % net.layers{end+1} = convLayerRandom(layerNumber, 5, 3, 96, 2, 5/100, layer_lr, 'load');
     % net.layers{end+1} = convLayerRandom(layerNumber, 5, 3, 96, 2, 5/1000, layer_lr,  'gen');
     net.layers{end+1} = convLayerRandom(layerNumber, 5, 3, 96, 2, 5/1000, 'load');
     net.layers{end+1} = reluLayer(layerNumber);
@@ -128,7 +130,6 @@ switch opts.networkType
     % [5, 5, 96, 256]
     % net.layers{end+1} = convLayerRandomFromPretrain(layerNumber, 2, 'load', '2D-super');
     % net.layers{end+1} = convLayerRandomFromPretrain(layerNumber, 2, 'load', '1D');
-    % net.layers{end+1} = convLayerRandom(layerNumber, 5, 96, 256, 2, 5/100, layer_lr, 'load');
     % net.layers{end+1} = convLayerRandom(layerNumber, 5, 96, 256, 2, 5/1000, layer_lr,  'gen');
     net.layers{end+1} = convLayerRandom(layerNumber, 5, 96, 256, 2, 5/1000, 'load');
     net.layers{end+1} = reluLayer(layerNumber);
@@ -139,7 +140,6 @@ switch opts.networkType
     % [3, 3, 256, 384]
     % net.layers{end+1} = convLayerRandomFromPretrain(layerNumber, 1, 'load', '2D-super');
     % net.layers{end+1} = convLayerRandomFromPretrain(layerNumber, 1, 'load', '1D');
-    % net.layers{end+1} = convLayerRandom(layerNumber, 3, 256, 384, 1, 5/100, layer_lr, 'load');
     % net.layers{end+1} = convLayerRandom(layerNumber, 3, 256, 384, 1, 5/1000, layer_lr,  'gen');
     net.layers{end+1} = convLayerRandom(layerNumber, 3, 256, 384, 1, 5/1000, 'load');
     net.layers{end+1} = reluLayer(layerNumber);
@@ -150,7 +150,6 @@ switch opts.networkType
     % [3, 3, 384, 384]
     % net.layers{end+1} = convLayerRandomFromPretrain(layerNumber, 1, 'load', '2D-super');
     % net.layers{end+1} = convLayerRandomFromPretrain(layerNumber, 1, 'load', '1D');
-    % net.layers{end+1} = convLayerRandom(layerNumber, 3, 384, 384, 1, 5/100, layer_lr, 'load');
     % net.layers{end+1} = convLayerRandom(layerNumber, 3, 384, 384, 1, 5/1000, layer_lr,  'gen');
     net.layers{end+1} = convLayerRandom(layerNumber, 3, 384, 384, 1, 5/1000, 'load');
     net.layers{end+1} = reluLayer(layerNumber);
@@ -160,9 +159,77 @@ switch opts.networkType
     % [3, 3, 384, 256]
     % net.layers{end+1} = convLayerRandomFromPretrain(layerNumber, 1, 'load', '2D-super');
     % net.layers{end+1} = convLayerRandomFromPretrain(layerNumber, 1, 'load', '1D');
-    % net.layers{end+1} = convLayerRandom(layerNumber, 3, 384, 256, 1, 5/100, layer_lr, 'load');
     % net.layers{end+1} = convLayerRandom(layerNumber, 3, 384, 256, 1, 5/1000, layer_lr,  'gen');
     net.layers{end+1} = convLayerRandom(layerNumber, 3, 384, 256, 1, 5/1000, 'load');
+    net.layers{end+1} = reluLayer(layerNumber);
+    net.layers{end+1} = poolingLayerAlexNet(layerNumber);
+
+    % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
+    % FULLY CONNECTED
+    layerNumber = layerNumber + 3;
+    % [4, 4, 256, 128]
+    % net.layers{end+1} = convLayerRandom(layerNumber, 4, 256, 128, 0, 5/1000, layer_lr,  'gen');
+    net.layers{end+1} = convLayerRandom(layerNumber, 4, 256, 128, 0, 5/1000, 'gen');
+    net.layers{end+1} = reluLayer(layerNumber);
+
+    % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
+    layerNumber = layerNumber + 2;
+    % [1, 1, 128, 64]
+    % net.layers{end+1} = convLayerRandom(layerNumber, 1, 128, 64, 0, 5/100, layer_lr, 'gen');
+    net.layers{end+1} = convLayerRandom(layerNumber, 1, 128, 64, 0, 5/100, 'gen');
+    net.layers{end+1} = reluLayer(layerNumber);
+
+    % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
+    layerNumber = layerNumber + 2;
+    % [1, 1, 64, 10]
+    % net.layers{end+1} = convLayerRandom(layerNumber, 1, 64, 10, 0, 5/100, .1 * layer_lr, 'gen');
+    net.layers{end+1} = convLayerRandom(layerNumber, 1, 64, 10, 0, 5/100, 'gen');
+    net.layers{end+1} = reluLayer(layerNumber);
+
+    % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
+    % Loss layer
+    net.layers{end+1} = struct('type', 'softmaxloss');
+  case 'alex-net-bottle-neck'
+    % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
+    % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
+    % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
+    % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
+    % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
+    % k = [1,4,8,16,32]
+    k = 4;
+    layerNumber = 1;
+    % [5, 5, 3, 96]
+    net.layers{end+1} = convLayerRandom(layerNumber, 5, 3, 96, 2, 5/1000, 'gen');
+    net.layers{end+1} = reluLayer(layerNumber);
+
+    % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
+    layerNumber = layerNumber + 2;
+    % [5, 5, 96, 256]
+    net.layers{end+1} = convLayerRandom(layerNumber, 5, 96, 96/k, 2, 5/1000, 'gen');
+    net.layers{end+1} = convLayerRandom(layerNumber, 5, 96/k, 256, 2, 5/1000, 'gen');
+    net.layers{end+1} = reluLayer(layerNumber);
+    net.layers{end+1} = poolingLayerAlexNet(layerNumber);
+
+    % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
+    layerNumber = layerNumber + 3;
+    % [3, 3, 256, 384]
+    net.layers{end+1} = convLayerRandom(layerNumber, 3, 256, 256/k, 1, 5/1000, 'gend');
+    net.layers{end+1} = convLayerRandom(layerNumber, 3, 256/k, 384, 1, 5/1000, 'gend');
+    net.layers{end+1} = reluLayer(layerNumber);
+    net.layers{end+1} = poolingLayerAlexNet(layerNumber);
+
+    % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
+    layerNumber = layerNumber + 3;
+    % [3, 3, 384, 384]
+    net.layers{end+1} = convLayerRandom(layerNumber, 3, 384, 384/k, 1, 5/1000, 'gend');
+    net.layers{end+1} = convLayerRandom(layerNumber, 3, 384/k, 384, 1, 5/1000, 'gend');
+    net.layers{end+1} = reluLayer(layerNumber);
+
+    % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
+    layerNumber = layerNumber + 2;
+    % [3, 3, 384, 256]
+    net.layers{end+1} = convLayerRandom(layerNumber, 3, 384, 384/k, 1, 5/1000, 'gend');
+    net.layers{end+1} = convLayerRandom(layerNumber, 3, 384/k, 256, 1, 5/1000, 'gend');
     net.layers{end+1} = reluLayer(layerNumber);
     net.layers{end+1} = poolingLayerAlexNet(layerNumber);
 

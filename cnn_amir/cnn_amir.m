@@ -4,7 +4,7 @@ function [net, info] = cnn_amir(varargin)
 
   % Setup -- -- -- -- -- -- -- -- -- -- -- --
   opts.train = struct();
-  opts.networkType = 'alex-net';
+  opts.networkType = 'alex-net-bottle-neck';
   opts.dataset = 'cifar';
   opts.timeString = sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
   opts.processorString = '';
