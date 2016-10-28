@@ -87,9 +87,18 @@ function super_sample = drawSuperSamplesFrom2DGaussian( ...
     fprintf('[INFO] converting sample to "Super" sample...');
   end
 
-  normalization_factor = max(sample(:));
-  samplen = sample ./ normalization_factor;
-  super_sample = (randn(dim,dim) + sign(randn(dim,dim)) .* samplen) * normalization_factor;
+  kernel_lower_bound = min(min(min(kernel)), 0); % finally compare with 0 because maybe
+  kernel_upper_bound = max(max(max(kernel)), 0); % kernel doesn't have any +ve \ -ve vals
+  samplen = sample ./ max(sample(:));
+  super_sample = randn(dim,dim) + sign(randn(dim,dim)) .* samplen;
+  super_sample_lower_bound = min(min(min(super_sample)), 0); % finally compare with 0 because maybe
+  super_sample_upper_bound = max(max(max(super_sample)), 0); % kernel doesn't have any +ve \ -ve vals
+
+  % finally scale this to the same dynamic range as the inital kernel so we don't have very large weights
+  scaling_factor = ...
+    (kernel_upper_bound - kernel_lower_bound) / ...
+    (super_sample_upper_bound - super_sample_lower_bound);
+  super_sample = super_sample * scaling_factor;
 
   % DEP - OCT 28
   % normalization_factor = max(sample(:));

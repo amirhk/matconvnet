@@ -185,6 +185,11 @@ function structuredLayer = convLayer(layerNumber, k, m, n, init_multiplier, pad,
     otherwise
       throwException('unrecognized command');
   end
+  % if strcmp(weightInitType, '2D-super')
+  %   randomWeights2{1} = randomWeights{1} * .1;
+  %   randomWeights2{2} = randomWeights{2} * .1;
+  %   structuredLayer = constructConvLayer(layerNumber, randomWeights2, pad);
+  % end
   structuredLayer = constructConvLayer(layerNumber, randomWeights, pad);
 
 % --------------------------------------------------------------------
