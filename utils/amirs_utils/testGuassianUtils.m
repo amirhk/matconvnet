@@ -43,7 +43,7 @@ a = [...
 %   0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0];
 d = size(a,1);
 [mu_y, mu_x, covariance] = utils.fit2DGaussian(a);
-sample = utils.drawSamplesFrom2DGaussian(mu_y, mu_x, covariance, d);
+sample = utils.drawPositiveSamplesFrom2DGaussian(mu_y, mu_x, covariance, d);
 fprintf('Done!\n');
 
 normalization_factor = max(sample(:));

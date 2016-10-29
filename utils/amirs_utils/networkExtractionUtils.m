@@ -3,6 +3,7 @@ function fh = networkExtractionUtils()
   fh.extractAlexNetCifar = @extractAlexNetCifar;
   fh.genRandomWeights = @genRandomWeights;
   fh.genRandomWeightsFromBaseline1DGaussian = @genRandomWeightsFromBaseline1DGaussian;
+  fh.genRandomWeightsFromBaseline2DGaussian = @genRandomWeightsFromBaseline2DGaussian;
   fh.genRandomWeightsFromBaseline2DGaussianSuper = @genRandomWeightsFromBaseline2DGaussianSuper;
 
 % --------------------------------------------------------------------
@@ -18,6 +19,7 @@ function extractAlexNetCifar()
   % TODO: flip these if need be!
   % genWeightsMethod = @genRandomWeights;
   % genWeightsMethod = @genRandomWeightsFromBaseline1DGaussian;
+  % genWeightsMethod = @genRandomWeightsFromBaseline2DGaussian;
   genWeightsMethod = @genRandomWeightsFromBaseline2DGaussianSuper;
   genNewWeights(net, genWeightsMethod);
 
@@ -143,6 +145,35 @@ function randomWeights = saveBaselineKernelDists1DGaussian( ...
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 
 % --------------------------------------------------------------------
+function randomWeights = genRandomWeightsFromBaseline2DGaussian( ...
+  layers, ...
+  layerNumber)
+  % extract ~400,000 kernels, save distributions, as well as random kernels from
+  % those distributions
+% --------------------------------------------------------------------
+  tic;
+  utils = guassianUtils;
+  baselineWeights = layers{layerNumber}.weights{1};
+  randomWeights_W1 = [];
+  for d = 1:size(baselineWeights, 4)
+    for c = 1:size(baselineWeights, 3)
+      baselineKernel = baselineWeights(:, :, c, d);
+      randomWeights_W1(:, :, c, d) = ...
+        utils.fit2DGuassianAndDrawSamples(baselineKernel);
+    end
+  end
+  randomWeights{1} = single(randomWeights_W1);
+  % Don't use a dist, just put the baseline pretrain
+  randomWeights{2} = layers{layerNumber}.weights{2};
+  numberOfKernels = size(randomWeights{1}, 3) * size(randomWeights{1}, 4);
+  fprintf( ...
+    ['[INFO] layer %d: random weights generated for %d kernels. ', ...
+    'Elapsed Time (since start): %f\n'], ...
+    layerNumber, ...
+    numberOfKernels, ...
+    toc);
+
+% --------------------------------------------------------------------
 function randomWeights = genRandomWeightsFromBaseline2DGaussianSuper( ...
   layers, ...
   layerNumber)
@@ -153,12 +184,11 @@ function randomWeights = genRandomWeightsFromBaseline2DGaussianSuper( ...
   utils = guassianUtils;
   baselineWeights = layers{layerNumber}.weights{1};
   randomWeights_W1 = [];
-  mixing_factor = 10;
   for d = 1:size(baselineWeights, 4)
     for c = 1:size(baselineWeights, 3)
       baselineKernel = baselineWeights(:, :, c, d);
       randomWeights_W1(:, :, c, d) = ...
-        utils.drawSuperSamplesFrom2DGaussian(baselineKernel, mixing_factor);
+        utils.fit2DGaussianAndDrawSuperSamples(baselineKernel);
     end
   end
   randomWeights{1} = single(randomWeights_W1);

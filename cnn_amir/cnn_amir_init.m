@@ -1,5 +1,5 @@
 function net = cnn_amir_init(varargin)
-opts.weightInitType = 'compRand'; % {'compRand', '1D', '2D-super'}
+opts.weightInitType = 'compRand'; % {'compRand', '1D', '2D', '2D-super'}
 opts.weightInitSource = 'gen'; % {'load' | 'gen'}
 opts.backpropDepth = 20; % [20, 18, 15, 12, 10, 7];
 opts.networkType = 'alex-net';
@@ -23,6 +23,9 @@ switch opts.networkType
         net.meta.trainOpts.learningRate = [0.01*ones(1,5)  0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,15) 0.00005*ones(1,15)];
         % ALSO WORKS (above was what I originally trained on):
         net.meta.trainOpts.learningRate = [0.01*ones(1,15)  0.005*ones(1,15) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,15) 0.00005*ones(1,15)];
+      case '2D'
+        % TESTING.... weights random from pre-train 2D (with whitening)
+        net.meta.trainOpts.learningRate = [0.005*ones(1,100)];
       case '2D-super'
         % TESTING.... weights random from pre-train 2D-super (with whitening)
         % net.meta.trainOpts.learningRate = [1*ones(1,15)  0.005*ones(1,15) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
@@ -157,7 +160,7 @@ end
 
 % --------------------------------------------------------------------
 function structuredLayer = convLayer(layerNumber, k, m, n, init_multiplier, pad, weightInitType, weightInitSource);
-  % weightInitType = {'compRand', '1D', '2D-super'}
+  % weightInitType = {'compRand', '1D', '2D', '2D-super'}
   % weightInitSource = {'load' | 'gen'}
 % --------------------------------------------------------------------
   if strcmp(weightInitType, '1D') || strcmp(weightInitType, '2D-super')
@@ -179,6 +182,13 @@ function structuredLayer = convLayer(layerNumber, k, m, n, init_multiplier, pad,
           randomWeights = loadWeights(layerNumber, 'random-from-baseline-1D');
         case 'gen'
           randomWeights = utils.genRandomWeightsFromBaseline1DGaussian(baselineWeights, layerNumber);
+      end
+    case '2D'
+      switch weightInitSource
+        case 'load'
+          randomWeights = loadWeights(layerNumber, 'random-from-baseline-2D');
+        case 'gen'
+          randomWeights = utils.genRandomWeightsFromBaseline2DGaussian(baselineWeights, layerNumber);
       end
     case '2D-super'
       switch weightInitSource
@@ -203,6 +213,7 @@ function weights = loadWeights(layerNumber, weightType)
   %   'random' |
   %   'baseline' |
   %   'random-from-baseline-1D' |
+  %   'random-from-baseline-2D' |
   %   'random-from-baseline-2D-super'
   % }
 % --------------------------------------------------------------------

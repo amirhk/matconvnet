@@ -1,18 +1,19 @@
 dataDir = '/Volumes/Amir/results/';
 % subDataDir = 'oct 17-18 testing FC+0-5 w: input whitening = true, 1D dist sampling, kernel normalization = false';
 % subDataDir = 'oct 19-20 testing FC+0-5, input whitening = false, 1D dist sampling, kernel normalization = false';
-subDataDir = 'oct 25-26 testing FC+0-5 with input whitening = true, 1D dist sampling, kernel normalization = false';
-subDataDir = fullfile('oct 27-28 testing FC+0-5 with input whitening = true, comp rand weights, kernel normalization = false', 'batch 2');
+% subDataDir = 'oct 25-26 testing FC+0-5 with input whitening = true, 1D dist sampling, kernel normalization = false';
+% subDataDir = fullfile('oct 27-28 testing FC+0-5 with input whitening = true, comp rand weights, kernel normalization = false', 'batch 2');
+subDataDir = 'oct 28 testing FC+0-5 without bottlenecks, comp rand weights, with weight decay';
 epochNum = 50;
 epochFile = sprintf('net-epoch-%d.mat', epochNum);
 fprintf('Loading files...'); i = 1;
 
-fc_plus_5 = load(fullfile(dataDir, subDataDir, 'cifar-alex-net-28-Oct-2016-08-07-32-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_4 = load(fullfile(dataDir, subDataDir, 'cifar-alex-net-28-Oct-2016-10-26-44-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_3 = load(fullfile(dataDir, subDataDir, 'cifar-alex-net-28-Oct-2016-12-37-15-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_2 = load(fullfile(dataDir, subDataDir, 'cifar-alex-net-28-Oct-2016-14-11-43-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_1 = load(fullfile(dataDir, subDataDir, 'cifar-alex-net-28-Oct-2016-15-47-42-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_only = load(fullfile(dataDir, subDataDir, 'cifar-alex-net-28-Oct-2016-17-00-20-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_5 = load(fullfile(dataDir, subDataDir, 'cifar-alex-net-28-Oct-2016-18-24-19-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_4 = load(fullfile(dataDir, subDataDir, 'cifar-alex-net-28-Oct-2016-20-45-27-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_3 = load(fullfile(dataDir, subDataDir, 'cifar-alex-net-28-Oct-2016-22-55-57-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_2 = load(fullfile(dataDir, subDataDir, 'cifar-alex-net-29-Oct-2016-00-30-16-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_1 = load(fullfile(dataDir, subDataDir, 'cifar-alex-net-29-Oct-2016-01-51-34-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_only = load(fullfile(dataDir, subDataDir, 'cifar-alex-net-29-Oct-2016-03-03-51-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
 fprintf('\nDone!');
 
 figure;
