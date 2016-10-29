@@ -91,6 +91,7 @@ function super_sample = drawSuperSamplesFrom2DGaussian( ...
   kernel_upper_bound = max(max(max(kernel)), 0); % kernel doesn't have any +ve \ -ve vals
   samplen = sample ./ max(sample(:));
   super_sample = randn(dim,dim) + sign(randn(dim,dim)) .* samplen;
+  % super_sample = sign(randn(dim,dim)) .* samplen;
   super_sample_lower_bound = min(min(min(super_sample)), 0); % finally compare with 0 because maybe
   super_sample_upper_bound = max(max(max(super_sample)), 0); % kernel doesn't have any +ve \ -ve vals
 
