@@ -21,8 +21,6 @@ switch opts.networkType
       case '1D'
         % VERIFIED: weights random from pre-train 1D (with or without whitening)
         net.meta.trainOpts.learningRate = [0.01*ones(1,5)  0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,15) 0.00005*ones(1,15)];
-        % ALSO WORKS (above was what I originally trained on):
-        net.meta.trainOpts.learningRate = [0.01*ones(1,15)  0.005*ones(1,15) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,15) 0.00005*ones(1,15)];
       case '2D'
         % TESTING.... weights random from pre-train 2D (with whitening)
         net.meta.trainOpts.learningRate = [0.005*ones(1,100)];
