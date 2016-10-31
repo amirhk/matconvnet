@@ -70,7 +70,7 @@ figure; mesh(1:1:d, 1:1:d, kernel);
 
 
 % oneD = load('W1-layer-1.mat');
-% twoD = load('/Users/amirhk/dev/data/cifar-alexnet/+8epoch-random-from-baseline-1D/W1-layer-1.mat');
+% twoD = load('/Users/a6karimi/dev/data/cifar-alexnet/+8epoch-random-from-baseline-1D/W1-layer-1.mat');
 
 % t = [];
 % for i = 1:96

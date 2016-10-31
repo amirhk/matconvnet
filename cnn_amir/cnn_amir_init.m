@@ -1,9 +1,10 @@
 function net = cnn_amir_init(varargin)
-opts.weightInitType = 'compRand'; % {'compRand', '1D', '2D', '2D-super'}
-opts.weightInitSource = 'gen'; % {'load' | 'gen'}
-opts.backpropDepth = 20; % [20, 18, 15, 12, 10, 7];
 opts.networkType = 'alex-net';
 opts.dataset = 'cifar';
+opts.backpropDepth = 20; % [20, 18, 15, 12, 10, 7];
+opts.weightDecay = 0.0001; % Works: {0.001, 0.0001, 0} Doesn't Work: {0.1, 0.01}
+opts.weightInitType = 'compRand'; % {'compRand', '1D', '2D', '2D-super'}
+opts.weightInitSource = 'gen'; % {'load' | 'gen'}
 opts = vl_argparse(opts, varargin);
 
 tic;
@@ -15,7 +16,9 @@ switch opts.networkType
     switch opts.weightInitType
       case 'compRand'
         % VERIFIED: weights completely random (goes down after 50 * 0.001 to %86 then after 230 epochs to ~%60)
-        net.meta.trainOpts.learningRate = [0.01*ones(1,15)  0.005*ones(1,15) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
+        % net.meta.trainOpts.learningRate = [0.01*ones(1,15)  0.005*ones(1,15) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
+        % TESTING...
+        net.meta.trainOpts.learningRate = [0.01*ones(1,5)  0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
         % DON'T USE: weights completely random from Javad
         % net.meta.trainOpts.learningRate = [0.05*ones(1,10) 0.05:-0.01:0.01 0.01*ones(1,5)  0.005*ones(1,10) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,4)];
       case '1D'
@@ -40,8 +43,9 @@ net.meta.trainOpts.weightInitSource = opts.weightInitSource;
 net.meta.trainOpts.backpropDepth = opts.backpropDepth;
 net.meta.trainOpts.numEpochs = numel(net.meta.trainOpts.learningRate);
 net.meta.inputSize = [32 32 3];
-net.meta.trainOpts.weightDecay = 0.0001;
+net.meta.trainOpts.weightDecay = opts.weightDecay;
 net.meta.trainOpts.batchSize = 100;
+opts = vl_argparse(opts, varargin);
 
 switch opts.networkType
   case 'alex-net'

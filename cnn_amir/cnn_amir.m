@@ -7,41 +7,24 @@ function [net, info] = cnn_amir(varargin)
   opts.networkType = 'alex-net';
   opts.dataset = 'cifar';
   opts.backpropDepth = 20;
+  opts.weightDecay = 0.0001;
   opts.weightInitType = '1D';
   opts.weightInitSource = 'load';
   [opts, varargin] = vl_argparse(opts, varargin);
   fprintf('[INFO] networkType:\t %s\n', opts.networkType);
   fprintf('[INFO] dataset:\t\t %s\n', opts.dataset);
   fprintf('[INFO] backpropDepth:\t %d\n', opts.backpropDepth);
+  fprintf('[INFO] weightDecay:\t %s\n', opts.weightDecay);
   fprintf('[INFO] weightInitType:\t %s\n', opts.weightInitType);
   fprintf('[INFO] weightInitSource: %s\n', opts.weightInitSource);
   fprintf('\n');
 
+  % Processor -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  [opts.train.gpus, opts.processorString] = getProcessor(opts);
+  [opts, varargin] = vl_argparse(opts, varargin);
+
   % Paths -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
   opts.timeString = sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
-  opts.processorString = '';
-  [opts, varargin] = vl_argparse(opts, varargin);
-
-  % Processor -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  if ~isfield(opts.train, 'gpus')
-    if ispc
-      % freeGPUIndex = getFreeGPUIndex();
-      freeGPUIndex = 1;
-      if freeGPUIndex ~= -1
-        opts.train.gpus = [freeGPUIndex];
-        opts.processorString = sprintf('GPU%d', freeGPUIndex);
-      else
-        opts.processorString = 'CPU';
-        opts.train.gpus = [];
-      end
-    else
-      opts.processorString = 'CPU';
-      opts.train.gpus = [];
-    end
-  end;
-  [opts, varargin] = vl_argparse(opts, varargin);
-
-  % More Paths -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   opts.imdbDir = fullfile(vl_rootnn, 'data', sprintf( ...
     '%s-%s', ...
     opts.dataset, ...
@@ -68,6 +51,7 @@ function [net, info] = cnn_amir(varargin)
   %                                                    Prepare model and data
   % -------------------------------------------------------------------------
   net = cnn_amir_init( ...
+    'weightDecay', opts.weightDecay, ...
     'weightInitType', opts.weightInitType, ...
     'weightInitSource', opts.weightInitSource, ...
     'backpropDepth', opts.backpropDepth, ...
@@ -98,6 +82,26 @@ function [net, info] = cnn_amir(varargin)
     net.meta.trainOpts, ...
     opts.train, ...
     'val', find(imdb.images.set == 3));
+
+% -------------------------------------------------------------------------
+function [processorList, processorString] = getProcessor(opts)
+% -------------------------------------------------------------------------
+  if ~isfield(opts.train, 'gpus')
+    if ispc
+      % freeGPUIndex = getFreeGPUIndex();
+      freeGPUIndex = 1;
+      if freeGPUIndex ~= -1
+        processorList = [freeGPUIndex];
+        processorString = sprintf('GPU%d', freeGPUIndex);
+      else
+        processorString = 'CPU';
+        processorList = [];
+      end
+    else
+      processorString = 'CPU';
+      processorList = [];
+    end
+  end;
 
 % -------------------------------------------------------------------------
 function randomGPUIndex = saveNetworkInfo(net, expDir)
