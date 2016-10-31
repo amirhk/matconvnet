@@ -141,6 +141,8 @@ function imdb = getCifarImdb(opts)
 % -------------------------------------------------------------------------
   % Prepare the imdb structure, returns image data with mean image subtracted
   unpackPath = fullfile(opts.dataDir, 'cifar-10-batches-mat');
+  % files = [arrayfun(@(n) sprintf('data_batch_%d.mat', n), 1:1, 'UniformOutput', false) ...
+  %   {'test_batch.mat'}];
   files = [arrayfun(@(n) sprintf('data_batch_%d.mat', n), 1:5, 'UniformOutput', false) ...
     {'test_batch.mat'}];
   files = cellfun(@(fn) fullfile(unpackPath, fn), files, 'UniformOutput', false);
@@ -197,6 +199,12 @@ function imdb = getCifarImdb(opts)
   imdb.images.data = data;
   imdb.images.labels = single(cat(2, labels{:}));
   imdb.images.set = set;
+  smallerTrainingAndValidationSet = true;
+  if smallerTrainingAndValidationSet
+    imdb.images.data = cat(4, imdb.images.data(:,:,:,1:500), imdb.images.data(:,:,:,50001:50500));
+    imdb.images.labels = cat(2, imdb.images.labels(1:500), imdb.images.labels(50001:50500));
+    imdb.images.set = cat(2, imdb.images.set(1:500), imdb.images.set(50001:50500));
+  end
   imdb.meta.sets = {'train', 'val', 'test'};
   imdb.meta.classes = clNames.label_names;
 
