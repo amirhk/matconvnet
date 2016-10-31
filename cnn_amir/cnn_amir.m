@@ -9,6 +9,7 @@ function [net, info] = cnn_amir(varargin)
   opts.backpropDepth = 20;
   opts.weightInitType = '1D';
   opts.weightInitSource = 'load';
+  [opts, varargin] = vl_argparse(opts, varargin);
   fprintf('[INFO] networkType:\t %s\n', opts.networkType);
   fprintf('[INFO] dataset:\t\t %s\n', opts.dataset);
   fprintf('[INFO] backpropDepth:\t %d\n', opts.backpropDepth);
