@@ -42,7 +42,8 @@ function [net, info] = cnn_amir(varargin)
   opts.dataDir = fullfile(vl_rootnn, 'data', opts.dataset);
   opts.imdbPath = fullfile(opts.imdbDir, 'imdb.mat');
 
-  % Other -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
+  % IMDB -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  opts.imdbPortion = 0.1;
   opts.whitenData = true;
   opts.contrastNormalization = true;
   opts = vl_argparse(opts, varargin);
@@ -62,12 +63,7 @@ function [net, info] = cnn_amir(varargin)
   if exist(opts.imdbPath, 'file')
     imdb = load(opts.imdbPath);
   else
-    switch opts.dataset
-      case 'cifar'
-        imdb = getCifarImdb(opts);
-      case 'mnist'
-        imdb = getMnistImdb(opts);
-    end
+    imdb = constructCifarImdb(opts);
     mkdir(opts.expDir);
     save(opts.imdbPath, '-struct', 'imdb');
   end
@@ -137,8 +133,9 @@ function inputs = getDagNNBatch(opts, imdb, batch)
   inputs = {'input', images, 'label', labels};
 
 % -------------------------------------------------------------------------
-function imdb = getCifarImdb(opts)
+function imdb = constructCifarImdb(opts)
 % -------------------------------------------------------------------------
+  fprintf('[INFO] Constructing CIFAR imdb (portion = %d%%)...\n\n', opts.imdbPortion * 100);
   % Prepare the imdb structure, returns image data with mean image subtracted
   unpackPath = fullfile(opts.dataDir, 'cifar-10-batches-mat');
   % files = [arrayfun(@(n) sprintf('data_batch_%d.mat', n), 1:1, 'UniformOutput', false) ...
@@ -154,6 +151,9 @@ function imdb = getCifarImdb(opts)
     untar(url, opts.dataDir);
   end
 
+  % TODO: something here to specify whether to build full or partial CIFAR
+  % opts.imdbPortion;
+
   data = cell(1, numel(files));
   labels = cell(1, numel(files));
   sets = cell(1, numel(files));
@@ -164,19 +164,23 @@ function imdb = getCifarImdb(opts)
     sets{fi} = repmat(file_set(fi), size(labels{fi}));
   end
 
-  set = cat(2, sets{:});
   data = single(cat(4, data{:}));
+  labels = single(cat(2, labels{:}));
+  set = cat(2, sets{:});
 
   % remove mean in any case
   dataMean = mean(data(:,:,:,set == 1), 4);
   data = bsxfun(@minus, data, dataMean);
+
+  [data, labels, set] = choosePortionOfImdb(data, labels, set, opts.imdbPortion);
 
   % normalize by image mean and std as suggested in `An Analysis of
   % Single-Layer Networks in Unsupervised Feature Learning` Adam
   % Coates, Honglak Lee, Andrew Y. Ng
 
   if opts.contrastNormalization
-    z = reshape(data,[],60000);
+    % z = reshape(data,[],60000);
+    z = reshape(data,[],size(labels, 2));
     z = bsxfun(@minus, z, mean(z,1));
     n = std(z,0,1);
     z = bsxfun(@times, z, mean(n) ./ max(n, 40));
@@ -184,8 +188,10 @@ function imdb = getCifarImdb(opts)
   end
 
   if opts.whitenData
-    z = reshape(data,[],60000);
-    W = z(:,set == 1)*z(:,set == 1)'/60000;
+    % z = reshape(data,[],60000);
+    % W = z(:,set == 1)*z(:,set == 1)'/60000;
+    z = reshape(data,[],size(labels, 2));
+    W = z(:,set == 1)*z(:,set == 1)'/size(labels, 2);
     [V,D] = eig(W);
     % the scale is selected to approximately preserve the norm of W
     d2 = diag(D);
@@ -197,66 +203,66 @@ function imdb = getCifarImdb(opts)
   clNames = load(fullfile(unpackPath, 'batches.meta.mat'));
 
   imdb.images.data = data;
-  imdb.images.labels = single(cat(2, labels{:}));
+  imdb.images.labels = labels
   imdb.images.set = set;
-  smallerTrainingAndValidationSet = true;
-  if smallerTrainingAndValidationSet
-    imdb.images.data = cat(4, imdb.images.data(:,:,:,1:500), imdb.images.data(:,:,:,50001:50500));
-    imdb.images.labels = cat(2, imdb.images.labels(1:500), imdb.images.labels(50001:50500));
-    imdb.images.set = cat(2, imdb.images.set(1:500), imdb.images.set(50001:50500));
-  end
   imdb.meta.sets = {'train', 'val', 'test'};
   imdb.meta.classes = clNames.label_names;
+  fprintf('[INFO] Finished constructing CIFAR imdb (portion = %d%%)!\n', opts.imdbPortion * 100);
 
-% --------------------------------------------------------------------
-function imdb = getMnistImdb(opts)
-% --------------------------------------------------------------------
-  % Prepare the imdb structure, returns image data with mean image subtracted
-  files = {'train-images-idx3-ubyte', ...
-           'train-labels-idx1-ubyte', ...
-           't10k-images-idx3-ubyte', ...
-           't10k-labels-idx1-ubyte'};
+% -------------------------------------------------------------------------
+function [data, labels, set] = choosePortionOfImdb(data, labels, set, portion)
+% -------------------------------------------------------------------------
+  % VERY INEFFICIENT
+  number_of_classes = 10;
+  number_of_samples = size(labels, 2);
 
-  if ~exist(opts.dataDir, 'dir')
-    mkdir(opts.dataDir);
+  label_indices = {};
+  output_data = {};
+  output_labels = {};
+  output_set = {};
+  for i = 1:number_of_classes
+    label_indices{i} = (labels == i);
+    fprintf('\t[INFO] found %d images with label %d...\n', size(label_indices{i}, 2), i);
   end
-
-  for i=1:4
-    if ~exist(fullfile(opts.dataDir, files{i}), 'file')
-      url = sprintf('http://yann.lecun.com/exdb/mnist/%s.gz',files{i});
-      fprintf('downloading %s\n', url);
-      gunzip(url, opts.dataDir);
+  fprintf('\n');
+  tic;
+  for i = 1:number_of_classes
+    fprintf('\t[INFO] extracting images for class %d...', i);
+    output_data{i} = [];
+    output_labels{i} = [];
+    output_set{i} = [];
+    count = 0;
+    for j = 1:number_of_samples
+      if label_indices{i}(j) == 1;
+        count = count + 1;
+        output_data{i} = cat(4, output_data{i}, data(:,:,:,j));
+        output_labels{i} = cat(2, output_labels{i}, labels(j));
+        output_set{i} = cat(2, output_set{i}, labels(j));
+      end
+      if count == number_of_samples * portion
+        break
+      end
     end
+    fprintf('done! \t');
+    toc;
   end
+  fprintf('\n');
 
-  f=fopen(fullfile(opts.dataDir, 'train-images-idx3-ubyte'),'r');
-  x1=fread(f,inf,'uint8');
-  fclose(f);
-  x1=permute(reshape(x1(17:end),28,28,60e3),[2 1 3]);
+  data = single(cat(4, output_data{:}));
+  labels = single(cat(2, output_labels{:}));
+  set = cat(2, output_set{:});
 
-  f=fopen(fullfile(opts.dataDir, 't10k-images-idx3-ubyte'),'r');
-  x2=fread(f,inf,'uint8');
-  fclose(f);
-  x2=permute(reshape(x2(17:end),28,28,10e3),[2 1 3]);
+  % for i = 1:number_of_classes
+  %   portioned_output_data{i} = output_data{i}(:,:,:,1:number_of_samples * portion);
+  %   portioned_output_labels{i} = output_labels{i}(1:number_of_samples * portion);
+  %   portioned_output_set{i} = output_set{i}(1:number_of_samples * portion);
+  % end
 
-  f=fopen(fullfile(opts.dataDir, 'train-labels-idx1-ubyte'),'r');
-  y1=fread(f,inf,'uint8');
-  fclose(f);
-  y1=double(y1(9:end)')+1;
+  % % finally shuffle these into 1 list for data, labels, set and pass that pack
+  % % make sure to shuffle all the same way!
+  % data = single(cat(4, portioned_output_data{:}));
+  % labels = single(cat(2, portioned_output_labels{:}));
+  % set = cat(2, portioned_output_set{:});
 
-  f=fopen(fullfile(opts.dataDir, 't10k-labels-idx1-ubyte'),'r');
-  y2=fread(f,inf,'uint8');
-  fclose(f);
-  y2=double(y2(9:end)')+1;
-
-  set = [ones(1,numel(y1)) 3*ones(1,numel(y2))];
-  data = single(reshape(cat(3, x1, x2),28,28,1,[]));
-  dataMean = mean(data(:,:,:,set == 1), 4);
-  data = bsxfun(@minus, data, dataMean);
-
-  imdb.images.data = data;
-  imdb.images.data_mean = dataMean;
-  imdb.images.labels = cat(2, y1, y2);
-  imdb.images.set = set;
-  imdb.meta.sets = {'train', 'val', 'test'};
-  imdb.meta.classes = arrayfun(@(x)sprintf('%d',x),0:9,'uniformoutput',false);
+  % TODO: not necessary, but great to have,... shuffle the above 3 matrices
+  % together in same order (not required bc cnn_train randomly chooses anyways)
