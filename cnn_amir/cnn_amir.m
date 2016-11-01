@@ -45,7 +45,8 @@ function [net, info] = cnn_amir(varargin)
   % IMDB -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % opts.imdbPortion = 1;
   % opts.imdbPortion = 0.25;
-  opts.imdbPortion = 0.1;
+  opts.imdbPortion = 0.5;
+  % opts.imdbPortion = 0.1;
   opts.whitenData = true;
   opts.contrastNormalization = true;
   opts = vl_argparse(opts, varargin);
