@@ -43,9 +43,9 @@ function [net, info] = cnn_amir(varargin)
   opts.imdbPath = fullfile(opts.imdbDir, 'imdb.mat');
 
   % IMDB -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % opts.imdbPortion = 0.1;
   % opts.imdbPortion = 1;
-  opts.imdbPortion = .25;
+  % opts.imdbPortion = 0.25;
+  opts.imdbPortion = 0.1;
   opts.whitenData = true;
   opts.contrastNormalization = true;
   opts = vl_argparse(opts, varargin);

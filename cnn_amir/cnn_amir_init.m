@@ -24,7 +24,7 @@ switch opts.networkType
         % COMP RAND FOR 500 training samples
         % net.meta.trainOpts.learningRate = [0.01*ones(1,5) 0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
         % net.meta.trainOpts.learningRate = [0.005*ones(1,200)];
-        net.meta.trainOpts.learningRate = [0.005*ones(1,20) 0.001*ones(1,180)];
+        net.meta.trainOpts.learningRate = [0.005*ones(1,20) 0.001*ones(1,80)];
       case '1D'
         % VERIFIED: weights random from pre-train 1D (with or without whitening)
         net.meta.trainOpts.learningRate = [0.01*ones(1,5)  0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,15) 0.00005*ones(1,15)];
