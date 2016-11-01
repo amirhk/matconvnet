@@ -172,9 +172,13 @@ function imdb = constructCifarImdb(opts)
   dataMean = mean(data(:,:,:,set == 1), 4);
   data = bsxfun(@minus, data, dataMean);
 
-  [data, labels, set] = choosePortionOfImdb(data, labels, set, opts.imdbPortion);
-  % TODO remove set code....
-  set = [ones(1, 50000 * opts.imdbPortion) 3 * ones(1, 10000 * opts.imdbPortion)];
+  % [data, labels, set] = choosePortionOfImdb(data, labels, set, opts.imdbPortion);
+  % % TODO remove set code....
+  % set = [ones(1, 50000 * opts.imdbPortion) 3 * ones(1, 10000 * opts.imdbPortion)];
+
+
+  [data, labels] = choosePortionOfImdb(data(:,:,:,1:50000), labels(1:50000), opts.imdbPortion);
+  set = [ones(1, 50000 * opts.imdbPortion) 3 * ones(1, 10000)]; % all of the test portion
 
   % normalize by image mean and std as suggested in `An Analysis of
   % Single-Layer Networks in Unsupervised Feature Learning` Adam
@@ -212,7 +216,7 @@ function imdb = constructCifarImdb(opts)
   fprintf('[INFO] Finished constructing CIFAR imdb (portion = %d%%)!\n', opts.imdbPortion * 100);
 
 % -------------------------------------------------------------------------
-function [data, labels, set] = choosePortionOfImdb(data, labels, set, portion)
+function [data, labels] = choosePortionOfImdb(data, labels, portion)
 % -------------------------------------------------------------------------
   % VERY INEFFICIENT
   number_of_classes = 10;
@@ -221,7 +225,6 @@ function [data, labels, set] = choosePortionOfImdb(data, labels, set, portion)
   label_indices = {};
   output_data = {};
   output_labels = {};
-  output_set = {};
   for i = 1:number_of_classes
     label_indices{i} = (labels == i);
     fprintf('\t[INFO] found %d images with label %d...\n', size(label_indices{i}, 2), i);
@@ -233,7 +236,6 @@ function [data, labels, set] = choosePortionOfImdb(data, labels, set, portion)
     fprintf('\t[INFO] extracting images for class %d...', i);
     output_data{i} = data(:,:,:,label_indices{i});
     output_labels{i} = labels(label_indices{i});
-    output_set{i} = labels(label_indices{i});
     fprintf('done! \t');
     toc;
   end
@@ -242,17 +244,14 @@ function [data, labels, set] = choosePortionOfImdb(data, labels, set, portion)
   for i = 1:number_of_classes
     portioned_output_data{i} = output_data{i}(:,:,:,1:number_of_samples / number_of_classes * portion);
     portioned_output_labels{i} = output_labels{i}(1:number_of_samples / number_of_classes * portion);
-    portioned_output_set{i} = output_set{i}(1:number_of_samples / number_of_classes * portion);
   end
 
   data = single(cat(4, output_data{:}));
   labels = single(cat(2, output_labels{:}));
-  set = cat(2, output_set{:});
 
   ix = randperm(number_of_samples * portion);
   data = data(:,:,:,ix);
   labels = labels(ix);
-  set = set(ix);
 
   % tic;
   % for i = 1:number_of_classes
