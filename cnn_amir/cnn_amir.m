@@ -138,8 +138,6 @@ function imdb = constructCifarImdb(opts)
   fprintf('[INFO] Constructing CIFAR imdb (portion = %d%%)...\n\n', opts.imdbPortion * 100);
   % Prepare the imdb structure, returns image data with mean image subtracted
   unpackPath = fullfile(opts.dataDir, 'cifar-10-batches-mat');
-  % files = [arrayfun(@(n) sprintf('data_batch_%d.mat', n), 1:1, 'UniformOutput', false) ...
-  %   {'test_batch.mat'}];
   files = [arrayfun(@(n) sprintf('data_batch_%d.mat', n), 1:5, 'UniformOutput', false) ...
     {'test_batch.mat'}];
   files = cellfun(@(fn) fullfile(unpackPath, fn), files, 'UniformOutput', false);
@@ -173,6 +171,8 @@ function imdb = constructCifarImdb(opts)
   data = bsxfun(@minus, data, dataMean);
 
   [data, labels, set] = choosePortionOfImdb(data, labels, set, opts.imdbPortion);
+  % TODO remove set code....
+  set = [ones(1, 50000 * opts.imdbPortion) 3 * ones(1, 10000 * opts.imdbPortion)];
 
   % normalize by image mean and std as suggested in `An Analysis of
   % Single-Layer Networks in Unsupervised Feature Learning` Adam
@@ -225,37 +225,77 @@ function [data, labels, set] = choosePortionOfImdb(data, labels, set, portion)
     fprintf('\t[INFO] found %d images with label %d...\n', size(label_indices{i}, 2), i);
   end
   fprintf('\n');
+
   tic;
   for i = 1:number_of_classes
     fprintf('\t[INFO] extracting images for class %d...', i);
-    output_data{i} = [];
-    output_labels{i} = [];
-    output_set{i} = [];
-    count = 0;
-    for j = 1:number_of_samples
-      if label_indices{i}(j) == 1;
-        count = count + 1;
-        output_data{i} = cat(4, output_data{i}, data(:,:,:,j));
-        output_labels{i} = cat(2, output_labels{i}, labels(j));
-        output_set{i} = cat(2, output_set{i}, labels(j));
-      end
-      if count == number_of_samples * portion
-        break
-      end
-    end
+    output_data{i} = data(:,:,:,label_indices{i});
+    output_labels{i} = labels(label_indices{i});
+    output_set{i} = labels(label_indices{i});
     fprintf('done! \t');
     toc;
   end
   fprintf('\n');
 
+  for i = 1:number_of_classes
+    portioned_output_data{i} = output_data{i}(:,:,:,1:number_of_samples / number_of_classes * portion);
+    portioned_output_labels{i} = output_labels{i}(1:number_of_samples / number_of_classes * portion);
+    portioned_output_set{i} = output_set{i}(1:number_of_samples / number_of_classes * portion);
+  end
+
   data = single(cat(4, output_data{:}));
   labels = single(cat(2, output_labels{:}));
   set = cat(2, output_set{:});
 
+  ix = randperm(number_of_samples * portion);
+  data = data(:,:,:,ix);
+  labels = labels(ix);
+  set = set(ix);
+
+  % tic;
   % for i = 1:number_of_classes
-  %   portioned_output_data{i} = output_data{i}(:,:,:,1:number_of_samples * portion);
-  %   portioned_output_labels{i} = output_labels{i}(1:number_of_samples * portion);
-  %   portioned_output_set{i} = output_set{i}(1:number_of_samples * portion);
+  %   fprintf('\t[INFO] extracting images for class %d...', i);
+  %   output_data{i} = [];
+  %   output_labels{i} = [];
+  %   output_set{i} = [];
+  %   count = 0;
+  %   for j = 1:number_of_samples
+  %     if label_indices{i}(j) == 1;
+  %       count = count + 1;
+  %       output_data{i} = cat(4, output_data{i}, data(:,:,:,j));
+  %       output_labels{i} = cat(2, output_labels{i}, labels(j));
+  %       output_set{i} = cat(2, output_set{i}, labels(j));
+  %     end
+  %     if count == number_of_samples / number_of_classes * portion
+  %       fprintf('done! \t');
+  %       toc;
+  %       break
+  %     end
+  %   end
+  % end
+  % fprintf('\n');
+
+  % % disp(output_data);
+  % % disp(size(output_data{1}));
+  % data = single(cat(4, output_data{:}));
+  % labels = single(cat(2, output_labels{:}));
+  % set = cat(2, output_set{:});
+
+
+
+
+
+
+
+
+  % disp(size(data));
+  % disp(size(labels));
+  % disp(size(set));
+
+  % for i = 1:number_of_classes
+  %   portioned_output_data{i} = output_data{i}(:,:,:,1:number_of_samples / number_of_classes * portion);
+  %   portioned_output_labels{i} = output_labels{i}(1:number_of_samples / number_of_classes * portion);
+  %   portioned_output_set{i} = output_set{i}(1:number_of_samples / number_of_classes * portion);
   % end
 
   % % finally shuffle these into 1 list for data, labels, set and pass that pack
