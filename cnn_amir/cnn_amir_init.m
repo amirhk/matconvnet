@@ -24,7 +24,8 @@ switch opts.networkType
         % COMP RAND FOR 500 training samples
         % net.meta.trainOpts.learningRate = [0.01*ones(1,5) 0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
         % net.meta.trainOpts.learningRate = [0.005*ones(1,200)];
-        net.meta.trainOpts.learningRate = [0.005*ones(1,20) 0.001*ones(1,30)];
+        % net.meta.trainOpts.learningRate = [0.005*ones(1,20) 0.001*ones(1,30)];
+        net.meta.trainOpts.learningRate = [0.001*ones(1,100)];
       case '1D'
         % VERIFIED: weights random from pre-train 1D (with or without whitening)
         net.meta.trainOpts.learningRate = [0.01*ones(1,5)  0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,15) 0.00005*ones(1,15)];
@@ -111,13 +112,14 @@ switch opts.networkType
     % --- --- ---                                                     --- --- --
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     % k = [1,4,8,16,32]
-    k = 4;
+    k = 2;
     layerNumber = 1;
     net.layers{end+1} = convLayer(layerNumber, 5, 3, 96, 5/1000, 2, 'compRand', 'gen');
     net.layers{end+1} = reluLayer(layerNumber);
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     layerNumber = layerNumber + 2;
+    % net.layers{end+1} = convLayer(layerNumber, 5, 96, 256, 5/1000, 2, 'compRand', 'gen');
     net.layers{end+1} = convLayer(layerNumber, 5, 96, 96/k, 5/1000, 2, 'compRand', 'gen');
     net.layers{end+1} = convLayer(layerNumber, 5, 96/k, 256, 5/1000, 2, 'compRand', 'gen');
     net.layers{end+1} = reluLayer(layerNumber);
@@ -125,21 +127,24 @@ switch opts.networkType
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     layerNumber = layerNumber + 3;
-    net.layers{end+1} = convLayer(layerNumber, 3, 256, 256/k, 5/1000, 1, 'compRand', 'gen');
-    net.layers{end+1} = convLayer(layerNumber, 3, 256/k, 384, 5/1000, 1, 'compRand', 'gen');
+    net.layers{end+1} = convLayer(layerNumber, 3, 256, 384, 5/1000, 1, 'compRand', 'gen');
+    % net.layers{end+1} = convLayer(layerNumber, 3, 256, 256/k, 5/1000, 1, 'compRand', 'gen');
+    % net.layers{end+1} = convLayer(layerNumber, 3, 256/k, 384, 5/1000, 1, 'compRand', 'gen');
     net.layers{end+1} = reluLayer(layerNumber);
     net.layers{end+1} = poolingLayerAlexNet(layerNumber);
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     layerNumber = layerNumber + 3;
-    net.layers{end+1} = convLayer(layerNumber, 3, 384, 384/k, 5/1000, 1, 'compRand', 'gen');
-    net.layers{end+1} = convLayer(layerNumber, 3, 384/k, 384, 5/1000, 1, 'compRand', 'gen');
+    net.layers{end+1} = convLayer(layerNumber, 3, 384, 384, 5/1000, 1, 'compRand', 'gen');
+    % net.layers{end+1} = convLayer(layerNumber, 3, 384, 384/k, 5/1000, 1, 'compRand', 'gen');
+    % net.layers{end+1} = convLayer(layerNumber, 3, 384/k, 384, 5/1000, 1, 'compRand', 'gen');
     net.layers{end+1} = reluLayer(layerNumber);
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     layerNumber = layerNumber + 2;
-    net.layers{end+1} = convLayer(layerNumber, 3, 384, 384/k, 5/1000, 1, 'compRand', 'gen');
-    net.layers{end+1} = convLayer(layerNumber, 3, 384/k, 256, 5/1000, 1, 'compRand', 'gen');
+    net.layers{end+1} = convLayer(layerNumber, 3, 384, 256, 5/1000, 1, 'compRand', 'gen');
+    % net.layers{end+1} = convLayer(layerNumber, 3, 384, 384/k, 5/1000, 1, 'compRand', 'gen');
+    % net.layers{end+1} = convLayer(layerNumber, 3, 384/k, 256, 5/1000, 1, 'compRand', 'gen');
     net.layers{end+1} = reluLayer(layerNumber);
     net.layers{end+1} = poolingLayerAlexNet(layerNumber);
 
