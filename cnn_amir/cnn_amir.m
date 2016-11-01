@@ -177,8 +177,13 @@ function imdb = constructCifarImdb(opts)
   % set = [ones(1, 50000 * opts.imdbPortion) 3 * ones(1, 10000 * opts.imdbPortion)];
 
 
-  [data, labels] = choosePortionOfImdb(data(:,:,:,1:50000), labels(1:50000), opts.imdbPortion);
+  [output_data, output_labels] = choosePortionOfImdb(data(:,:,:,1:50000), labels(1:50000), opts.imdbPortion);
+  data = single(cat(4, output_data, data(:,:,:,50001:60000)));
+  labels = single(cat(2, output_labels, labels(50001:60000)));
   set = [ones(1, 50000 * opts.imdbPortion) 3 * ones(1, 10000)]; % all of the test portion
+  disp(size(data));
+  disp(size(labels));
+  disp(size(set));
 
   % normalize by image mean and std as suggested in `An Analysis of
   % Single-Layer Networks in Unsupervised Feature Learning` Adam
