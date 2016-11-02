@@ -4,6 +4,7 @@ function [net, info] = cnn_amir(varargin)
 
   % Setup -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
   opts.train = struct();
+  opts.folderNumber = 1;
   opts.networkArch = 'alex-net';
   opts.dataset = 'cifar';
   opts.imdbPortion = 1.0;
@@ -29,11 +30,9 @@ function [net, info] = cnn_amir(varargin)
 
   % Paths -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
   opts.timeString = sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
-  opts.imdbDir = fullfile(vl_rootnn, 'data', sprintf( ...
-    '%s-%s', ...
-    opts.dataset, ...
-    opts.networkArch));
-  opts.expDir = fullfile(vl_rootnn, 'data', sprintf( ...
+  opts.dataString = sprintf('data_%d', opts.folderNumber);
+  opts.dataDir = fullfile(vl_rootnn, opts.dataString, opts.dataset);
+  opts.expDir = fullfile(vl_rootnn, opts.dataString, sprintf( ...
     '%s-%s-%s-%s', ...
     opts.dataset, ...
     opts.networkArch, ...
@@ -43,7 +42,10 @@ function [net, info] = cnn_amir(varargin)
   if ~exist(opts.expDir)
     mkdir(opts.expDir);
   end
-  opts.dataDir = fullfile(vl_rootnn, 'data', opts.dataset);
+  opts.imdbDir = fullfile(vl_rootnn, opts.dataString, sprintf( ...
+    '%s-%s', ...
+    opts.dataset, ...
+    opts.networkArch));
   opts.imdbPath = fullfile(opts.imdbDir, 'imdb.mat');
   if ~exist(opts.imdbDir)
     mkdir(opts.imdbDir);
@@ -96,8 +98,9 @@ function [processorList, processorString] = getProcessor(opts)
 % -------------------------------------------------------------------------
   if ~isfield(opts.train, 'gpus')
     if ispc
-      freeGPUIndex = getFreeGPUIndex();
+      % freeGPUIndex = getFreeGPUIndex();
       % freeGPUIndex = 1;
+      freeGPUIndex = opts.folderNumber;
       if freeGPUIndex ~= -1
         processorList = [freeGPUIndex];
         processorString = sprintf('GPU%d', freeGPUIndex);
