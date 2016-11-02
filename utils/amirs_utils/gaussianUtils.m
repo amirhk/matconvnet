@@ -1,7 +1,7 @@
-function fh = guassianUtils()
+function fh = gaussianUtils()
   % assign function handles so we can call these local functions from elsewhere
-  fh.fit2DGaussianAndDrawPositiveSamples = fit2DGaussianAndDrawPositiveSamples;
-  fh.fit2DGuassianAndDrawSamples = @fit2DGuassianAndDrawSamples;
+  fh.fit2DGaussianAndDrawPositiveSamples = @fit2DGaussianAndDrawPositiveSamples;
+  fh.fit2DGaussianAndDrawSamples = @fit2DGaussianAndDrawSamples;
   fh.fit2DGaussianAndDrawSuperSamples = @fit2DGaussianAndDrawSuperSamples;
 
 % --------------------------------------------------------------------
@@ -36,8 +36,8 @@ function averaged_sample_kernel = drawPositiveSamplesFrom2DGaussian( ...
   covariance, ...
   kernel_size)
 % --------------------------------------------------------------------
-  %2d guassian
-  guassian2D = @(mu, covariance, X) ...
+  %2d gaussian
+  gaussian2D = @(mu, covariance, X) ...
     1 / (sqrt(det(2 * pi * covariance))) * ...
     exp(-1/2 * (X - mu)' * inv(covariance) * (X - mu));
 
@@ -48,7 +48,7 @@ function averaged_sample_kernel = drawPositiveSamplesFrom2DGaussian( ...
   for k = 1:trial_repeat_count
     for y = 1:kernel_size
       for x = 1:kernel_size
-        sample_kernel(y, x) = guassian2D(mu, covariance, [y; x]);
+        sample_kernel(y, x) = gaussian2D(mu, covariance, [y; x]);
       end
     end
     sample_kernels(:, :, end + 1) = sample_kernel;
@@ -65,15 +65,15 @@ function sample = fit2DGaussianAndDrawPositiveSamples(kernel, debug_flag)
   end
   dim = size(kernel, 1);
   if debug_flag
-    fprintf('[INFO] computing params of fitted 2D Guassian...\n');
+    fprintf('[INFO] computing params of fitted 2D Gaussian...\n');
   end
   [mu_y, mu_x, covariance] = fit2DGaussian(kernel);
   if debug_flag
-    fprintf('[INFO] params of fitted 2D Guassian, mu_x, mu_y, covariance:\n');
+    fprintf('[INFO] params of fitted 2D Gaussian, mu_x, mu_y, covariance:\n');
     disp(mu_y);
     disp(mu_x);
     disp(covariance);
-    fprintf('[INFO] drawing sample from fitted 2D Guassian...');
+    fprintf('[INFO] drawing sample from fitted 2D Gaussian...');
   end
   sample = drawPositiveSamplesFrom2DGaussian(mu_y, mu_x, covariance, dim);
   if debug_flag
@@ -82,17 +82,25 @@ function sample = fit2DGaussianAndDrawPositiveSamples(kernel, debug_flag)
   end
 
 % --------------------------------------------------------------------
-function sample = fit2DGuassianAndDrawSamples(kernel, debug_flag)
+function sample = fit2DGaussianAndDrawSamples(kernel, debug_flag)
 % --------------------------------------------------------------------
-  sample = fit2DGaussianAndDrawPositiveSamples(kernel, debug_flag)
+  dim = size(kernel, 1);
+  sample = fit2DGaussianAndDrawPositiveSamples(kernel, debug_flag);
   samplen = sample ./ max(sample(:));
-  sample = sign(randn(dim,dim)) .* samplen;
+  % sample = sign(randn(dim,dim)) .* samplen;
+  thresh = .3;
+  a = rand(dim,dim);
+  b = a >= thresh;
+  c = a < thresh;
+  d = b - c; % smaller than thresh gets multiplied by -1
+  sample = d .* samplen;
   sample = scaleDrawnSampleToInitialDynamicRange(kernel, sample);
 
 % --------------------------------------------------------------------
 function super_sample = fit2DGaussianAndDrawSuperSamples(kernel, debug_flag)
 % --------------------------------------------------------------------
-  sample = fit2DGaussianAndDrawPositiveSamples(kernel, debug_flag)
+  dim = size(kernel, 1);
+  sample = fit2DGaussianAndDrawPositiveSamples(kernel, debug_flag);
   samplen = sample ./ max(sample(:));
   super_sample = randn(dim,dim) + sign(randn(dim,dim)) .* samplen;
   super_sample = scaleDrawnSampleToInitialDynamicRange(kernel, super_sample);

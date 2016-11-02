@@ -9,7 +9,7 @@ function main_cnn_amir(varargin)
 
   networkArch = 'alex-net-bnorm';
   % backpropDepthList = [20, 18, 15, 12, 10, 7];
-  backpropDepthList = [25];
+  backpropDepthList = [22];
   bottleNeckDivideByList = [1];
 
   % networkArch = 'alex-net-bottle-neck';

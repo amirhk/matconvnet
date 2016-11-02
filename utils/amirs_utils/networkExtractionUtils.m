@@ -19,8 +19,8 @@ function extractAlexNetCifar()
   % TODO: flip these if need be!
   % genWeightsMethod = @genRandomWeights;
   % genWeightsMethod = @genRandomWeightsFromBaseline1DGaussian;
-  % genWeightsMethod = @genRandomWeightsFromBaseline2DGaussian;
-  genWeightsMethod = @genRandomWeightsFromBaseline2DGaussianSuper;
+  genWeightsMethod = @genRandomWeightsFromBaseline2DGaussian;
+  % genWeightsMethod = @genRandomWeightsFromBaseline2DGaussianSuper;
   genNewWeights(net, genWeightsMethod);
 
 % --------------------------------------------------------------------
@@ -152,14 +152,14 @@ function randomWeights = genRandomWeightsFromBaseline2DGaussian( ...
   % those distributions
 % --------------------------------------------------------------------
   tic;
-  utils = guassianUtils;
+  utils = gaussianUtils;
   baselineWeights = layers{layerNumber}.weights{1};
   randomWeights_W1 = [];
   for d = 1:size(baselineWeights, 4)
     for c = 1:size(baselineWeights, 3)
       baselineKernel = baselineWeights(:, :, c, d);
       randomWeights_W1(:, :, c, d) = ...
-        utils.fit2DGuassianAndDrawSamples(baselineKernel);
+        utils.fit2DGaussianAndDrawSamples(baselineKernel, false);
     end
   end
   randomWeights{1} = single(randomWeights_W1);
@@ -181,14 +181,14 @@ function randomWeights = genRandomWeightsFromBaseline2DGaussianSuper( ...
   % those distributions
 % --------------------------------------------------------------------
   tic;
-  utils = guassianUtils;
+  utils = gaussianUtils;
   baselineWeights = layers{layerNumber}.weights{1};
   randomWeights_W1 = [];
   for d = 1:size(baselineWeights, 4)
     for c = 1:size(baselineWeights, 3)
       baselineKernel = baselineWeights(:, :, c, d);
       randomWeights_W1(:, :, c, d) = ...
-        utils.fit2DGaussianAndDrawSuperSamples(baselineKernel);
+        utils.fit2DGaussianAndDrawSuperSamples(baselineKernel, false);
     end
   end
   randomWeights{1} = single(randomWeights_W1);
