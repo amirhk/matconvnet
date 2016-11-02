@@ -96,8 +96,8 @@ function [processorList, processorString] = getProcessor(opts)
 % -------------------------------------------------------------------------
   if ~isfield(opts.train, 'gpus')
     if ispc
-      % freeGPUIndex = getFreeGPUIndex();
-      freeGPUIndex = 1;
+      freeGPUIndex = getFreeGPUIndex();
+      % freeGPUIndex = 1;
       if freeGPUIndex ~= -1
         processorList = [freeGPUIndex];
         processorString = sprintf('GPU%d', freeGPUIndex);
