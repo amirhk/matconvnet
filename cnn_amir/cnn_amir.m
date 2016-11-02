@@ -4,19 +4,23 @@ function [net, info] = cnn_amir(varargin)
 
   % Setup -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
   opts.train = struct();
-  opts.networkType = 'alex-net';
+  opts.networkArch = 'alex-net';
   opts.dataset = 'cifar';
+  opts.imdbPortion = 1.0;
   opts.backpropDepth = 20;
   opts.weightDecay = 0.0001;
   opts.weightInitType = '1D';
   opts.weightInitSource = 'load';
+  opts.bottleNeckDivideBy = 1;
   [opts, varargin] = vl_argparse(opts, varargin);
-  fprintf('[INFO] networkType:\t %s\n', opts.networkType);
+  fprintf('[INFO] networkArch:\t %s\n', opts.networkArch);
   fprintf('[INFO] dataset:\t\t %s\n', opts.dataset);
+  fprintf('[INFO] imdbPortion:\t %6.5f\n', opts.imdbPortion);
   fprintf('[INFO] backpropDepth:\t %d\n', opts.backpropDepth);
-  fprintf('[INFO] weightDecay:\t %s\n', opts.weightDecay);
+  fprintf('[INFO] weightDecay:\t %6.5f\n', opts.weightDecay);
   fprintf('[INFO] weightInitType:\t %s\n', opts.weightInitType);
   fprintf('[INFO] weightInitSource: %s\n', opts.weightInitSource);
+  fprintf('[INFO] bottleNeckDivideBy: %d\n', opts.bottleNeckDivideBy);
   fprintf('\n');
 
   % Processor -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
@@ -28,11 +32,11 @@ function [net, info] = cnn_amir(varargin)
   opts.imdbDir = fullfile(vl_rootnn, 'data', sprintf( ...
     '%s-%s', ...
     opts.dataset, ...
-    opts.networkType));
+    opts.networkArch));
   opts.expDir = fullfile(vl_rootnn, 'data', sprintf( ...
     '%s-%s-%s-%s', ...
     opts.dataset, ...
-    opts.networkType, ...
+    opts.networkArch, ...
     opts.timeString, ...
     opts.processorString));
   [opts, varargin] = vl_argparse(opts, varargin);
@@ -41,12 +45,15 @@ function [net, info] = cnn_amir(varargin)
   end
   opts.dataDir = fullfile(vl_rootnn, 'data', opts.dataset);
   opts.imdbPath = fullfile(opts.imdbDir, 'imdb.mat');
+  if ~exist(opts.imdbDir)
+    mkdir(opts.imdbDir);
+  else
+    % if folder exists, there may be an imdb inside there (that corresponds to
+    % a different portion of CIFAR). just delete the imdb and remake to be safe.
+    delete(fullfile(opts.imdbDir, 'imdb.mat'));
+  end
 
   % IMDB -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  opts.imdbPortion = 1;
-  % opts.imdbPortion = 0.25;
-  % opts.imdbPortion = 0.5;
-  % opts.imdbPortion = 0.1;
   opts.whitenData = true;
   opts.contrastNormalization = true;
   opts = vl_argparse(opts, varargin);
@@ -55,20 +62,22 @@ function [net, info] = cnn_amir(varargin)
   %                                                    Prepare model and data
   % -------------------------------------------------------------------------
   net = cnn_amir_init( ...
+    'networkArch', opts.networkArch, ...
+    'dataset', opts.dataset, ...
+    'backpropDepth', opts.backpropDepth, ...
     'weightDecay', opts.weightDecay, ...
     'weightInitType', opts.weightInitType, ...
     'weightInitSource', opts.weightInitSource, ...
-    'backpropDepth', opts.backpropDepth, ...
-    'networkType', opts.networkType, ...
-    'dataset', opts.dataset);
+    'bottleNeckDivideBy', opts.bottleNeckDivideBy);
   saveNetworkInfo(net, opts.expDir);
 
   if exist(opts.imdbPath, 'file')
     imdb = load(opts.imdbPath);
   else
     imdb = constructCifarImdb(opts);
-    mkdir(opts.expDir);
+    fprintf('[INFO] saving new imdb... ');
     save(opts.imdbPath, '-struct', 'imdb');
+    fprintf('done.\n\n');
   end
 
   net.meta.classes.name = imdb.meta.classes(:)';
@@ -138,7 +147,7 @@ function inputs = getDagNNBatch(opts, imdb, batch)
 % -------------------------------------------------------------------------
 function imdb = constructCifarImdb(opts)
 % -------------------------------------------------------------------------
-  fprintf('[INFO] Constructing CIFAR imdb (portion = %d%%)...\n\n', opts.imdbPortion * 100);
+  fprintf('[INFO] Constructing CIFAR imdb (portion = %%%d)...\n\n', opts.imdbPortion * 100);
   % Prepare the imdb structure, returns image data with mean image subtracted
   unpackPath = fullfile(opts.dataDir, 'cifar-10-batches-mat');
   files = [arrayfun(@(n) sprintf('data_batch_%d.mat', n), 1:5, 'UniformOutput', false) ...
@@ -151,9 +160,6 @@ function imdb = constructCifarImdb(opts)
     fprintf('downloading %s\n', url);
     untar(url, opts.dataDir);
   end
-
-  % TODO: something here to specify whether to build full or partial CIFAR
-  % opts.imdbPortion;
 
   data = cell(1, numel(files));
   labels = cell(1, numel(files));
@@ -173,53 +179,48 @@ function imdb = constructCifarImdb(opts)
   dataMean = mean(data(:,:,:,set == 1), 4);
   data = bsxfun(@minus, data, dataMean);
 
-  % [data, labels, set] = choosePortionOfImdb(data, labels, set, opts.imdbPortion);
-  % % TODO remove set code....
-  % set = [ones(1, 50000 * opts.imdbPortion) 3 * ones(1, 10000 * opts.imdbPortion)];
-
-
   [output_data, output_labels] = choosePortionOfImdb(data(:,:,:,1:50000), labels(1:50000), opts.imdbPortion);
-  data = single(cat(4, output_data, data(:,:,:,50001:60000)));
-  labels = single(cat(2, output_labels, labels(50001:60000)));
+  data = single(cat(4, output_data, data(:,:,:,50001:60000))); % amend with test data
+  labels = single(cat(2, output_labels, labels(50001:60000))); % amend with test data
   set = [ones(1, 50000 * opts.imdbPortion) 3 * ones(1, 10000)]; % all of the test portion
-  disp(size(data));
-  disp(size(labels));
-  disp(size(set));
+  number_of_train_and_test_images = size(labels, 2);
+  fprintf('[INFO] number_of_train_and_test_images in portion: %d.\n', number_of_train_and_test_images);
 
   % normalize by image mean and std as suggested in `An Analysis of
   % Single-Layer Networks in Unsupervised Feature Learning` Adam
   % Coates, Honglak Lee, Andrew Y. Ng
 
   if opts.contrastNormalization
-    % z = reshape(data,[],60000);
-    z = reshape(data,[],size(labels, 2));
+    fprintf('[INFO] contrast-normalizing data... ');
+    z = reshape(data,[],number_of_train_and_test_images);
     z = bsxfun(@minus, z, mean(z,1));
     n = std(z,0,1);
     z = bsxfun(@times, z, mean(n) ./ max(n, 40));
     data = reshape(z, 32, 32, 3, []);
+    fprintf('done.\n');
   end
 
   if opts.whitenData
-    % z = reshape(data,[],60000);
-    % W = z(:,set == 1)*z(:,set == 1)'/60000;
-    z = reshape(data,[],size(labels, 2));
-    W = z(:,set == 1)*z(:,set == 1)'/size(labels, 2);
+    fprintf('[INFO] whitening data... ');
+    z = reshape(data,[],number_of_train_and_test_images);
+    W = z(:,set == 1)*z(:,set == 1)'/number_of_train_and_test_images;
     [V,D] = eig(W);
     % the scale is selected to approximately preserve the norm of W
     d2 = diag(D);
     en = sqrt(mean(d2));
     z = V*diag(en./max(sqrt(d2), 10))*V'*z;
     data = reshape(z, 32, 32, 3, []);
+    fprintf('done.\n');
   end
 
   clNames = load(fullfile(unpackPath, 'batches.meta.mat'));
 
   imdb.images.data = data;
-  imdb.images.labels = labels
+  imdb.images.labels = labels;
   imdb.images.set = set;
   imdb.meta.sets = {'train', 'val', 'test'};
   imdb.meta.classes = clNames.label_names;
-  fprintf('[INFO] Finished constructing CIFAR imdb (portion = %d%%)!\n', opts.imdbPortion * 100);
+  fprintf('[INFO] Finished constructing CIFAR imdb (portion = %%%d)!\n', opts.imdbPortion * 100);
 
 % -------------------------------------------------------------------------
 function [data, labels] = choosePortionOfImdb(data, labels, portion)
@@ -227,6 +228,7 @@ function [data, labels] = choosePortionOfImdb(data, labels, portion)
   % VERY INEFFICIENT
   number_of_classes = 10;
   number_of_samples = size(labels, 2);
+  number_of_images_per_class = number_of_samples / number_of_classes * portion;
 
   label_indices = {};
   output_data = {};
@@ -248,68 +250,14 @@ function [data, labels] = choosePortionOfImdb(data, labels, portion)
   fprintf('\n');
 
   for i = 1:number_of_classes
-    portioned_output_data{i} = output_data{i}(:,:,:,1:number_of_samples / number_of_classes * portion);
-    portioned_output_labels{i} = output_labels{i}(1:number_of_samples / number_of_classes * portion);
+    portioned_output_data{i} = output_data{i}(:,:,:,1:number_of_images_per_class);
+    portioned_output_labels{i} = output_labels{i}(1:number_of_images_per_class);
   end
 
   data = single(cat(4, output_data{:}));
   labels = single(cat(2, output_labels{:}));
 
+  % shuffle data and labels the same way
   ix = randperm(number_of_samples * portion);
   data = data(:,:,:,ix);
   labels = labels(ix);
-
-  % tic;
-  % for i = 1:number_of_classes
-  %   fprintf('\t[INFO] extracting images for class %d...', i);
-  %   output_data{i} = [];
-  %   output_labels{i} = [];
-  %   output_set{i} = [];
-  %   count = 0;
-  %   for j = 1:number_of_samples
-  %     if label_indices{i}(j) == 1;
-  %       count = count + 1;
-  %       output_data{i} = cat(4, output_data{i}, data(:,:,:,j));
-  %       output_labels{i} = cat(2, output_labels{i}, labels(j));
-  %       output_set{i} = cat(2, output_set{i}, labels(j));
-  %     end
-  %     if count == number_of_samples / number_of_classes * portion
-  %       fprintf('done! \t');
-  %       toc;
-  %       break
-  %     end
-  %   end
-  % end
-  % fprintf('\n');
-
-  % % disp(output_data);
-  % % disp(size(output_data{1}));
-  % data = single(cat(4, output_data{:}));
-  % labels = single(cat(2, output_labels{:}));
-  % set = cat(2, output_set{:});
-
-
-
-
-
-
-
-
-  % disp(size(data));
-  % disp(size(labels));
-  % disp(size(set));
-
-  % for i = 1:number_of_classes
-  %   portioned_output_data{i} = output_data{i}(:,:,:,1:number_of_samples / number_of_classes * portion);
-  %   portioned_output_labels{i} = output_labels{i}(1:number_of_samples / number_of_classes * portion);
-  %   portioned_output_set{i} = output_set{i}(1:number_of_samples / number_of_classes * portion);
-  % end
-
-  % % finally shuffle these into 1 list for data, labels, set and pass that pack
-  % % make sure to shuffle all the same way!
-  % data = single(cat(4, portioned_output_data{:}));
-  % labels = single(cat(2, portioned_output_labels{:}));
-  % set = cat(2, portioned_output_set{:});
-
-  % TODO: not necessary, but great to have,... shuffle the above 3 matrices
-  % together in same order (not required bc cnn_train randomly chooses anyways)

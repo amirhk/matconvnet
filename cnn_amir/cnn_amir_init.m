@@ -1,17 +1,18 @@
 function net = cnn_amir_init(varargin)
-opts.networkType = 'alex-net';
+opts.networkArch = 'alex-net';
 opts.dataset = 'cifar';
 opts.backpropDepth = 20; % [20, 18, 15, 12, 10, 7];
 opts.weightDecay = 0.0001; % Works: {0.001, 0.0001, 0} Doesn't Work: {0.1, 0.01}
 opts.weightInitType = 'compRand'; % {'compRand', '1D', '2D', '2D-super'}
 opts.weightInitSource = 'gen'; % {'load' | 'gen'}
+opts.bottleNeckDivideBy = 1;
 opts = vl_argparse(opts, varargin);
 
 tic;
 rng(0);
 net.layers = {};
 % Meta parameters
-switch opts.networkType
+switch opts.networkArch
   case 'alex-net'
     switch opts.weightInitType
       case 'compRand'
@@ -21,11 +22,11 @@ switch opts.networkType
         % net.meta.trainOpts.learningRate = [0.01*ones(1,5)  0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
         % DON'T USE: weights completely random from Javad
         % net.meta.trainOpts.learningRate = [0.05*ones(1,10) 0.05:-0.01:0.01 0.01*ones(1,5)  0.005*ones(1,10) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,4)];
-        % COMP RAND FOR 500 training samples
+        % COMP RAND FOR portion training samples
         % net.meta.trainOpts.learningRate = [0.01*ones(1,5) 0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
         % net.meta.trainOpts.learningRate = [0.005*ones(1,200)];
-        % net.meta.trainOpts.learningRate = [0.005*ones(1,20) 0.001*ones(1,30)];
-        net.meta.trainOpts.learningRate = [0.001*ones(1,100)];
+        net.meta.trainOpts.learningRate = [0.005*ones(1,20) 0.001*ones(1,30)];
+        % net.meta.trainOpts.learningRate = [0.001*ones(1,100)];
       case '1D'
         % VERIFIED: weights random from pre-train 1D (with or without whitening)
         net.meta.trainOpts.learningRate = [0.01*ones(1,5)  0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,15) 0.00005*ones(1,15)];
@@ -40,7 +41,8 @@ switch opts.networkType
         net.meta.trainOpts.learningRate = [0.005*ones(1,100)];
     end
   case 'alex-net-bottle-neck'
-    net.meta.trainOpts.learningRate = [0.01*ones(1,15)  0.005*ones(1,15) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
+    % net.meta.trainOpts.learningRate = [0.01*ones(1,15)  0.005*ones(1,15) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
+    net.meta.trainOpts.learningRate = [0.005*ones(1,50)];
 end
 
 net.meta.trainOpts.weightInitType = opts.weightInitType;
@@ -52,7 +54,7 @@ net.meta.trainOpts.weightDecay = opts.weightDecay;
 net.meta.trainOpts.batchSize = 100;
 opts = vl_argparse(opts, varargin);
 
-switch opts.networkType
+switch opts.networkArch
   case 'alex-net'
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     % --- --- ---                                                     --- --- --
@@ -112,7 +114,7 @@ switch opts.networkType
     % --- --- ---                                                     --- --- --
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     % k = [1,4,8,16,32]
-    k = 2;
+    k = opts.bottleNeckDivideBy;
     layerNumber = 1;
     net.layers{end+1} = convLayer(layerNumber, 5, 3, 96, 5/1000, 2, 'compRand', 'gen');
     net.layers{end+1} = reluLayer(layerNumber);
