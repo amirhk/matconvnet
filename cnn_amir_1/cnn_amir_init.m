@@ -32,7 +32,8 @@ switch opts.networkArch
         net.meta.trainOpts.learningRate = [0.01*ones(1,5)  0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,15) 0.00005*ones(1,15)];
       case '2D'
         % TESTING.... weights random from pre-train 2D (with whitening)
-        net.meta.trainOpts.learningRate = [0.005*ones(1,100)];
+        net.meta.trainOpts.learningRate = [0.01*ones(1,5)  0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,15) 0.00005*ones(1,15)];
+        % net.meta.trainOpts.learningRate = [0.005*ones(1,100)];
       case '2D-super'
         % TESTING.... weights random from pre-train 2D-super (with whitening)
         % net.meta.trainOpts.learningRate = [1*ones(1,15)  0.005*ones(1,15) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
@@ -46,11 +47,12 @@ switch opts.networkArch
         % TESTING: weights completely random (goes down after 50 * 0.001 to %86 then after 230 epochs to ~%60)
         net.meta.trainOpts.learningRate = [0.01*ones(1,15)  0.005*ones(1,15) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
       case '1D'
-        % TEST: weights random from pre-train 1D (with or without whitening)
+        % TESTING: weights random from pre-train 1D (with or without whitening)
         net.meta.trainOpts.learningRate = [0.01*ones(1,5)  0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,15) 0.00005*ones(1,15)];
       case '2D'
         % TESTING.... weights random from pre-train 2D (with whitening)
-        net.meta.trainOpts.learningRate = [0.005*ones(1,100)];
+        net.meta.trainOpts.learningRate = [0.01*ones(1,15)  0.005*ones(1,15) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
+        % net.meta.trainOpts.learningRate = [0.005*ones(1,100)];
       case '2D-super'
         % TESTING.... weights random from pre-train 2D-super (with whitening)
         net.meta.trainOpts.learningRate = [0.005*ones(1,100)];
@@ -127,7 +129,7 @@ switch opts.networkArch
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     % Loss layer
     net.layers{end+1} = struct('type', 'softmaxloss');
-  case 'alex-net'
+  case 'alex-net-bnorm'
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     % --- --- ---                                                     --- --- --
     % --- --- ---                ALEX-NET-BNORM                       --- --- --
@@ -139,27 +141,27 @@ switch opts.networkArch
     net.layers{end+1} = reluLayer(layerNumber);
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
-    layerNumber = layerNumber + 3;
+    layerNumber = layerNumber + 2;
     net.layers{end+1} = convLayer(layerNumber, 5, 96, 256, 5/1000, 2, opts.weightInitType, opts.weightInitSource);
     net.layers{end+1} = bnormLayer(layerNumber, 256);
     net.layers{end+1} = reluLayer(layerNumber);
     net.layers{end+1} = poolingLayerAlexNet(layerNumber);
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
-    layerNumber = layerNumber + 4;
+    layerNumber = layerNumber + 3;
     net.layers{end+1} = convLayer(layerNumber, 3, 256, 384, 5/1000, 1, opts.weightInitType, opts.weightInitSource);
     net.layers{end+1} = bnormLayer(layerNumber, 384);
     net.layers{end+1} = reluLayer(layerNumber);
     net.layers{end+1} = poolingLayerAlexNet(layerNumber);
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
-    layerNumber = layerNumber + 4;
+    layerNumber = layerNumber + 3;
     net.layers{end+1} = convLayer(layerNumber, 3, 384, 384, 5/1000, 1, opts.weightInitType, opts.weightInitSource);
     net.layers{end+1} = bnormLayer(layerNumber, 384);
     net.layers{end+1} = reluLayer(layerNumber);
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
-    layerNumber = layerNumber + 3;
+    layerNumber = layerNumber + 2;
     net.layers{end+1} = convLayer(layerNumber, 3, 384, 256, 5/1000, 1, opts.weightInitType, opts.weightInitSource);
     net.layers{end+1} = bnormLayer(layerNumber, 256);
     net.layers{end+1} = reluLayer(layerNumber);
@@ -167,7 +169,7 @@ switch opts.networkArch
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     % FULLY CONNECTED
-    layerNumber = layerNumber + 4;
+    layerNumber = layerNumber + 3;
     net.layers{end+1} = convLayer(layerNumber, 4, 256, 128, 5/1000, 0, 'compRand', 'gen');
     net.layers{end+1} = reluLayer(layerNumber);
 
@@ -257,6 +259,7 @@ function structuredLayer = convLayer(layerNumber, k, m, n, init_multiplier, pad,
     utils = networkExtractionUtils;
     baselineWeights = loadWeights(layerNumber, 'baseline'); % used for its size
   end
+  disp(weightInitType);
   switch weightInitType
     case 'compRand'
       switch weightInitSource
