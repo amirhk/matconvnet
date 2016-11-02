@@ -30,7 +30,7 @@ function [net, info] = cnn_amir(varargin)
 
   % Paths -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
   opts.timeString = sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
-  opts.dataString = sprintf('data_%s', opts.folderNumber);
+  opts.dataString = sprintf('data_%d', opts.folderNumber);
   opts.dataDir = fullfile(vl_rootnn, opts.dataString, opts.dataset);
   opts.expDir = fullfile(vl_rootnn, opts.dataString, sprintf( ...
     '%s-%s-%s-%s', ...

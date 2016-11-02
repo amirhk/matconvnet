@@ -132,8 +132,8 @@ bottle_neck_divide_by_1 = load(fullfile(dataDir, subDataDir, 'cifar-alex-net-bot
 bottle_neck_divide_by_2 = load(fullfile(dataDir, subDataDir, 'cifar-alex-net-bottle-neck-2-Nov-2016-02-45-47-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
 bottle_neck_divide_by_4 = load(fullfile(dataDir, subDataDir, 'cifar-alex-net-bottle-neck-2-Nov-2016-05-03-09-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
 bottle_neck_divide_by_8 = load(fullfile(dataDir, subDataDir, 'cifar-alex-net-bottle-neck-2-Nov-2016-07-05-01-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
-bottle_neck_divide_by_16 = load(fullfile(dataDir, subDataDir, 'cifar-alex-net-1-Nov-2016-15-37-00-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
-bottle_neck_divide_by_32 = load(fullfile(dataDir, subDataDir, 'cifar-alex-net-1-Nov-2016-15-37-00-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
+bottle_neck_divide_by_16 = load(fullfile(dataDir, subDataDir, 'cifar-alex-net-bottle-neck-2-Nov-2016-09-01-44-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
+bottle_neck_divide_by_32 = load(fullfile(dataDir, subDataDir, 'cifar-alex-net-bottle-neck-2-Nov-2016-10-54-09-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
 
 fprintf('\nDone!');
 
