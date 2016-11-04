@@ -3,7 +3,7 @@ opts.networkArch = 'alex-net';
 opts.dataset = 'cifar';
 opts.backpropDepth = 20; % [20, 18, 15, 12, 10, 7];
 opts.weightDecay = 0.0001; % Works: {0.001, 0.0001, 0} Doesn't Work: {0.1, 0.01}
-opts.weightInitType = 'compRand'; % {'compRand', '1D', '2D', '2D-super'}
+opts.weightInitType = 'compRand'; % {'compRand', '1D', '2D', '2D-mult', '2D-super'}
 opts.weightInitSource = 'gen'; % {'load' | 'gen'}
 opts.bottleNeckDivideBy = 1;
 opts = vl_argparse(opts, varargin);
@@ -25,6 +25,9 @@ switch opts.networkArch
         % TESTING.... weights random from pre-train 2D (with whitening)
         net.meta.trainOpts.learningRate = [0.01*ones(1,5) 0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
         % net.meta.trainOpts.learningRate = [0.005*ones(1,100)];
+      case '2D-mult'
+        % TESTING.... weights random from pre-train 2D-mult (with whitening)
+        net.meta.trainOpts.learningRate = [0.01*ones(1,5) 0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
       case '2D-super'
         % TESTING.... weights random from pre-train 2D-super (with whitening)
         % net.meta.trainOpts.learningRate = [1*ones(1,15)  0.005*ones(1,15) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
@@ -44,6 +47,9 @@ switch opts.networkArch
         % TESTING.... weights random from pre-train 2D (with whitening)
         net.meta.trainOpts.learningRate = [0.01*ones(1,5) 0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
         % net.meta.trainOpts.learningRate = [0.005*ones(1,100)];
+      case '2D-mult'
+        % TESTING.... weights random from pre-train 2D-mult (with whitening)
+        net.meta.trainOpts.learningRate = [0.01*ones(1,5) 0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
       case '2D-super'
         % TESTING.... weights random from pre-train 2D-super (with whitening)
         net.meta.trainOpts.learningRate = [0.01*ones(1,5) 0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
@@ -72,33 +78,28 @@ switch opts.networkArch
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     layerNumber = 1;
     net.layers{end+1} = convLayer(layerNumber, 5, 3, 96, 5/1000, 2, opts.weightInitType, opts.weightInitSource);
-    net.layers{end+1} = bnormLayer(layerNumber, 96);
     net.layers{end+1} = reluLayer(layerNumber);
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     layerNumber = layerNumber + 2;
     net.layers{end+1} = convLayer(layerNumber, 5, 96, 256, 5/1000, 2, opts.weightInitType, opts.weightInitSource);
-    net.layers{end+1} = bnormLayer(layerNumber, 256);
     net.layers{end+1} = reluLayer(layerNumber);
     net.layers{end+1} = poolingLayerAlexNet(layerNumber);
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     layerNumber = layerNumber + 3;
     net.layers{end+1} = convLayer(layerNumber, 3, 256, 384, 5/1000, 1, opts.weightInitType, opts.weightInitSource);
-    net.layers{end+1} = bnormLayer(layerNumber, 384);
     net.layers{end+1} = reluLayer(layerNumber);
     net.layers{end+1} = poolingLayerAlexNet(layerNumber);
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     layerNumber = layerNumber + 3;
     net.layers{end+1} = convLayer(layerNumber, 3, 384, 384, 5/1000, 1, opts.weightInitType, opts.weightInitSource);
-    net.layers{end+1} = bnormLayer(layerNumber, 384);
     net.layers{end+1} = reluLayer(layerNumber);
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     layerNumber = layerNumber + 2;
     net.layers{end+1} = convLayer(layerNumber, 3, 384, 256, 5/1000, 1, opts.weightInitType, opts.weightInitSource);
-    net.layers{end+1} = bnormLayer(layerNumber, 256);
     net.layers{end+1} = reluLayer(layerNumber);
     net.layers{end+1} = poolingLayerAlexNet(layerNumber);
 
@@ -244,10 +245,10 @@ end
 
 % --------------------------------------------------------------------
 function structuredLayer = convLayer(layerNumber, k, m, n, init_multiplier, pad, weightInitType, weightInitSource);
-  % weightInitType = {'compRand', '1D', '2D', '2D-super'}
+  % weightInitType = {'compRand', '1D', '2D', '2D-mult', '2D-super'}
   % weightInitSource = {'load' | 'gen'}
 % --------------------------------------------------------------------
-  if strcmp(weightInitType, '1D') || strcmp(weightInitType, '2D-super')
+  if strcmp(weightInitType, '1D') || strcmp(weightInitType, '2D') || strcmp(weightInitType, '2D-mult') || strcmp(weightInitType, '2D-super')
     utils = networkExtractionUtils;
     baselineWeights = loadWeights(layerNumber, 'baseline'); % used for its size
   end
@@ -275,6 +276,13 @@ function structuredLayer = convLayer(layerNumber, k, m, n, init_multiplier, pad,
         case 'gen'
           randomWeights = utils.genRandomWeightsFromBaseline2DGaussian(baselineWeights, layerNumber);
       end
+    case '2D-mult'
+      switch weightInitSource
+        case 'load'
+          randomWeights = loadWeights(layerNumber, 'random-from-baseline-2D-mult');
+        case 'gen'
+          randomWeights = utils.genRandomWeightsFromBaseline2DGaussianMult(baselineWeights, layerNumber);
+      end
     case '2D-super'
       switch weightInitSource
         case 'load'
@@ -285,7 +293,7 @@ function structuredLayer = convLayer(layerNumber, k, m, n, init_multiplier, pad,
     otherwise
       throwException('unrecognized command');
   end
-  % if strcmp(weightInitType, '2D') || strcmp(weightInitType, '2D-super')
+  % if strcmp(weightInitType, '2D') || strcmp(weightInitType, '2D-mult') || strcmp(weightInitType, '2D-super')
   %   randomWeights2{1} = randomWeights{1} * .1;
   %   randomWeights2{2} = randomWeights{2} * .1;
   %   structuredLayer = constructConvLayer(layerNumber, randomWeights2, pad);
@@ -299,6 +307,7 @@ function weights = loadWeights(layerNumber, weightType)
   %   'baseline' |
   %   'random-from-baseline-1D' |
   %   'random-from-baseline-2D' |
+  %   'random-from-baseline-2D-mult' |
   %   'random-from-baseline-2D-super'
   % }
 % --------------------------------------------------------------------

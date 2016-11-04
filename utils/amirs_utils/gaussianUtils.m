@@ -3,6 +3,7 @@ function fh = gaussianUtils()
   fh.testGaussianUtils = @testGaussianUtils;
   fh.fit2DGaussianAndDrawPositiveSamples = @fit2DGaussianAndDrawPositiveSamples;
   fh.fit2DGaussianAndDrawSamples = @fit2DGaussianAndDrawSamples;
+  fh.fit2DGaussianAndDrawMultSamples = @fit2DGaussianAndDrawMultSamples;
   fh.fit2DGaussianAndDrawSuperSamples = @fit2DGaussianAndDrawSuperSamples;
 
 % --------------------------------------------------------------------
@@ -63,25 +64,25 @@ function testGaussianUtils(kernel)
   ndim = size(kernel,1);
   kernel2 = fit2DGaussianAndDrawPositiveSamples(kernel, false);
   kernel3 = fit2DGaussianAndDrawSamples(kernel, false);
-  kernel4 = fit2DGaussianAndDrawSuperSamples(kernel, false);
+  kernel4 = fit2DGaussianAndDrawMultSamples(kernel, false);
+  kernel5 = fit2DGaussianAndDrawSuperSamples(kernel, false);
   figure;
-  subplot(2,4,1), imshow(kernel, []), title('input');
-  subplot(2,4,5), mesh(1:1:ndim, 1:1:ndim, kernel);
-  subplot(2,4,2), imshow(kernel2, []), title('positive samples');
-  subplot(2,4,6), mesh(1:1:ndim, 1:1:ndim, kernel2);
-  subplot(2,4,3), imshow(kernel3, []), title('+/- samples');
-  subplot(2,4,7), mesh(1:1:ndim, 1:1:ndim, kernel3);
-  subplot(2,4,4), imshow(kernel4, []), title('super samples');
-  subplot(2,4,8), mesh(1:1:ndim, 1:1:ndim, kernel4);
-
-  disp(min(kernel(:)));
-  disp(max(kernel(:)));
-  disp(min(kernel2(:)));
-  disp(max(kernel2(:)));
-  disp(min(kernel3(:)));
-  disp(max(kernel3(:)));
-  disp(min(kernel4(:)));
-  disp(max(kernel4(:)));
+  i = 1;
+  num_tests = 5;
+  subplot(2,num_tests,i), imshow(kernel, []), title('input');
+  subplot(2,num_tests,num_tests + i), mesh(1:1:ndim, 1:1:ndim, kernel);
+  i = i + 1;
+  subplot(2,num_tests,i), imshow(kernel2, []), title('2D fit / positive samples');
+  subplot(2,num_tests,num_tests + i), mesh(1:1:ndim, 1:1:ndim, kernel2);
+  i = i + 1;
+  subplot(2,num_tests,i), imshow(kernel3, []), title('+/- samples');
+  subplot(2,num_tests,num_tests + i), mesh(1:1:ndim, 1:1:ndim, kernel3);
+  i = i + 1;
+  subplot(2,num_tests,i), imshow(kernel4, []), title('mult samples');
+  subplot(2,num_tests,num_tests + i), mesh(1:1:ndim, 1:1:ndim, kernel4);
+  i = i + 1;
+  subplot(2,num_tests,i), imshow(kernel5, []), title('super samples');
+  subplot(2,num_tests,num_tests + i), mesh(1:1:ndim, 1:1:ndim, kernel5);
 
 % --------------------------------------------------------------------
 function sample = fit2DGaussianAndDrawPositiveSamples(kernel, debug_flag)
@@ -121,6 +122,14 @@ function sample = fit2DGaussianAndDrawSamples(kernel, debug_flag)
   c = a < thresh;
   d = b - c; % smaller than thresh gets multiplied by -1
   sample = d .* samplen;
+  sample = scaleDrawnSampleToInitialDynamicRange(kernel, sample);
+
+% --------------------------------------------------------------------
+function sample = fit2DGaussianAndDrawMultSamples(kernel, debug_flag)
+% --------------------------------------------------------------------
+  dim = size(kernel, 1);
+  positive_sample = fit2DGaussianAndDrawPositiveSamples(kernel, debug_flag);
+  sample = positive_sample .* kernel;
   sample = scaleDrawnSampleToInitialDynamicRange(kernel, sample);
 
 % --------------------------------------------------------------------
@@ -165,4 +174,4 @@ function sample = scaleDrawnSampleToInitialDynamicRange(kernel, sample)
   sample_upper_bound = max(max(max(sample)), 0); % sample doesn't have any +ve \ -ve vals
   sample = (sample - sample_lower_bound) * ...
     ((kernel_upper_bound - kernel_lower_bound) / (sample_upper_bound - sample_lower_bound)) + ...
-    kernel_lower_bound
+    kernel_lower_bound;
