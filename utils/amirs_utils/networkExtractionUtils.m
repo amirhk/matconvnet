@@ -1,6 +1,7 @@
 function fh = networkExtractionUtils()
   % assign function handles so we can call these local functions from elsewhere
   fh.extractAlexNetCifar = @extractAlexNetCifar;
+  fh.extractLeNetCifar = @extractLeNetCifar;
   fh.genRandomWeights = @genRandomWeights;
   fh.gen1DGaussianWeightsFromBaseline = @gen1DGaussianWeightsFromBaseline;
   fh.gen2DGaussianMultWeightsFromBaseline = @gen2DGaussianMultWeightsFromBaseline;
@@ -20,12 +21,34 @@ function extractAlexNetCifar()
   % printNetworkStructure(net);
   % TODO: flip these if need be!
   % genWeightsMethod = @genRandomWeights;
+  % genWeightsMethod = @genBaselineWeights;
   % genWeightsMethod = @gen1DGaussianWeightsFromBaseline;
   genWeightsMethod = @gen2DGaussianMultWeightsFromBaseline;
   % genWeightsMethod = @gen2DGaussianSuperWeightsFromBaseline;
   % genWeightsMethod = @gen2DGaussianPosNegWeightsFromBaseline;
   % genWeightsMethod = @gen2DGaussianPositiveWeightsFromBaseline;
   genNewWeights(net, genWeightsMethod);
+
+% --------------------------------------------------------------------
+function extractLeNetCifar()
+% --------------------------------------------------------------------
+  fprintf('[INFO] Loading data from pre-trained LeNet on Cifar...\n');
+  devPath = getDevPath();
+  loadedFile = ...
+    load(fullfile(devPath, 'data', 'cifar-lenet', 'lenet+0epoch.mat'));
+  fprintf('[INFO] Loading data successful!\n\n');
+  net = loadedFile.net;
+  % printNetworkStructure(net);
+  % TODO: flip these if need be!
+  % genWeightsMethod = @genRandomWeights;
+  % genWeightsMethod = @genBaselineWeights;
+  % genWeightsMethod = @gen1DGaussianWeightsFromBaseline;
+  genWeightsMethod = @gen2DGaussianMultWeightsFromBaseline;
+  % genWeightsMethod = @gen2DGaussianSuperWeightsFromBaseline;
+  % genWeightsMethod = @gen2DGaussianPosNegWeightsFromBaseline;
+  % genWeightsMethod = @gen2DGaussianPositiveWeightsFromBaseline;
+  genNewWeights(net, genWeightsMethod);
+
 
 % --------------------------------------------------------------------
 function genNewWeights(net, genWeightsMethod)
@@ -44,7 +67,7 @@ function genNewWeights(net, genWeightsMethod)
 
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 % -- ==                                                                                           -- ==
-% -- ==                                        RANDOM                                             -- ==
+% -- ==                                 RANDOM / BASELINE                                         -- ==
 % -- ==                                                                                           -- ==
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 
@@ -61,6 +84,14 @@ function randomWeights = genRandomWeights(layers, layerNumber)
   init_multiplier = 5/1000;
   randomWeights{1} = init_multiplier * randn(k, k, m, n, 'single');
   randomWeights{2} = zeros(1, n, 'single');
+
+% --------------------------------------------------------------------
+function randomWeights = genBaselineWeights(layers, layerNumber)
+  % just save the baseline in the form of weights, not the whole network
+% --------------------------------------------------------------------
+  randomWeights{1} = layers{layerNumber}.weights{1};
+  randomWeights{2} = layers{layerNumber}.weights{2};
+
 
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 % -- ==                                                                                           -- ==
@@ -263,13 +294,4 @@ function printNetworkStructure(net)
         layers{i}.stride);
       disp(layers{i}.pool);
     end
-  end
-
-% --------------------------------------------------------------------
-function datapath = getDevPath()
-% --------------------------------------------------------------------
-  if ispc
-    datapath = 'H:\Amir';
-  else
-    datapath = '/Users/a6karimi/dev';
   end
