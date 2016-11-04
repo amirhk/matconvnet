@@ -1,5 +1,6 @@
 function fh = gaussianUtils()
   % assign function handles so we can call these local functions from elsewhere
+  fh.testGaussianUtils = @testGaussianUtils;
   fh.fit2DGaussianAndDrawPositiveSamples = @fit2DGaussianAndDrawPositiveSamples;
   fh.fit2DGaussianAndDrawSamples = @fit2DGaussianAndDrawSamples;
   fh.fit2DGaussianAndDrawSuperSamples = @fit2DGaussianAndDrawSuperSamples;
@@ -57,6 +58,32 @@ function averaged_sample_kernel = drawPositiveSamplesFrom2DGaussian( ...
   averaged_sample_kernel = mean(sample_kernels, 3);
 
 % --------------------------------------------------------------------
+function testGaussianUtils(kernel)
+  % --------------------------------------------------------------------
+  ndim = size(kernel,1);
+  kernel2 = fit2DGaussianAndDrawPositiveSamples(kernel, false);
+  kernel3 = fit2DGaussianAndDrawSamples(kernel, false);
+  kernel4 = fit2DGaussianAndDrawSuperSamples(kernel, false);
+  figure;
+  subplot(2,4,1), imshow(kernel, []), title('input');
+  subplot(2,4,5), mesh(1:1:ndim, 1:1:ndim, kernel);
+  subplot(2,4,2), imshow(kernel2, []), title('positive samples');
+  subplot(2,4,6), mesh(1:1:ndim, 1:1:ndim, kernel2);
+  subplot(2,4,3), imshow(kernel3, []), title('+/- samples');
+  subplot(2,4,7), mesh(1:1:ndim, 1:1:ndim, kernel3);
+  subplot(2,4,4), imshow(kernel4, []), title('super samples');
+  subplot(2,4,8), mesh(1:1:ndim, 1:1:ndim, kernel4);
+
+  disp(min(kernel(:)));
+  disp(max(kernel(:)));
+  disp(min(kernel2(:)));
+  disp(max(kernel2(:)));
+  disp(min(kernel3(:)));
+  disp(max(kernel3(:)));
+  disp(min(kernel4(:)));
+  disp(max(kernel4(:)));
+
+% --------------------------------------------------------------------
 function sample = fit2DGaussianAndDrawPositiveSamples(kernel, debug_flag)
 % --------------------------------------------------------------------
   warning off;
@@ -88,7 +115,7 @@ function sample = fit2DGaussianAndDrawSamples(kernel, debug_flag)
   sample = fit2DGaussianAndDrawPositiveSamples(kernel, debug_flag);
   samplen = sample ./ max(sample(:));
   % sample = sign(randn(dim,dim)) .* samplen;
-  thresh = .3;
+  thresh = .5;
   a = rand(dim,dim);
   b = a >= thresh;
   c = a < thresh;
@@ -118,7 +145,7 @@ function super_sample = fit2DGaussianAndDrawSuperSamples(kernel, debug_flag)
   %   (randn(dim, dim) + mixing_factor * sample_normalized);
 
 % --------------------------------------------------------------------
-function sample = scaleDrawnSampleToInitialDynamicRange(kernel, sample)
+function sample = scaleDrawnSampleToInitialDynamicRangeBaseZero(kernel, sample)
 % --------------------------------------------------------------------
   kernel_lower_bound = min(min(min(kernel)), 0); % finally compare with 0 because maybe
   kernel_upper_bound = max(max(max(kernel)), 0); % kernel doesn't have any +ve \ -ve vals
@@ -128,3 +155,14 @@ function sample = scaleDrawnSampleToInitialDynamicRange(kernel, sample)
     (kernel_upper_bound - kernel_lower_bound) / ...
     (sample_upper_bound - sample_lower_bound);
   sample = sample * scaling_factor;
+
+% --------------------------------------------------------------------
+function sample = scaleDrawnSampleToInitialDynamicRange(kernel, sample)
+% --------------------------------------------------------------------
+  kernel_lower_bound = min(min(min(kernel)), 0); % finally compare with 0 because maybe
+  kernel_upper_bound = max(max(max(kernel)), 0); % kernel doesn't have any +ve \ -ve vals
+  sample_lower_bound = min(min(min(sample)), 0); % finally compare with 0 because maybe
+  sample_upper_bound = max(max(max(sample)), 0); % sample doesn't have any +ve \ -ve vals
+  sample = (sample - sample_lower_bound) * ...
+    ((kernel_upper_bound - kernel_lower_bound) / (sample_upper_bound - sample_lower_bound)) + ...
+    kernel_lower_bound
