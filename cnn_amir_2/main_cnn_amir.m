@@ -3,8 +3,8 @@ function main_cnn_amir(varargin)
   folderNumber = str2num(folder(end));
 
   networkArch = 'alex-net';
-  % backpropDepthList = [20, 18, 15, 12, 10, 7];
-  backpropDepthList = [20];
+  backpropDepthList = [20, 18, 15, 12, 10, 7];
+  % backpropDepthList = [20];
   bottleNeckDivideByList = [1];
 
   % networkArch = 'alex-net-bnorm';
@@ -17,7 +17,7 @@ function main_cnn_amir(varargin)
   % bottleNeckDivideByList = [1,2,4,8,16,32];
 
   dataset = 'cifar';
-  weightInitType = '2D-mult';
+  weightInitType = '1D';
   weightInitSource = 'load';
 
   % imdbPortionList = [0.1, 0.25, 0.5, 1.0];

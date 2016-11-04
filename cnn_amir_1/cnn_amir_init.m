@@ -78,12 +78,14 @@ switch opts.networkArch
     % --- --- ---                                                     --- --- --
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     layerNumber = 1;
-    net.layers{end+1} = convLayer(layerNumber, 5, 3, 96, 5/1000, 2, opts.weightInitType, opts.weightInitSource);
+    % net.layers{end+1} = convLayer(layerNumber, 5, 3, 96, 5/1000, 2, opts.weightInitType, opts.weightInitSource);
+    net.layers{end+1} = convLayer(layerNumber, 5, 3, 96, 5/1000, 2, '2D-mult', opts.weightInitSource);
     net.layers{end+1} = reluLayer(layerNumber);
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     layerNumber = layerNumber + 2;
-    net.layers{end+1} = convLayer(layerNumber, 5, 96, 256, 5/1000, 2, opts.weightInitType, opts.weightInitSource);
+    % net.layers{end+1} = convLayer(layerNumber, 5, 96, 256, 5/1000, 2, opts.weightInitType, opts.weightInitSource);
+    net.layers{end+1} = convLayer(layerNumber, 5, 96, 256, 5/1000, 2, '2D-mult', opts.weightInitSource);
     net.layers{end+1} = reluLayer(layerNumber);
     net.layers{end+1} = poolingLayerAlexNet(layerNumber);
 
