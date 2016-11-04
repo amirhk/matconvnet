@@ -91,7 +91,7 @@ function sample = fit2DGaussianAndDrawPositiveSamples(kernel, debug_flag)
   if nargin < 2
     debug_flag = false;
   end
-  dim = size(kernel, 1);
+  ndim = size(kernel, 1);
   if debug_flag
     fprintf('[INFO] computing params of fitted 2D Gaussian...\n');
   end
@@ -103,21 +103,21 @@ function sample = fit2DGaussianAndDrawPositiveSamples(kernel, debug_flag)
     disp(covariance);
     fprintf('[INFO] drawing sample from fitted 2D Gaussian...');
   end
-  sample = drawPositiveSamplesFrom2DGaussian(mu_y, mu_x, covariance, dim);
+  sample = drawPositiveSamplesFrom2DGaussian(mu_y, mu_x, covariance, ndim);
   if debug_flag
     fprintf('Done!\n');
-    figure; mesh(1:1:dim, 1:1:dim, super_sample);
+    figure; mesh(1:1:ndim, 1:1:ndim, sample);
   end
 
 % --------------------------------------------------------------------
-function sample = fit2DGaussianAndDrawSamples(kernel, debug_flag)
+function sample = fit2DGaussianAndDrawPosNegSamples(kernel, debug_flag)
 % --------------------------------------------------------------------
-  dim = size(kernel, 1);
+  ndim = size(kernel, 1);
   sample = fit2DGaussianAndDrawPositiveSamples(kernel, debug_flag);
   samplen = sample ./ max(sample(:));
-  % sample = sign(randn(dim,dim)) .* samplen;
+  % sample = sign(randn(ndim,ndim)) .* samplen;
   thresh = .5;
-  a = rand(dim,dim);
+  a = rand(ndim,ndim);
   b = a >= thresh;
   c = a < thresh;
   d = b - c; % smaller than thresh gets multiplied by -1
@@ -127,31 +127,66 @@ function sample = fit2DGaussianAndDrawSamples(kernel, debug_flag)
 % --------------------------------------------------------------------
 function sample = fit2DGaussianAndDrawMultSamples(kernel, debug_flag)
 % --------------------------------------------------------------------
-  dim = size(kernel, 1);
   positive_sample = fit2DGaussianAndDrawPositiveSamples(kernel, debug_flag);
+  positive_sample = positive_sample / sum(positive_sample(:));
   sample = positive_sample .* kernel;
+
+
+  % disp(sum(positive_sample(:)));
+  % disp(positive_sample);
+  % g = fspecial('gaussian', [size(kernel,1), size(kernel,1)], 1);
+  % g = fspecial('gaussian', [size(kernel,1), size(kernel,1)], .1);
+  % sample = g .* kernel;
+  % sample2 = g .* kernel;
+  if debug_flag
+    positive_sample = fit2DGaussianAndDrawPositiveSamples(kernel, debug_flag);
+    positive_sample = positive_sample / sum(positive_sample(:));
+    sample1 = positive_sample .* kernel;
+    g = fspecial('gaussian', [size(kernel,1), size(kernel,1)], 1);
+    sample2 = g .* kernel;
+    h = figure;
+    subplot(1,5,1), imshow(kernel, []), title('input kernel');
+    subplot(1,5,2), imshow(positive_sample, []), title('amirs gaussian');
+    subplot(1,5,3), imshow(sample1, []), title('amirs g * kernel ');
+    subplot(1,5,4), imshow(g, []), title('fixed gaussian');
+    subplot(1,5,5), imshow(sample2, []), title('fixed g * kernel');
+    saveas(h, sprintf('Gaussians - %s.png', datetime('now', 'Format', 'd-MMM-y-HH-mm-ss')));
+  end
   sample = scaleDrawnSampleToInitialDynamicRange(kernel, sample);
+  % sample = scaleDrawnSampleToInitialDynamicRangeMeanZero(sample);
 
 % --------------------------------------------------------------------
 function super_sample = fit2DGaussianAndDrawSuperSamples(kernel, debug_flag)
 % --------------------------------------------------------------------
-  dim = size(kernel, 1);
+  ndim = size(kernel, 1);
   sample = fit2DGaussianAndDrawPositiveSamples(kernel, debug_flag);
   samplen = sample ./ max(sample(:));
-  super_sample = randn(dim,dim) + sign(randn(dim,dim)) .* samplen;
+  super_sample = randn(ndim,ndim) + sign(randn(ndim,ndim)) .* samplen;
   super_sample = scaleDrawnSampleToInitialDynamicRange(kernel, super_sample);
 
   % DEP - OCT 28
   % normalization_factor = max(sample(:));
   % samplen = sample ./ normalization_factor;
-  % tmp = randn(dim,dim);
-  % super_sample = (tmp / max(abs(tmp(:))) + sign(randn(dim,dim)) .* samplen) * normalization_factor;
+  % tmp = randn(ndim,ndim);
+  % super_sample = (tmp / max(abs(tmp(:))) + sign(randn(ndim,ndim)) .* samplen) * normalization_factor;
 
   % DEP - Oct 26
   % sample_normalized = sample ./ max(sample(:));
   % super_sample =  ...
-  %   sign(randn(dim, dim)) .* ...
-  %   (randn(dim, dim) + mixing_factor * sample_normalized);
+  %   sign(randn(ndim, ndim)) .* ...
+  %   (randn(ndim, ndim) + mixing_factor * sample_normalized);
+
+% --------------------------------------------------------------------
+function sample = scaleDrawnSampleToInitialDynamicRange(kernel, sample)
+% --------------------------------------------------------------------
+  kernel_lower_bound = min(min(min(kernel)), 0); % finally compare with 0 because maybe
+  kernel_upper_bound = max(max(max(kernel)), 0); % kernel doesn't have any +ve \ -ve vals
+  sample_lower_bound = min(min(min(sample)), 0); % finally compare with 0 because maybe
+  sample_upper_bound = max(max(max(sample)), 0); % sample doesn't have any +ve \ -ve vals
+  sample = (sample - sample_lower_bound) * ...
+    ((kernel_upper_bound - kernel_lower_bound) / (sample_upper_bound - sample_lower_bound)) + ...
+    kernel_lower_bound;
+
 
 % --------------------------------------------------------------------
 function sample = scaleDrawnSampleToInitialDynamicRangeBaseZero(kernel, sample)
@@ -166,12 +201,6 @@ function sample = scaleDrawnSampleToInitialDynamicRangeBaseZero(kernel, sample)
   sample = sample * scaling_factor;
 
 % --------------------------------------------------------------------
-function sample = scaleDrawnSampleToInitialDynamicRange(kernel, sample)
+function sample = scaleDrawnSampleToInitialDynamicRangeMeanZero(sample)
 % --------------------------------------------------------------------
-  kernel_lower_bound = min(min(min(kernel)), 0); % finally compare with 0 because maybe
-  kernel_upper_bound = max(max(max(kernel)), 0); % kernel doesn't have any +ve \ -ve vals
-  sample_lower_bound = min(min(min(sample)), 0); % finally compare with 0 because maybe
-  sample_upper_bound = max(max(max(sample)), 0); % sample doesn't have any +ve \ -ve vals
-  sample = (sample - sample_lower_bound) * ...
-    ((kernel_upper_bound - kernel_lower_bound) / (sample_upper_bound - sample_lower_bound)) + ...
-    kernel_lower_bound;
+  sample = sample - mean(sample(:));

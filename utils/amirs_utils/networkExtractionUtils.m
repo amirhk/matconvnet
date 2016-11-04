@@ -2,10 +2,11 @@ function fh = networkExtractionUtils()
   % assign function handles so we can call these local functions from elsewhere
   fh.extractAlexNetCifar = @extractAlexNetCifar;
   fh.genRandomWeights = @genRandomWeights;
-  fh.genRandomWeightsFromBaseline1DGaussian = @genRandomWeightsFromBaseline1DGaussian;
-  fh.genRandomWeightsFromBaseline2DGaussian = @genRandomWeightsFromBaseline2DGaussian;
-  fh.genRandomWeightsFromBaseline2DGaussianMult = @genRandomWeightsFromBaseline2DGaussianMult;
-  fh.genRandomWeightsFromBaseline2DGaussianSuper = @genRandomWeightsFromBaseline2DGaussianSuper;
+  fh.gen1DGaussianWeightsFromBaseline = @gen1DGaussianWeightsFromBaseline;
+  fh.gen2DGaussianMultWeightsFromBaseline = @gen2DGaussianMultWeightsFromBaseline;
+  fh.gen2DGaussianSuperWeightsFromBaseline = @gen2DGaussianSuperWeightsFromBaseline;
+  fh.gen2DGaussianPosNegWeightsFromBaseline = @gen2DGaussianWeightsFromBaseline;
+  fh.gen2DGaussianPositiveWeightsFromBaseline = @gen2DGaussianPositiveWeightsFromBaseline;
 
 % --------------------------------------------------------------------
 function extractAlexNetCifar()
@@ -19,10 +20,11 @@ function extractAlexNetCifar()
   % printNetworkStructure(net);
   % TODO: flip these if need be!
   % genWeightsMethod = @genRandomWeights;
-  % genWeightsMethod = @genRandomWeightsFromBaseline1DGaussian;
-  % genWeightsMethod = @genRandomWeightsFromBaseline2DGaussian;
-  genWeightsMethod = @genRandomWeightsFromBaseline2DGaussianMult;
-  % genWeightsMethod = @genRandomWeightsFromBaseline2DGaussianSuper;
+  % genWeightsMethod = @gen1DGaussianWeightsFromBaseline;
+  % genWeightsMethod = @gen2DGaussianWeightsFromBaseline;
+  genWeightsMethod = @gen2DGaussianMultWeightsFromBaseline;
+  % genWeightsMethod = @gen2DGaussianSuperWeightsFromBaseline;
+  % genWeightsMethod = @gen2DGaussianPositiveWeightsFromBaseline;
   genNewWeights(net, genWeightsMethod);
 
 % --------------------------------------------------------------------
@@ -34,13 +36,16 @@ function genNewWeights(net, genWeightsMethod)
   for i = 1:numel(layers)
     if (strcmp(layers{i}.type, 'conv'))
       layerNumber = i;
-      randomWeights = genWeightsMethod(layers, layerNumber);
-      saveRandomWeights(randomWeights, layerNumber);
+      newWeights = genWeightsMethod(layers, layerNumber);
+      saveNewWeights(newWeights, layerNumber);
     end
   end
   fprintf('[INFO] Successfully finished generating weights!\n\n');
 
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
+% -- ==                                                                                                             -- ==
+% -- ==                                              RANDOM                                                         -- ==
+% -- ==                                                                                                             -- ==
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 
 % --------------------------------------------------------------------
@@ -58,14 +63,16 @@ function randomWeights = genRandomWeights(layers, layerNumber)
   randomWeights{2} = zeros(1, n, 'single');
 
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
+% -- ==                                                                                                             -- ==
+% -- ==                                                1D                                                           -- ==
+% -- ==                                                                                                             -- ==
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 
 % --------------------------------------------------------------------
-function randomWeights = genRandomWeightsFromBaseline1DGaussian( ...
+function newWeights = gen1DGaussianWeightsFromBaseline( ...
   layers, ...
   layerNumber)
-  % extract ~400,000 kernels, save distributions, as well as random kernels from
-  % those distributions
+  % extract ~400,000 kernels, fit dist to each, and generate new kernel for each
 % --------------------------------------------------------------------
   tic;
   saveDistributions = false;
@@ -73,15 +80,15 @@ function randomWeights = genRandomWeightsFromBaseline1DGaussian( ...
     layers, ...
     layerNumber, ...
     saveDistributions);
-  randomWeights{1} = genRandomWeightsFromDistributions1DGaussian( ...
+  newWeights{1} = gennewWeightsFromDistributions1DGaussian( ...
     layers, ...
     layerNumber, ...
     baselineKernelDists);
   % Don't use a dist, just put the baseline pretrain
-  randomWeights{2} = layers{layerNumber}.weights{2};
-  numberOfKernels = size(randomWeights{1}, 3) * size(randomWeights{1}, 4);
+  newWeights{2} = layers{layerNumber}.weights{2};
+  numberOfKernels = size(newWeights{1}, 3) * size(newWeights{1}, 4);
   fprintf( ...
-    ['[INFO] layer %d: random weights generated for %d kernels. ', ...
+    ['[INFO] layer %d: 1D weights generated for %d kernels. ', ...
     'Elapsed Time (since start): %f\n'], ...
     layerNumber, ...
     numberOfKernels, ...
@@ -110,13 +117,13 @@ function baselineKernelDists = getDistsFromBaseline1DGaussian( ...
   end
 
 % --------------------------------------------------------------------
-function randomWeights = genRandomWeightsFromDistributions1DGaussian( ...
+function newWeights = gennewWeightsFromDistributions1DGaussian( ...
   layers, ...
   layerNumber, ...
   baselineKernelDists)
 % --------------------------------------------------------------------
   baselineWeights = layers{layerNumber}.weights{1};
-  randomWeights = [];
+  newWeights = [];
   for d = 1:size(baselineWeights, 4)
     for c = 1:size(baselineWeights, 3)
       baselineKernel = baselineWeights(:, :, c, d);
@@ -128,15 +135,15 @@ function randomWeights = genRandomWeightsFromDistributions1DGaussian( ...
         baselineKernelDists(1, 1, c, d), ...
         'sigma', ...
         baselineKernelDists(1, 2, c, d));
-      vectorizedRandomKernel = random(dist, vectorDims);
-      randomKernel = reshape(vectorizedRandomKernel, matrixDims);
-      randomWeights(:, :, c, d) = randomKernel;
+      vectorizedNewKernel = random(dist, vectorDims);
+      newKernel = reshape(vectorizedNewKernel, matrixDims);
+      newWeights(:, :, c, d) = newKernel;
     end
   end
-  randomWeights = single(randomWeights);
+  newWeights = single(newWeights);
 
 % --------------------------------------------------------------------
-function randomWeights = saveBaselineKernelDists1DGaussian( ...
+function newWeights = saveBaselineKernelDists1DGaussian( ...
   baselineKernelDists, ...
   layerNumber)
 % --------------------------------------------------------------------
@@ -144,105 +151,95 @@ function randomWeights = saveBaselineKernelDists1DGaussian( ...
   save(sprintf('W1-baseline-kernel-dists-layer-%d.mat', layerNumber), 'W1');
 
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
+% -- ==                                                                                                             -- ==
+% -- ==                                                2D                                                           -- ==
+% -- ==                                                                                                             -- ==
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 
 % --------------------------------------------------------------------
-function randomWeights = genRandomWeightsFromBaseline2DGaussian( ...
+function newWeights = gen2DGaussianWeightsFromBaseline( ...
   layers, ...
   layerNumber)
-  % extract ~400,000 kernels, save distributions, as well as random kernels from
-  % those distributions
+% --------------------------------------------------------------------
+  utils = gaussianUtils;
+  newWeights = gen2DGaussianCoreWeightsFromBaseline( ...
+    utils.fit2DGaussianAndDrawPositiveSamples, ...
+    layers, ...
+    layerNumber);
+
+% --------------------------------------------------------------------
+function newWeights = gen2DGaussianMultWeightsFromBaseline( ...
+  layers, ...
+  layerNumber)
+% --------------------------------------------------------------------
+  utils = gaussianUtils;
+  newWeights = gen2DGaussianCoreWeightsFromBaseline( ...
+    utils.fit2DGaussianAndDrawPositiveSamples, ...
+    layers, ...
+    layerNumber);
+
+% --------------------------------------------------------------------
+function newWeights = gen2DGaussianSuperWeightsFromBaseline( ...
+  layers, ...
+  layerNumber)
+% --------------------------------------------------------------------
+  utils = gaussianUtils;
+  newWeights = gen2DGaussianCoreWeightsFromBaseline( ...
+    utils.fit2DGaussianAndDrawPositiveSamples, ...
+    layers, ...
+    layerNumber);
+
+% --------------------------------------------------------------------
+function newWeights = gen2DGaussianPositiveWeightsFromBaseline( ...
+  layers, ...
+  layerNumber)
+% --------------------------------------------------------------------
+  utils = gaussianUtils;
+  newWeights = gen2DGaussianCoreWeightsFromBaseline( ...
+    utils.fit2DGaussianAndDrawPositiveSamples, ...
+    layers, ...
+    layerNumber);
+
+% --------------------------------------------------------------------
+function newWeights = gen2DGaussianCoreWeightsFromBaseline( ...
+  gen2DWeightsMethod, ...
+  layers, ...
+  layerNumber)
+  % extract ~400,000 kernels, fit dist to each, and generate new kernel for each
 % --------------------------------------------------------------------
   tic;
   utils = gaussianUtils;
   baselineWeights = layers{layerNumber}.weights{1};
-  randomWeights_W1 = [];
+  newWeights_W1 = [];
   for d = 1:size(baselineWeights, 4)
     for c = 1:size(baselineWeights, 3)
       baselineKernel = baselineWeights(:, :, c, d);
-      randomWeights_W1(:, :, c, d) = ...
-        utils.fit2DGaussianAndDrawSamples(baselineKernel, false);
+      newWeights_W1(:, :, c, d) = gen2DWeightsMethod(baselineKernel, false);
     end
   end
-  randomWeights{1} = single(randomWeights_W1);
+  newWeights{1} = single(newWeights_W1);
   % Don't use a dist, just put the baseline pretrain
-  randomWeights{2} = layers{layerNumber}.weights{2};
-  numberOfKernels = size(randomWeights{1}, 3) * size(randomWeights{1}, 4);
+  newWeights{2} = layers{layerNumber}.weights{2};
+  numberOfKernels = size(newWeights{1}, 3) * size(newWeights{1}, 4);
   fprintf( ...
-    ['[INFO] layer %d: random weights generated for %d kernels. ', ...
-    'Elapsed Time (since start): %f\n'], ...
-    layerNumber, ...
-    numberOfKernels, ...
-    toc);
-
-% --------------------------------------------------------------------
-function randomWeights = genRandomWeightsFromBaseline2DGaussianMult( ...
-  layers, ...
-  layerNumber)
-  % extract ~400,000 kernels, save distributions, as well as random kernels from
-  % those distributions
-% --------------------------------------------------------------------
-  tic;
-  utils = gaussianUtils;
-  baselineWeights = layers{layerNumber}.weights{1};
-  randomWeights_W1 = [];
-  for d = 1:size(baselineWeights, 4)
-    for c = 1:size(baselineWeights, 3)
-      baselineKernel = baselineWeights(:, :, c, d);
-      randomWeights_W1(:, :, c, d) = ...
-        utils.fit2DGaussianAndDrawMultSamples(baselineKernel, false);
-    end
-  end
-  randomWeights{1} = single(randomWeights_W1);
-  % Don't use a dist, just put the baseline pretrain
-  randomWeights{2} = layers{layerNumber}.weights{2};
-  numberOfKernels = size(randomWeights{1}, 3) * size(randomWeights{1}, 4);
-  fprintf( ...
-    ['[INFO] layer %d: random weights generated for %d kernels. ', ...
-    'Elapsed Time (since start): %f\n'], ...
-    layerNumber, ...
-    numberOfKernels, ...
-    toc);
-
-
-% --------------------------------------------------------------------
-function randomWeights = genRandomWeightsFromBaseline2DGaussianSuper( ...
-  layers, ...
-  layerNumber)
-  % extract ~400,000 kernels, save distributions, as well as random kernels from
-  % those distributions
-% --------------------------------------------------------------------
-  tic;
-  utils = gaussianUtils;
-  baselineWeights = layers{layerNumber}.weights{1};
-  randomWeights_W1 = [];
-  for d = 1:size(baselineWeights, 4)
-    for c = 1:size(baselineWeights, 3)
-      baselineKernel = baselineWeights(:, :, c, d);
-      randomWeights_W1(:, :, c, d) = ...
-        utils.fit2DGaussianAndDrawSuperSamples(baselineKernel, false);
-    end
-  end
-  randomWeights{1} = single(randomWeights_W1);
-  % Don't use a dist, just put the baseline pretrain
-  randomWeights{2} = layers{layerNumber}.weights{2};
-  numberOfKernels = size(randomWeights{1}, 3) * size(randomWeights{1}, 4);
-  fprintf( ...
-    ['[INFO] layer %d: random weights generated for %d kernels. ', ...
+    ['[INFO] layer %d: 2D weights gene1rated for %d kernels. ', ...
     'Elapsed Time (since start): %f\n'], ...
     layerNumber, ...
     numberOfKernels, ...
     toc);
 
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
+% -- ==                                                                                                             -- ==
+% -- ==                                               utils                                                         -- ==
+% -- ==                                                                                                             -- ==
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 
 % --------------------------------------------------------------------
-function randomWeights = saveRandomWeights(randomWeights, layerNumber)
+function newWeights = saveNewWeights(newWeights, layerNumber)
   % WARNING: only 1 sample!
 % --------------------------------------------------------------------
-  W1 = randomWeights{1};
-  W2 = randomWeights{2};
+  W1 = newWeights{1};
+  W2 = newWeights{2};
   save(sprintf('W1-layer-%d.mat', layerNumber), 'W1');
   save(sprintf('W2-layer-%d.mat', layerNumber), 'W2');
 

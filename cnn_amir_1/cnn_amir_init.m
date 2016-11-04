@@ -3,7 +3,7 @@ opts.networkArch = 'alex-net';
 opts.dataset = 'cifar';
 opts.backpropDepth = 20; % [20, 18, 15, 12, 10, 7];
 opts.weightDecay = 0.0001; % Works: {0.001, 0.0001, 0} Doesn't Work: {0.1, 0.01}
-opts.weightInitType = 'compRand'; % {'compRand', '1D', '2D', '2D-mult', '2D-super'}
+opts.weightInitType = 'compRand'; % {'compRand', '1D', '2D-mult', '2D-super', '2D-posneg', '2D-positive'}
 opts.weightInitSource = 'gen'; % {'load' | 'gen'}
 opts.bottleNeckDivideBy = 1;
 opts = vl_argparse(opts, varargin);
@@ -21,10 +21,6 @@ switch opts.networkArch
       case '1D'
         % VERIFIED: weights random from pre-train 1D (with or without whitening)
         net.meta.trainOpts.learningRate = [0.01*ones(1,5) 0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
-      case '2D'
-        % TESTING.... weights random from pre-train 2D (with whitening)
-        net.meta.trainOpts.learningRate = [0.01*ones(1,5) 0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
-        % net.meta.trainOpts.learningRate = [0.005*ones(1,100)];
       case '2D-mult'
         % TESTING.... weights random from pre-train 2D-mult (with whitening)
         net.meta.trainOpts.learningRate = [0.01*ones(1,5) 0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
@@ -33,7 +29,12 @@ switch opts.networkArch
         % net.meta.trainOpts.learningRate = [1*ones(1,15)  0.005*ones(1,15) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
         % net.meta.trainOpts.learningRate = [0.1*ones(1,15)  0.005*ones(1,15) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
         % net.meta.trainOpts.learningRate = [0.01*ones(1,15)  0.005*ones(1,15) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
-        net.meta.trainOpts.learningRate = [0.005*ones(1,100)];
+        net.meta.trainOpts.learningRate = [0.01*ones(1,5) 0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
+        % net.meta.trainOpts.learningRate = [0.005*ones(1,100)];
+      case '2D-pos-neg'
+        % TESTING.... weights random from pre-train 2D (with whitening)
+        net.meta.trainOpts.learningRate = [0.01*ones(1,5) 0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
+        % net.meta.trainOpts.learningRate = [0.005*ones(1,100)];
     end
   case 'alex-net-bnorm'
     switch opts.weightInitType
@@ -43,15 +44,15 @@ switch opts.networkArch
       case '1D'
         % TESTING: weights random from pre-train 1D (with or without whitening)
         net.meta.trainOpts.learningRate = [0.01*ones(1,5) 0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
-      case '2D'
-        % TESTING.... weights random from pre-train 2D (with whitening)
-        net.meta.trainOpts.learningRate = [0.01*ones(1,5) 0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
-        % net.meta.trainOpts.learningRate = [0.005*ones(1,100)];
       case '2D-mult'
         % TESTING.... weights random from pre-train 2D-mult (with whitening)
         net.meta.trainOpts.learningRate = [0.01*ones(1,5) 0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
       case '2D-super'
         % TESTING.... weights random from pre-train 2D-super (with whitening)
+        net.meta.trainOpts.learningRate = [0.01*ones(1,5) 0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
+        % net.meta.trainOpts.learningRate = [0.005*ones(1,100)];
+      case '2D-pos-neg'
+        % TESTING.... weights random from pre-train 2D (with whitening)
         net.meta.trainOpts.learningRate = [0.01*ones(1,5) 0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
         % net.meta.trainOpts.learningRate = [0.005*ones(1,100)];
     end
@@ -245,10 +246,10 @@ end
 
 % --------------------------------------------------------------------
 function structuredLayer = convLayer(layerNumber, k, m, n, init_multiplier, pad, weightInitType, weightInitSource);
-  % weightInitType = {'compRand', '1D', '2D', '2D-mult', '2D-super'}
+  % weightInitType = {'compRand', '1D', '2D-mult', '2D-super', '2D-posneg', '2D-positive'}
   % weightInitSource = {'load' | 'gen'}
 % --------------------------------------------------------------------
-  if strcmp(weightInitType, '1D') || strcmp(weightInitType, '2D') || strcmp(weightInitType, '2D-mult') || strcmp(weightInitType, '2D-super')
+  if strcmp(weightInitType, '1D') || strcmp(weightInitType, '2D-pos-neg') || strcmp(weightInitType, '2D-mult') || strcmp(weightInitType, '2D-super')
     utils = networkExtractionUtils;
     baselineWeights = loadWeights(layerNumber, 'baseline'); % used for its size
   end
@@ -269,13 +270,6 @@ function structuredLayer = convLayer(layerNumber, k, m, n, init_multiplier, pad,
         case 'gen'
           randomWeights = utils.genRandomWeightsFromBaseline1DGaussian(baselineWeights, layerNumber);
       end
-    case '2D'
-      switch weightInitSource
-        case 'load'
-          randomWeights = loadWeights(layerNumber, 'random-from-baseline-2D');
-        case 'gen'
-          randomWeights = utils.genRandomWeightsFromBaseline2DGaussian(baselineWeights, layerNumber);
-      end
     case '2D-mult'
       switch weightInitSource
         case 'load'
@@ -290,10 +284,17 @@ function structuredLayer = convLayer(layerNumber, k, m, n, init_multiplier, pad,
         case 'gen'
           randomWeights = utils.genRandomWeightsFromBaseline2DGaussianSuper(baselineWeights, layerNumber);
       end
+    case '2D-pos-neg'
+      switch weightInitSource
+        case 'load'
+          randomWeights = loadWeights(layerNumber, 'random-from-baseline-2D-pos-neg');
+        case 'gen'
+          randomWeights = utils.genRandomWeightsFromBaseline2DGaussian(baselineWeights, layerNumber);
+      end
     otherwise
       throwException('unrecognized command');
   end
-  % if strcmp(weightInitType, '2D') || strcmp(weightInitType, '2D-mult') || strcmp(weightInitType, '2D-super')
+  % if strcmp(weightInitType, '2D-pos-neg') || strcmp(weightInitType, '2D-mult') || strcmp(weightInitType, '2D-super')
   %   randomWeights2{1} = randomWeights{1} * .1;
   %   randomWeights2{2} = randomWeights{2} * .1;
   %   structuredLayer = constructConvLayer(layerNumber, randomWeights2, pad);
@@ -306,7 +307,7 @@ function weights = loadWeights(layerNumber, weightType)
   %   'random' |
   %   'baseline' |
   %   'random-from-baseline-1D' |
-  %   'random-from-baseline-2D' |
+  %   'random-from-baseline-2D-pos-neg' |
   %   'random-from-baseline-2D-mult' |
   %   'random-from-baseline-2D-super'
   % }
