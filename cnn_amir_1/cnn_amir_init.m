@@ -268,28 +268,28 @@ function structuredLayer = convLayer(layerNumber, k, m, n, init_multiplier, pad,
         case 'load'
           randomWeights = loadWeights(layerNumber, 'random-from-baseline-1D');
         case 'gen'
-          randomWeights = utils.genRandomWeightsFromBaseline1DGaussian(baselineWeights, layerNumber);
+          randomWeights = utils.gen1DGaussianWeightsFromBaseline(baselineWeights, layerNumber);
       end
     case '2D-mult'
       switch weightInitSource
         case 'load'
           randomWeights = loadWeights(layerNumber, 'random-from-baseline-2D-mult');
         case 'gen'
-          randomWeights = utils.genRandomWeightsFromBaseline2DGaussianMult(baselineWeights, layerNumber);
+          randomWeights = utils.gen2DGaussianMultWeightsFromBaseline(baselineWeights, layerNumber);
       end
     case '2D-super'
       switch weightInitSource
         case 'load'
           randomWeights = loadWeights(layerNumber, 'random-from-baseline-2D-super');
         case 'gen'
-          randomWeights = utils.genRandomWeightsFromBaseline2DGaussianSuper(baselineWeights, layerNumber);
+          randomWeights = utils.gen2DGaussianSuperWeightsFromBaseline(baselineWeights, layerNumber);
       end
     case '2D-pos-neg'
       switch weightInitSource
         case 'load'
           randomWeights = loadWeights(layerNumber, 'random-from-baseline-2D-pos-neg');
         case 'gen'
-          randomWeights = utils.genRandomWeightsFromBaseline2DGaussian(baselineWeights, layerNumber);
+          randomWeights = utils.gen2DGaussianPosNegWeightsFromBaseline(baselineWeights, layerNumber);
       end
     otherwise
       throwException('unrecognized command');

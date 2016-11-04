@@ -1,10 +1,10 @@
 function fh = gaussianUtils()
   % assign function handles so we can call these local functions from elsewhere
   fh.testGaussianUtils = @testGaussianUtils;
-  fh.fit2DGaussianAndDrawPositiveSamples = @fit2DGaussianAndDrawPositiveSamples;
-  fh.fit2DGaussianAndDrawSamples = @fit2DGaussianAndDrawSamples;
   fh.fit2DGaussianAndDrawMultSamples = @fit2DGaussianAndDrawMultSamples;
   fh.fit2DGaussianAndDrawSuperSamples = @fit2DGaussianAndDrawSuperSamples;
+  fh.fit2DGaussianAndDrawPosNegSamples = @fit2DGaussianAndDrawPosNegSamples;
+  fh.fit2DGaussianAndDrawPositiveSamples = @fit2DGaussianAndDrawPositiveSamples;
 
 % --------------------------------------------------------------------
 function [mu_y, mu_x, covariance] = fit2DGaussian(kernel)
@@ -60,7 +60,7 @@ function averaged_sample_kernel = drawPositiveSamplesFrom2DGaussian( ...
 
 % --------------------------------------------------------------------
 function testGaussianUtils(kernel)
-  % --------------------------------------------------------------------
+% --------------------------------------------------------------------
   ndim = size(kernel,1);
   kernel2 = fit2DGaussianAndDrawPositiveSamples(kernel, false);
   kernel3 = fit2DGaussianAndDrawSamples(kernel, false);
@@ -84,45 +84,11 @@ function testGaussianUtils(kernel)
   subplot(2,num_tests,i), imshow(kernel5, []), title('super samples');
   subplot(2,num_tests,num_tests + i), mesh(1:1:ndim, 1:1:ndim, kernel5);
 
-% --------------------------------------------------------------------
-function sample = fit2DGaussianAndDrawPositiveSamples(kernel, debug_flag)
-% --------------------------------------------------------------------
-  warning off;
-  if nargin < 2
-    debug_flag = false;
-  end
-  ndim = size(kernel, 1);
-  if debug_flag
-    fprintf('[INFO] computing params of fitted 2D Gaussian...\n');
-  end
-  [mu_y, mu_x, covariance] = fit2DGaussian(kernel);
-  if debug_flag
-    fprintf('[INFO] params of fitted 2D Gaussian, mu_x, mu_y, covariance:\n');
-    disp(mu_y);
-    disp(mu_x);
-    disp(covariance);
-    fprintf('[INFO] drawing sample from fitted 2D Gaussian...');
-  end
-  sample = drawPositiveSamplesFrom2DGaussian(mu_y, mu_x, covariance, ndim);
-  if debug_flag
-    fprintf('Done!\n');
-    figure; mesh(1:1:ndim, 1:1:ndim, sample);
-  end
-
-% --------------------------------------------------------------------
-function sample = fit2DGaussianAndDrawPosNegSamples(kernel, debug_flag)
-% --------------------------------------------------------------------
-  ndim = size(kernel, 1);
-  sample = fit2DGaussianAndDrawPositiveSamples(kernel, debug_flag);
-  samplen = sample ./ max(sample(:));
-  % sample = sign(randn(ndim,ndim)) .* samplen;
-  thresh = .5;
-  a = rand(ndim,ndim);
-  b = a >= thresh;
-  c = a < thresh;
-  d = b - c; % smaller than thresh gets multiplied by -1
-  sample = d .* samplen;
-  sample = scaleDrawnSampleToInitialDynamicRange(kernel, sample);
+% -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
+% -- ==                                                                                           -- ==
+% -- ==                                       FITTING                                             -- ==
+% -- ==                                                                                           -- ==
+% -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 
 % --------------------------------------------------------------------
 function sample = fit2DGaussianAndDrawMultSamples(kernel, debug_flag)
@@ -156,13 +122,13 @@ function sample = fit2DGaussianAndDrawMultSamples(kernel, debug_flag)
   % sample = scaleDrawnSampleToInitialDynamicRangeMeanZero(sample);
 
 % --------------------------------------------------------------------
-function super_sample = fit2DGaussianAndDrawSuperSamples(kernel, debug_flag)
+function sample = fit2DGaussianAndDrawSuperSamples(kernel, debug_flag)
 % --------------------------------------------------------------------
   ndim = size(kernel, 1);
   sample = fit2DGaussianAndDrawPositiveSamples(kernel, debug_flag);
   samplen = sample ./ max(sample(:));
-  super_sample = randn(ndim,ndim) + sign(randn(ndim,ndim)) .* samplen;
-  super_sample = scaleDrawnSampleToInitialDynamicRange(kernel, super_sample);
+  sample = randn(ndim,ndim) + sign(randn(ndim,ndim)) .* samplen;
+  sample = scaleDrawnSampleToInitialDynamicRange(kernel, sample);
 
   % DEP - OCT 28
   % normalization_factor = max(sample(:));
@@ -177,6 +143,52 @@ function super_sample = fit2DGaussianAndDrawSuperSamples(kernel, debug_flag)
   %   (randn(ndim, ndim) + mixing_factor * sample_normalized);
 
 % --------------------------------------------------------------------
+function sample = fit2DGaussianAndDrawPosNegSamples(kernel, debug_flag)
+% --------------------------------------------------------------------
+  ndim = size(kernel, 1);
+  sample = fit2DGaussianAndDrawPositiveSamples(kernel, debug_flag);
+  samplen = sample ./ max(sample(:));
+  % sample = sign(randn(ndim,ndim)) .* samplen;
+  thresh = .5;
+  a = rand(ndim,ndim);
+  b = a >= thresh;
+  c = a < thresh;
+  d = b - c; % smaller than thresh gets multiplied by -1
+  sample = d .* samplen;
+  sample = scaleDrawnSampleToInitialDynamicRange(kernel, sample);
+
+% --------------------------------------------------------------------
+function sample = fit2DGaussianAndDrawPositiveSamples(kernel, debug_flag)
+% --------------------------------------------------------------------
+  warning off;
+  if nargin < 2
+    debug_flag = false;
+  end
+  ndim = size(kernel, 1);
+  if debug_flag
+    fprintf('[INFO] computing params of fitted 2D Gaussian...\n');
+  end
+  [mu_y, mu_x, covariance] = fit2DGaussian(kernel);
+  if debug_flag
+    fprintf('[INFO] params of fitted 2D Gaussian, mu_x, mu_y, covariance:\n');
+    disp(mu_y);
+    disp(mu_x);
+    disp(covariance);
+    fprintf('[INFO] drawing sample from fitted 2D Gaussian...');
+  end
+  sample = drawPositiveSamplesFrom2DGaussian(mu_y, mu_x, covariance, ndim);
+  if debug_flag
+    fprintf('Done!\n');
+    figure; mesh(1:1:ndim, 1:1:ndim, sample);
+  end
+
+% -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
+% -- ==                                                                                           -- ==
+% -- ==                                       SCALING                                             -- ==
+% -- ==                                                                                           -- ==
+% -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
+
+% --------------------------------------------------------------------
 function sample = scaleDrawnSampleToInitialDynamicRange(kernel, sample)
 % --------------------------------------------------------------------
   kernel_lower_bound = min(min(min(kernel)), 0); % finally compare with 0 because maybe
@@ -186,7 +198,6 @@ function sample = scaleDrawnSampleToInitialDynamicRange(kernel, sample)
   sample = (sample - sample_lower_bound) * ...
     ((kernel_upper_bound - kernel_lower_bound) / (sample_upper_bound - sample_lower_bound)) + ...
     kernel_lower_bound;
-
 
 % --------------------------------------------------------------------
 function sample = scaleDrawnSampleToInitialDynamicRangeBaseZero(kernel, sample)

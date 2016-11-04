@@ -5,7 +5,7 @@ function fh = networkExtractionUtils()
   fh.gen1DGaussianWeightsFromBaseline = @gen1DGaussianWeightsFromBaseline;
   fh.gen2DGaussianMultWeightsFromBaseline = @gen2DGaussianMultWeightsFromBaseline;
   fh.gen2DGaussianSuperWeightsFromBaseline = @gen2DGaussianSuperWeightsFromBaseline;
-  fh.gen2DGaussianPosNegWeightsFromBaseline = @gen2DGaussianWeightsFromBaseline;
+  fh.gen2DGaussianPosNegWeightsFromBaseline = @gen2DGaussianPosNegWeightsFromBaseline;
   fh.gen2DGaussianPositiveWeightsFromBaseline = @gen2DGaussianPositiveWeightsFromBaseline;
 
 % --------------------------------------------------------------------
@@ -21,9 +21,9 @@ function extractAlexNetCifar()
   % TODO: flip these if need be!
   % genWeightsMethod = @genRandomWeights;
   % genWeightsMethod = @gen1DGaussianWeightsFromBaseline;
-  % genWeightsMethod = @gen2DGaussianWeightsFromBaseline;
   genWeightsMethod = @gen2DGaussianMultWeightsFromBaseline;
   % genWeightsMethod = @gen2DGaussianSuperWeightsFromBaseline;
+  % genWeightsMethod = @gen2DGaussianPosNegWeightsFromBaseline;
   % genWeightsMethod = @gen2DGaussianPositiveWeightsFromBaseline;
   genNewWeights(net, genWeightsMethod);
 
@@ -42,11 +42,11 @@ function genNewWeights(net, genWeightsMethod)
   end
   fprintf('[INFO] Successfully finished generating weights!\n\n');
 
-% -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
-% -- ==                                                                                                             -- ==
-% -- ==                                              RANDOM                                                         -- ==
-% -- ==                                                                                                             -- ==
-% -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
+% -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
+% -- ==                                                                                           -- ==
+% -- ==                                        RANDOM                                             -- ==
+% -- ==                                                                                           -- ==
+% -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 
 % --------------------------------------------------------------------
 function randomWeights = genRandomWeights(layers, layerNumber)
@@ -62,11 +62,11 @@ function randomWeights = genRandomWeights(layers, layerNumber)
   randomWeights{1} = init_multiplier * randn(k, k, m, n, 'single');
   randomWeights{2} = zeros(1, n, 'single');
 
-% -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
-% -- ==                                                                                                             -- ==
-% -- ==                                                1D                                                           -- ==
-% -- ==                                                                                                             -- ==
-% -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
+% -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
+% -- ==                                                                                           -- ==
+% -- ==                                          1D                                               -- ==
+% -- ==                                                                                           -- ==
+% -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 
 % --------------------------------------------------------------------
 function newWeights = gen1DGaussianWeightsFromBaseline( ...
@@ -150,22 +150,11 @@ function newWeights = saveBaselineKernelDists1DGaussian( ...
   W1 = baselineKernelDists;
   save(sprintf('W1-baseline-kernel-dists-layer-%d.mat', layerNumber), 'W1');
 
-% -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
-% -- ==                                                                                                             -- ==
-% -- ==                                                2D                                                           -- ==
-% -- ==                                                                                                             -- ==
-% -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
-
-% --------------------------------------------------------------------
-function newWeights = gen2DGaussianWeightsFromBaseline( ...
-  layers, ...
-  layerNumber)
-% --------------------------------------------------------------------
-  utils = gaussianUtils;
-  newWeights = gen2DGaussianCoreWeightsFromBaseline( ...
-    utils.fit2DGaussianAndDrawPositiveSamples, ...
-    layers, ...
-    layerNumber);
+% -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
+% -- ==                                                                                           -- ==
+% -- ==                                          2D                                               -- ==
+% -- ==                                                                                           -- ==
+% -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 
 % --------------------------------------------------------------------
 function newWeights = gen2DGaussianMultWeightsFromBaseline( ...
@@ -174,7 +163,7 @@ function newWeights = gen2DGaussianMultWeightsFromBaseline( ...
 % --------------------------------------------------------------------
   utils = gaussianUtils;
   newWeights = gen2DGaussianCoreWeightsFromBaseline( ...
-    utils.fit2DGaussianAndDrawPositiveSamples, ...
+    utils.fit2DGaussianAndDrawMultSamples, ...
     layers, ...
     layerNumber);
 
@@ -185,7 +174,7 @@ function newWeights = gen2DGaussianSuperWeightsFromBaseline( ...
 % --------------------------------------------------------------------
   utils = gaussianUtils;
   newWeights = gen2DGaussianCoreWeightsFromBaseline( ...
-    utils.fit2DGaussianAndDrawPositiveSamples, ...
+    utils.fit2DGaussianAndDrawSuperSamples, ...
     layers, ...
     layerNumber);
 
@@ -199,6 +188,18 @@ function newWeights = gen2DGaussianPositiveWeightsFromBaseline( ...
     utils.fit2DGaussianAndDrawPositiveSamples, ...
     layers, ...
     layerNumber);
+
+% --------------------------------------------------------------------
+function newWeights = gen2DGaussianPosNegWeightsFromBaseline( ...
+  layers, ...
+  layerNumber)
+% --------------------------------------------------------------------
+  utils = gaussianUtils;
+  newWeights = gen2DGaussianCoreWeightsFromBaseline( ...
+    utils.fit2DGaussianAndDrawPosNegSamples, ...
+    layers, ...
+    layerNumber);
+
 
 % --------------------------------------------------------------------
 function newWeights = gen2DGaussianCoreWeightsFromBaseline( ...
@@ -228,11 +229,11 @@ function newWeights = gen2DGaussianCoreWeightsFromBaseline( ...
     numberOfKernels, ...
     toc);
 
-% -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
-% -- ==                                                                                                             -- ==
-% -- ==                                               utils                                                         -- ==
-% -- ==                                                                                                             -- ==
-% -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
+% -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
+% -- ==                                                                                           -- ==
+% -- ==                                         UTILS                                             -- ==
+% -- ==                                                                                           -- ==
+% -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 
 % --------------------------------------------------------------------
 function newWeights = saveNewWeights(newWeights, layerNumber)
