@@ -23,10 +23,10 @@ function extractAlexNetCifar()
   % genWeightsMethod = @genRandomWeights;
   % genWeightsMethod = @genBaselineWeights;
   % genWeightsMethod = @gen1DGaussianWeightsFromBaseline;
-  genWeightsMethod = @gen2DGaussianMultWeightsFromBaseline;
+  % genWeightsMethod = @gen2DGaussianMultWeightsFromBaseline;
   % genWeightsMethod = @gen2DGaussianSuperWeightsFromBaseline;
   % genWeightsMethod = @gen2DGaussianPosNegWeightsFromBaseline;
-  % genWeightsMethod = @gen2DGaussianPositiveWeightsFromBaseline;
+  genWeightsMethod = @gen2DGaussianPositiveWeightsFromBaseline;
   genNewWeights(net, genWeightsMethod);
 
 % --------------------------------------------------------------------
@@ -43,10 +43,10 @@ function extractLeNetCifar()
   % genWeightsMethod = @genRandomWeights;
   % genWeightsMethod = @genBaselineWeights;
   % genWeightsMethod = @gen1DGaussianWeightsFromBaseline;
-  genWeightsMethod = @gen2DGaussianMultWeightsFromBaseline;
+  % genWeightsMethod = @gen2DGaussianMultWeightsFromBaseline;
   % genWeightsMethod = @gen2DGaussianSuperWeightsFromBaseline;
   % genWeightsMethod = @gen2DGaussianPosNegWeightsFromBaseline;
-  % genWeightsMethod = @gen2DGaussianPositiveWeightsFromBaseline;
+  genWeightsMethod = @gen2DGaussianPositiveWeightsFromBaseline;
   genNewWeights(net, genWeightsMethod);
 
 
