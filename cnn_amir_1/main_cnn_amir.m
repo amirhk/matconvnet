@@ -5,25 +5,25 @@ function main_cnn_amir(varargin)
   % networkArch = 'lenet';
   % % backpropDepthList = [13, 10, 7, 4];
   % backpropDepthList = [13];
-  % bottleNeckDivideByList = [1];
+  % bottleneckDivideByList = [1];
 
-  networkArch = 'alex-net';
+  networkArch = 'alexnet';
   backpropDepthList = [20, 18, 15, 12, 10, 7];
   % backpropDepthList = [20];
-  bottleNeckDivideByList = [1];
+  bottleneckDivideByList = [1];
 
-  % networkArch = 'alex-net-bnorm';
+  % networkArch = 'alexnet-bnorm';
   % % backpropDepthList = [20, 18, 15, 12, 10, 7];
   % backpropDepthList = [22];
-  % bottleNeckDivideByList = [1];
+  % bottleneckDivideByList = [1];
 
-  % networkArch = 'alex-net-bottle-neck';
+  % networkArch = 'alexnet-bottleneck';
   % backpropDepthList = [21];
-  % bottleNeckDivideByList = [1,2,4,8,16,32];
+  % bottleneckDivideByList = [1,2,4,8,16,32];
 
   dataset = 'cifar';
   weightInitSource = 'load';
-  weightInitType = {'compRand'};
+  weightInitTypeList = {'compRand'};
   % weightInitTypeList = {'compRand', '1D', '2D-mult', '2D-super', '2D-posneg'};
 
   % imdbPortionList = [0.1, 0.25, 0.5, 1.0];
@@ -32,7 +32,7 @@ function main_cnn_amir(varargin)
   % weightDecayList = [0.1, 0.01, 0.001, 0.0001, 0];
   weightDecayList = [0.0001];
   for weightInitType = weightInitTypeList
-    for bottleNeckDivideBy = bottleNeckDivideByList
+    for bottleneckDivideBy = bottleneckDivideByList
       for imdbPortion = imdbPortionList
         for weightDecay = weightDecayList
           for backpropDepth = backpropDepthList
@@ -45,7 +45,7 @@ function main_cnn_amir(varargin)
               'weightDecay', weightDecay, ...
               'weightInitType', char(weightInitType), ...
               'weightInitSource', weightInitSource, ...
-              'bottleNeckDivideBy', bottleNeckDivideBy);
+              'bottleneckDivideBy', bottleneckDivideBy);
           end
         end
       end

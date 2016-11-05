@@ -1,11 +1,11 @@
 function net = cnn_amir_init(varargin)
-opts.networkArch = 'alex-net';
+opts.networkArch = 'alexnet';
 opts.dataset = 'cifar';
 opts.backpropDepth = 20; % [20, 18, 15, 12, 10, 7];
 opts.weightDecay = 0.0001; % Works: {0.001, 0.0001, 0} Doesn't Work: {0.1, 0.01}
 opts.weightInitType = 'compRand'; % {'compRand', '1D', '2D-mult', '2D-super', '2D-posneg', '2D-positive'}
 opts.weightInitSource = 'gen'; % {'load' | 'gen'}
-opts.bottleNeckDivideBy = 1;
+opts.bottleneckDivideBy = 1;
 opts = vl_argparse(opts, varargin);
 
 tic;
@@ -15,7 +15,7 @@ net.layers = {};
 switch opts.networkArch
   case 'lenet'
     net.meta.trainOpts.learningRate = [0.01*ones(1,5) 0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
-  case 'alex-net'
+  case 'alexnet'
     switch opts.weightInitType
       case 'compRand'
         % VERIFIED: weights completely random (goes down after 50 * 0.001 to %86 then after 230 epochs to ~%60)
@@ -38,7 +38,7 @@ switch opts.networkArch
         net.meta.trainOpts.learningRate = [0.01*ones(1,5) 0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
         % net.meta.trainOpts.learningRate = [0.005*ones(1,100)];
     end
-  case 'alex-net-bnorm'
+  case 'alexnet-bnorm'
     switch opts.weightInitType
       case 'compRand'
         % TESTING: weights completely random (goes down after 50 * 0.001 to %86 then after 230 epochs to ~%60)
@@ -58,7 +58,7 @@ switch opts.networkArch
         net.meta.trainOpts.learningRate = [0.01*ones(1,5) 0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
         % net.meta.trainOpts.learningRate = [0.005*ones(1,100)];
     end
-  case 'alex-net-bottle-neck'
+  case 'alexnet-bottleneck'
     % net.meta.trainOpts.learningRate = [0.01*ones(1,15)  0.005*ones(1,15) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
     net.meta.trainOpts.learningRate = [0.005*ones(1,50)];
 end
@@ -109,21 +109,21 @@ switch opts.networkArch
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     % Loss layer
     net.layers{end+1} = struct('type', 'softmaxloss');
-  case 'alex-net'
+  case 'alexnet'
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     % --- --- ---                                                     --- --- --
-    % --- --- ---                   ALEX-NET                          --- --- --
+    % --- --- ---                   ALEXNET                           --- --- --
     % --- --- ---                                                     --- --- --
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     layerNumber = 1;
     % net.layers{end+1} = convLayer(layerNumber, 5, 3, 96, 5/1000, 2, opts.weightInitType, opts.weightInitSource, opts.networkArch);
-    net.layers{end+1} = convLayer(layerNumber, 5, 3, 96, 5/1000, 2, '2D-mult', opts.weightInitSource, opts.networkArch);
+    net.layers{end+1} = convLayer(layerNumber, 5, 3, 96, 5/1000, 2, '2D-posneg', opts.weightInitSource, opts.networkArch);
     net.layers{end+1} = reluLayer(layerNumber);
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     layerNumber = layerNumber + 2;
     % net.layers{end+1} = convLayer(layerNumber, 5, 96, 256, 5/1000, 2, opts.weightInitType, opts.weightInitSource, opts.networkArch);
-    net.layers{end+1} = convLayer(layerNumber, 5, 96, 256, 5/1000, 2, '2D-mult', opts.weightInitSource, opts.networkArch);
+    net.layers{end+1} = convLayer(layerNumber, 5, 96, 256, 5/1000, 2, '2D-posneg', opts.weightInitSource, opts.networkArch);
     net.layers{end+1} = reluLayer(layerNumber);
     net.layers{end+1} = poolingLayerAlexNet(layerNumber);
 
@@ -163,10 +163,10 @@ switch opts.networkArch
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     % Loss layer
     net.layers{end+1} = struct('type', 'softmaxloss');
-  case 'alex-net-bnorm'
+  case 'alexnet-bnorm'
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     % --- --- ---                                                     --- --- --
-    % --- --- ---                ALEX-NET-BNORM                       --- --- --
+    % --- --- ---                ALEXNET-BNORM                        --- --- --
     % --- --- ---                                                     --- --- --
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     layerNumber = 1;
@@ -220,14 +220,14 @@ switch opts.networkArch
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     % Loss layer
     net.layers{end+1} = struct('type', 'softmaxloss');
-  case 'alex-net-bottle-neck'
+  case 'alexnet-bottleneck'
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     % --- --- ---                                                     --- --- --
-    % --- --- ---               ALEX-NET-BOTTLE-NECK                  --- --- --
+    % --- --- ---               ALEXNET-BOTTLENECK                    --- --- --
     % --- --- ---                                                     --- --- --
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     % k = [1,4,8,16,32]
-    k = opts.bottleNeckDivideBy;
+    k = opts.bottleneckDivideBy;
     layerNumber = 1;
     net.layers{end+1} = convLayer(layerNumber, 5, 3, 96, 5/1000, 2, 'compRand', 'gen', opts.networkArch);
     net.layers{end+1} = reluLayer(layerNumber);
@@ -289,81 +289,61 @@ function structuredLayer = convLayer(layerNumber, k, m, n, init_multiplier, pad,
   % weightInitType = {'compRand', '1D', '2D-mult', '2D-super', '2D-posneg', '2D-positive'}
   % weightInitSource = {'load' | 'gen'}
 % --------------------------------------------------------------------
-  if strcmp(weightInitType, '1D') || strcmp(weightInitType, '2D-posneg') || strcmp(weightInitType, '2D-mult') || strcmp(weightInitType, '2D-super')
-    utils = networkExtractionUtils;
-    baselineWeights = loadWeights(layerNumber, 'baseline', networkArch); % used for its size
-  end
-  switch weightInitType
-    case 'compRand'
-      switch weightInitSource
-        case 'load'
-          randomWeights = loadWeights(layerNumber, 'random', networkArch);
-        case 'gen'
-          randomWeights{1} = init_multiplier * randn(k, k, m, n, 'single');
-          randomWeights{2} = zeros(1, n, 'single');
+  switch weightInitSource
+    case 'load'
+      layerWeights = loadWeights(networkArch, layerNumber, weightInitType);
+    case 'gen'
+      if ~strcmp(weightInitType, 'compRand') % if weightInitType = {'1D' ,'2D-posneg','2D-mult', '2D-super'}
+        utils = networkExtractionUtils;
+        baselineWeights = loadWeights(networkArch, layerNumber, 'baseline'); % used for its size
       end
-    case '1D'
-      switch weightInitSource
-        case 'load'
-          randomWeights = loadWeights(layerNumber, 'random-from-baseline-1D', networkArch);
-        case 'gen'
-          randomWeights = utils.gen1DGaussianWeightsFromBaseline(baselineWeights, layerNumber);
+      switch weightInitType
+        case 'compRand'
+          layerWeights{1} = init_multiplier * randn(k, k, m, n, 'single');
+          layerWeights{2} = zeros(1, n, 'single');
+        case '1D'
+          layerWeights = utils.gen1DGaussianWeightsFromBaseline(baselineWeights, layerNumber);
+        case '2D-mult'
+          layerWeights = utils.gen2DGaussianMultWeightsFromBaseline(baselineWeights, layerNumber);
+        case '2D-super'
+          layerWeights = utils.gen2DGaussianSuperWeightsFromBaseline(baselineWeights, layerNumber);
+        case '2D-posneg'
+          layerWeights = utils.gen2DGaussianPosNegWeightsFromBaseline(baselineWeights, layerNumber);
+        otherwise
+          throwException('unrecognized command');
       end
-    case '2D-mult'
-      switch weightInitSource
-        case 'load'
-          randomWeights = loadWeights(layerNumber, 'random-from-baseline-2D-mult', networkArch);
-        case 'gen'
-          randomWeights = utils.gen2DGaussianMultWeightsFromBaseline(baselineWeights, layerNumber);
-      end
-    case '2D-super'
-      switch weightInitSource
-        case 'load'
-          randomWeights = loadWeights(layerNumber, 'random-from-baseline-2D-super', networkArch);
-        case 'gen'
-          randomWeights = utils.gen2DGaussianSuperWeightsFromBaseline(baselineWeights, layerNumber);
-      end
-    case '2D-posneg'
-      switch weightInitSource
-        case 'load'
-          randomWeights = loadWeights(layerNumber, 'random-from-baseline-2D-posneg', networkArch);
-        case 'gen'
-          randomWeights = utils.gen2DGaussianPosNegWeightsFromBaseline(baselineWeights, layerNumber);
-      end
-    otherwise
-      throwException('unrecognized command');
   end
   % if strcmp(weightInitType, '2D-posneg') || strcmp(weightInitType, '2D-mult') || strcmp(weightInitType, '2D-super')
-  %   randomWeights2{1} = randomWeights{1} * .1;
-  %   randomWeights2{2} = randomWeights{2} * .1;
-  %   structuredLayer = constructConvLayer(layerNumber, randomWeights2, pad);
+  %   layerWeights2{1} = layerWeights{1} * .1;
+  %   layerWeights2{2} = layerWeights{2} * .1;
+  %   structuredLayer = constructConvLayer(layerNumber, layerWeights2, pad);
   % end
-  structuredLayer = constructConvLayer(layerNumber, randomWeights, pad);
+  structuredLayer = constructConvLayer(layerNumber, layerWeights, pad);
 
 % --------------------------------------------------------------------
-function weights = loadWeights(layerNumber, weightType, networkArch)
-  % weightType = {
-  %   'random' |
+function weights = loadWeights(networkArch, layerNumber, weightInitType)
+  % weightInitType = {
+  %   'compRand' |
   %   'baseline' |
-  %   'random-from-baseline-1D' |
-  %   'random-from-baseline-2D-posneg' |
-  %   'random-from-baseline-2D-mult' |
-  %   'random-from-baseline-2D-super'
+  %   '1D' |
+  %   '2D-posneg' |
+  %   '2D-mult' |
+  %   '2D-super'
   % }
 % --------------------------------------------------------------------
   fprintf( ...
     '[INFO] Loading %s weights (layer %d) from saved directory...\t', ...
-    weightType, ...
+    weightInitType, ...
     layerNumber);
   devPath = getDevPath();
 
-  % subDirPath = fullfile('data', 'cifar-alexnet', sprintf('+8epoch-%s', weightType));
-  % TODO: search subtstring... if networkArch starts with 'alex-net' use the 'alex-net' folder
+  % subDirPath = fullfile('data', 'cifar-alexnet', sprintf('+8epoch-%s', weightInitType));
+  % TODO: search subtstring... if networkArch starts with 'alexnet' use the 'alexnet' folder
   switch networkArch
     case 'lenet'
-      subDirPath = fullfile('data', 'cifar-lenet', sprintf('+8epoch-%s', weightType));
-    otherwise
-      subDirPath = fullfile('data', 'cifar-alexnet', sprintf('+8epoch-%s', weightType));
+      subDirPath = fullfile('data', 'cifar-lenet', sprintf('+8epoch-%s', weightInitType));
+    otherwise % {'alexnet', 'alexnet-bnorm', 'alexnet-bottleneck', ...}
+      subDirPath = fullfile('data', 'cifar-alexnet', sprintf('+8epoch-%s', weightInitType));
   end
   fileNameSuffix = sprintf('-layer-%d.mat', layerNumber);
   tmp = load(fullfile(devPath, subDirPath, sprintf('W1%s', fileNameSuffix)));

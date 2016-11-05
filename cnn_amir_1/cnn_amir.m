@@ -5,14 +5,14 @@ function [net, info] = cnn_amir(varargin)
   % Setup -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
   opts.train = struct();
   opts.folderNumber = 1;
-  opts.networkArch = 'alex-net';
+  opts.networkArch = 'alexnet';
   opts.dataset = 'cifar';
   opts.imdbPortion = 1.0;
   opts.backpropDepth = 20;
   opts.weightDecay = 0.0001;
   opts.weightInitType = '1D';
   opts.weightInitSource = 'load';
-  opts.bottleNeckDivideBy = 1;
+  opts.bottleneckDivideBy = 1;
   [opts, varargin] = vl_argparse(opts, varargin);
   fprintf('[INFO] networkArch:\t %s\n', opts.networkArch);
   fprintf('[INFO] dataset:\t\t %s\n', opts.dataset);
@@ -21,7 +21,7 @@ function [net, info] = cnn_amir(varargin)
   fprintf('[INFO] weightDecay:\t %6.5f\n', opts.weightDecay);
   fprintf('[INFO] weightInitType:\t %s\n', opts.weightInitType);
   fprintf('[INFO] weightInitSource: %s\n', opts.weightInitSource);
-  fprintf('[INFO] bottleNeckDivideBy: %d\n', opts.bottleNeckDivideBy);
+  fprintf('[INFO] bottleneckDivideBy: %d\n', opts.bottleneckDivideBy);
   fprintf('\n');
 
   % Processor -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
@@ -72,7 +72,7 @@ function [net, info] = cnn_amir(varargin)
     'weightDecay', opts.weightDecay, ...
     'weightInitType', opts.weightInitType, ...
     'weightInitSource', opts.weightInitSource, ...
-    'bottleNeckDivideBy', opts.bottleNeckDivideBy);
+    'bottleneckDivideBy', opts.bottleneckDivideBy);
   saveNetworkInfo(net, opts.expDir);
 
   if exist(opts.imdbPath, 'file')
