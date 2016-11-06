@@ -1,58 +1,51 @@
 function fh = networkExtractionUtils()
   % assign function handles so we can call these local functions from elsewhere
-  fh.extractAlexNetCifar = @extractAlexNetCifar;
-  fh.extractLeNetCifar = @extractLeNetCifar;
-  fh.genRandomWeights = @genRandomWeights;
+  fh.extractNewWeightsFromNetwork = @extractNewWeightsFromNetwork;
   fh.gen1DGaussianWeightsFromBaseline = @gen1DGaussianWeightsFromBaseline;
   fh.gen2DGaussianMultWeightsFromBaseline = @gen2DGaussianMultWeightsFromBaseline;
   fh.gen2DGaussianSuperWeightsFromBaseline = @gen2DGaussianSuperWeightsFromBaseline;
   fh.gen2DGaussianPosNegWeightsFromBaseline = @gen2DGaussianPosNegWeightsFromBaseline;
   fh.gen2DGaussianPositiveWeightsFromBaseline = @gen2DGaussianPositiveWeightsFromBaseline;
 
+
 % --------------------------------------------------------------------
-function extractAlexNetCifar()
+function extractNewWeightsFromNetwork(networkArch, newWeightType)
+  % networkArch = {'alexnet', 'lenet'}
+  % newWeightType = {'baseline', 'compRand', '1D', '2D-positive', '2D-mult', '2D-super', '2D-posneg', '2D-amir'}
 % --------------------------------------------------------------------
-  fprintf('[INFO] Loading data from pre-trained AlexNet on Cifar...\n');
+  fprintf(sprintf('[INFO] Loading data from pre-trained %s on Cifar...\n', networkArch));
   devPath = getDevPath();
-  loadedFile = ...
-    load(fullfile(devPath, 'data', 'cifar-alexnet', 'alexnet+8epoch.mat'));
+  loadedFile = load(fullfile( ...
+    devPath, ...
+    'data', ...
+    sprintf('cifar-%s', networkArch), ...
+    sprintf('%s+8epoch.mat', networkArch)));
   fprintf('[INFO] Loading data successful!\n\n');
   net = loadedFile.net;
   % printNetworkStructure(net);
-  % TODO: flip these if need be!
-  % genWeightsMethod = @genRandomWeights;
-  % genWeightsMethod = @genBaselineWeights;
-  % genWeightsMethod = @gen1DGaussianWeightsFromBaseline;
-  % genWeightsMethod = @gen2DGaussianMultWeightsFromBaseline;
-  % genWeightsMethod = @gen2DGaussianSuperWeightsFromBaseline;
-  % genWeightsMethod = @gen2DGaussianPosNegWeightsFromBaseline;
-  % genWeightsMethod = @gen2DGaussianPositiveWeightsFromBaseline;
-  genWeightsMethod = @gen2DGaussianAmirWeightsFromBaseline;
-  genNewWeights(net, genWeightsMethod);
+  % TODO: change these....
+  switch newWeightType
+    case 'baseline'
+      genWeightsMethod = @genBaselineWeights;
+    case 'compRand'
+      genWeightsMethod = @genCompRandWeights;
+    case '1D'
+      genWeightsMethod = @gen1DGaussianWeightsFromBaseline;
+    case '2D-mult'
+      genWeightsMethod = @gen2DGaussianMultWeightsFromBaseline;
+    case '2D-super'
+      genWeightsMethod = @gen2DGaussianSuperWeightsFromBaseline;
+    case '2D-posneg'
+      genWeightsMethod = @gen2DGaussianPosNegWeightsFromBaseline;
+    case '2D-positive'
+      genWeightsMethod = @gen2DGaussianPositiveWeightsFromBaseline;
+    case '2D-amir'
+      genWeightsMethod = @gen2DGaussianAmirWeightsFromBaseline;
+  end
+  genNewWeights(networkArch, newWeightType, net, genWeightsMethod);
 
 % --------------------------------------------------------------------
-function extractLeNetCifar()
-% --------------------------------------------------------------------
-  fprintf('[INFO] Loading data from pre-trained LeNet on Cifar...\n');
-  devPath = getDevPath();
-  loadedFile = ...
-    load(fullfile(devPath, 'data', 'cifar-lenet', 'lenet+0epoch.mat'));
-  fprintf('[INFO] Loading data successful!\n\n');
-  net = loadedFile.net;
-  % printNetworkStructure(net);
-  % TODO: flip these if need be!
-  % genWeightsMethod = @genRandomWeights;
-  % genWeightsMethod = @genBaselineWeights;
-  % genWeightsMethod = @gen1DGaussianWeightsFromBaseline;
-  % genWeightsMethod = @gen2DGaussianMultWeightsFromBaseline;
-  % genWeightsMethod = @gen2DGaussianSuperWeightsFromBaseline;
-  % genWeightsMethod = @gen2DGaussianPosNegWeightsFromBaseline;
-  % genWeightsMethod = @gen2DGaussianPositiveWeightsFromBaseline;
-  genWeightsMethod = @gen2DGaussianAmirWeightsFromBaseline;
-  genNewWeights(net, genWeightsMethod);
-
-% --------------------------------------------------------------------
-function genNewWeights(net, genWeightsMethod)
+function genNewWeights(networkArch, newWeightType, net, genWeightsMethod)
   % for all 'conv' layers...
 % --------------------------------------------------------------------
   fprintf('[INFO] Generating new weights... \n');
@@ -61,7 +54,7 @@ function genNewWeights(net, genWeightsMethod)
     if (strcmp(layers{i}.type, 'conv'))
       layerNumber = i;
       newWeights = genWeightsMethod(layers, layerNumber);
-      saveNewWeights(newWeights, layerNumber);
+      saveNewWeights(networkArch, newWeightType, newWeights, layerNumber);
     end
   end
   fprintf('[INFO] Successfully finished generating weights!\n\n');
@@ -73,7 +66,14 @@ function genNewWeights(net, genWeightsMethod)
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 
 % --------------------------------------------------------------------
-function randomWeights = genRandomWeights(layers, layerNumber)
+function randomWeights = genBaselineWeights(layers, layerNumber)
+  % just save the baseline in the form of weights, not the whole network
+% --------------------------------------------------------------------
+  randomWeights{1} = layers{layerNumber}.weights{1};
+  randomWeights{2} = layers{layerNumber}.weights{2};
+
+% --------------------------------------------------------------------
+function randomWeights = genCompRandWeights(layers, layerNumber)
   % extract ~400,000 kernels and just save that many random kernels of the same
   % size generated from randn methods
 % --------------------------------------------------------------------
@@ -85,13 +85,6 @@ function randomWeights = genRandomWeights(layers, layerNumber)
   init_multiplier = 5/1000;
   randomWeights{1} = init_multiplier * randn(k, k, m, n, 'single');
   randomWeights{2} = zeros(1, n, 'single');
-
-% --------------------------------------------------------------------
-function randomWeights = genBaselineWeights(layers, layerNumber)
-  % just save the baseline in the form of weights, not the whole network
-% --------------------------------------------------------------------
-  randomWeights{1} = layers{layerNumber}.weights{1};
-  randomWeights{2} = layers{layerNumber}.weights{2};
 
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 % -- ==                                                                                           -- ==
@@ -277,13 +270,42 @@ function newWeights = gen2DGaussianCoreWeightsFromBaseline( ...
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 
 % --------------------------------------------------------------------
-function newWeights = saveNewWeights(newWeights, layerNumber)
+function newWeights = saveNewWeights(networkArch, newWeightType, newWeights, layerNumber)
   % WARNING: only 1 sample!
 % --------------------------------------------------------------------
+  % devPath = getDevPath();
+  % folder = fullfile( ...
+  %   devPath, ...
+  %   'data', ...
+  %   sprintf('cifar-%s', networkArch), ...
+  %   sprintf('+8epoch-%s', newWeightType));
+  % if ~exist(folder)
+  %   mkdir(folder);
+  % else
+  %   % create backup of previous weights folder, then create new folder
+  %   backup_folder = strcat(folder, sprintf('_bu_%s', datetime('now', 'Format', 'd-MMM-y-HH-mm-ss')));
+  %   movefile(folder, backup_folder)
+  %   mkdir(folder);
+  % end
+  % % then save the weights in the folder
+  % W1 = newWeights{1};
+  % W2 = newWeights{2};
+  % save(fullfile(folder, sprintf('W1-layer-%d.mat', layerNumber)), 'W1');
+  % save(fullfile(folder, sprintf('W2-layer-%d.mat', layerNumber)), 'W2');
+  devPath = getDevPath();
+  folder = fullfile( ...
+    devPath, ...
+    'data', ...
+    sprintf('cifar-%s', networkArch), ...
+    sprintf('+8epoch-%s', newWeightType));
+  if ~exist(folder)
+    mkdir(folder);
+  end
+  % then save the weights in the folder
   W1 = newWeights{1};
   W2 = newWeights{2};
-  save(sprintf('W1-layer-%d.mat', layerNumber), 'W1');
-  save(sprintf('W2-layer-%d.mat', layerNumber), 'W2');
+  save(fullfile(folder, sprintf('W1-layer-%d.mat', layerNumber)), 'W1');
+  save(fullfile(folder, sprintf('W2-layer-%d.mat', layerNumber)), 'W2');
 
 % --------------------------------------------------------------------
 function printNetworkStructure(net)

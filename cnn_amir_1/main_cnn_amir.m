@@ -24,7 +24,7 @@ function main_cnn_amir(varargin)
   dataset = 'cifar';
   weightInitSource = 'load';
   weightInitTypeList = {'compRand'};
-  % weightInitTypeList = {'compRand', '1D', '2D-mult', '2D-super', '2D-posneg'};
+  % weightInitTypeList = {'baseline', 'compRand', '1D', '2D-mult', '2D-super', '2D-posneg', '2D-amir'};
 
   % imdbPortionList = [0.1, 0.25, 0.5, 1.0];
   imdbPortionList = [1.0];
