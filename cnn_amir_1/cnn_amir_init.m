@@ -337,13 +337,13 @@ function weights = loadWeights(networkArch, layerNumber, weightInitType)
     layerNumber);
   devPath = getDevPath();
 
-  % subDirPath = fullfile('data', 'cifar-alexnet', sprintf('+8epoch-%s', weightInitType));
+  % subDirPath = fullfile('data', 'cifar-alexnet', sprintf('w_%s', weightInitType));
   % TODO: search subtstring... if networkArch starts with 'alexnet' use the 'alexnet' folder
   switch networkArch
     case 'lenet'
-      subDirPath = fullfile('data', 'cifar-lenet', sprintf('+8epoch-%s', weightInitType));
+      subDirPath = fullfile('data', 'cifar-lenet', sprintf('w_%s', weightInitType));
     otherwise % {'alexnet', 'alexnet-bnorm', 'alexnet-bottleneck', ...}
-      subDirPath = fullfile('data', 'cifar-alexnet', sprintf('+8epoch-%s', weightInitType));
+      subDirPath = fullfile('data', 'cifar-alexnet', sprintf('w_%s', weightInitType));
   end
   fileNameSuffix = sprintf('-layer-%d.mat', layerNumber);
   tmp = load(fullfile(devPath, subDirPath, sprintf('W1%s', fileNameSuffix)));
