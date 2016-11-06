@@ -1,7 +1,7 @@
 % networkArch = 'cifar-lenet';
 % layer = 4; % [1, 4, 7]
 networkArch = 'cifar-alexnet';
-layer = 6; % [1, 3, 6, 9, 11]
+layer = 11; % [1, 3, 6, 9, 11]
 
 file_name = sprintf('W1-layer-%d.mat', layer);
 devPath = getDevPath();
@@ -13,6 +13,7 @@ w_2D_mult = load(fullfile(devPath, 'data', networkArch, '+8epoch-2D-mult', file_
 w_2D_super = load(fullfile(devPath, 'data', networkArch, '+8epoch-2D-super', file_name));
 w_2D_posneg = load(fullfile(devPath, 'data', networkArch, '+8epoch-2D-posneg', file_name));
 w_2D_positive = load(fullfile(devPath, 'data', networkArch, '+8epoch-2D-positive', file_name));
+w_2D_amir = load(fullfile(devPath, 'data', networkArch, '+8epoch-2D-amir', file_name));
 
 w_baseline = w_baseline.W1;
 w_random = w_random.W1;
@@ -21,6 +22,7 @@ w_2D_mult = w_2D_mult.W1;
 w_2D_super = w_2D_super.W1;
 w_2D_posneg = w_2D_posneg.W1;
 w_2D_positive = w_2D_positive.W1;
+w_2D_amir = w_2D_amir.W1;
 
 assert(logical(prod(size(w_baseline) == size(w_random))));
 assert(logical(prod(size(w_baseline) == size(w_1D))));
@@ -28,10 +30,11 @@ assert(logical(prod(size(w_baseline) == size(w_2D_mult))));
 assert(logical(prod(size(w_baseline) == size(w_2D_super))));
 assert(logical(prod(size(w_baseline) == size(w_2D_posneg))));
 assert(logical(prod(size(w_baseline) == size(w_2D_positive))));
+assert(logical(prod(size(w_baseline) == size(w_2D_amir))));
 
 % randomly choose 3 kernels to compare
-num_kernels = 7;
-for k = 1:5
+num_kernels = 8;
+for k = 1:2
   aa = size(w_baseline, 1);
   bb = size(w_baseline, 2);
   assert(aa == bb);
@@ -67,6 +70,10 @@ for k = 1:5
   w_2D_posneg_slice = w_2D_posneg(:, :, cc, dd);
   subplot(2,num_kernels,i), imshow(w_2D_posneg_slice, []), title('2D posneg');
   subplot(2,num_kernels,num_kernels + i), mesh(1:1:aa, 1:1:aa, w_2D_posneg_slice);
+  i = i + 1;
+  w_2D_amir_slice = w_2D_amir(:, :, cc, dd);
+  subplot(2,num_kernels,i), imshow(w_2D_amir_slice, []), title('2D amir');
+  subplot(2,num_kernels,num_kernels + i), mesh(1:1:aa, 1:1:aa, w_2D_amir_slice);
   % saveas(h, sprintf('Weight comparisons for slice (:,:,%d,%d).png', cc, dd));
 end
 

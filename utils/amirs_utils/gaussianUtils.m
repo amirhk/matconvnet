@@ -5,6 +5,7 @@ function fh = gaussianUtils()
   fh.fit2DGaussianAndDrawSuperSamples = @fit2DGaussianAndDrawSuperSamples;
   fh.fit2DGaussianAndDrawPosNegSamples = @fit2DGaussianAndDrawPosNegSamples;
   fh.fit2DGaussianAndDrawPositiveSamples = @fit2DGaussianAndDrawPositiveSamples;
+  fh.fit2DGaussianAndDrawAmirSamples = @fit2DGaussianAndDrawAmirSamples;
 
 % --------------------------------------------------------------------
 function [mu_y, mu_x, covariance] = fit2DGaussian(kernel)
@@ -66,23 +67,27 @@ function testGaussianUtils(kernel)
   kernel3 = fit2DGaussianAndDrawSamples(kernel, false);
   kernel4 = fit2DGaussianAndDrawMultSamples(kernel, false);
   kernel5 = fit2DGaussianAndDrawSuperSamples(kernel, false);
+  kernel6 = fit2DGaussianAndDrawAmirSamples(kernel, false);
   figure;
   i = 1;
-  num_tests = 5;
-  subplot(2,num_tests,i), imshow(kernel, []), title('input');
-  subplot(2,num_tests,num_tests + i), mesh(1:1:ndim, 1:1:ndim, kernel);
+  num_kernels = 6;
+  subplot(2,num_kernels,i), imshow(kernel, []), title('input');
+  subplot(2,num_kernels,num_kernels + i), mesh(1:1:ndim, 1:1:ndim, kernel);
   i = i + 1;
-  subplot(2,num_tests,i), imshow(kernel2, []), title('2D fit / positive samples');
-  subplot(2,num_tests,num_tests + i), mesh(1:1:ndim, 1:1:ndim, kernel2);
+  subplot(2,num_kernels,i), imshow(kernel2, []), title('2D fit / positive samples');
+  subplot(2,num_kernels,num_kernels + i), mesh(1:1:ndim, 1:1:ndim, kernel2);
   i = i + 1;
-  subplot(2,num_tests,i), imshow(kernel3, []), title('+/- samples');
-  subplot(2,num_tests,num_tests + i), mesh(1:1:ndim, 1:1:ndim, kernel3);
+  subplot(2,num_kernels,i), imshow(kernel3, []), title('+/- samples');
+  subplot(2,num_kernels,num_kernels + i), mesh(1:1:ndim, 1:1:ndim, kernel3);
   i = i + 1;
-  subplot(2,num_tests,i), imshow(kernel4, []), title('mult samples');
-  subplot(2,num_tests,num_tests + i), mesh(1:1:ndim, 1:1:ndim, kernel4);
+  subplot(2,num_kernels,i), imshow(kernel4, []), title('mult samples');
+  subplot(2,num_kernels,num_kernels + i), mesh(1:1:ndim, 1:1:ndim, kernel4);
   i = i + 1;
-  subplot(2,num_tests,i), imshow(kernel5, []), title('super samples');
-  subplot(2,num_tests,num_tests + i), mesh(1:1:ndim, 1:1:ndim, kernel5);
+  subplot(2,num_kernels,i), imshow(kernel5, []), title('super samples');
+  subplot(2,num_kernels,num_kernels + i), mesh(1:1:ndim, 1:1:ndim, kernel5);
+  i = i + 1;
+  subplot(2,num_kernels,i), imshow(kernel6, []), title('super samples');
+  subplot(2,num_kernels,num_kernels + i), mesh(1:1:ndim, 1:1:ndim, kernel6);
 
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 % -- ==                                                                                           -- ==
@@ -181,6 +186,13 @@ function sample = fit2DGaussianAndDrawPositiveSamples(kernel, debug_flag)
     fprintf('Done!\n');
     figure; mesh(1:1:ndim, 1:1:ndim, sample);
   end
+
+% --------------------------------------------------------------------
+function sample = fit2DGaussianAndDrawAmirSamples(kernel, debug_flag)
+% --------------------------------------------------------------------
+  sample = fit2DGaussianAndDrawPositiveSamples(kernel, debug_flag);
+  sample = scaleDrawnSampleToInitialDynamicRange(kernel, sample);
+  sample = sample * sign(randn()); % the entire gaussian gets multiplied by +/-, not each pixel
 
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 % -- ==                                                                                           -- ==

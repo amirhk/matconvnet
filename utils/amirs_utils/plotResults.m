@@ -1,15 +1,15 @@
 dataDir = '/Volumes/Amir-1/results/';
-subDataDir = '2016-11-04-06; AlexNet; FC+{0-5}; 2x2D-mult + 3xcompRand';
+subDataDir = '2016-11-04-06; AlexNet; FC+{0-5}; 2x2D-posneg + 3xcompRand';
 epochNum = 50;
 epochFile = sprintf('net-epoch-%d.mat', epochNum);
 fprintf('Loading files...'); i = 1;
 
-fc_plus_5 = load(fullfile(dataDir, subDataDir, 'cifar-alex-net-4-Nov-2016-17-29-44-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_4 = load(fullfile(dataDir, subDataDir, 'cifar-alex-net-4-Nov-2016-19-38-40-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_3 = load(fullfile(dataDir, subDataDir, 'cifar-alex-net-4-Nov-2016-21-40-27-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_2 = load(fullfile(dataDir, subDataDir, 'cifar-alex-net-4-Nov-2016-23-06-48-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_1 = load(fullfile(dataDir, subDataDir, 'cifar-alex-net-5-Nov-2016-00-21-57-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_only = load(fullfile(dataDir, subDataDir, 'cifar-alex-net-5-Nov-2016-01-28-38-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_5 = load(fullfile(dataDir, subDataDir, 'cifar-alexnet-5-Nov-2016-20-10-41-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_4 = load(fullfile(dataDir, subDataDir, 'cifar-alexnet-5-Nov-2016-22-18-04-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_3 = load(fullfile(dataDir, subDataDir, 'cifar-alexnet-6-Nov-2016-00-15-48-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_2 = load(fullfile(dataDir, subDataDir, 'cifar-alexnet-6-Nov-2016-01-40-22-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_1 = load(fullfile(dataDir, subDataDir, 'cifar-alexnet-6-Nov-2016-01-53-33-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_only = load(fullfile(dataDir, subDataDir, 'cifar-alexnet-6-Nov-2016-02-58-42-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
 fprintf('\nDone!');
 
 h = figure;
@@ -34,7 +34,7 @@ xlabel('epoch')
 ylabel('Training Error');
 saveas(h, sprintf('Training Comparison - %d.png', epochNum));
 
-h = figure
+h = figure;
 plot( ...
   1:1:epochNum, [fc_only.info.val.error(1,:)], ... % [fc_only.stats.val.top1err], ...
   1:1:epochNum, [fc_plus_1.info.val.error(1,:)], ... % [fc_plus_1.stats.val.top1err], ...

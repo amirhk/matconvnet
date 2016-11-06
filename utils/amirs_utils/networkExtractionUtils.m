@@ -26,7 +26,8 @@ function extractAlexNetCifar()
   % genWeightsMethod = @gen2DGaussianMultWeightsFromBaseline;
   % genWeightsMethod = @gen2DGaussianSuperWeightsFromBaseline;
   % genWeightsMethod = @gen2DGaussianPosNegWeightsFromBaseline;
-  genWeightsMethod = @gen2DGaussianPositiveWeightsFromBaseline;
+  % genWeightsMethod = @gen2DGaussianPositiveWeightsFromBaseline;
+  genWeightsMethod = @gen2DGaussianAmirWeightsFromBaseline;
   genNewWeights(net, genWeightsMethod);
 
 % --------------------------------------------------------------------
@@ -46,9 +47,9 @@ function extractLeNetCifar()
   % genWeightsMethod = @gen2DGaussianMultWeightsFromBaseline;
   % genWeightsMethod = @gen2DGaussianSuperWeightsFromBaseline;
   % genWeightsMethod = @gen2DGaussianPosNegWeightsFromBaseline;
-  genWeightsMethod = @gen2DGaussianPositiveWeightsFromBaseline;
+  % genWeightsMethod = @gen2DGaussianPositiveWeightsFromBaseline;
+  genWeightsMethod = @gen2DGaussianAmirWeightsFromBaseline;
   genNewWeights(net, genWeightsMethod);
-
 
 % --------------------------------------------------------------------
 function genNewWeights(net, genWeightsMethod)
@@ -91,7 +92,6 @@ function randomWeights = genBaselineWeights(layers, layerNumber)
 % --------------------------------------------------------------------
   randomWeights{1} = layers{layerNumber}.weights{1};
   randomWeights{2} = layers{layerNumber}.weights{2};
-
 
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 % -- ==                                                                                           -- ==
@@ -231,6 +231,16 @@ function newWeights = gen2DGaussianPosNegWeightsFromBaseline( ...
     layers, ...
     layerNumber);
 
+% --------------------------------------------------------------------
+function newWeights = gen2DGaussianAmirWeightsFromBaseline( ...
+  layers, ...
+  layerNumber)
+% --------------------------------------------------------------------
+  utils = gaussianUtils;
+  newWeights = gen2DGaussianCoreWeightsFromBaseline( ...
+    utils.fit2DGaussianAndDrawAmirSamples, ...
+    layers, ...
+    layerNumber);
 
 % --------------------------------------------------------------------
 function newWeights = gen2DGaussianCoreWeightsFromBaseline( ...
