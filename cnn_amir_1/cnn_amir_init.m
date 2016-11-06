@@ -1,10 +1,10 @@
 function net = cnn_amir_init(varargin)
 opts.networkArch = 'alexnet';
 opts.dataset = 'cifar';
-opts.backpropDepth = 20; % [20, 18, 15, 12, 10, 7];
-opts.weightDecay = 0.0001; % Works: {0.001, 0.0001, 0} Doesn't Work: {0.1, 0.01}
-opts.weightInitType = 'compRand'; % {'compRand', '1D', '2D-mult', '2D-super', '2D-posneg', '2D-positive'}
-opts.weightInitSource = 'gen'; % {'load' | 'gen'}
+opts.backpropDepth = 20;
+opts.weightDecay = 0.0001;
+opts.weightInitType = 'compRand';
+opts.weightInitSource = 'gen';
 opts.bottleneckDivideBy = 1;
 opts = vl_argparse(opts, varargin);
 
@@ -16,48 +16,9 @@ switch opts.networkArch
   case 'lenet'
     net.meta.trainOpts.learningRate = [0.01*ones(1,5) 0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
   case 'alexnet'
-    switch opts.weightInitType
-      case 'compRand'
-        % VERIFIED: weights completely random (goes down after 50 * 0.001 to %86 then after 230 epochs to ~%60)
-        net.meta.trainOpts.learningRate = [0.01*ones(1,5) 0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
-      case '1D'
-        % VERIFIED: weights random from pre-train 1D (with or without whitening)
-        net.meta.trainOpts.learningRate = [0.01*ones(1,5) 0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
-      case '2D-mult'
-        % TESTING.... weights random from pre-train 2D-mult (with whitening)
-        net.meta.trainOpts.learningRate = [0.01*ones(1,5) 0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
-      case '2D-super'
-        % TESTING.... weights random from pre-train 2D-super (with whitening)
-        % net.meta.trainOpts.learningRate = [1*ones(1,15)  0.005*ones(1,15) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
-        % net.meta.trainOpts.learningRate = [0.1*ones(1,15)  0.005*ones(1,15) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
-        % net.meta.trainOpts.learningRate = [0.01*ones(1,15)  0.005*ones(1,15) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
-        net.meta.trainOpts.learningRate = [0.01*ones(1,5) 0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
-        % net.meta.trainOpts.learningRate = [0.005*ones(1,100)];
-      case '2D-posneg'
-        % TESTING.... weights random from pre-train 2D (with whitening)
-        net.meta.trainOpts.learningRate = [0.01*ones(1,5) 0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
-        % net.meta.trainOpts.learningRate = [0.005*ones(1,100)];
-    end
+    net.meta.trainOpts.learningRate = [0.01*ones(1,5) 0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
   case 'alexnet-bnorm'
-    switch opts.weightInitType
-      case 'compRand'
-        % TESTING: weights completely random (goes down after 50 * 0.001 to %86 then after 230 epochs to ~%60)
-        net.meta.trainOpts.learningRate = [0.01*ones(1,5) 0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
-      case '1D'
-        % TESTING: weights random from pre-train 1D (with or without whitening)
-        net.meta.trainOpts.learningRate = [0.01*ones(1,5) 0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
-      case '2D-mult'
-        % TESTING.... weights random from pre-train 2D-mult (with whitening)
-        net.meta.trainOpts.learningRate = [0.01*ones(1,5) 0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
-      case '2D-super'
-        % TESTING.... weights random from pre-train 2D-super (with whitening)
-        net.meta.trainOpts.learningRate = [0.01*ones(1,5) 0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
-        % net.meta.trainOpts.learningRate = [0.005*ones(1,100)];
-      case '2D-posneg'
-        % TESTING.... weights random from pre-train 2D (with whitening)
-        net.meta.trainOpts.learningRate = [0.01*ones(1,5) 0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
-        % net.meta.trainOpts.learningRate = [0.005*ones(1,100)];
-    end
+    net.meta.trainOpts.learningRate = [0.01*ones(1,5) 0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
   case 'alexnet-bottleneck'
     % net.meta.trainOpts.learningRate = [0.01*ones(1,15)  0.005*ones(1,15) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
     net.meta.trainOpts.learningRate = [0.005*ones(1,50)];
@@ -116,14 +77,12 @@ switch opts.networkArch
     % --- --- ---                                                     --- --- --
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     layerNumber = 1;
-    % net.layers{end+1} = convLayer(layerNumber, 5, 3, 96, 5/1000, 2, opts.weightInitType, opts.weightInitSource, opts.networkArch);
-    net.layers{end+1} = convLayer(layerNumber, 5, 3, 96, 5/1000, 2, '2D-posneg', opts.weightInitSource, opts.networkArch);
+    net.layers{end+1} = convLayer(layerNumber, 5, 3, 96, 5/1000, 2, opts.weightInitType, opts.weightInitSource, opts.networkArch);
     net.layers{end+1} = reluLayer(layerNumber);
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     layerNumber = layerNumber + 2;
-    % net.layers{end+1} = convLayer(layerNumber, 5, 96, 256, 5/1000, 2, opts.weightInitType, opts.weightInitSource, opts.networkArch);
-    net.layers{end+1} = convLayer(layerNumber, 5, 96, 256, 5/1000, 2, '2D-posneg', opts.weightInitSource, opts.networkArch);
+    net.layers{end+1} = convLayer(layerNumber, 5, 96, 256, 5/1000, 2, opts.weightInitType, opts.weightInitSource, opts.networkArch);
     net.layers{end+1} = reluLayer(layerNumber);
     net.layers{end+1} = poolingLayerAlexNet(layerNumber);
 
@@ -286,14 +245,14 @@ end
 
 % --------------------------------------------------------------------
 function structuredLayer = convLayer(layerNumber, k, m, n, init_multiplier, pad, weightInitType, weightInitSource, networkArch);
-  % weightInitType = {'compRand', '1D', '2D-mult', '2D-super', '2D-posneg', '2D-positive'}
+  % weightInitType = {'baseline', 'compRand', '1D', '2D-positive', '2D-mult', '2D-super', '2D-posneg', '2D-shiftflip'};
   % weightInitSource = {'load' | 'gen'}
 % --------------------------------------------------------------------
   switch weightInitSource
     case 'load'
       layerWeights = loadWeights(networkArch, layerNumber, weightInitType);
     case 'gen'
-      if ~strcmp(weightInitType, 'compRand') % if weightInitType = {'1D' ,'2D-posneg','2D-mult', '2D-super'}
+      if ~strcmp(weightInitType, 'compRand')
         utils = networkExtractionUtils;
         baselineWeights = loadWeights(networkArch, layerNumber, 'baseline'); % used for its size
       end
@@ -301,34 +260,23 @@ function structuredLayer = convLayer(layerNumber, k, m, n, init_multiplier, pad,
         case 'compRand'
           layerWeights{1} = init_multiplier * randn(k, k, m, n, 'single');
           layerWeights{2} = zeros(1, n, 'single');
-        case '1D'
-          layerWeights = utils.gen1DGaussianWeightsFromBaseline(baselineWeights, layerNumber);
-        case '2D-mult'
-          layerWeights = utils.gen2DGaussianMultWeightsFromBaseline(baselineWeights, layerNumber);
-        case '2D-super'
-          layerWeights = utils.gen2DGaussianSuperWeightsFromBaseline(baselineWeights, layerNumber);
-        case '2D-posneg'
-          layerWeights = utils.gen2DGaussianPosNegWeightsFromBaseline(baselineWeights, layerNumber);
         otherwise
-          throwException('unrecognized command');
+          throwException('[ERROR] Generating non-compRand weights not supported from this code.');
       end
   end
-  % if strcmp(weightInitType, '2D-posneg') || strcmp(weightInitType, '2D-mult') || strcmp(weightInitType, '2D-super')
-  %   layerWeights2{1} = layerWeights{1} * .1;
-  %   layerWeights2{2} = layerWeights{2} * .1;
-  %   structuredLayer = constructConvLayer(layerNumber, layerWeights2, pad);
-  % end
   structuredLayer = constructConvLayer(layerNumber, layerWeights, pad, weightInitType, weightInitSource);
 
 % --------------------------------------------------------------------
 function weights = loadWeights(networkArch, layerNumber, weightInitType)
   % weightInitType = {
-  %   'compRand' |
   %   'baseline' |
+  %   'compRand' |
   %   '1D' |
-  %   '2D-posneg' |
+  %   '2D-positive' |
   %   '2D-mult' |
   %   '2D-super'
+  %   '2D-posneg' |
+  %   '2D-shiftflip' |
   % }
 % --------------------------------------------------------------------
   fprintf( ...

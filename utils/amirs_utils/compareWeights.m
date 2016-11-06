@@ -1,19 +1,19 @@
 % networkArch = 'cifar-lenet';
 % layer = 4; % [1, 4, 7]
 networkArch = 'cifar-alexnet';
-layer = 11; % [1, 3, 6, 9, 11]
+layer = 1; % [1, 3, 6, 9, 11]
 
 file_name = sprintf('W1-layer-%d.mat', layer);
 devPath = getDevPath();
 
-w_baseline = load(fullfile(devPath, 'data', networkArch, '+8epoch-baseline', file_name));
-w_compRand = load(fullfile(devPath, 'data', networkArch, '+8epoch-compRand', file_name));
-w_1D = load(fullfile(devPath, 'data', networkArch, '+8epoch-1D', file_name));
-w_2D_mult = load(fullfile(devPath, 'data', networkArch, '+8epoch-2D-mult', file_name));
-w_2D_super = load(fullfile(devPath, 'data', networkArch, '+8epoch-2D-super', file_name));
-w_2D_posneg = load(fullfile(devPath, 'data', networkArch, '+8epoch-2D-posneg', file_name));
-w_2D_positive = load(fullfile(devPath, 'data', networkArch, '+8epoch-2D-positive', file_name));
-w_2D_amir = load(fullfile(devPath, 'data', networkArch, '+8epoch-2D-amir', file_name));
+w_baseline = load(fullfile(devPath, 'data', networkArch, 'w_baseline', file_name));
+w_compRand = load(fullfile(devPath, 'data', networkArch, 'w_compRand', file_name));
+w_1D = load(fullfile(devPath, 'data', networkArch, 'w_1D', file_name));
+w_2D_mult = load(fullfile(devPath, 'data', networkArch, 'w_2D-mult', file_name));
+w_2D_super = load(fullfile(devPath, 'data', networkArch, 'w_2D-super', file_name));
+w_2D_posneg = load(fullfile(devPath, 'data', networkArch, 'w_2D-posneg', file_name));
+w_2D_positive = load(fullfile(devPath, 'data', networkArch, 'w_2D-positive', file_name));
+w_2D_shiftflip = load(fullfile(devPath, 'data', networkArch, 'w_2D-shiftflip', file_name));
 
 w_baseline = w_baseline.W1;
 w_compRand = w_compRand.W1;
@@ -22,7 +22,7 @@ w_2D_mult = w_2D_mult.W1;
 w_2D_super = w_2D_super.W1;
 w_2D_posneg = w_2D_posneg.W1;
 w_2D_positive = w_2D_positive.W1;
-w_2D_amir = w_2D_amir.W1;
+w_2D_shiftflip = w_2D_shiftflip.W1;
 
 assert(logical(prod(size(w_baseline) == size(w_compRand))));
 assert(logical(prod(size(w_baseline) == size(w_1D))));
@@ -30,7 +30,7 @@ assert(logical(prod(size(w_baseline) == size(w_2D_mult))));
 assert(logical(prod(size(w_baseline) == size(w_2D_super))));
 assert(logical(prod(size(w_baseline) == size(w_2D_posneg))));
 assert(logical(prod(size(w_baseline) == size(w_2D_positive))));
-assert(logical(prod(size(w_baseline) == size(w_2D_amir))));
+assert(logical(prod(size(w_baseline) == size(w_2D_shiftflip))));
 
 % randomly choose 3 kernels to compare
 num_kernels = 8;
@@ -71,9 +71,9 @@ for k = 1:2
   subplot(2,num_kernels,i), imshow(w_2D_posneg_slice, []), title('2D posneg');
   subplot(2,num_kernels,num_kernels + i), mesh(1:1:aa, 1:1:aa, w_2D_posneg_slice);
   i = i + 1;
-  w_2D_amir_slice = w_2D_amir(:, :, cc, dd);
-  subplot(2,num_kernels,i), imshow(w_2D_amir_slice, []), title('2D amir');
-  subplot(2,num_kernels,num_kernels + i), mesh(1:1:aa, 1:1:aa, w_2D_amir_slice);
+  w_2D_shiftflip_slice = w_2D_shiftflip(:, :, cc, dd);
+  subplot(2,num_kernels,i), imshow(w_2D_shiftflip_slice, []), title('2D shiftflip');
+  subplot(2,num_kernels,num_kernels + i), mesh(1:1:aa, 1:1:aa, w_2D_shiftflip_slice);
   % saveas(h, sprintf('Weight comparisons for slice (:,:,%d,%d).png', cc, dd));
 end
 

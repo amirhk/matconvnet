@@ -1,18 +1,14 @@
 function fh = networkExtractionUtils()
   % assign function handles so we can call these local functions from elsewhere
   fh.extractNewWeightsFromNetwork = @extractNewWeightsFromNetwork;
-  fh.gen1DGaussianWeightsFromBaseline = @gen1DGaussianWeightsFromBaseline;
-  fh.gen2DGaussianMultWeightsFromBaseline = @gen2DGaussianMultWeightsFromBaseline;
-  fh.gen2DGaussianSuperWeightsFromBaseline = @gen2DGaussianSuperWeightsFromBaseline;
-  fh.gen2DGaussianPosNegWeightsFromBaseline = @gen2DGaussianPosNegWeightsFromBaseline;
-  fh.gen2DGaussianPositiveWeightsFromBaseline = @gen2DGaussianPositiveWeightsFromBaseline;
-
+  fh.extractAllNewWeightsFromNetwork = @extractAllNewWeightsFromNetwork;
 
 % --------------------------------------------------------------------
-function extractNewWeightsFromNetwork(networkArch, newWeightType)
+function extractNewWeightsFromNetwork(networkArch, weightInitType)
   % networkArch = {'alexnet', 'lenet'}
-  % newWeightType = {'baseline', 'compRand', '1D', '2D-positive', '2D-mult', '2D-super', '2D-posneg', '2D-amir'}
+  % weightInitType = {'baseline', 'compRand', '1D', '2D-positive', '2D-mult', '2D-super', '2D-posneg', '2D-shiftflip'};
 % --------------------------------------------------------------------
+  fprintf('\n-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --\n');
   fprintf(sprintf('[INFO] Loading data from pre-trained %s on Cifar...\n', networkArch));
   devPath = getDevPath();
   loadedFile = load(fullfile( ...
@@ -24,7 +20,7 @@ function extractNewWeightsFromNetwork(networkArch, newWeightType)
   net = loadedFile.net;
   % printNetworkStructure(net);
   % TODO: change these....
-  switch newWeightType
+  switch weightInitType
     case 'baseline'
       genWeightsMethod = @genBaselineWeights;
     case 'compRand'
@@ -39,22 +35,35 @@ function extractNewWeightsFromNetwork(networkArch, newWeightType)
       genWeightsMethod = @gen2DGaussianPosNegWeightsFromBaseline;
     case '2D-positive'
       genWeightsMethod = @gen2DGaussianPositiveWeightsFromBaseline;
-    case '2D-amir'
-      genWeightsMethod = @gen2DGaussianAmirWeightsFromBaseline;
+    case '2D-shiftflip'
+      genWeightsMethod = @gen2DGaussianShiftFlipWeightsFromBaseline;
   end
-  genNewWeights(networkArch, newWeightType, net, genWeightsMethod);
+  genNewWeights(networkArch, weightInitType, net, genWeightsMethod);
 
 % --------------------------------------------------------------------
-function genNewWeights(networkArch, newWeightType, net, genWeightsMethod)
+function extractAllNewWeightsFromNetwork(networkArch)
+  % networkArch = {'alexnet', 'lenet'}
+% --------------------------------------------------------------------
+  runInTryCatch(@extractNewWeightsFromNetwork, networkArch, 'baseline');
+  runInTryCatch(@extractNewWeightsFromNetwork, networkArch, 'compRand');
+  runInTryCatch(@extractNewWeightsFromNetwork, networkArch, '1D');
+  runInTryCatch(@extractNewWeightsFromNetwork, networkArch, '2D-mult');
+  runInTryCatch(@extractNewWeightsFromNetwork, networkArch, '2D-super');
+  runInTryCatch(@extractNewWeightsFromNetwork, networkArch, '2D-posneg');
+  runInTryCatch(@extractNewWeightsFromNetwork, networkArch, '2D-positive');
+  runInTryCatch(@extractNewWeightsFromNetwork, networkArch, '2D-shiftflip');
+
+% --------------------------------------------------------------------
+function genNewWeights(networkArch, weightInitType, net, genWeightsMethod)
   % for all 'conv' layers...
 % --------------------------------------------------------------------
-  fprintf('[INFO] Generating new weights... \n');
+  fprintf(sprintf('[INFO] Generating new `%s` weights from `%s`... \n', weightInitType, networkArch));
   layers = net.layers;
   for i = 1:numel(layers)
     if (strcmp(layers{i}.type, 'conv'))
       layerNumber = i;
       newWeights = genWeightsMethod(layers, layerNumber);
-      saveNewWeights(networkArch, newWeightType, newWeights, layerNumber);
+      saveNewWeights(networkArch, weightInitType, newWeights, layerNumber);
     end
   end
   fprintf('[INFO] Successfully finished generating weights!\n\n');
@@ -225,13 +234,13 @@ function newWeights = gen2DGaussianPosNegWeightsFromBaseline( ...
     layerNumber);
 
 % --------------------------------------------------------------------
-function newWeights = gen2DGaussianAmirWeightsFromBaseline( ...
+function newWeights = gen2DGaussianShiftFlipWeightsFromBaseline( ...
   layers, ...
   layerNumber)
 % --------------------------------------------------------------------
   utils = gaussianUtils;
   newWeights = gen2DGaussianCoreWeightsFromBaseline( ...
-    utils.fit2DGaussianAndDrawAmirSamples, ...
+    utils.fit2DGaussianAndDrawShiftFlipSamples, ...
     layers, ...
     layerNumber);
 
@@ -257,7 +266,7 @@ function newWeights = gen2DGaussianCoreWeightsFromBaseline( ...
   newWeights{2} = layers{layerNumber}.weights{2};
   numberOfKernels = size(newWeights{1}, 3) * size(newWeights{1}, 4);
   fprintf( ...
-    ['[INFO] layer %d: 2D weights gene1rated for %d kernels. ', ...
+    ['[INFO] layer %d: 2D weights generated for %d kernels. ', ...
     'Elapsed Time (since start): %f\n'], ...
     layerNumber, ...
     numberOfKernels, ...
@@ -270,7 +279,7 @@ function newWeights = gen2DGaussianCoreWeightsFromBaseline( ...
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 
 % --------------------------------------------------------------------
-function newWeights = saveNewWeights(networkArch, newWeightType, newWeights, layerNumber)
+function newWeights = saveNewWeights(networkArch, weightInitType, newWeights, layerNumber)
   % WARNING: only 1 sample!
 % --------------------------------------------------------------------
   % devPath = getDevPath();
@@ -278,7 +287,7 @@ function newWeights = saveNewWeights(networkArch, newWeightType, newWeights, lay
   %   devPath, ...
   %   'data', ...
   %   sprintf('cifar-%s', networkArch), ...
-  %   sprintf('w_%s', newWeightType));
+  %   sprintf('w_%s', weightInitType));
   % if ~exist(folder)
   %   mkdir(folder);
   % else
@@ -297,7 +306,7 @@ function newWeights = saveNewWeights(networkArch, newWeightType, newWeights, lay
     devPath, ...
     'data', ...
     sprintf('cifar-%s', networkArch), ...
-    sprintf('w_%s', newWeightType));
+    sprintf('w_%s', weightInitType));
   if ~exist(folder)
     mkdir(folder);
   end
@@ -326,4 +335,13 @@ function printNetworkStructure(net)
         layers{i}.stride);
       disp(layers{i}.pool);
     end
+  end
+
+% --------------------------------------------------------------------
+function runInTryCatch(function_handle, networkArch, weightInitType)
+% --------------------------------------------------------------------
+  try
+    feval(function_handle, networkArch, weightInitType);
+  catch
+    fprintf('caught ya bitch!\n');
   end

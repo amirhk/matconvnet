@@ -5,7 +5,7 @@ function fh = gaussianUtils()
   fh.fit2DGaussianAndDrawSuperSamples = @fit2DGaussianAndDrawSuperSamples;
   fh.fit2DGaussianAndDrawPosNegSamples = @fit2DGaussianAndDrawPosNegSamples;
   fh.fit2DGaussianAndDrawPositiveSamples = @fit2DGaussianAndDrawPositiveSamples;
-  fh.fit2DGaussianAndDrawAmirSamples = @fit2DGaussianAndDrawAmirSamples;
+  fh.fit2DGaussianAndDrawShiftFlipSamples = @fit2DGaussianAndDrawShiftFlipSamples;
 
 % --------------------------------------------------------------------
 function [mu_y, mu_x, covariance] = fit2DGaussian(kernel)
@@ -64,10 +64,10 @@ function testGaussianUtils(kernel)
 % --------------------------------------------------------------------
   ndim = size(kernel,1);
   kernel2 = fit2DGaussianAndDrawPositiveSamples(kernel, false);
-  kernel3 = fit2DGaussianAndDrawSamples(kernel, false);
-  kernel4 = fit2DGaussianAndDrawMultSamples(kernel, false);
-  kernel5 = fit2DGaussianAndDrawSuperSamples(kernel, false);
-  kernel6 = fit2DGaussianAndDrawAmirSamples(kernel, false);
+  kernel3 = fit2DGaussianAndDrawMultSamples(kernel, false);
+  kernel4 = fit2DGaussianAndDrawSuperSamples(kernel, false);
+  kernel5 = fit2DGaussianAndDrawPosNegSamples(kernel, false);
+  kernel6 = fit2DGaussianAndDrawShiftFlipSamples(kernel, false);
   figure;
   i = 1;
   num_kernels = 6;
@@ -77,16 +77,16 @@ function testGaussianUtils(kernel)
   subplot(2,num_kernels,i), imshow(kernel2, []), title('2D fit / positive samples');
   subplot(2,num_kernels,num_kernels + i), mesh(1:1:ndim, 1:1:ndim, kernel2);
   i = i + 1;
-  subplot(2,num_kernels,i), imshow(kernel3, []), title('+/- samples');
+  subplot(2,num_kernels,i), imshow(kernel3, []), title('mult samples');
   subplot(2,num_kernels,num_kernels + i), mesh(1:1:ndim, 1:1:ndim, kernel3);
   i = i + 1;
-  subplot(2,num_kernels,i), imshow(kernel4, []), title('mult samples');
+  subplot(2,num_kernels,i), imshow(kernel4, []), title('super samples');
   subplot(2,num_kernels,num_kernels + i), mesh(1:1:ndim, 1:1:ndim, kernel4);
   i = i + 1;
-  subplot(2,num_kernels,i), imshow(kernel5, []), title('super samples');
+  subplot(2,num_kernels,i), imshow(kernel5, []), title('posneg samples');
   subplot(2,num_kernels,num_kernels + i), mesh(1:1:ndim, 1:1:ndim, kernel5);
   i = i + 1;
-  subplot(2,num_kernels,i), imshow(kernel6, []), title('super samples');
+  subplot(2,num_kernels,i), imshow(kernel6, []), title('shiftflip samples');
   subplot(2,num_kernels,num_kernels + i), mesh(1:1:ndim, 1:1:ndim, kernel6);
 
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
@@ -117,8 +117,8 @@ function sample = fit2DGaussianAndDrawMultSamples(kernel, debug_flag)
     sample2 = g .* kernel;
     h = figure;
     subplot(1,5,1), imshow(kernel, []), title('input kernel');
-    subplot(1,5,2), imshow(positive_sample, []), title('amirs gaussian');
-    subplot(1,5,3), imshow(sample1, []), title('amirs g * kernel ');
+    subplot(1,5,2), imshow(positive_sample, []), title('positive gaussian');
+    subplot(1,5,3), imshow(sample1, []), title('positive g * kernel ');
     subplot(1,5,4), imshow(g, []), title('fixed gaussian');
     subplot(1,5,5), imshow(sample2, []), title('fixed g * kernel');
     saveas(h, sprintf('Gaussians - %s.png', datetime('now', 'Format', 'd-MMM-y-HH-mm-ss')));
@@ -188,7 +188,7 @@ function sample = fit2DGaussianAndDrawPositiveSamples(kernel, debug_flag)
   end
 
 % --------------------------------------------------------------------
-function sample = fit2DGaussianAndDrawAmirSamples(kernel, debug_flag)
+function sample = fit2DGaussianAndDrawShiftFlipSamples(kernel, debug_flag)
 % --------------------------------------------------------------------
   sample = fit2DGaussianAndDrawPositiveSamples(kernel, debug_flag);
   sample = scaleDrawnSampleToInitialDynamicRange(kernel, sample);

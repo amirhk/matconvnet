@@ -2,14 +2,20 @@ function main_cnn_amir(varargin)
   folder = fileparts(mfilename('fullpath'));
   folderNumber = str2num(folder(end));
 
+% -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
+% -- ==                                                                   -- ==
+% -- ==                        NETWORK ARCH                               -- ==
+% -- ==                                                                   -- ==
+% -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
+
   % networkArch = 'lenet';
   % % backpropDepthList = [13, 10, 7, 4];
   % backpropDepthList = [13];
   % bottleneckDivideByList = [1];
 
   networkArch = 'alexnet';
-  backpropDepthList = [20, 18, 15, 12, 10, 7];
-  % backpropDepthList = [20];
+  % backpropDepthList = [20, 18, 15, 12, 10, 7];
+  backpropDepthList = [20];
   bottleneckDivideByList = [1];
 
   % networkArch = 'alexnet-bnorm';
@@ -21,16 +27,30 @@ function main_cnn_amir(varargin)
   % backpropDepthList = [21];
   % bottleneckDivideByList = [1,2,4,8,16,32];
 
+% -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
+% -- ==                                                                   -- ==
+% -- ==                          MORE PARAMS                              -- ==
+% -- ==                                                                   -- ==
+% -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
+
   dataset = 'cifar';
-  weightInitSource = 'load';
-  weightInitTypeList = {'compRand'};
-  % weightInitTypeList = {'baseline', 'compRand', '1D', '2D-mult', '2D-super', '2D-posneg', '2D-amir'};
+  weightInitSource = 'load';  % {'load' | 'gen'}
+
+  % weightInitTypeList = {'baseline', 'compRand', '1D', '2D-positive', '2D-mult', '2D-super', '2D-posneg', '2D-shiftflip'};
+  weightInitTypeList = {'2D-shiftflip'};
 
   % imdbPortionList = [0.1, 0.25, 0.5, 1.0];
   imdbPortionList = [1.0];
 
-  % weightDecayList = [0.1, 0.01, 0.001, 0.0001, 0];
+  % weightDecayList = [0.1, 0.01, 0.001, 0.0001, 0]; % Works: {0.001, 0.0001, 0} Doesn't Work: {0.1, 0.01}
   weightDecayList = [0.0001];
+
+% -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
+% -- ==                                                                   -- ==
+% -- ==                           MAIN LOOP                               -- ==
+% -- ==                                                                   -- ==
+% -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
+
   for weightInitType = weightInitTypeList
     for bottleneckDivideBy = bottleneckDivideByList
       for imdbPortion = imdbPortionList
