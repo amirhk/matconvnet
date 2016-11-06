@@ -7,7 +7,7 @@ file_name = sprintf('W1-layer-%d.mat', layer);
 devPath = getDevPath();
 
 w_baseline = load(fullfile(devPath, 'data', networkArch, '+8epoch-baseline', file_name));
-w_random = load(fullfile(devPath, 'data', networkArch, '+8epoch-random', file_name));
+w_random = load(fullfile(devPath, 'data', networkArch, '+8epoch-compRand', file_name));
 w_1D = load(fullfile(devPath, 'data', networkArch, '+8epoch-1D', file_name));
 w_2D_mult = load(fullfile(devPath, 'data', networkArch, '+8epoch-2D-mult', file_name));
 w_2D_super = load(fullfile(devPath, 'data', networkArch, '+8epoch-2D-super', file_name));
@@ -53,7 +53,7 @@ for k = 1:5
   subplot(2,num_kernels,num_kernels + i), mesh(1:1:aa, 1:1:aa, w_1D_slice);
   i = i + 1;
   w_2D_positive_slice = w_2D_positive(:, :, cc, dd);
-  subplot(2,num_kernels,i), imshow(w_2D_mult_slice, []), title('2D positive');
+  subplot(2,num_kernels,i), imshow(w_2D_positive_slice, []), title('2D positive');
   subplot(2,num_kernels,num_kernels + i), mesh(1:1:aa, 1:1:aa, w_2D_positive_slice);
   i = i + 1;
   w_2D_mult_slice = w_2D_mult(:, :, cc, dd);

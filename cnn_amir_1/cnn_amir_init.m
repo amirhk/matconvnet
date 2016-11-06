@@ -318,7 +318,7 @@ function structuredLayer = convLayer(layerNumber, k, m, n, init_multiplier, pad,
   %   layerWeights2{2} = layerWeights{2} * .1;
   %   structuredLayer = constructConvLayer(layerNumber, layerWeights2, pad);
   % end
-  structuredLayer = constructConvLayer(layerNumber, layerWeights, pad);
+  structuredLayer = constructConvLayer(layerNumber, layerWeights, pad, weightInitType, weightInitSource);
 
 % --------------------------------------------------------------------
 function weights = loadWeights(networkArch, layerNumber, weightInitType)
@@ -353,11 +353,11 @@ function weights = loadWeights(networkArch, layerNumber, weightInitType)
   fprintf('Done!\n');
 
 % --------------------------------------------------------------------
-function structuredLayer = constructConvLayer(index, weights, pad)
+function structuredLayer = constructConvLayer(index, weights, pad, weightInitType, weightInitSource)
 % --------------------------------------------------------------------
   structuredLayer = struct( ...
     'type', 'conv', ...
-    'name', sprintf('conv%s', index), ...
+    'name', sprintf('conv%s-%s-%s', index, weightInitType, weightInitSource), ...
     'weights', {weights}, ...
     'stride', 1, ...
     'pad', pad);
