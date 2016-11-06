@@ -7,7 +7,7 @@ file_name = sprintf('W1-layer-%d.mat', layer);
 devPath = getDevPath();
 
 w_baseline = load(fullfile(devPath, 'data', networkArch, '+8epoch-baseline', file_name));
-w_random = load(fullfile(devPath, 'data', networkArch, '+8epoch-compRand', file_name));
+w_compRand = load(fullfile(devPath, 'data', networkArch, '+8epoch-compRand', file_name));
 w_1D = load(fullfile(devPath, 'data', networkArch, '+8epoch-1D', file_name));
 w_2D_mult = load(fullfile(devPath, 'data', networkArch, '+8epoch-2D-mult', file_name));
 w_2D_super = load(fullfile(devPath, 'data', networkArch, '+8epoch-2D-super', file_name));
@@ -16,7 +16,7 @@ w_2D_positive = load(fullfile(devPath, 'data', networkArch, '+8epoch-2D-positive
 w_2D_amir = load(fullfile(devPath, 'data', networkArch, '+8epoch-2D-amir', file_name));
 
 w_baseline = w_baseline.W1;
-w_random = w_random.W1;
+w_compRand = w_compRand.W1;
 w_1D = w_1D.W1;
 w_2D_mult = w_2D_mult.W1;
 w_2D_super = w_2D_super.W1;
@@ -24,7 +24,7 @@ w_2D_posneg = w_2D_posneg.W1;
 w_2D_positive = w_2D_positive.W1;
 w_2D_amir = w_2D_amir.W1;
 
-assert(logical(prod(size(w_baseline) == size(w_random))));
+assert(logical(prod(size(w_baseline) == size(w_compRand))));
 assert(logical(prod(size(w_baseline) == size(w_1D))));
 assert(logical(prod(size(w_baseline) == size(w_2D_mult))));
 assert(logical(prod(size(w_baseline) == size(w_2D_super))));
@@ -47,9 +47,9 @@ for k = 1:2
   subplot(2,num_kernels,i), imshow(w_baseline_slice, []), title('baseline');
   subplot(2,num_kernels,num_kernels + i), mesh(1:1:aa, 1:1:aa, w_baseline_slice);
   i = i + 1;
-  w_random_slice = w_random(:, :, cc, dd);
-  subplot(2,num_kernels,i), imshow(w_random_slice, []), title('random');
-  subplot(2,num_kernels,num_kernels + i), mesh(1:1:aa, 1:1:aa, w_random_slice);
+  w_compRand_slice = w_compRand(:, :, cc, dd);
+  subplot(2,num_kernels,i), imshow(w_compRand_slice, []), title('random');
+  subplot(2,num_kernels,num_kernels + i), mesh(1:1:aa, 1:1:aa, w_compRand_slice);
   i = i + 1;
   w_1D_slice = w_1D(:, :, cc, dd);
   subplot(2,num_kernels,i), imshow(w_1D_slice, []), title('1D');
