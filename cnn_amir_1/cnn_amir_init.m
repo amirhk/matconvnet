@@ -14,8 +14,7 @@ net.layers = {};
 % Meta parameters
 switch opts.networkArch
   case 'lenet'
-    % net.meta.trainOpts.learningRate = [0.01*ones(1,5) 0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
-    net.meta.trainOpts.learningRate = [0.01*ones(1,5) 0.005*ones(1,15) 0.001*ones(1,10)];
+    net.meta.trainOpts.learningRate = [0.01*ones(1,5) 0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
   case 'alexnet'
     net.meta.trainOpts.learningRate = [0.01*ones(1,5) 0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
   case 'alexnet-bnorm'
@@ -78,12 +77,14 @@ switch opts.networkArch
     % --- --- ---                                                     --- --- --
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     layerNumber = 1;
-    net.layers{end+1} = convLayer(layerNumber, 5, 3, 96, 5/1000, 2, opts.weightInitType, opts.weightInitSource, opts.networkArch);
+    % net.layers{end+1} = convLayer(layerNumber, 5, 3, 96, 5/1000, 2, opts.weightInitType, opts.weightInitSource, opts.networkArch);
+    net.layers{end+1} = convLayer(layerNumber, 5, 3, 96, 5/1000, 2, '2D-mult2', opts.weightInitSource, opts.networkArch);
     net.layers{end+1} = reluLayer(layerNumber);
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     layerNumber = layerNumber + 2;
-    net.layers{end+1} = convLayer(layerNumber, 5, 96, 256, 5/1000, 2, opts.weightInitType, opts.weightInitSource, opts.networkArch);
+    % net.layers{end+1} = convLayer(layerNumber, 5, 96, 256, 5/1000, 2, opts.weightInitType, opts.weightInitSource, opts.networkArch);
+    net.layers{end+1} = convLayer(layerNumber, 5, 96, 256, 5/1000, 2, '2D-mult2', opts.weightInitSource, opts.networkArch);
     net.layers{end+1} = reluLayer(layerNumber);
     net.layers{end+1} = poolingLayerAlexNet(layerNumber);
 

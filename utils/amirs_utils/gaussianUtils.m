@@ -107,7 +107,6 @@ function sample = fit2DGaussianAndDrawMultSamples(kernel, debug_flag)
   positive_sample = positive_sample / sum(positive_sample(:));
   sample = positive_sample .* kernel;
 
-
   % disp(sum(positive_sample(:)));
   % disp(positive_sample);
   % g = fspecial('gaussian', [size(kernel,1), size(kernel,1)], 1);
