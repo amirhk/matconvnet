@@ -137,6 +137,7 @@ function sample = fit2DGaussianAndDrawMult2Samples(kernel, debug_flag)
   ndim = size(kernel, 1);
   positive_sample = fit2DGaussianAndDrawPositiveSamples(kernel, debug_flag);
   sample = randn(ndim, ndim) .* positive_sample;
+  sample = scaleDrawnSampleToInitialDynamicRange(kernel, sample);
 
 % --------------------------------------------------------------------
 function sample = fit2DGaussianAndDrawSuperSamples(kernel, debug_flag)

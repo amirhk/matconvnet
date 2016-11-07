@@ -14,8 +14,8 @@ net.layers = {};
 % Meta parameters
 switch opts.networkArch
   case 'lenet'
-    % net.meta.trainOpts.learningRate = [0.01*ones(1,5) 0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
-    net.meta.trainOpts.learningRate = [0.01*ones(1,5) 0.005*ones(1,15) 0.001*ones(1,10)];
+    net.meta.trainOpts.learningRate = [0.01*ones(1,5) 0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
+    % net.meta.trainOpts.learningRate = [0.01*ones(1,5) 0.005*ones(1,15) 0.001*ones(1,10)];
   case 'alexnet'
     net.meta.trainOpts.learningRate = [0.01*ones(1,5) 0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
   case 'alexnet-bnorm'
