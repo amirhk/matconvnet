@@ -14,7 +14,8 @@ net.layers = {};
 % Meta parameters
 switch opts.networkArch
   case 'lenet'
-    net.meta.trainOpts.learningRate = [0.01*ones(1,5) 0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
+    % net.meta.trainOpts.learningRate = [0.01*ones(1,5) 0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
+    net.meta.trainOpts.learningRate = [0.01*ones(1,5) 0.005*ones(1,15) 0.001*ones(1,10)];
   case 'alexnet'
     net.meta.trainOpts.learningRate = [0.01*ones(1,5) 0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
   case 'alexnet-bnorm'
@@ -245,8 +246,6 @@ end
 
 % --------------------------------------------------------------------
 function structuredLayer = convLayer(layerNumber, k, m, n, init_multiplier, pad, weightInitType, weightInitSource, networkArch);
-  % weightInitType = {'baseline', 'compRand', '1D', '2D-positive', '2D-mult', '2D-super', '2D-posneg', '2D-shiftflip'};
-  % weightInitSource = {'load' | 'gen'}
 % --------------------------------------------------------------------
   switch weightInitSource
     case 'load'
@@ -268,16 +267,6 @@ function structuredLayer = convLayer(layerNumber, k, m, n, init_multiplier, pad,
 
 % --------------------------------------------------------------------
 function weights = loadWeights(networkArch, layerNumber, weightInitType)
-  % weightInitType = {
-  %   'baseline' |
-  %   'compRand' |
-  %   '1D' |
-  %   '2D-positive' |
-  %   '2D-mult' |
-  %   '2D-super'
-  %   '2D-posneg' |
-  %   '2D-shiftflip' |
-  % }
 % --------------------------------------------------------------------
   fprintf( ...
     '[INFO] Loading %s weights (layer %d) from saved directory...\t', ...

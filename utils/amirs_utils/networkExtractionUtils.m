@@ -6,7 +6,7 @@ function fh = networkExtractionUtils()
 % --------------------------------------------------------------------
 function extractNewWeightsFromNetwork(networkArch, weightInitType)
   % networkArch = {'alexnet', 'lenet'}
-  % weightInitType = {'baseline', 'compRand', '1D', '2D-positive', '2D-mult', '2D-super', '2D-posneg', '2D-shiftflip'};
+  % weightInitType = {'baseline', 'compRand', '1D', '2D-positive', '2D-mult', '2D-mult2', '2D-super', '2D-posneg', '2D-shiftflip'};
 % --------------------------------------------------------------------
   fprintf('\n-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --\n');
   fprintf(sprintf('[INFO] Loading data from pre-trained %s on Cifar...\n', networkArch));
@@ -29,6 +29,8 @@ function extractNewWeightsFromNetwork(networkArch, weightInitType)
       genWeightsMethod = @gen1DGaussianWeightsFromBaseline;
     case '2D-mult'
       genWeightsMethod = @gen2DGaussianMultWeightsFromBaseline;
+    case '2D-mult2'
+      genWeightsMethod = @gen2DGaussianMult2WeightsFromBaseline;
     case '2D-super'
       genWeightsMethod = @gen2DGaussianSuperWeightsFromBaseline;
     case '2D-posneg'
@@ -48,6 +50,7 @@ function extractAllNewWeightsFromNetwork(networkArch)
   runInTryCatch(@extractNewWeightsFromNetwork, networkArch, 'compRand');
   runInTryCatch(@extractNewWeightsFromNetwork, networkArch, '1D');
   runInTryCatch(@extractNewWeightsFromNetwork, networkArch, '2D-mult');
+  runInTryCatch(@extractNewWeightsFromNetwork, networkArch, '2D-mult2');
   runInTryCatch(@extractNewWeightsFromNetwork, networkArch, '2D-super');
   runInTryCatch(@extractNewWeightsFromNetwork, networkArch, '2D-posneg');
   runInTryCatch(@extractNewWeightsFromNetwork, networkArch, '2D-positive');
@@ -197,6 +200,17 @@ function newWeights = gen2DGaussianMultWeightsFromBaseline( ...
   utils = gaussianUtils;
   newWeights = gen2DGaussianCoreWeightsFromBaseline( ...
     utils.fit2DGaussianAndDrawMultSamples, ...
+    layers, ...
+    layerNumber);
+
+% --------------------------------------------------------------------
+function newWeights = gen2DGaussianMult2WeightsFromBaseline( ...
+  layers, ...
+  layerNumber)
+% --------------------------------------------------------------------
+  utils = gaussianUtils;
+  newWeights = gen2DGaussianCoreWeightsFromBaseline( ...
+    utils.fit2DGaussianAndDrawMult2Samples, ...
     layers, ...
     layerNumber);
 

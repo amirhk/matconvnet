@@ -2,6 +2,7 @@ function fh = gaussianUtils()
   % assign function handles so we can call these local functions from elsewhere
   fh.testGaussianUtils = @testGaussianUtils;
   fh.fit2DGaussianAndDrawMultSamples = @fit2DGaussianAndDrawMultSamples;
+  fh.fit2DGaussianAndDrawMult2Samples = @fit2DGaussianAndDrawMult2Samples;
   fh.fit2DGaussianAndDrawSuperSamples = @fit2DGaussianAndDrawSuperSamples;
   fh.fit2DGaussianAndDrawPosNegSamples = @fit2DGaussianAndDrawPosNegSamples;
   fh.fit2DGaussianAndDrawPositiveSamples = @fit2DGaussianAndDrawPositiveSamples;
@@ -65,12 +66,13 @@ function testGaussianUtils(kernel)
   ndim = size(kernel,1);
   kernel2 = fit2DGaussianAndDrawPositiveSamples(kernel, false);
   kernel3 = fit2DGaussianAndDrawMultSamples(kernel, false);
+  kernel53 = fit2DGaussianAndDrawMult2Samples(kernel, false);
   kernel4 = fit2DGaussianAndDrawSuperSamples(kernel, false);
   kernel5 = fit2DGaussianAndDrawPosNegSamples(kernel, false);
   kernel6 = fit2DGaussianAndDrawShiftFlipSamples(kernel, false);
   figure;
   i = 1;
-  num_kernels = 6;
+  num_kernels = 7;
   subplot(2,num_kernels,i), imshow(kernel, []), title('input');
   subplot(2,num_kernels,num_kernels + i), mesh(1:1:ndim, 1:1:ndim, kernel);
   i = i + 1;
@@ -79,6 +81,9 @@ function testGaussianUtils(kernel)
   i = i + 1;
   subplot(2,num_kernels,i), imshow(kernel3, []), title('mult samples');
   subplot(2,num_kernels,num_kernels + i), mesh(1:1:ndim, 1:1:ndim, kernel3);
+  i = i + 1;
+  subplot(2,num_kernels,i), imshow(kernel35, []), title('mult2 samples');
+  subplot(2,num_kernels,num_kernels + i), mesh(1:1:ndim, 1:1:ndim, kernel35);
   i = i + 1;
   subplot(2,num_kernels,i), imshow(kernel4, []), title('super samples');
   subplot(2,num_kernels,num_kernels + i), mesh(1:1:ndim, 1:1:ndim, kernel4);
@@ -125,6 +130,13 @@ function sample = fit2DGaussianAndDrawMultSamples(kernel, debug_flag)
   end
   sample = scaleDrawnSampleToInitialDynamicRange(kernel, sample);
   % sample = scaleDrawnSampleToInitialDynamicRangeMeanZero(sample);
+
+% --------------------------------------------------------------------
+function sample = fit2DGaussianAndDrawMult2Samples(kernel, debug_flag)
+% --------------------------------------------------------------------
+  ndim = size(kernel, 1);
+  positive_sample = fit2DGaussianAndDrawPositiveSamples(kernel, debug_flag);
+  sample = randn(ndim, ndim) .* positive_sample;
 
 % --------------------------------------------------------------------
 function sample = fit2DGaussianAndDrawSuperSamples(kernel, debug_flag)
