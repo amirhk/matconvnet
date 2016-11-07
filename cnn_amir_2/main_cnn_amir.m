@@ -8,15 +8,15 @@ function main_cnn_amir(varargin)
 % -- ==                                                                   -- ==
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 
-  networkArch = 'lenet';
-  % backpropDepthList = [13, 10, 7, 4];
-  backpropDepthList = [13];
-  bottleneckDivideByList = [1];
-
-  % networkArch = 'alexnet';
-  % % backpropDepthList = [20, 18, 15, 12, 10, 7];
-  % backpropDepthList = [20];
+  % networkArch = 'lenet';
+  % % backpropDepthList = [13, 10, 7, 4];
+  % backpropDepthList = [13];
   % bottleneckDivideByList = [1];
+
+  networkArch = 'alexnet';
+  backpropDepthList = [20, 18, 15, 12, 10, 7];
+  % backpropDepthList = [20];
+  bottleneckDivideByList = [1];
 
   % networkArch = 'alexnet-bnorm';
   % % backpropDepthList = [20, 18, 15, 12, 10, 7];
@@ -36,8 +36,8 @@ function main_cnn_amir(varargin)
   dataset = 'cifar';
   weightInitSource = 'load';  % {'load' | 'gen'}
 
-  % weightInitTypeList = {'baseline', 'compRand', '1D', '2D-positive', '2D-mult', '2D-mult2', '2D-super', '2D-posneg', '2D-shiftflip'};
-  weightInitTypeList = {'compRand'};
+  % weightInitTypeList = {'baseline', 'compRand', '1D', '2D-positive', '2D-super', '2D-posneg', '2D-shiftflip', '2D-mult-randn', '2D-mult-kernel'};
+  weightInitTypeList = {'1D'};
 
   % imdbPortionList = [0.1, 0.25, 0.5, 1.0];
   imdbPortionList = [1.0];
