@@ -34,10 +34,9 @@ function main_cnn_amir(varargin)
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 
   dataset = 'cifar';
-  % weightInitSource = 'load';  % {'load' | 'gen'}
   weightInitSource = 'load';  % {'load' | 'gen'}
 
-  % weightInitTypeList = {'baseline', 'compRand', '1D', '2D-positive', '2D-mult', '2D-mult2', '2D-super', '2D-posneg', '2D-shiftflip'};
+  % weightInitTypeList = {'baseline', 'compRand', '1D', '2D-positive', '2D-super', '2D-posneg', '2D-shiftflip', '2D-mult-randn', '2D-mult-kernel'};
   weightInitTypeList = {'compRand'};
 
   % imdbPortionList = [0.1, 0.25, 0.5, 1.0];

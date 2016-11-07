@@ -6,7 +6,7 @@ function fh = networkExtractionUtils()
 % --------------------------------------------------------------------
 function extractNewWeightsFromNetwork(networkArch, weightInitType)
   % networkArch = {'alexnet', 'lenet'}
-  % weightInitType = {'baseline', 'compRand', '1D', '2D-positive', '2D-mult', '2D-mult2', '2D-super', '2D-posneg', '2D-shiftflip'};
+  % weightInitType = {'baseline', 'compRand', '1D', '2D-positive', '2D-super', '2D-posneg', '2D-shiftflip', '2D-mult-randn', '2D-mult-kernel'};
 % --------------------------------------------------------------------
   fprintf('\n-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --\n');
   fprintf(sprintf('[INFO] Loading data from pre-trained %s on Cifar...\n', networkArch));
@@ -27,10 +27,6 @@ function extractNewWeightsFromNetwork(networkArch, weightInitType)
       genWeightsMethod = @genCompRandWeights;
     case '1D'
       genWeightsMethod = @gen1DGaussianWeightsFromBaseline;
-    case '2D-mult'
-      genWeightsMethod = @gen2DGaussianMultWeightsFromBaseline;
-    case '2D-mult2'
-      genWeightsMethod = @gen2DGaussianMult2WeightsFromBaseline;
     case '2D-super'
       genWeightsMethod = @gen2DGaussianSuperWeightsFromBaseline;
     case '2D-posneg'
@@ -39,6 +35,10 @@ function extractNewWeightsFromNetwork(networkArch, weightInitType)
       genWeightsMethod = @gen2DGaussianPositiveWeightsFromBaseline;
     case '2D-shiftflip'
       genWeightsMethod = @gen2DGaussianShiftFlipWeightsFromBaseline;
+    case '2D-mult-randn'
+      genWeightsMethod = @gen2DGaussianMultRandnWeightsFromBaseline;
+    case '2D-mult-kernel'
+      genWeightsMethod = @gen2DGaussianMultKernelWeightsFromBaseline;
   end
   genNewWeights(networkArch, weightInitType, net, genWeightsMethod);
 
@@ -49,12 +49,12 @@ function extractAllNewWeightsFromNetwork(networkArch)
   runInTryCatch(@extractNewWeightsFromNetwork, networkArch, 'baseline');
   runInTryCatch(@extractNewWeightsFromNetwork, networkArch, 'compRand');
   runInTryCatch(@extractNewWeightsFromNetwork, networkArch, '1D');
-  runInTryCatch(@extractNewWeightsFromNetwork, networkArch, '2D-mult');
-  runInTryCatch(@extractNewWeightsFromNetwork, networkArch, '2D-mult2');
   runInTryCatch(@extractNewWeightsFromNetwork, networkArch, '2D-super');
   runInTryCatch(@extractNewWeightsFromNetwork, networkArch, '2D-posneg');
   runInTryCatch(@extractNewWeightsFromNetwork, networkArch, '2D-positive');
   runInTryCatch(@extractNewWeightsFromNetwork, networkArch, '2D-shiftflip');
+  runInTryCatch(@extractNewWeightsFromNetwork, networkArch, '2D-mult-randn');
+  runInTryCatch(@extractNewWeightsFromNetwork, networkArch, '2D-mult-kernel');
 
 % --------------------------------------------------------------------
 function genNewWeights(networkArch, weightInitType, net, genWeightsMethod)
@@ -193,24 +193,24 @@ function newWeights = saveBaselineKernelDists1DGaussian( ...
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 
 % --------------------------------------------------------------------
-function newWeights = gen2DGaussianMultWeightsFromBaseline( ...
+function newWeights = gen2DGaussianMultKernelWeightsFromBaseline( ...
   layers, ...
   layerNumber)
 % --------------------------------------------------------------------
   utils = gaussianUtils;
   newWeights = gen2DGaussianCoreWeightsFromBaseline( ...
-    utils.fit2DGaussianAndDrawMultSamples, ...
+    utils.fit2DGaussianAndDrawMultKernelSamples, ...
     layers, ...
     layerNumber);
 
 % --------------------------------------------------------------------
-function newWeights = gen2DGaussianMult2WeightsFromBaseline( ...
+function newWeights = gen2DGaussianMultRandnWeightsFromBaseline( ...
   layers, ...
   layerNumber)
 % --------------------------------------------------------------------
   utils = gaussianUtils;
   newWeights = gen2DGaussianCoreWeightsFromBaseline( ...
-    utils.fit2DGaussianAndDrawMult2Samples, ...
+    utils.fit2DGaussianAndDrawMultRandnSamples, ...
     layers, ...
     layerNumber);
 
