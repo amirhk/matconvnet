@@ -11,21 +11,19 @@ function main_cnn_amir(varargin)
   % networkArch = 'lenet';
   % % backpropDepthList = [13, 10, 7, 4];
   % backpropDepthList = [13];
-  % bottleneckDivideByList = [1];
 
   networkArch = 'alexnet';
   backpropDepthList = [20, 18, 15, 12, 10, 7];
   % backpropDepthList = [20];
-  bottleneckDivideByList = [1];
 
   % networkArch = 'alexnet-bnorm';
   % % backpropDepthList = [20, 18, 15, 12, 10, 7];
   % backpropDepthList = [22];
-  % bottleneckDivideByList = [1];
 
   % networkArch = 'alexnet-bottleneck';
   % backpropDepthList = [21];
   % bottleneckDivideByList = [1,2,4,8,16,32];
+  bottleneckDivideByList = [1];
 
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 % -- ==                                                                   -- ==
@@ -33,7 +31,7 @@ function main_cnn_amir(varargin)
 % -- ==                                                                   -- ==
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 
-  dataset = 'cifar';
+  dataset = 'stl-10'; % {'cifar' | 'stl-10'}
   weightInitSource = 'load';  % {'load' | 'gen'}
 
   % weightInitTypes: {'baseline', 'compRand', '1D', '2D-positive', '2D-super', '2D-posneg', '2D-shiftflip', '2D-mult-randn', '2D-mult-kernel'};
