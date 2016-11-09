@@ -4,13 +4,13 @@ function [net, info] = cnn_amir(varargin)
 
   % Setup -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
   opts.train = struct();
-  opts.folderNumber = 1;
+  opts.folderNumber = 2;
   opts.networkArch = 'alexnet';
   opts.dataset = 'cifar';
   opts.imdbPortion = 1.0;
   opts.backpropDepth = 20;
   opts.weightDecay = 0.0001;
-  opts.weightInitType = '1D';
+  opts.weightInitSequence = {'1D', 'compRand', '1D', '2D-shiftflip', '1D'};
   opts.weightInitSource = 'load';
   opts.bottleneckDivideBy = 1;
   [opts, varargin] = vl_argparse(opts, varargin);
@@ -19,7 +19,7 @@ function [net, info] = cnn_amir(varargin)
   fprintf('[INFO] imdbPortion:\t %6.5f\n', opts.imdbPortion);
   fprintf('[INFO] backpropDepth:\t %d\n', opts.backpropDepth);
   fprintf('[INFO] weightDecay:\t %6.5f\n', opts.weightDecay);
-  fprintf('[INFO] weightInitType:\t %s\n', opts.weightInitType);
+  fprintf('[INFO] weightInitSequence:\t %s\n', printWeightInitSequence(opts.weightInitSequence));
   fprintf('[INFO] weightInitSource: %s\n', opts.weightInitSource);
   fprintf('[INFO] bottleneckDivideBy: %d\n', opts.bottleneckDivideBy);
   fprintf('\n');
@@ -70,7 +70,7 @@ function [net, info] = cnn_amir(varargin)
     'dataset', opts.dataset, ...
     'backpropDepth', opts.backpropDepth, ...
     'weightDecay', opts.weightDecay, ...
-    'weightInitType', opts.weightInitType, ...
+    'weightInitSequence', opts.weightInitSequence, ...
     'weightInitSource', opts.weightInitSource, ...
     'bottleneckDivideBy', opts.bottleneckDivideBy);
   saveNetworkInfo(net, opts.expDir);

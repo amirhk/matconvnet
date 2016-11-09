@@ -36,8 +36,8 @@ function main_cnn_amir(varargin)
   dataset = 'cifar';
   weightInitSource = 'load';  % {'load' | 'gen'}
 
-  % weightInitTypeList = {'baseline', 'compRand', '1D', '2D-positive', '2D-super', '2D-posneg', '2D-shiftflip', '2D-mult-randn', '2D-mult-kernel'};
-  weightInitTypeList = {'1D'};
+  % weightInitTypes: {'baseline', 'compRand', '1D', '2D-positive', '2D-super', '2D-posneg', '2D-shiftflip', '2D-mult-randn', '2D-mult-kernel'};
+  weightInitSequenceList = {{'2D-mult-kernel', '2D-super', '2D-shiftflip', 'compRand', '1D'}, {'1D', '1D', '1D', '1D', '1D'}};
 
   % imdbPortionList = [0.1, 0.25, 0.5, 1.0];
   imdbPortionList = [1.0];
@@ -51,7 +51,7 @@ function main_cnn_amir(varargin)
 % -- ==                                                                   -- ==
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 
-  for weightInitType = weightInitTypeList
+  for weightInitSequence = weightInitSequenceList
     for bottleneckDivideBy = bottleneckDivideByList
       for imdbPortion = imdbPortionList
         for weightDecay = weightDecayList
@@ -63,7 +63,7 @@ function main_cnn_amir(varargin)
               'imdbPortion', imdbPortion, ...
               'backpropDepth', backpropDepth, ...
               'weightDecay', weightDecay, ...
-              'weightInitType', char(weightInitType), ...
+              'weightInitSequence', weightInitSequence{1}, ...
               'weightInitSource', weightInitSource, ...
               'bottleneckDivideBy', bottleneckDivideBy);
           end

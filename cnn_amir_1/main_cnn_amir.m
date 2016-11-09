@@ -11,21 +11,19 @@ function main_cnn_amir(varargin)
   % networkArch = 'lenet';
   % % backpropDepthList = [13, 10, 7, 4];
   % backpropDepthList = [13];
-  % bottleneckDivideByList = [1];
 
   networkArch = 'alexnet';
   backpropDepthList = [20, 18, 15, 12, 10, 7];
   % backpropDepthList = [20];
-  bottleneckDivideByList = [1];
 
   % networkArch = 'alexnet-bnorm';
   % % backpropDepthList = [20, 18, 15, 12, 10, 7];
   % backpropDepthList = [22];
-  % bottleneckDivideByList = [1];
 
   % networkArch = 'alexnet-bottleneck';
   % backpropDepthList = [21];
   % bottleneckDivideByList = [1,2,4,8,16,32];
+  bottleneckDivideByList = [1];
 
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 % -- ==                                                                   -- ==
@@ -36,8 +34,8 @@ function main_cnn_amir(varargin)
   dataset = 'cifar';
   weightInitSource = 'load';  % {'load' | 'gen'}
 
-  % weightInitTypeList = {'baseline', 'compRand', '1D', '2D-positive', '2D-super', '2D-posneg', '2D-shiftflip', '2D-mult-randn', '2D-mult-kernel'};
-  weightInitTypeList = {'compRand'};
+  % weightInitTypes: {'baseline', 'compRand', '1D', '2D-positive', '2D-super', '2D-posneg', '2D-shiftflip', '2D-mult-randn', '2D-mult-kernel'};
+  weightInitSequenceList = {{'2D-mult-kernel', '2D-super', '2D-shiftflip', 'compRand', '1D'}, {'1D', '1D', '1D', '1D', '1D'}};
 
   % imdbPortionList = [0.1, 0.25, 0.5, 1.0];
   imdbPortionList = [1.0];
@@ -51,7 +49,7 @@ function main_cnn_amir(varargin)
 % -- ==                                                                   -- ==
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 
-  for weightInitType = weightInitTypeList
+  for weightInitSequence = weightInitSequenceList
     for bottleneckDivideBy = bottleneckDivideByList
       for imdbPortion = imdbPortionList
         for weightDecay = weightDecayList
@@ -63,7 +61,7 @@ function main_cnn_amir(varargin)
               'imdbPortion', imdbPortion, ...
               'backpropDepth', backpropDepth, ...
               'weightDecay', weightDecay, ...
-              'weightInitType', char(weightInitType), ...
+              'weightInitSequence', weightInitSequence{1}, ...
               'weightInitSource', weightInitSource, ...
               'bottleneckDivideBy', bottleneckDivideBy);
           end
