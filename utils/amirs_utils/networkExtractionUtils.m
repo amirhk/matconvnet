@@ -40,24 +40,24 @@ function extractNewWeightsFromNetwork(dataset, networkArch, weightInitType)
     case '2D-mult-kernel'
       genWeightsMethod = @gen2DGaussianMultKernelWeightsFromBaseline;
   end
-  genNewWeights(networkArch, weightInitType, net, genWeightsMethod);
+  genNewWeights(dataset, networkArch, weightInitType, net, genWeightsMethod);
 
 % --------------------------------------------------------------------
-function extractAllNewWeightsFromNetwork(networkArch)
+function extractAllNewWeightsFromNetwork(dataset, networkArch)
   % networkArch = {'alexnet', 'lenet'}
 % --------------------------------------------------------------------
-  runInTryCatch(@extractNewWeightsFromNetwork, networkArch, 'baseline');
-  runInTryCatch(@extractNewWeightsFromNetwork, networkArch, 'compRand');
-  runInTryCatch(@extractNewWeightsFromNetwork, networkArch, '1D');
-  runInTryCatch(@extractNewWeightsFromNetwork, networkArch, '2D-super');
-  runInTryCatch(@extractNewWeightsFromNetwork, networkArch, '2D-posneg');
-  runInTryCatch(@extractNewWeightsFromNetwork, networkArch, '2D-positive');
-  runInTryCatch(@extractNewWeightsFromNetwork, networkArch, '2D-shiftflip');
-  runInTryCatch(@extractNewWeightsFromNetwork, networkArch, '2D-mult-randn');
-  runInTryCatch(@extractNewWeightsFromNetwork, networkArch, '2D-mult-kernel');
+  runInTryCatch(@extractNewWeightsFromNetwork, dataset, networkArch, 'baseline');
+  runInTryCatch(@extractNewWeightsFromNetwork, dataset, networkArch, 'compRand');
+  runInTryCatch(@extractNewWeightsFromNetwork, dataset, networkArch, '1D');
+  runInTryCatch(@extractNewWeightsFromNetwork, dataset, networkArch, '2D-super');
+  runInTryCatch(@extractNewWeightsFromNetwork, dataset, networkArch, '2D-posneg');
+  runInTryCatch(@extractNewWeightsFromNetwork, dataset, networkArch, '2D-positive');
+  runInTryCatch(@extractNewWeightsFromNetwork, dataset, networkArch, '2D-shiftflip');
+  runInTryCatch(@extractNewWeightsFromNetwork, dataset, networkArch, '2D-mult-randn');
+  runInTryCatch(@extractNewWeightsFromNetwork, dataset, networkArch, '2D-mult-kernel');
 
 % --------------------------------------------------------------------
-function genNewWeights(networkArch, weightInitType, net, genWeightsMethod)
+function genNewWeights(dataset, networkArch, weightInitType, net, genWeightsMethod)
   % for all 'conv' layers...
 % --------------------------------------------------------------------
   fprintf(sprintf('[INFO] Generating new `%s` weights from `%s`... \n', weightInitType, networkArch));
@@ -66,7 +66,7 @@ function genNewWeights(networkArch, weightInitType, net, genWeightsMethod)
     if (strcmp(layers{i}.type, 'conv'))
       layerNumber = i;
       newWeights = genWeightsMethod(layers, layerNumber);
-      saveNewWeights(networkArch, weightInitType, newWeights, layerNumber);
+      saveNewWeights(dataset, networkArch, weightInitType, newWeights, layerNumber);
     end
   end
   fprintf('[INFO] Successfully finished generating weights!\n\n');
@@ -293,7 +293,7 @@ function newWeights = gen2DGaussianCoreWeightsFromBaseline( ...
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 
 % --------------------------------------------------------------------
-function newWeights = saveNewWeights(networkArch, weightInitType, newWeights, layerNumber)
+function newWeights = saveNewWeights(dataset, networkArch, weightInitType, newWeights, layerNumber)
   % WARNING: only 1 sample!
 % --------------------------------------------------------------------
   % devPath = getDevPath();
@@ -352,10 +352,11 @@ function printNetworkStructure(net)
   end
 
 % --------------------------------------------------------------------
-function runInTryCatch(function_handle, networkArch, weightInitType)
+function runInTryCatch(function_handle, dataset, networkArch, weightInitType)
 % --------------------------------------------------------------------
+  % feval(function_handle, dataset, networkArch, weightInitType);
   try
-    feval(function_handle, networkArch, weightInitType);
+    feval(function_handle, dataset, networkArch, weightInitType);
   catch
     fprintf('caught ya bitch!\n');
   end
