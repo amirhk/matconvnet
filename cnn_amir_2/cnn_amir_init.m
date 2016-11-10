@@ -53,14 +53,14 @@ switch opts.networkArch
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     layerNumber = layerNumber + 3;
     net.layers{end+1} = convLayer(layerNumber, 5, 32, 32, 5/100, 2, char(opts.weightInitSequence{2}), opts.weightInitSource, opts.networkArch);
-    net.layers{end+1} = poolingLayerLeNetAvg(layerNumber);
     net.layers{end+1} = reluLayer(layerNumber);
+    net.layers{end+1} = poolingLayerLeNetAvg(layerNumber);
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     layerNumber = layerNumber + 3;
     net.layers{end+1} = convLayer(layerNumber, 5, 32, 64, 5/100, 2, char(opts.weightInitSequence{3}), opts.weightInitSource, opts.networkArch);
-    net.layers{end+1} = poolingLayerLeNetAvg(layerNumber);
     net.layers{end+1} = reluLayer(layerNumber);
+    net.layers{end+1} = poolingLayerLeNetAvg(layerNumber);
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     % FULLY CONNECTED
