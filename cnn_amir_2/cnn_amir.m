@@ -89,7 +89,7 @@ function [net, info] = cnn_amir(varargin)
     fprintf('done.\n\n');
   end
 
-  net.meta.classes.name = imdb.meta.classes(:)';
+  % net.meta.classes.name = imdb.meta.classes(:)';
 
   % -------------------------------------------------------------------------
   %                                                                     Train

@@ -354,7 +354,7 @@ function printNetworkStructure(net)
 % --------------------------------------------------------------------
 function runInTryCatch(function_handle, dataset, networkArch, weightInitType)
 % --------------------------------------------------------------------
-  feval(function_handle, dataset, networkArch, weightInitType);
+  % feval(function_handle, dataset, networkArch, weightInitType);
   try
     feval(function_handle, dataset, networkArch, weightInitType);
   catch
