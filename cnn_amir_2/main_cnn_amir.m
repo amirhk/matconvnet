@@ -8,13 +8,13 @@ function main_cnn_amir(varargin)
 % -- ==                                                                   -- ==
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 
-  networkArch = 'lenet';
-  % backpropDepthList = [13, 10, 7, 4];
-  backpropDepthList = [13];
+  % networkArch = 'lenet';
+  % % backpropDepthList = [13, 10, 7, 4];
+  % backpropDepthList = [13];
 
-  % networkArch = 'alexnet';
-  % % backpropDepthList = [20, 18, 15, 12, 10, 7];
-  % backpropDepthList = [20];
+  networkArch = 'alexnet';
+  % backpropDepthList = [20, 18, 15, 12, 10, 7];
+  backpropDepthList = [20];
 
   % networkArch = 'alexnet-bnorm';
   % % backpropDepthList = [20, 18, 15, 12, 10, 7];
