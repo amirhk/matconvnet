@@ -35,10 +35,10 @@ fc_plus_1_5x1D = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-10-Nov-2016-00
 fc_plus_0_5x1D = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-10-Nov-2016-00-27-40-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
 
 subDataDir = '2016-11-10-10; STL10; LeNet; FC+{0-3}; 5xcompRand';
-fc_plus_3_5xcompRand = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-10-Nov-2016-00-31-36-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_2_5xcompRand = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-10-Nov-2016-00-37-09-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_1_5xcompRand = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-10-Nov-2016-00-42-21-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_0_5xcompRand = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-10-Nov-2016-00-46-42-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_3_5xcompRand = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-10-Nov-2016-12-05-05-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_2_5xcompRand = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-10-Nov-2016-12-10-38-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_1_5xcompRand = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-10-Nov-2016-12-15-28-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_0_5xcompRand = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-10-Nov-2016-12-19-47-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
 
 fprintf('\nDone!');
 

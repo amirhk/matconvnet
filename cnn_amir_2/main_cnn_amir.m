@@ -32,10 +32,10 @@ function main_cnn_amir(varargin)
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 
   dataset = 'stl-10'; % {'cifar' | 'stl-10'}
-  weightInitSource = 'gen';  % {'load' | 'gen'}
+  weightInitSource = 'load';  % {'load' | 'gen'}
 
   % weightInitTypes: {'baseline', 'compRand', '1D', '2D-positive', '2D-super', '2D-posneg', '2D-shiftflip', '2D-mult-randn', '2D-mult-kernel'};
-  weightInitSequenceList = {{'compRand', 'compRand', 'compRand', 'compRand', 'compRand'}};
+  weightInitSequenceList = {{'2D-mult-randn', '2D-mult-randn', 'compRand', 'compRand', 'compRand'}};
   % weightInitSequenceList = { ...
   %   {'1D', '1D', '1D', '1D', '1D'}, ...
   %   {'compRand', 'compRand', 'compRand', 'compRand', 'compRand'}, ...
