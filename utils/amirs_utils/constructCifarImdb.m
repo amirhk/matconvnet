@@ -25,7 +25,7 @@ function imdb = constructCifarImdb(opts)
     sets{fi} = repmat(file_set(fi), size(labels{fi}));
   end
 
-  data = single(cat(4, data{:}));
+  data = im2double(single(cat(4, data{:})));
   labels = single(cat(2, labels{:}));
   set = cat(2, sets{:});
 
