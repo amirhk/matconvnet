@@ -9,8 +9,8 @@ function main_cnn_amir(varargin)
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 
   networkArch = 'lenet';
-  backpropDepthList = [13, 10, 7, 4];
-  % backpropDepthList = [13];
+  % backpropDepthList = [13, 10, 7, 4];
+  backpropDepthList = [13];
 
   % networkArch = 'alexnet';
   % % backpropDepthList = [20, 18, 15, 12, 10, 7];
@@ -31,7 +31,7 @@ function main_cnn_amir(varargin)
 % -- ==                                                                   -- ==
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 
-  dataset = 'cifar'; % {'cifar' | 'stl-10'}
+  dataset = 'stl-10'; % {'cifar' | 'stl-10'}
   weightInitSource = 'gen';  % {'load' | 'gen'}
   weightInitSequenceList = {{'compRand', 'compRand', 'compRand', 'compRand', 'compRand'}};
 
