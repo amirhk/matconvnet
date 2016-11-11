@@ -31,7 +31,7 @@ function main_cnn_amir(varargin)
 % -- ==                                                                   -- ==
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 
-  dataset = 'stl-10'; % {'cifar' | 'stl-10'}
+  dataset = 'cifar'; % {'cifar' | 'stl-10'}
   weightInitSource = 'gen';  % {'load' | 'gen'}
   weightInitSequenceList = {{'compRand', 'compRand', 'compRand', 'compRand', 'compRand'}};
 
