@@ -10,8 +10,8 @@ function imdb = constructSTL10Imdb(opts)
   labels_train = single(train_file.y');
   set_train = 1 * ones(1, 5000);
 
-  % data_test = imresize(reshape(test_file.X', 96,96,3,[]), [32,32]);
-  data_test = imresize(reshape(im2double(test_file.X'), 96,96,3,[]), [32,32]);
+  data_test = imresize(reshape(test_file.X', 96,96,3,[]), [32,32]);
+  % data_test = imresize(reshape(im2double(test_file.X'), 96,96,3,[]), [32,32]);
   labels_test = single(test_file.y');
   set_test = 3 * ones(1, 8000);
 
