@@ -42,9 +42,9 @@ function [net, info] = cnn_amir(varargin)
   else
     % if folder exists, there may be an imdb inside there (that corresponds to
     % a different portion of CIFAR). just delete the imdb and remake to be safe.
-    if opts.imdbPortion ~= 1
+    % if opts.imdbPortion ~= 1
       delete(fullfile(opts.imdbDir, 'imdb.mat'));
-    end
+    % end
   end
   opts.expDir = fullfile(vl_rootnn, opts.dataFolderString, sprintf( ...
     '%s-%s-%s-%s', ...
