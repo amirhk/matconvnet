@@ -18,7 +18,7 @@ switch opts.networkArch
       case 'cifar'
         net.meta.trainOpts.learningRate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)]; % matconvnet default
       case 'stl-10'
-        net.meta.trainOpts.learningRate = [0.5*ones(1,20) 0.05*ones(1,15)  0.1:-0.01:0.06 0.05*ones(1,10)]; % javad-LR
+        net.meta.trainOpts.learningRate = [0.5*ones(1,20) 0.05*ones(1,15)  0.1:-0.01:0.05 0.05*ones(1,10)]; % javad-LR
     end
   case 'alexnet'
     net.meta.trainOpts.learningRate = [0.01*ones(1,5) 0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)];
@@ -45,31 +45,31 @@ switch opts.networkArch
     % --- --- ---                                                     --- --- --
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     layerNumber = 1;
-    net.layers{end+1} = convLayer(opts.networkArch, layerNumber, 5, 3, 32, 1/100, 2, char(opts.weightInitSequence{1}), opts.weightInitSource);
+    net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 5, 3, 32, 1/100, 2, char(opts.weightInitSequence{1}), opts.weightInitSource);
     net.layers{end+1} = poolingLayerLeNetMax(layerNumber);
     net.layers{end+1} = reluLayer(layerNumber);
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     layerNumber = layerNumber + 3;
-    net.layers{end+1} = convLayer(opts.networkArch, layerNumber, 5, 32, 32, 5/100, 2, char(opts.weightInitSequence{2}), opts.weightInitSource);
+    net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 5, 32, 32, 5/100, 2, char(opts.weightInitSequence{2}), opts.weightInitSource);
     net.layers{end+1} = reluLayer(layerNumber);
     net.layers{end+1} = poolingLayerLeNetAvg(layerNumber);
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     layerNumber = layerNumber + 3;
-    net.layers{end+1} = convLayer(opts.networkArch, layerNumber, 5, 32, 64, 5/100, 2, char(opts.weightInitSequence{3}), opts.weightInitSource);
+    net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 5, 32, 64, 5/100, 2, char(opts.weightInitSequence{3}), opts.weightInitSource);
     net.layers{end+1} = reluLayer(layerNumber);
     net.layers{end+1} = poolingLayerLeNetAvg(layerNumber);
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     % FULLY CONNECTED
     layerNumber = layerNumber + 3;
-    net.layers{end+1} = convLayer(opts.networkArch, layerNumber, 4, 64, 64, 5/100, 0, 'compRand', 'gen');
+    net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 4, 64, 64, 5/100, 0, 'compRand', 'gen');
     net.layers{end+1} = reluLayer(layerNumber);
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     layerNumber = layerNumber + 2;
-    net.layers{end+1} = convLayer(opts.networkArch, layerNumber, 1, 64, 10, 5/100, 0, 'compRand', 'gen');
+    net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 1, 64, 10, 5/100, 0, 'compRand', 'gen');
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     % Loss layer
@@ -81,46 +81,46 @@ switch opts.networkArch
     % --- --- ---                                                     --- --- --
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     layerNumber = 1;
-    net.layers{end+1} = convLayer(opts.networkArch, layerNumber, 5, 3, 96, 5/1000, 2, char(opts.weightInitSequence{1}), opts.weightInitSource);
+    net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 5, 3, 96, 5/1000, 2, char(opts.weightInitSequence{1}), opts.weightInitSource);
     net.layers{end+1} = reluLayer(layerNumber);
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     layerNumber = layerNumber + 2;
-    net.layers{end+1} = convLayer(opts.networkArch, layerNumber, 5, 96, 256, 5/1000, 2, char(opts.weightInitSequence{2}), opts.weightInitSource);
+    net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 5, 96, 256, 5/1000, 2, char(opts.weightInitSequence{2}), opts.weightInitSource);
     net.layers{end+1} = reluLayer(layerNumber);
     net.layers{end+1} = poolingLayerAlexNet(layerNumber);
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     layerNumber = layerNumber + 3;
-    net.layers{end+1} = convLayer(opts.networkArch, layerNumber, 3, 256, 384, 5/1000, 1, char(opts.weightInitSequence{3}), opts.weightInitSource);
+    net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 3, 256, 384, 5/1000, 1, char(opts.weightInitSequence{3}), opts.weightInitSource);
     net.layers{end+1} = reluLayer(layerNumber);
     net.layers{end+1} = poolingLayerAlexNet(layerNumber);
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     layerNumber = layerNumber + 3;
-    net.layers{end+1} = convLayer(opts.networkArch, layerNumber, 3, 384, 384, 5/1000, 1, char(opts.weightInitSequence{4}), opts.weightInitSource);
+    net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 3, 384, 384, 5/1000, 1, char(opts.weightInitSequence{4}), opts.weightInitSource);
     net.layers{end+1} = reluLayer(layerNumber);
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     layerNumber = layerNumber + 2;
-    net.layers{end+1} = convLayer(opts.networkArch, layerNumber, 3, 384, 256, 5/1000, 1, char(opts.weightInitSequence{5}), opts.weightInitSource);
+    net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 3, 384, 256, 5/1000, 1, char(opts.weightInitSequence{5}), opts.weightInitSource);
     net.layers{end+1} = reluLayer(layerNumber);
     net.layers{end+1} = poolingLayerAlexNet(layerNumber);
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     % FULLY CONNECTED
     layerNumber = layerNumber + 3;
-    net.layers{end+1} = convLayer(opts.networkArch, layerNumber, 4, 256, 128, 5/1000, 0, 'compRand', 'gen');
+    net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 4, 256, 128, 5/1000, 0, 'compRand', 'gen');
     net.layers{end+1} = reluLayer(layerNumber);
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     layerNumber = layerNumber + 2;
-    net.layers{end+1} = convLayer(opts.networkArch, layerNumber, 1, 128, 64, 5/100, 0, 'compRand', 'gen');
+    net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 1, 128, 64, 5/100, 0, 'compRand', 'gen');
     net.layers{end+1} = reluLayer(layerNumber);
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     layerNumber = layerNumber + 2;
-    net.layers{end+1} = convLayer(opts.networkArch, layerNumber, 1, 64, 10, 5/100, 0, 'compRand', 'gen');
+    net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 1, 64, 10, 5/100, 0, 'compRand', 'gen');
     net.layers{end+1} = reluLayer(layerNumber);
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
@@ -133,33 +133,33 @@ switch opts.networkArch
     % --- --- ---                                                     --- --- --
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     layerNumber = 1;
-    net.layers{end+1} = convLayer(opts.networkArch, layerNumber, 5, 3, 96, 5/1000, 2, char(opts.weightInitSequence{1}), opts.weightInitSource);
+    net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 5, 3, 96, 5/1000, 2, char(opts.weightInitSequence{1}), opts.weightInitSource);
     % net.layers{end+1} = bnormLayer(layerNumber, 96);
     net.layers{end+1} = reluLayer(layerNumber);
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     layerNumber = layerNumber + 2;
-    net.layers{end+1} = convLayer(opts.networkArch, layerNumber, 5, 96, 256, 5/1000, 2, char(opts.weightInitSequence{2}), opts.weightInitSource);
+    net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 5, 96, 256, 5/1000, 2, char(opts.weightInitSequence{2}), opts.weightInitSource);
     net.layers{end+1} = bnormLayer(layerNumber, 256);
     net.layers{end+1} = reluLayer(layerNumber);
     net.layers{end+1} = poolingLayerAlexNet(layerNumber);
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     layerNumber = layerNumber + 3;
-    net.layers{end+1} = convLayer(opts.networkArch, layerNumber, 3, 256, 384, 5/1000, 1, char(opts.weightInitSequence{3}), opts.weightInitSource);
+    net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 3, 256, 384, 5/1000, 1, char(opts.weightInitSequence{3}), opts.weightInitSource);
     % net.layers{end+1} = bnormLayer(layerNumber, 384);
     net.layers{end+1} = reluLayer(layerNumber);
     net.layers{end+1} = poolingLayerAlexNet(layerNumber);
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     layerNumber = layerNumber + 3;
-    net.layers{end+1} = convLayer(opts.networkArch, layerNumber, 3, 384, 384, 5/1000, 1, char(opts.weightInitSequence{4}), opts.weightInitSource);
+    net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 3, 384, 384, 5/1000, 1, char(opts.weightInitSequence{4}), opts.weightInitSource);
     % net.layers{end+1} = bnormLayer(layerNumber, 384);
     net.layers{end+1} = reluLayer(layerNumber);
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     layerNumber = layerNumber + 2;
-    net.layers{end+1} = convLayer(opts.networkArch, layerNumber, 3, 384, 256, 5/1000, 1, char(opts.weightInitSequence{5}), opts.weightInitSource);
+    net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 3, 384, 256, 5/1000, 1, char(opts.weightInitSequence{5}), opts.weightInitSource);
     net.layers{end+1} = bnormLayer(layerNumber, 256);
     net.layers{end+1} = reluLayer(layerNumber);
     net.layers{end+1} = poolingLayerAlexNet(layerNumber);
@@ -167,17 +167,17 @@ switch opts.networkArch
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     % FULLY CONNECTED
     layerNumber = layerNumber + 3;
-    net.layers{end+1} = convLayer(opts.networkArch, layerNumber, 4, 256, 128, 5/1000, 0, 'compRand', 'gen');
+    net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 4, 256, 128, 5/1000, 0, 'compRand', 'gen');
     net.layers{end+1} = reluLayer(layerNumber);
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     layerNumber = layerNumber + 2;
-    net.layers{end+1} = convLayer(opts.networkArch, layerNumber, 1, 128, 64, 5/100, 0, 'compRand', 'gen');
+    net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 1, 128, 64, 5/100, 0, 'compRand', 'gen');
     net.layers{end+1} = reluLayer(layerNumber);
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     layerNumber = layerNumber + 2;
-    net.layers{end+1} = convLayer(opts.networkArch, layerNumber, 1, 64, 10, 5/100, 0, 'compRand', 'gen');
+    net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 1, 64, 10, 5/100, 0, 'compRand', 'gen');
     net.layers{end+1} = reluLayer(layerNumber);
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
@@ -192,54 +192,54 @@ switch opts.networkArch
     % k = [1,4,8,16,32]
     k = opts.bottleneckDivideBy;
     layerNumber = 1;
-    net.layers{end+1} = convLayer(opts.networkArch, layerNumber, 5, 3, 96, 5/1000, 2, 'compRand', 'gen');
+    net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 5, 3, 96, 5/1000, 2, 'compRand', 'gen');
     net.layers{end+1} = reluLayer(layerNumber);
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     layerNumber = layerNumber + 2;
-    % net.layers{end+1} = convLayer(opts.networkArch, layerNumber, 5, 96, 256, 5/1000, 2, 'compRand', 'gen');
-    net.layers{end+1} = convLayer(opts.networkArch, layerNumber, 5, 96, 96/k, 5/1000, 2, 'compRand', 'gen');
-    net.layers{end+1} = convLayer(opts.networkArch, layerNumber, 5, 96/k, 256, 5/1000, 2, 'compRand', 'gen');
+    % net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 5, 96, 256, 5/1000, 2, 'compRand', 'gen');
+    net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 5, 96, 96/k, 5/1000, 2, 'compRand', 'gen');
+    net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 5, 96/k, 256, 5/1000, 2, 'compRand', 'gen');
     net.layers{end+1} = reluLayer(layerNumber);
     net.layers{end+1} = poolingLayerAlexNet(layerNumber);
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     layerNumber = layerNumber + 3;
-    net.layers{end+1} = convLayer(opts.networkArch, layerNumber, 3, 256, 384, 5/1000, 1, 'compRand', 'gen');
-    % net.layers{end+1} = convLayer(opts.networkArch, layerNumber, 3, 256, 256/k, 5/1000, 1, 'compRand', 'gen');
-    % net.layers{end+1} = convLayer(opts.networkArch, layerNumber, 3, 256/k, 384, 5/1000, 1, 'compRand', 'gen');
+    net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 3, 256, 384, 5/1000, 1, 'compRand', 'gen');
+    % net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 3, 256, 256/k, 5/1000, 1, 'compRand', 'gen');
+    % net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 3, 256/k, 384, 5/1000, 1, 'compRand', 'gen');
     net.layers{end+1} = reluLayer(layerNumber);
     net.layers{end+1} = poolingLayerAlexNet(layerNumber);
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     layerNumber = layerNumber + 3;
-    net.layers{end+1} = convLayer(opts.networkArch, layerNumber, 3, 384, 384, 5/1000, 1, 'compRand', 'gen');
-    % net.layers{end+1} = convLayer(opts.networkArch, layerNumber, 3, 384, 384/k, 5/1000, 1, 'compRand', 'gen');
-    % net.layers{end+1} = convLayer(opts.networkArch, layerNumber, 3, 384/k, 384, 5/1000, 1, 'compRand', 'gen');
+    net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 3, 384, 384, 5/1000, 1, 'compRand', 'gen');
+    % net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 3, 384, 384/k, 5/1000, 1, 'compRand', 'gen');
+    % net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 3, 384/k, 384, 5/1000, 1, 'compRand', 'gen');
     net.layers{end+1} = reluLayer(layerNumber);
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     layerNumber = layerNumber + 2;
-    net.layers{end+1} = convLayer(opts.networkArch, layerNumber, 3, 384, 256, 5/1000, 1, 'compRand', 'gen');
-    % net.layers{end+1} = convLayer(opts.networkArch, layerNumber, 3, 384, 384/k, 5/1000, 1, 'compRand', 'gen');
-    % net.layers{end+1} = convLayer(opts.networkArch, layerNumber, 3, 384/k, 256, 5/1000, 1, 'compRand', 'gen');
+    net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 3, 384, 256, 5/1000, 1, 'compRand', 'gen');
+    % net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 3, 384, 384/k, 5/1000, 1, 'compRand', 'gen');
+    % net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 3, 384/k, 256, 5/1000, 1, 'compRand', 'gen');
     net.layers{end+1} = reluLayer(layerNumber);
     net.layers{end+1} = poolingLayerAlexNet(layerNumber);
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     % FULLY CONNECTED
     layerNumber = layerNumber + 3;
-    net.layers{end+1} = convLayer(opts.networkArch, layerNumber, 4, 256, 128, 5/1000, 0, 'compRand', 'gen');
+    net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 4, 256, 128, 5/1000, 0, 'compRand', 'gen');
     net.layers{end+1} = reluLayer(layerNumber);
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     layerNumber = layerNumber + 2;
-    net.layers{end+1} = convLayer(opts.networkArch, layerNumber, 1, 128, 64, 5/100, 0, 'compRand', 'gen');
+    net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 1, 128, 64, 5/100, 0, 'compRand', 'gen');
     net.layers{end+1} = reluLayer(layerNumber);
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     layerNumber = layerNumber + 2;
-    net.layers{end+1} = convLayer(opts.networkArch, layerNumber, 1, 64, 10, 5/100, 0, 'compRand', 'gen');
+    net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 1, 64, 10, 5/100, 0, 'compRand', 'gen');
     net.layers{end+1} = reluLayer(layerNumber);
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
@@ -248,15 +248,15 @@ switch opts.networkArch
 end
 
 % --------------------------------------------------------------------
-function structuredLayer = convLayer(networkArch, layerNumber, k, m, n, init_multiplier, pad, weightInitType, weightInitSource);
+function structuredLayer = convLayer(dataset, networkArch, layerNumber, k, m, n, init_multiplier, pad, weightInitType, weightInitSource);
 % --------------------------------------------------------------------
   switch weightInitSource
     case 'load'
-      layerWeights = loadWeights(networkArch, layerNumber, weightInitType);
+      layerWeights = loadWeights(dataset, networkArch, layerNumber, weightInitType);
     case 'gen'
       if ~strcmp(weightInitType, 'compRand')
         utils = networkExtractionUtils;
-        baselineWeights = loadWeights(networkArch, layerNumber, 'baseline'); % used for its size
+        baselineWeights = loadWeights(dataset, networkArch, layerNumber, 'baseline'); % used for its size
       end
       switch weightInitType
         case 'compRand'
@@ -269,7 +269,7 @@ function structuredLayer = convLayer(networkArch, layerNumber, k, m, n, init_mul
   structuredLayer = constructConvLayer(networkArch, layerNumber, layerWeights, pad, weightInitType, weightInitSource);
 
 % --------------------------------------------------------------------
-function weights = loadWeights(networkArch, layerNumber, weightInitType)
+function weights = loadWeights(dataset, networkArch, layerNumber, weightInitType)
 % --------------------------------------------------------------------
   fprintf( ...
     '[INFO] Loading %s weights (layer %d) from saved directory...\t', ...
@@ -279,12 +279,7 @@ function weights = loadWeights(networkArch, layerNumber, weightInitType)
 
   % subDirPath = fullfile('data', 'cifar-alexnet', sprintf('w_%s', weightInitType));
   % TODO: search subtstring... if networkArch starts with 'alexnet' use the 'alexnet' folder
-  switch networkArch
-    case 'lenet'
-      subDirPath = fullfile('data', 'cifar-lenet', sprintf('w_%s', weightInitType));
-    otherwise % {'alexnet', 'alexnet-bnorm', 'alexnet-bottleneck', ...}
-      subDirPath = fullfile('data', 'cifar-alexnet', sprintf('w_%s', weightInitType));
-  end
+  subDirPath = fullfile('data', sprintf('%s-%s', dataset, networkArch), sprintf('w_%s', weightInitType));
   fileNameSuffix = sprintf('-layer-%d.mat', layerNumber);
   tmp = load(fullfile(devPath, subDirPath, sprintf('W1%s', fileNameSuffix)));
   weights{1} = tmp.W1;
