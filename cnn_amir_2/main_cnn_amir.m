@@ -31,7 +31,7 @@ function main_cnn_amir(varargin)
 % -- ==                                                                   -- ==
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 
-  dataset = 'cifar'; % {'cifar' | 'stl-10'}
+  dataset = 'stl-10'; % {'cifar' | 'stl-10'}
   % weightInitSource = 'gen';  % {'load' | 'gen'}
   % weightInitSequenceList = {{'compRand', 'compRand', 'compRand', 'compRand', 'compRand'}};
 
@@ -48,7 +48,11 @@ function main_cnn_amir(varargin)
   %   {'2D-mult-randn', '2D-mult-randn', 'compRand', 'compRand', 'compRand'}};
   weightInitSequenceList = { ...
     {'2D-shiftflip', '1D', '1D'}, ...
-    {'2D-shiftflip', 'compRand', 'compRand'}};
+    {'2D-shiftflip', 'compRand', 'compRand'}, ...
+    {'2D-mult-randn', '1D', '1D'}, ...
+    {'2D-mult-randn', 'compRand', 'compRand'}, ...
+    {'2D-shiftflip', '2D-shiftflip', '1D'}, ...
+    {'2D-shiftflip', '2D-shiftflip', 'compRand'}};
 
   % imdbPortionList = [0.1, 0.25, 0.5, 1.0];
   imdbPortionList = [1.0];
