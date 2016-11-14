@@ -4,71 +4,71 @@ epochNum = 50;
 epochFile = sprintf('net-epoch-%d.mat', epochNum);
 fprintf('Loading files...'); i = 1;
 
-subDataDir = '2016-11-13-14; CIFAR; LeNet; FC+{0-3}; 1x2D_mult_randn_2x1D';
-fc_plus_3_1x2D_mult_randn_2x1D = load(fullfile(dataDir, subDataDir, 'cifar-lenet-14-Nov-2016-11-08-29-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_2_1x2D_mult_randn_2x1D = load(fullfile(dataDir, subDataDir, 'cifar-lenet-14-Nov-2016-11-41-24-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_1_1x2D_mult_randn_2x1D = load(fullfile(dataDir, subDataDir, 'cifar-lenet-14-Nov-2016-12-08-31-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_0_1x2D_mult_randn_2x1D = load(fullfile(dataDir, subDataDir, 'cifar-lenet-14-Nov-2016-12-30-02-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
+subDataDir = '2016-11-10-14; STL10; LeNet; FC+{0-3}; 1x2D_mult_randn_2x1D';
+fc_plus_3_1x2D_mult_randn_2x1D = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-14-Nov-2016-15-10-42-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_2_1x2D_mult_randn_2x1D = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-14-Nov-2016-15-16-32-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_1_1x2D_mult_randn_2x1D = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-14-Nov-2016-15-21-44-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_0_1x2D_mult_randn_2x1D = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-14-Nov-2016-15-26-22-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
 
-subDataDir = '2016-11-13-14; CIFAR; LeNet; FC+{0-3}; 1x2D_mult_randn_2xcompRand';
-fc_plus_3_1x2D_mult_randn_2xcompRand = load(fullfile(dataDir, subDataDir, 'cifar-lenet-14-Nov-2016-12-47-03-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_2_1x2D_mult_randn_2xcompRand = load(fullfile(dataDir, subDataDir, 'cifar-lenet-14-Nov-2016-13-19-59-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_1_1x2D_mult_randn_2xcompRand = load(fullfile(dataDir, subDataDir, 'cifar-lenet-14-Nov-2016-13-46-54-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_0_1x2D_mult_randn_2xcompRand = load(fullfile(dataDir, subDataDir, 'cifar-lenet-14-Nov-2016-14-08-10-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
+subDataDir = '2016-11-10-14; STL10; LeNet; FC+{0-3}; 1x2D_mult_randn_2xcompRand';
+fc_plus_3_1x2D_mult_randn_2xcompRand = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-14-Nov-2016-15-30-31-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_2_1x2D_mult_randn_2xcompRand = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-14-Nov-2016-15-36-23-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_1_1x2D_mult_randn_2xcompRand = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-14-Nov-2016-15-41-36-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_0_1x2D_mult_randn_2xcompRand = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-14-Nov-2016-15-46-15-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
 
-subDataDir = '2016-11-13-14; CIFAR; LeNet; FC+{0-3}; 1x2D_shiftflip_2x1D';
-fc_plus_3_1x2D_shiftflip_2x1D = load(fullfile(dataDir, subDataDir, 'cifar-lenet-14-Nov-2016-11-08-30-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_2_1x2D_shiftflip_2x1D = load(fullfile(dataDir, subDataDir, 'cifar-lenet-14-Nov-2016-11-42-36-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_1_1x2D_shiftflip_2x1D = load(fullfile(dataDir, subDataDir, 'cifar-lenet-14-Nov-2016-12-10-14-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_0_1x2D_shiftflip_2x1D = load(fullfile(dataDir, subDataDir, 'cifar-lenet-14-Nov-2016-12-32-03-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+subDataDir = '2016-11-10-14; STL10; LeNet; FC+{0-3}; 1x2D_shiftflip_2x1D';
+fc_plus_3_1x2D_shiftflip_2x1D = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-14-Nov-2016-14-30-02-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_2_1x2D_shiftflip_2x1D = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-14-Nov-2016-14-35-58-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_1_1x2D_shiftflip_2x1D = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-14-Nov-2016-14-41-12-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_0_1x2D_shiftflip_2x1D = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-14-Nov-2016-14-46-04-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
 
-subDataDir = '2016-11-13-14; CIFAR; LeNet; FC+{0-3}; 1x2D_shiftflip_2xcompRand';
-fc_plus_3_1x2D_shiftflip_2xcompRand = load(fullfile(dataDir, subDataDir, 'cifar-lenet-14-Nov-2016-12-49-16-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_2_1x2D_shiftflip_2xcompRand = load(fullfile(dataDir, subDataDir, 'cifar-lenet-14-Nov-2016-13-23-04-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_1_1x2D_shiftflip_2xcompRand = load(fullfile(dataDir, subDataDir, 'cifar-lenet-14-Nov-2016-13-50-37-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_0_1x2D_shiftflip_2xcompRand = load(fullfile(dataDir, subDataDir, 'cifar-lenet-14-Nov-2016-14-12-17-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+subDataDir = '2016-11-10-14; STL10; LeNet; FC+{0-3}; 1x2D_shiftflip_2xcompRand';
+fc_plus_3_1x2D_shiftflip_2xcompRand = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-14-Nov-2016-14-50-15-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_2_1x2D_shiftflip_2xcompRand = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-14-Nov-2016-14-56-04-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_1_1x2D_shiftflip_2xcompRand = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-14-Nov-2016-15-01-21-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_0_1x2D_shiftflip_2xcompRand = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-14-Nov-2016-15-06-16-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
 
-subDataDir = '2016-11-13-14; CIFAR; LeNet; FC+{0-3}; 2x2D_mult_randn_1x1D';
-fc_plus_3_2x2D_mult_randn_1x1D = load(fullfile(dataDir, subDataDir, 'cifar-lenet-14-Nov-2016-07-28-36-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_2_2x2D_mult_randn_1x1D = load(fullfile(dataDir, subDataDir, 'cifar-lenet-14-Nov-2016-08-03-52-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_1_2x2D_mult_randn_1x1D = load(fullfile(dataDir, subDataDir, 'cifar-lenet-14-Nov-2016-08-33-19-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_0_2x2D_mult_randn_1x1D = load(fullfile(dataDir, subDataDir, 'cifar-lenet-14-Nov-2016-08-56-39-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
+subDataDir = '2016-11-10-14; STL10; LeNet; FC+{0-3}; 2x2D_mult_randn_1x1D';
+fc_plus_3_2x2D_mult_randn_1x1D = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-14-Nov-2016-15-29-55-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_2_2x2D_mult_randn_1x1D = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-14-Nov-2016-15-35-42-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_1_2x2D_mult_randn_1x1D = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-14-Nov-2016-15-40-52-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_0_2x2D_mult_randn_1x1D = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-14-Nov-2016-15-45-30-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
 
-subDataDir = '2016-11-13-14; CIFAR; LeNet; FC+{0-3}; 2x2D_mult_randn_1xcompRand';
-fc_plus_3_2x2D_mult_randn_1xcompRand = load(fullfile(dataDir, subDataDir, 'cifar-lenet-14-Nov-2016-09-14-18-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_2_2x2D_mult_randn_1xcompRand = load(fullfile(dataDir, subDataDir, 'cifar-lenet-14-Nov-2016-09-48-47-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_1_2x2D_mult_randn_1xcompRand = load(fullfile(dataDir, subDataDir, 'cifar-lenet-14-Nov-2016-10-15-39-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_0_2x2D_mult_randn_1xcompRand = load(fullfile(dataDir, subDataDir, 'cifar-lenet-14-Nov-2016-10-37-00-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
+subDataDir = '2016-11-10-14; STL10; LeNet; FC+{0-3}; 2x2D_mult_randn_1xcompRand';
+fc_plus_3_2x2D_mult_randn_1xcompRand = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-14-Nov-2016-15-49-41-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_2_2x2D_mult_randn_1xcompRand = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-14-Nov-2016-15-55-32-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_1_2x2D_mult_randn_1xcompRand = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-14-Nov-2016-16-00-47-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_0_2x2D_mult_randn_1xcompRand = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-14-Nov-2016-16-05-26-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
 
-subDataDir = '2016-11-13-14; CIFAR; LeNet; FC+{0-3}; 2x2D_shiftflip_1x1D';
-fc_plus_3_2x2D_shiftflip_1x1D = load(fullfile(dataDir, subDataDir, 'cifar-lenet-14-Nov-2016-03-58-31-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_2_2x2D_shiftflip_1x1D = load(fullfile(dataDir, subDataDir, 'cifar-lenet-14-Nov-2016-04-33-18-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_1_2x2D_shiftflip_1x1D = load(fullfile(dataDir, subDataDir, 'cifar-lenet-14-Nov-2016-05-02-28-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_0_2x2D_shiftflip_1x1D = load(fullfile(dataDir, subDataDir, 'cifar-lenet-14-Nov-2016-05-25-37-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
+subDataDir = '2016-11-10-14; STL10; LeNet; FC+{0-3}; 2x2D_shiftflip_1x1D';
+fc_plus_3_2x2D_shiftflip_1x1D = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-14-Nov-2016-15-50-25-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_2_2x2D_shiftflip_1x1D = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-14-Nov-2016-15-56-18-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_1_2x2D_shiftflip_1x1D = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-14-Nov-2016-16-01-34-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_0_2x2D_shiftflip_1x1D = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-14-Nov-2016-16-06-13-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
 
-subDataDir = '2016-11-13-14; CIFAR; LeNet; FC+{0-3}; 2x2D_shiftflip_1xcompRand';
-fc_plus_3_2x2D_shiftflip_1xcompRand = load(fullfile(dataDir, subDataDir, 'cifar-lenet-14-Nov-2016-05-43-21-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_2_2x2D_shiftflip_1xcompRand = load(fullfile(dataDir, subDataDir, 'cifar-lenet-14-Nov-2016-06-18-14-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_1_2x2D_shiftflip_1xcompRand = load(fullfile(dataDir, subDataDir, 'cifar-lenet-14-Nov-2016-06-47-30-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_0_2x2D_shiftflip_1xcompRand = load(fullfile(dataDir, subDataDir, 'cifar-lenet-14-Nov-2016-07-10-40-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
+subDataDir = '2016-11-10-14; STL10; LeNet; FC+{0-3}; 2x2D_shiftflip_1xcompRand';
+fc_plus_3_2x2D_shiftflip_1xcompRand = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-14-Nov-2016-16-10-27-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_2_2x2D_shiftflip_1xcompRand = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-14-Nov-2016-16-16-35-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_1_2x2D_shiftflip_1xcompRand = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-14-Nov-2016-16-21-55-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_0_2x2D_shiftflip_1xcompRand = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-14-Nov-2016-16-26-37-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
 
-subDataDir = '2016-11-13-14; CIFAR; LeNet; FC+{0-3}; 3x1D';
-fc_plus_3_3x1D = load(fullfile(dataDir, subDataDir, 'cifar-lenet-14-Nov-2016-02-13-29-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_2_3x1D = load(fullfile(dataDir, subDataDir, 'cifar-lenet-14-Nov-2016-02-48-46-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_1_3x1D = load(fullfile(dataDir, subDataDir, 'cifar-lenet-14-Nov-2016-03-17-46-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_0_3x1D = load(fullfile(dataDir, subDataDir, 'cifar-lenet-14-Nov-2016-03-40-53-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
+subDataDir = '2016-11-10-14; STL10; LeNet; FC+{0-3}; 3x1D';
+fc_plus_3_3x1D = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-14-Nov-2016-15-10-17-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_2_3x1D = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-14-Nov-2016-15-16-03-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_1_3x1D = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-14-Nov-2016-15-21-12-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_0_3x1D = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-14-Nov-2016-15-25-47-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
 
-subDataDir = '2016-11-13-14; CIFAR; LeNet; FC+{0-3}; 3xbaseline';
-fc_plus_3_3xbaseline = load(fullfile(dataDir, subDataDir, 'cifar-lenet-13-Nov-2016-22-52-12-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_2_3xbaseline = load(fullfile(dataDir, subDataDir, 'cifar-lenet-13-Nov-2016-23-25-24-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_1_3xbaseline = load(fullfile(dataDir, subDataDir, 'cifar-lenet-13-Nov-2016-23-52-34-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_0_3xbaseline = load(fullfile(dataDir, subDataDir, 'cifar-lenet-14-Nov-2016-00-14-08-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
+subDataDir = '2016-11-10-14; STL10; LeNet; FC+{0-3}; 3xbaseline';
+fc_plus_3_3xbaseline = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-14-Nov-2016-14-30-00-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_2_3xbaseline = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-14-Nov-2016-14-35-48-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_1_3xbaseline = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-14-Nov-2016-14-40-58-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_0_3xbaseline = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-14-Nov-2016-14-45-53-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
 
-subDataDir = '2016-11-13-14; CIFAR; LeNet; FC+{0-3}; 3xcompRand';
-fc_plus_3_3xcompRand = load(fullfile(dataDir, subDataDir, 'cifar-lenet-14-Nov-2016-00-31-14-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_2_3xcompRand = load(fullfile(dataDir, subDataDir, 'cifar-lenet-14-Nov-2016-01-04-13-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_1_3xcompRand = load(fullfile(dataDir, subDataDir, 'cifar-lenet-14-Nov-2016-01-32-30-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_0_3xcompRand = load(fullfile(dataDir, subDataDir, 'cifar-lenet-14-Nov-2016-01-55-38-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
+subDataDir = '2016-11-10-14; STL10; LeNet; FC+{0-3}; 3xcompRand';
+fc_plus_3_3xcompRand = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-14-Nov-2016-14-50-00-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_2_3xcompRand = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-14-Nov-2016-14-55-44-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_1_3xcompRand = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-14-Nov-2016-15-00-54-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_0_3xcompRand = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-14-Nov-2016-15-05-48-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
 
 fprintf('\nDone!');
 
