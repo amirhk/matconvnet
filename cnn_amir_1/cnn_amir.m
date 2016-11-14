@@ -100,6 +100,14 @@ function [net, info] = cnn_amir(varargin)
     opts.train, ...
     'val', find(imdb.images.set == 3));
 
+  % -------------------------------------------------------------------------
+  %                                             Delete All But Last Net Files
+  % -------------------------------------------------------------------------
+  for epoch = 1:net.meta.trainOpts.numEpochs - 1
+    fileName = sprintf('net-epoch-%d.mat', epoch);
+    delete(fullfile(opts.expDir, fileName));
+  end
+
 % -------------------------------------------------------------------------
 function [processorList, processorString] = getProcessor(opts)
 % -------------------------------------------------------------------------
