@@ -59,7 +59,9 @@ function [net, info] = cnn_amir(varargin)
 
   % IMDB -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % opts.whitenData = true;
+  opts.whitenData = false;
   % opts.contrastNormalization = true;
+  opts.contrastNormalization = false;
   opts = vl_argparse(opts, varargin);
 
   % -------------------------------------------------------------------------
