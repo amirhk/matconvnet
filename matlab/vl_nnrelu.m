@@ -34,21 +34,23 @@ opts.leak = 0 ;
 opts = vl_argparse(opts, varargin) ;
 
 if opts.leak == 0
-  if nargin <= 1 || isempty(dzdy)
-    y = max(x, single(0)) ;
-  else
-    y = dzdy .* (x > single(0)) ;
-  end
-  % testing absolute value non-linearity
   % if nargin <= 1 || isempty(dzdy)
-  %   y = abs(x);
+  %   y = max(x, single(0)) ;
   % else
-  %   y = dzdy .* abs(x);
+  %   y = dzdy .* (x > single(0)) ;
   % end
+  % testing absolute value non-linearity
+  % disp(dzdy);
+  % disp(x);
+  if nargin <= 1 || isempty(dzdy)
+    y = abs(x);
+  else
+    y = dzdy .* abs(x);
+  end
 else
   if nargin <= 1 || isempty(dzdy)
     y = x .* (opts.leak + (1 - opts.leak) * single(x > 0)) ;
   else
-    y = dzdy .* (opts.leak + (1 - opts.leak) * single(x > 0)) ; ;
+    y = dzdy .* (opts.leak + (1 - opts.leak) * single(x > 0)) ;
   end
 end

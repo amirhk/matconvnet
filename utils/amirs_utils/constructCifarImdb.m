@@ -25,8 +25,8 @@ function imdb = constructCifarImdb(opts)
     sets{fi} = repmat(file_set(fi), size(labels{fi}));
   end
 
-  % data = im2double(single(cat(4, data{:})));
-  data = single(cat(4, data{:}));
+  data = im2double(cat(4, data{:}));
+  % data = single(cat(4, data{:}));
   labels = single(cat(2, labels{:}));
   set = cat(2, sets{:});
 
@@ -45,28 +45,28 @@ function imdb = constructCifarImdb(opts)
   % Single-Layer Networks in Unsupervised Feature Learning` Adam
   % Coates, Honglak Lee, Andrew Y. Ng
 
-  if opts.contrastNormalization
-    fprintf('[INFO] contrast-normalizing data... ');
-    z = reshape(data,[],number_of_train_and_test_images);
-    z = bsxfun(@minus, z, mean(z,1));
-    n = std(z,0,1);
-    z = bsxfun(@times, z, mean(n) ./ max(n, 40));
-    data = reshape(z, 32, 32, 3, []);
-    fprintf('done.\n');
-  end
+  % if opts.contrastNormalization
+  %   fprintf('[INFO] contrast-normalizing data... ');
+  %   z = reshape(data,[],number_of_train_and_test_images);
+  %   z = bsxfun(@minus, z, mean(z,1));
+  %   n = std(z,0,1);
+  %   z = bsxfun(@times, z, mean(n) ./ max(n, 40));
+  %   data = reshape(z, 32, 32, 3, []);
+  %   fprintf('done.\n');
+  % end
 
-  if opts.whitenData
-    fprintf('[INFO] whitening data... ');
-    z = reshape(data,[],number_of_train_and_test_images);
-    W = z(:,set == 1)*z(:,set == 1)'/number_of_train_and_test_images;
-    [V,D] = eig(W);
-    % the scale is selected to approximately preserve the norm of W
-    d2 = diag(D);
-    en = sqrt(mean(d2));
-    z = V*diag(en./max(sqrt(d2), 10))*V'*z;
-    data = reshape(z, 32, 32, 3, []);
-    fprintf('done.\n');
-  end
+  % if opts.whitenData
+  %   fprintf('[INFO] whitening data... ');
+  %   z = reshape(data,[],number_of_train_and_test_images);
+  %   W = z(:,set == 1)*z(:,set == 1)'/number_of_train_and_test_images;
+  %   [V,D] = eig(W);
+  %   % the scale is selected to approximately preserve the norm of W
+  %   d2 = diag(D);
+  %   en = sqrt(mean(d2));
+  %   z = V*diag(en./max(sqrt(d2), 10))*V'*z;
+  %   data = reshape(z, 32, 32, 3, []);
+  %   fprintf('done.\n');
+  % end
 
   clNames = load(fullfile(unpackPath, 'batches.meta.mat'));
 
