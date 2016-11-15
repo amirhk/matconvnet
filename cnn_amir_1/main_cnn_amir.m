@@ -8,7 +8,7 @@ function main_cnn_amir(varargin)
 % -- ==                                                                   -- ==
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 
-  networkArch = 'mnistnte';
+  networkArch = 'mnistnet';
   backpropDepthList = [8, 6, 4, 2];
   % backpropDepthList = [8];
 
