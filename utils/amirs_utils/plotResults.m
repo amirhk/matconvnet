@@ -4,8 +4,8 @@ epochNum = 50;
 epochFile = sprintf('net-epoch-%d.mat', epochNum);
 fprintf('Loading files...'); i = 1;
 
-dataset = 'cifar';
-networkArch = 'alexnet';
+dataset = 'mnist';
+networkArch = 'mnistnet';
 if strcmp(dataset, 'cifar')
   if strcmp(networkArch, 'lenet')
     subDataDir = '2016-11-13-14; CIFAR; LeNet; FC+{0-3}; 1x2D_mult_randn_2x1D';
@@ -122,7 +122,7 @@ if strcmp(dataset, 'cifar')
     fc_plus_1_3xcompRand = load(fullfile(dataDir, subDataDir, 'cifar-alexnet-9-Nov-2016-00-58-39-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
     fc_plus_0_3xcompRand = load(fullfile(dataDir, subDataDir, 'cifar-alexnet-9-Nov-2016-02-04-06-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
   end
-else
+elseif strcmp(dataset, 'stl-10')
   subDataDir = '2016-11-10-14; STL10; LeNet; FC+{0-3}; 1x2D_mult_randn_2x1D';
   fc_plus_3_1x2D_mult_randn_2x1D = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-14-Nov-2016-15-10-42-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
   fc_plus_2_1x2D_mult_randn_2x1D = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-14-Nov-2016-15-16-32-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
@@ -188,14 +188,46 @@ else
   fc_plus_2_3xcompRand = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-14-Nov-2016-14-55-44-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
   fc_plus_1_3xcompRand = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-14-Nov-2016-15-00-54-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
   fc_plus_0_3xcompRand = load(fullfile(dataDir, subDataDir, 'stl-10-lenet-14-Nov-2016-15-05-48-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
+elseif strcmp(dataset, 'mnist')
+  subDataDir = '2016-11-15-15; MNIST; MNISTNet; FC+{0-2}; 1x2D_mult_randn_2x1D';
+  fc_plus_2_1x2D_mult_randn_2x1D = load(fullfile(dataDir, subDataDir, 'mnist-mnistnet-15-Nov-2016-13-58-56-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+  fc_plus_1_1x2D_mult_randn_2x1D = load(fullfile(dataDir, subDataDir, 'mnist-mnistnet-15-Nov-2016-14-16-31-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+  fc_plus_0_1x2D_mult_randn_2x1D = load(fullfile(dataDir, subDataDir, 'mnist-mnistnet-15-Nov-2016-14-29-29-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
 
+  subDataDir = '2016-11-15-15; MNIST; MNISTNet; FC+{0-2}; 1x2D_mult_randn_2xcompRand';
+  fc_plus_2_1x2D_mult_randn_2xcompRand = load(fullfile(dataDir, subDataDir, 'mnist-mnistnet-15-Nov-2016-14-39-02-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+  fc_plus_1_1x2D_mult_randn_2xcompRand = load(fullfile(dataDir, subDataDir, 'mnist-mnistnet-15-Nov-2016-14-56-23-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+  fc_plus_0_1x2D_mult_randn_2xcompRand = load(fullfile(dataDir, subDataDir, 'mnist-mnistnet-15-Nov-2016-15-09-37-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+
+  subDataDir = '2016-11-15-15; MNIST; MNISTNet; FC+{0-2}; 1x2D_shiftflip_2x1D';
+  fc_plus_2_1x2D_shiftflip_2x1D = load(fullfile(dataDir, subDataDir, 'mnist-mnistnet-15-Nov-2016-12-38-20-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+  fc_plus_1_1x2D_shiftflip_2x1D = load(fullfile(dataDir, subDataDir, 'mnist-mnistnet-15-Nov-2016-12-55-19-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+  fc_plus_0_1x2D_shiftflip_2x1D = load(fullfile(dataDir, subDataDir, 'mnist-mnistnet-15-Nov-2016-13-08-26-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+
+  subDataDir = '2016-11-15-15; MNIST; MNISTNet; FC+{0-2}; 1x2D_shiftflip_2xcompRand';
+  fc_plus_2_1x2D_shiftflip_2xcompRand = load(fullfile(dataDir, subDataDir, 'mnist-mnistnet-15-Nov-2016-13-18-10-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+  fc_plus_1_1x2D_shiftflip_2xcompRand = load(fullfile(dataDir, subDataDir, 'mnist-mnistnet-15-Nov-2016-13-35-42-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+  fc_plus_0_1x2D_shiftflip_2xcompRand = load(fullfile(dataDir, subDataDir, 'mnist-mnistnet-15-Nov-2016-13-49-06-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+
+  subDataDir = '2016-11-15-15; MNIST; MNISTNet; FC+{0-2}; 3x1D';
+  fc_plus_2_3x1D = load(fullfile(dataDir, subDataDir, 'mnist-mnistnet-15-Nov-2016-11-59-10-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+  fc_plus_1_3x1D = load(fullfile(dataDir, subDataDir, 'mnist-mnistnet-15-Nov-2016-12-16-11-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+  fc_plus_0_3x1D = load(fullfile(dataDir, subDataDir, 'mnist-mnistnet-15-Nov-2016-12-28-57-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+
+  subDataDir = '2016-11-15-15; MNIST; MNISTNet; FC+{0-2}; 3xcompRand';
+  fc_plus_2_3xcompRand = load(fullfile(dataDir, subDataDir, 'mnist-mnistnet-15-Nov-2016-09-23-01-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
+  fc_plus_1_3xcompRand = load(fullfile(dataDir, subDataDir, 'mnist-mnistnet-15-Nov-2016-09-41-00-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
+  fc_plus_0_3xcompRand = load(fullfile(dataDir, subDataDir, 'mnist-mnistnet-15-Nov-2016-09-53-55-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
 end
 
 fprintf('\nDone!');
-
-backPropDepthLimit = 3;
-if strcmp(networkArch, 'alexnet')
-  backPropDepthLimit = 5;
+switch networkArch
+  case 'alexnet'
+    backPropDepthLimit = 5;
+  case 'lenet'
+    backPropDepthLimit = 3;
+  case 'mnistnet'
+    backPropDepthLimit = 2;
 end
 
 for backPropDepth = 0:backPropDepthLimit
