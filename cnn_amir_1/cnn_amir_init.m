@@ -73,7 +73,7 @@ switch opts.networkArch
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     layerNumber = layerNumber + 2;
-    net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 1, 500, 10, 1/100, 0, char(opts.weightInitSequence{1}), opts.weightInitSource);
+    net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 1, 500, 10, 1/100, 0, 'compRand', 'gen');
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     % Loss layer

@@ -16,7 +16,7 @@ switch opts.networkArch
   case 'mnistnet'
     switch opts.dataset
       case 'mnist'
-        net.meta.trainOpts.learningRate = [0.001*ones(1,20)]; % matconvnet default
+        net.meta.trainOpts.learningRate = [0.001*ones(1,50)]; % matconvnet default
     end
   case 'lenet'
     switch opts.dataset
@@ -73,7 +73,7 @@ switch opts.networkArch
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     layerNumber = layerNumber + 2;
-    net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 1, 500, 10, 1/100, 0, char(opts.weightInitSequence{1}), opts.weightInitSource);
+    net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 1, 500, 10, 1/100, 0, 'compRand', 'gen');
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     % Loss layer
