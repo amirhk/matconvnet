@@ -13,6 +13,11 @@ rng(0);
 net.layers = {};
 % Meta parameters
 switch opts.networkArch
+  case 'mnistnet'
+    switch opts.dataset
+      case 'mnist'
+        net.meta.trainOpts.learningRate = [0.001*ones(1,20)]; % matconvnet default
+    end
   case 'lenet'
     switch opts.dataset
       case 'cifar'
@@ -46,6 +51,63 @@ net.meta.trainOpts.batchSize = 100;
 opts = vl_argparse(opts, varargin);
 
 switch opts.networkArch
+  case 'mnistnet'
+    % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
+    % --- --- ---                                                     --- --- --
+    % --- --- ---                    MNISTNET                         --- --- --
+    % --- --- ---                                                     --- --- --
+    % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
+    layerNumber = 1;
+    net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 5, 1, 20, 1/100, 0, char(opts.weightInitSequence{1}), opts.weightInitSource);
+    net.layers{end+1} = poolingLayer(layerNumber);
+
+    % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
+    layerNumber = layerNumber + 2;
+    net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 5, 20, 50, 1/100, 0, char(opts.weightInitSequence{1}), opts.weightInitSource);
+    net.layers{end+1} = poolingLayer(layerNumber);
+
+    % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
+    layerNumber = layerNumber + 2;
+    net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 4, 50, 500, 1/100, 0, char(opts.weightInitSequence{1}), opts.weightInitSource);
+    net.layers{end+1} = reluLayer(layerNumber);
+
+    % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
+    layerNumber = layerNumber + 2;
+    net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 1, 500, 10, 1/100, 0, char(opts.weightInitSequence{1}), opts.weightInitSource);
+
+    % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
+    % Loss layer
+    net.layers{end+1} = struct('type', 'softmaxloss');
+
+    % f = 1/100
+    % net.layers{end+1} = struct('type', 'conv', ...
+    %                            'weights', {{f*randn(5,5,1,20, 'single'), zeros(1, 20, 'single')}}, ...
+    %                            'stride', 1, ...
+    %                            'pad', 0) ;
+    % net.layers{end+1} = struct('type', 'pool', ...
+    %                            'method', 'max', ...
+    %                            'pool', [2 2], ...
+    %                            'stride', 2, ...
+    %                            'pad', 0) ;
+    % net.layers{end+1} = struct('type', 'conv', ...
+    %                            'weights', {{f*randn(5,5,20,50, 'single'),zeros(1,50,'single')}}, ...
+    %                            'stride', 1, ...
+    %                            'pad', 0) ;
+    % net.layers{end+1} = struct('type', 'pool', ...
+    %                            'method', 'max', ...
+    %                            'pool', [2 2], ...
+    %                            'stride', 2, ...
+    %                            'pad', 0) ;
+    % net.layers{end+1} = struct('type', 'conv', ...
+    %                            'weights', {{f*randn(4,4,50,500, 'single'),  zeros(1,500,'single')}}, ...
+    %                            'stride', 1, ...
+    %                            'pad', 0) ;
+    % net.layers{end+1} = struct('type', 'relu') ;
+    % net.layers{end+1} = struct('type', 'conv', ...
+    %                            'weights', {{f*randn(1,1,500,10, 'single'), zeros(1,10,'single')}}, ...
+    %                            'stride', 1, ...
+    %                            'pad', 0) ;
+    % net.layers{end+1} = struct('type', 'softmaxloss') ;
   case 'lenet'
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     % --- --- ---                                                     --- --- --

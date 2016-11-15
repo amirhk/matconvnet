@@ -5,7 +5,7 @@ function fh = networkExtractionUtils()
 
 % --------------------------------------------------------------------
 function extractNewWeightsFromNetwork(dataset, networkArch, weightInitType)
-  % networkArch = {'alexnet', 'lenet'}
+  % networkArch = {'alexnet', 'lenet', 'mnistnet'}
   % weightInitType = {'baseline', 'compRand', '1D', '2D-positive', '2D-super', '2D-posneg', '2D-shiftflip', '2D-mult-randn', '2D-mult-kernel'};
 % --------------------------------------------------------------------
   fprintf('\n-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --\n');
@@ -44,7 +44,7 @@ function extractNewWeightsFromNetwork(dataset, networkArch, weightInitType)
 
 % --------------------------------------------------------------------
 function extractAllNewWeightsFromNetwork(dataset, networkArch)
-  % networkArch = {'alexnet', 'lenet'}
+  % networkArch = {'alexnet', 'lenet', 'mnistnet'}
 % --------------------------------------------------------------------
   runInTryCatch(@extractNewWeightsFromNetwork, dataset, networkArch, 'baseline');
   runInTryCatch(@extractNewWeightsFromNetwork, dataset, networkArch, 'compRand');
@@ -94,6 +94,8 @@ function randomWeights = genCompRandWeights(dataset, networkArch, layers, layerN
   m = size(W1, 3);
   n = size(W1, 4);
   switch networkArch
+    case 'mnistnet'
+      init_multiplier = 1/100;
     case 'lenet'
       switch layerNumber
         case 1
