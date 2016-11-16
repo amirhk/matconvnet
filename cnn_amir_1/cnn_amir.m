@@ -79,10 +79,12 @@ function [net, info] = cnn_amir(varargin)
     imdb = load(opts.imdbPath);
   else
     switch opts.dataset
-      case 'mnist'
-        imdb = constructMnistImdb(opts);
       case 'cifar'
         imdb = constructCifarImdb(opts);
+      case 'coil-100'
+        imdb = constructCOIL100Imdb(opts);
+      case 'mnist'
+        imdb = constructMnistImdb(opts);
       case 'stl-10'
         imdb = constructSTL10Imdb(opts);
     end

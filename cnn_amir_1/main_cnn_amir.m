@@ -8,9 +8,15 @@ function main_cnn_amir(varargin)
 % -- ==                                                                   -- ==
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 
-  networkArch = 'mnistnet';
-  % backpropDepthList = [8, 6, 4];
-  backpropDepthList = [4];
+  dataset = 'coil-100'; % {'mnist', 'cifar', 'stl-10', 'coil-100'}
+
+  % networkArch = 'mnistnet';
+  % % backpropDepthList = [8, 6, 4];
+  % backpropDepthList = [4];
+
+  networkArch = 'lenet';
+  % backpropDepthList = [13, 10, 7, 4];
+  backpropDepthList = [13];
 
   % networkArch = 'lenet';
   % % backpropDepthList = [13, 10, 7, 4];
@@ -35,7 +41,6 @@ function main_cnn_amir(varargin)
 % -- ==                                                                   -- ==
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 
-  dataset = 'mnist'; % {'mnist', 'cifar' | 'stl-10'}
   weightInitSource = 'gen';  % {'load' | 'gen'}
   weightInitSequenceList = {{'compRand', 'compRand', 'compRand', 'compRand', 'compRand'}};
 
