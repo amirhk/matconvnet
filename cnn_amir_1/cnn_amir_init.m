@@ -16,7 +16,7 @@ switch opts.networkArch
   case 'mnistnet'
     switch opts.dataset
       case 'mnist'
-        net.meta.trainOpts.learningRate = [0.001*ones(1,50)]; % matconvnet default
+        net.meta.trainOpts.learningRate = [0.001*ones(1,150)]; % matconvnet default
     end
   case 'lenet'
     switch opts.dataset
