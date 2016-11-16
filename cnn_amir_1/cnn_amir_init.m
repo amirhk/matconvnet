@@ -16,13 +16,13 @@ switch opts.networkArch
   case 'mnistnet'
     switch opts.dataset
       case 'mnist'
-        net.meta.trainOpts.learningRate = [0.001*ones(1,150)]; % matconvnet default
+        net.meta.trainOpts.learningRate = [0.001*ones(1,50)]; % matconvnet default
     end
   case 'lenet'
     switch opts.dataset
       case 'cifar'
-        % net.meta.trainOpts.learningRate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)]; % matconvnet default
-        net.meta.trainOpts.learningRate = [0.05*ones(1,25)]; % matconvnet default
+        net.meta.trainOpts.learningRate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)]; % matconvnet default
+        % net.meta.trainOpts.learningRate = [0.05*ones(1,25)]; % matconvnet default
       case 'stl-10'
         net.meta.trainOpts.learningRate = [0.5*ones(1,20) 0.05*ones(1,15)  0.1:-0.01:0.06 0.05*ones(1,10)]; % javad-LR
     end
