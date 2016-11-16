@@ -42,12 +42,12 @@ function imdb = constructCOIL100Imdb(opts)
     meta_test.data = images(test_images_indices,:);
     meta_test.labels = labels(test_images_indices);
 
-    fprintf('\t[INFO] Saving train meta data (large file ~25MB)...\n');
+    fprintf('\t[INFO] Saving train meta data (large file ~25MB)...');
     save(fullfile(opts.dataDir, 'train.mat'), 'meta_train');
-    fprintf('\tdone\n');
-    fprintf('\t[INFO] Saving test meta data (large file ~25MB)...\n');
+    fprintf('done\n');
+    fprintf('\t[INFO] Saving test meta data (large file ~25MB)...');
     save(fullfile(opts.dataDir, 'test.mat'), 'meta_test');
-    fprintf('\tdone\n');
+    fprintf('done\n');
   else
     fprintf('\t[INFO] Found pre-existing train and test meta files. Loading... ');
     meta_train = load(trainFile);
