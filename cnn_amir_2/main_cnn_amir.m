@@ -17,11 +17,11 @@ function main_cnn_amir(varargin)
 
   networkArch = 'lenet';
   % backpropDepthList = [13, 10, 7, 4]; % no dropout
-  % backpropDepthList = [14, 10, 7, 4]; % 1 x dropout after 1st layer
+  backpropDepthList = [14, 10, 7, 4]; % 1 x dropout after 1st layer
   % backpropDepthList = [14, 11, 8, 4]; % 1 x dropout after 3rd layer
   % backpropDepthList = [15, 11, 8, 4]; % 2 x dropout after 1st and 3rd layers
   % backpropDepthList = [13];
-  backpropDepthList = [14];
+  % backpropDepthList = [14];
 
   % networkArch = 'lenet';
   % % backpropDepthList = [13, 10, 7, 4];
