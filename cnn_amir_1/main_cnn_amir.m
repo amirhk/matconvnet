@@ -45,10 +45,10 @@ function main_cnn_amir(varargin)
 % -- ==                                                                   -- ==
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 
-  weightInitSource = 'gen';  % {'load' | 'gen'}
-  weightInitSequenceList = {{'compRand', 'compRand', 'compRand', 'compRand', 'compRand'}};
+  % weightInitSource = 'gen';  % {'load' | 'gen'}
+  % weightInitSequenceList = {{'compRand', 'compRand', 'compRand', 'compRand', 'compRand'}};
 
-  % weightInitSource = 'load';  % {'load' | 'gen'}
+  weightInitSource = 'load';  % {'load' | 'gen'}
   % % weightInitTypes: {'baseline', 'compRand', '1D', '2D-positive', '2D-super', '2D-posneg', '2D-shiftflip', '2D-mult-randn', '2D-mult-kernel'};
   % % weightInitSequenceList = {{'baseline', 'baseline', 'baseline', 'baseline', 'baseline'}};
   % % weightInitSequenceList = { ...
@@ -59,6 +59,7 @@ function main_cnn_amir(varargin)
   % %   {'2D-shiftflip', '2D-shiftflip', 'compRand', 'compRand', 'compRand'}, ...
   % %   {'2D-mult-randn', '2D-mult-randn', '1D', '1D', '1D'}, ...
   % %   {'2D-mult-randn', '2D-mult-randn', 'compRand', 'compRand', 'compRand'}};ult-randn', '2D-mult-randn', 'compRand'}};
+  weightInitSequenceList = {{'1D', '1D', '1D'}};
   % weightInitSequenceList = { ...
   %   % {'baseline', 'baseline', 'baseline'}, ...
   %   % {'compRand', 'compRand', 'compRand'}, ...
