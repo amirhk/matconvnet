@@ -104,18 +104,19 @@ switch opts.networkArch
     net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 5, 32, 64, 5/100, 2, char(opts.weightInitSequence{3}), opts.weightInitSource);
     net.layers{end+1} = reluLayer(layerNumber);
     net.layers{end+1} = poolingLayerLeNetAvg(layerNumber);
-    net.layers{end+1} = dropoutLayer(layerNumber, 0.5); % NEW!!!!!!!!!
+    % net.layers{end+1} = dropoutLayer(layerNumber, 0.5); % NEW!!!!!!!!!
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     % FULLY CONNECTED
     layerNumber = layerNumber + 3;
     net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 4, 64, 64, 5/100, 0, 'compRand', 'gen');
     net.layers{end+1} = reluLayer(layerNumber);
+    net.layers{end+1} = dropoutLayer(layerNumber, 0.5); % NEW!!!!!!!!!
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     layerNumber = layerNumber + 2;
-    % net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 1, 64, 10, 5/100, 0, 'compRand', 'gen');
-    net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 1, 64, 100, 5/100, 0, 'compRand', 'gen');
+    net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 1, 64, 10, 5/100, 0, 'compRand', 'gen');
+    % net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 1, 64, 100, 5/100, 0, 'compRand', 'gen');
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     % Loss layer
