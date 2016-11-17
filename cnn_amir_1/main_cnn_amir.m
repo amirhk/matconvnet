@@ -20,6 +20,7 @@ function main_cnn_amir(varargin)
   % backpropDepthList = [14, 10, 7, 4]; % 1 x dropout after 1st layer
   % backpropDepthList = [14, 11, 8, 4]; % 1 x dropout after 3rd layer
   backpropDepthList = [15, 11, 8, 4]; % 2 x dropout after 1st and 3rd layers
+  backpropDepthList = [4, 8, 11, 15];
   % backpropDepthList = [13];
   % backpropDepthList = [15];
 
