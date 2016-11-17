@@ -91,6 +91,7 @@ switch opts.networkArch
     net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 5, 3, 32, 1/100, 2, char(opts.weightInitSequence{1}), opts.weightInitSource);
     net.layers{end+1} = poolingLayerLeNetMax(layerNumber);
     net.layers{end+1} = reluLayer(layerNumber);
+    net.layers{end+1} = dropoutLayer(layerNumber); % NEW!!!!!!!!!
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     layerNumber = layerNumber + 3;
@@ -103,6 +104,7 @@ switch opts.networkArch
     net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 5, 32, 64, 5/100, 2, char(opts.weightInitSequence{3}), opts.weightInitSource);
     net.layers{end+1} = reluLayer(layerNumber);
     net.layers{end+1} = poolingLayerLeNetAvg(layerNumber);
+    % net.layers{end+1} = dropoutLayer(layerNumber); % NEW!!!!!!!!!
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     % FULLY CONNECTED
@@ -397,6 +399,14 @@ function structuredLayer = poolingLayerLeNetMax(layerNumber)
     'pool', [3 3], ...
     'stride', 2, ...
     'pad', [0 1 0 1]); % Emulate caffe
+
+% --------------------------------------------------------------------
+function structuredLayer = dropoutLayer(layerNumber, dropoutRatio)
+% --------------------------------------------------------------------
+  structuredLayer = struct( ...
+    'type', 'dropout', ...
+    'name', sprintf('dropout%s', layerNumber), ...
+    'rate', dropoutRatio);
 
 % --------------------------------------------------------------------
 function structuredLayer = bnormLayer(layerNumber, ndim)
