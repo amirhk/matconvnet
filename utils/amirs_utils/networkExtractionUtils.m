@@ -27,6 +27,8 @@ function extractNewWeightsFromNetwork(dataset, networkArch, weightInitType)
       genWeightsMethod = @genCompRandWeights;
     case '1D'
       genWeightsMethod = @gen1DGaussianWeightsFromBaseline;
+    case 'layerwise-1D'
+      genWeightsMethod = @genLayerwise1DGaussianWeightsFromBaseline;
     case '2D-super'
       genWeightsMethod = @gen2DGaussianSuperWeightsFromBaseline;
     case '2D-posneg'
@@ -49,6 +51,7 @@ function extractAllNewWeightsFromNetwork(dataset, networkArch)
   runInTryCatch(@extractNewWeightsFromNetwork, dataset, networkArch, 'baseline');
   runInTryCatch(@extractNewWeightsFromNetwork, dataset, networkArch, 'compRand');
   runInTryCatch(@extractNewWeightsFromNetwork, dataset, networkArch, '1D');
+  runInTryCatch(@extractNewWeightsFromNetwork, dataset, networkArch, 'layerwise-1D');
   runInTryCatch(@extractNewWeightsFromNetwork, dataset, networkArch, '2D-super');
   runInTryCatch(@extractNewWeightsFromNetwork, dataset, networkArch, '2D-posneg');
   runInTryCatch(@extractNewWeightsFromNetwork, dataset, networkArch, '2D-positive');
@@ -201,6 +204,41 @@ function newWeights = saveBaselineKernelDists1DGaussian( ...
 
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 % -- ==                                                                                           -- ==
+% -- ==                                    layerwise-1D                                           -- ==
+% -- ==                                                                                           -- ==
+% -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
+
+% --------------------------------------------------------------------
+function newWeights = genLayerwise1DGaussianWeightsFromBaseline( ...
+  dataset, ...
+  networkArch, ...
+  layers, ...
+  layerNumber)
+% --------------------------------------------------------------------
+  tic;
+  % vectorize all the kernels together, get global 1D distribution, sample from
+  % that, reshape back to 4D matrix, and set the new value to newWeights{1}. For
+  % newWeights{2} just use the baseline pretrain weights.
+  baselineWeights = layers{layerNumber}.weights{1};
+  matrixDims = size(baselineWeights);
+  vectorDims = [size(baselineWeights, 1) * size(baselineWeights, 2) * size(baselineWeights, 3) * size(baselineWeights, 4), 1];
+  vectorizedAllBaselineKernels = reshape(baselineWeights, vectorDims);
+  dist = fitdist(vectorizedAllBaselineKernels, 'Normal');
+  vectorizedAllNewKernels = random(dist, vectorDims);
+  newKernel = reshape(vectorizedAllNewKernels, matrixDims);
+  newWeights{1} = newKernel;
+  newWeights{2} = layers{layerNumber}.weights{2};
+  numberOfKernels = size(newWeights{1}, 3) * size(newWeights{1}, 4);
+  fprintf( ...
+    ['[INFO] layer %d: GLOBAL 1D weights generated for %d kernels. ', ...
+    'Elapsed Time (since start): %f\n'], ...
+    layerNumber, ...
+    numberOfKernels, ...
+    toc);
+
+
+% -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
+% -- ==                                                                                           -- ==
 % -- ==                                          2D                                               -- ==
 % -- ==                                                                                           -- ==
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
@@ -230,7 +268,6 @@ function newWeights = gen2DGaussianPosNegWeightsFromBaseline( ...
     utils.fit2DGaussianAndDrawPosNegSamples, ...
     layers, ...
     layerNumber);
-
 
 % --------------------------------------------------------------------
 function newWeights = gen2DGaussianPositiveWeightsFromBaseline( ...
