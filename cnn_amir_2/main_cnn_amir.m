@@ -62,8 +62,8 @@ function main_cnn_amir(varargin)
   % %   {'2D-mult-randn', '2D-mult-randn', 'compRand', 'compRand', 'compRand'}};ult-randn', '2D-mult-randn', 'compRand'}};
   % weightInitSequenceList = {{'1D', '1D', '1D'}};
   weightInitSequenceList = { ...
-    {'compRand', 'compRand', 'compRand'}
-    {'1D', '1D', '1D'}
+    % {'compRand', 'compRand', 'compRand'}, ...
+    {'1D', '1D', '1D'}, ...
     {'layerwise-1D', 'layerwise-1D', 'layerwise-1D'}};
 
   % imdbPortionList = [0.1, 0.25, 0.5, 1.0];
