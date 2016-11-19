@@ -9,7 +9,7 @@ function main_cnn_amir(varargin)
 % -- ==                                                                   -- ==
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 
-  dataset = 'stl-10'; % {'mnist', 'cifar', 'stl-10', 'coil-100'}
+  dataset = coil-100'; % {'mnist', 'cifar', 'stl-10', 'coil-100'}
 
   % networkArch = 'mnistnet';
   % % backpropDepthList = [8, 6, 4];
@@ -62,7 +62,7 @@ function main_cnn_amir(varargin)
   % %   {'2D-mult-randn', '2D-mult-randn', 'compRand', 'compRand', 'compRand'}};ult-randn', '2D-mult-randn', 'compRand'}};
   % weightInitSequenceList = {{'1D', '1D', '1D'}};
   weightInitSequenceList = { ...
-    % {'compRand', 'compRand', 'compRand'}, ...
+    {'compRand', 'compRand', 'compRand'}, ...
     {'1D', '1D', '1D'}, ...
     {'layerwise-1D', 'layerwise-1D', 'layerwise-1D'}};
 
