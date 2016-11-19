@@ -9,14 +9,14 @@ function main_cnn_amir(varargin)
 % -- ==                                                                   -- ==
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 
-  dataset = 'cifar'; % {'mnist', 'cifar', 'stl-10', 'coil-100'}
+  dataset = 'mnist'; % {'mnist', 'cifar', 'stl-10', 'coil-100'}
 
-  % networkArch = 'mnistnet';
-  % % backpropDepthList = [8, 6, 4];
+  networkArch = 'mnistnet';
+  backpropDepthList = [8, 6, 4];
   % backpropDepthList = [4];
 
-  networkArch = 'lenet';
-  backpropDepthList = [13, 10, 7, 4]; % no dropout
+  % networkArch = 'lenet';
+  % backpropDepthList = [13, 10, 7, 4]; % no dropout
   % backpropDepthList = [14, 10, 7, 4]; % 1 x dropout after 1st layer
   % backpropDepthList = [14, 11, 8, 4]; % 1 x dropout after 3rd layer
   % backpropDepthList = [14, 11, 8, 5]; % 1 x dropout in FC
@@ -62,8 +62,8 @@ function main_cnn_amir(varargin)
   % %   {'2D-mult-randn', '2D-mult-randn', 'compRand', 'compRand', 'compRand'}};ult-randn', '2D-mult-randn', 'compRand'}};
   % weightInitSequenceList = {{'1D', '1D', '1D'}};
   weightInitSequenceList = { ...
-    % {'compRand', 'compRand', 'compRand'}, ...
-    % {'1D', '1D', '1D'}, ...
+    {'compRand', 'compRand', 'compRand'}, ...
+    {'1D', '1D', '1D'}, ...
     {'layerwise-1D', 'layerwise-1D', 'layerwise-1D'}};
 
   % imdbPortionList = [0.1, 0.25, 0.5, 1.0];
