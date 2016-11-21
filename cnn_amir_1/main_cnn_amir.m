@@ -9,7 +9,7 @@ function main_cnn_amir(varargin)
 % -- ==                                                                   -- ==
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
   % datasetList = {'cifar', 'stl-10', 'coil-100'}; % {'mnist', 'cifar', 'stl-10', 'coil-100'}
-  datasetList = {'mnist'};
+  datasetList = {'cifar'};
 
   % networkArch = 'mnistnet';
   % % backpropDepthList = [8, 6, 4];
