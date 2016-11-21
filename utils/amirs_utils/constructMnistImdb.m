@@ -1,7 +1,7 @@
 % --------------------------------------------------------------------
 function imdb = constructMnistImdb(opts)
 % --------------------------------------------------------------------
-  fprintf('[INFO] Constructing STL-10 imdb...');
+  fprintf('[INFO] Constructing MNIST imdb...');
   % Preapre the imdb structure, returns image data with mean image subtracted
   files = {'train-images-idx3-ubyte', ...
            'train-labels-idx1-ubyte', ...
