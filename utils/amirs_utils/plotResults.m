@@ -1,42 +1,48 @@
 dataDir = '/Volumes/Amir/results/';
-experimentDir = '2016-11-18-20; Varying Layerwise Weight Initialization; STL-10; LeNet; FC+{0-3}';
+experimentDir = '2016-11-18-21; Varying Layerwise Weight Initialization; MNIST; LeNet; FC+{0-3}';
 
 epochNum = 50;
 epochFile = sprintf('net-epoch-%d.mat', epochNum);
 fprintf('Loading files...'); i = 1;
 
-dataset = 'stl-10';
+dataset = 'mnist';
 networkArch = 'lenet';
 
 subDataDir = '1D';
-fc_plus_3_3x1D = load(fullfile(dataDir, experimentDir, subDataDir, 'stl-10-lenet-18-Nov-2016-18-24-40-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_2_3x1D = load(fullfile(dataDir, experimentDir, subDataDir, 'stl-10-lenet-18-Nov-2016-18-30-24-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_1_3x1D = load(fullfile(dataDir, experimentDir, subDataDir, 'stl-10-lenet-18-Nov-2016-18-35-23-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_0_3x1D = load(fullfile(dataDir, experimentDir, subDataDir, 'stl-10-lenet-18-Nov-2016-18-39-46-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_3_3x1D = load(fullfile(dataDir, experimentDir, subDataDir, 'mnist-lenet-21-Nov-2016-01-44-03-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_2_3x1D = load(fullfile(dataDir, experimentDir, subDataDir, 'mnist-lenet-21-Nov-2016-02-20-56-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_1_3x1D = load(fullfile(dataDir, experimentDir, subDataDir, 'mnist-lenet-21-Nov-2016-02-50-30-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_0_3x1D = load(fullfile(dataDir, experimentDir, subDataDir, 'mnist-lenet-21-Nov-2016-03-13-47-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
 
 subDataDir = 'compRand';
-fc_plus_3_3xcompRand = load(fullfile(dataDir, experimentDir, subDataDir, 'stl-10-lenet-18-Nov-2016-18-04-48-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_2_3xcompRand = load(fullfile(dataDir, experimentDir, subDataDir, 'stl-10-lenet-18-Nov-2016-18-10-20-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_1_3xcompRand = load(fullfile(dataDir, experimentDir, subDataDir, 'stl-10-lenet-18-Nov-2016-18-15-20-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_0_3xcompRand = load(fullfile(dataDir, experimentDir, subDataDir, 'stl-10-lenet-18-Nov-2016-18-19-41-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_3_3xcompRand = load(fullfile(dataDir, experimentDir, subDataDir, 'mnist-lenet-20-Nov-2016-20-47-41-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_2_3xcompRand = load(fullfile(dataDir, experimentDir, subDataDir, 'mnist-lenet-20-Nov-2016-21-25-29-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_1_3xcompRand = load(fullfile(dataDir, experimentDir, subDataDir, 'mnist-lenet-20-Nov-2016-21-56-14-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_0_3xcompRand = load(fullfile(dataDir, experimentDir, subDataDir, 'mnist-lenet-20-Nov-2016-22-20-13-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
 
 subDataDir = 'layerwise-1D-from-CIFAR';
-fc_plus_3_3xlayerwise_1D_from_CIFAR = load(fullfile(dataDir, experimentDir, subDataDir, 'stl-10-lenet-19-Nov-2016-12-13-46-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_2_3xlayerwise_1D_from_CIFAR = load(fullfile(dataDir, experimentDir, subDataDir, 'stl-10-lenet-19-Nov-2016-12-19-26-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_1_3xlayerwise_1D_from_CIFAR = load(fullfile(dataDir, experimentDir, subDataDir, 'stl-10-lenet-19-Nov-2016-12-24-31-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_0_3xlayerwise_1D_from_CIFAR = load(fullfile(dataDir, experimentDir, subDataDir, 'stl-10-lenet-19-Nov-2016-12-28-58-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_3_3xlayerwise_1D_from_CIFAR = load(fullfile(dataDir, experimentDir, subDataDir, 'mnist-lenet-21-Nov-2016-03-32-27-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_2_3xlayerwise_1D_from_CIFAR = load(fullfile(dataDir, experimentDir, subDataDir, 'mnist-lenet-21-Nov-2016-04-08-38-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_1_3xlayerwise_1D_from_CIFAR = load(fullfile(dataDir, experimentDir, subDataDir, 'mnist-lenet-21-Nov-2016-04-38-11-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_0_3xlayerwise_1D_from_CIFAR = load(fullfile(dataDir, experimentDir, subDataDir, 'mnist-lenet-21-Nov-2016-05-01-23-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
 
 subDataDir = 'layerwise-1D-from-COIL-100';
-fc_plus_3_3xlayerwise_1D_from_COIL_100 = load(fullfile(dataDir, experimentDir, subDataDir, 'stl-10-lenet-19-Nov-2016-12-33-00-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_2_3xlayerwise_1D_from_COIL_100 = load(fullfile(dataDir, experimentDir, subDataDir, 'stl-10-lenet-19-Nov-2016-12-38-49-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_1_3xlayerwise_1D_from_COIL_100 = load(fullfile(dataDir, experimentDir, subDataDir, 'stl-10-lenet-19-Nov-2016-12-43-46-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_0_3xlayerwise_1D_from_COIL_100 = load(fullfile(dataDir, experimentDir, subDataDir, 'stl-10-lenet-19-Nov-2016-12-48-08-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_3_3xlayerwise_1D_from_COIL_100 = load(fullfile(dataDir, experimentDir, subDataDir, 'mnist-lenet-21-Nov-2016-05-20-02-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_2_3xlayerwise_1D_from_COIL_100 = load(fullfile(dataDir, experimentDir, subDataDir, 'mnist-lenet-21-Nov-2016-05-56-13-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_1_3xlayerwise_1D_from_COIL_100 = load(fullfile(dataDir, experimentDir, subDataDir, 'mnist-lenet-21-Nov-2016-06-25-44-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_0_3xlayerwise_1D_from_COIL_100 = load(fullfile(dataDir, experimentDir, subDataDir, 'mnist-lenet-21-Nov-2016-06-49-02-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+
+subDataDir = 'layerwise-1D-from-MNIST';
+fc_plus_3_3xlayerwise_1D_from_MNIST = load(fullfile(dataDir, experimentDir, subDataDir, 'mnist-lenet-21-Nov-2016-07-07-45-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_2_3xlayerwise_1D_from_MNIST = load(fullfile(dataDir, experimentDir, subDataDir, 'mnist-lenet-21-Nov-2016-07-44-08-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_1_3xlayerwise_1D_from_MNIST = load(fullfile(dataDir, experimentDir, subDataDir, 'mnist-lenet-21-Nov-2016-08-13-50-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_0_3xlayerwise_1D_from_MNIST = load(fullfile(dataDir, experimentDir, subDataDir, 'mnist-lenet-21-Nov-2016-08-37-07-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
 
 subDataDir = 'layerwise-1D-from-STL-10';
-fc_plus_3_3xlayerwise_1D_from_STL_10 = load(fullfile(dataDir, experimentDir, subDataDir, 'stl-10-lenet-18-Nov-2016-18-43-42-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_2_3xlayerwise_1D_from_STL_10 = load(fullfile(dataDir, experimentDir, subDataDir, 'stl-10-lenet-18-Nov-2016-18-49-14-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_1_3xlayerwise_1D_from_STL_10 = load(fullfile(dataDir, experimentDir, subDataDir, 'stl-10-lenet-18-Nov-2016-18-54-08-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
-fc_plus_0_3xlayerwise_1D_from_STL_10 = load(fullfile(dataDir, experimentDir, subDataDir, 'stl-10-lenet-18-Nov-2016-18-58-30-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_3_3xlayerwise_1D_from_STL_10 = load(fullfile(dataDir, experimentDir, subDataDir, 'mnist-lenet-21-Nov-2016-08-55-41-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_2_3xlayerwise_1D_from_STL_10 = load(fullfile(dataDir, experimentDir, subDataDir, 'mnist-lenet-21-Nov-2016-09-31-50-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_1_3xlayerwise_1D_from_STL_10 = load(fullfile(dataDir, experimentDir, subDataDir, 'mnist-lenet-21-Nov-2016-10-02-08-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
+fc_plus_0_3xlayerwise_1D_from_STL_10 = load(fullfile(dataDir, experimentDir, subDataDir, 'mnist-lenet-21-Nov-2016-10-26-04-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
 
 fprintf('\nDone!');
 switch networkArch
@@ -60,14 +66,16 @@ for backPropDepth = 0:backPropDepthLimit
     exp_2 = eval(sprintf('fc_plus_%d_3xcompRand', backPropDepth));
     exp_3 = eval(sprintf('fc_plus_%d_3xlayerwise_1D_from_CIFAR', backPropDepth));
     exp_4 = eval(sprintf('fc_plus_%d_3xlayerwise_1D_from_COIL_100', backPropDepth));
-    exp_5 = eval(sprintf('fc_plus_%d_3xlayerwise_1D_from_STL_10', backPropDepth));
+    exp_5 = eval(sprintf('fc_plus_%d_3xlayerwise_1D_from_MNIST', backPropDepth));
+    exp_6 = eval(sprintf('fc_plus_%d_3xlayerwise_1D_from_STL_10', backPropDepth));
 
     plot( ...
       startEpoch:1:epochNum, [exp_1.info.(resultType).error(1,startEpoch:epochNum)], 'r', ...
       startEpoch:1:epochNum, [exp_2.info.(resultType).error(1,startEpoch:epochNum)], 'k', ...
       startEpoch:1:epochNum, [exp_3.info.(resultType).error(1,startEpoch:epochNum)], 'r--', ...
       startEpoch:1:epochNum, [exp_4.info.(resultType).error(1,startEpoch:epochNum)], 'r-.', ...
-      startEpoch:1:epochNum, [exp_5.info.(resultType).error(1,startEpoch:epochNum)], 'r:', ...
+      startEpoch:1:epochNum, [exp_5.info.(resultType).error(1,startEpoch:epochNum)], 'r-^', ...
+      startEpoch:1:epochNum, [exp_6.info.(resultType).error(1,startEpoch:epochNum)], 'r:', ...
       'LineWidth', 2);
     grid on
     title(experiment);
@@ -76,7 +84,8 @@ for backPropDepth = 0:backPropDepthLimit
       '3 x compRand', ...
       '3 x layerwise 1D from CIFAR', ...
       '3 x layerwise 1D from COIL-100', ...
-      '3 x layerwise 1D from STL-10 (default)');
+      '3 x layerwise 1D from MNIST (default)', ...
+      '3 x layerwise 1D from STL-10');
     xlabel('epoch')
     % ylabel('Training Error');
     ylim([0, 1 / granularity]);
