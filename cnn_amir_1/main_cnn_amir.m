@@ -65,7 +65,7 @@ function main_cnn_amir(varargin)
   %   {'layerwise-1D-from-mnist', 'layerwise-1D-from-mnist', 'layerwise-1D-from-mnist'}};
 
   % imdbPortionList = [0.1, 0.25, 0.5, 1.0];
-  imdbPortionList = [1.0];
+  imdbPortionList = [0.1];
 
   % weightDecayList = [0.1, 0.01, 0.001, 0.0001, 0]; % Works: {0.001, 0.0001, 0} Doesn't Work: {0.1, 0.01}
   weightDecayList = [0.0001];
