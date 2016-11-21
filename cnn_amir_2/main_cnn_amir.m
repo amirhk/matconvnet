@@ -14,7 +14,7 @@ function main_cnn_amir(varargin)
   % % backpropDepthList = [8, 6, 4];
   % backpropDepthList = [4];
 
-  networkArch = 'mnistnet';
+  networkArch = 'lenet';
   backpropDepthList = [13, 10, 7, 4]; % no dropout
   % backpropDepthList = [14, 10, 7, 4]; % 1 x dropout after 1st layer
   % backpropDepthList = [14, 11, 8, 4]; % 1 x dropout after 3rd layer
@@ -45,10 +45,10 @@ function main_cnn_amir(varargin)
 % -- ==                                                                   -- ==
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 
-  weightInitSource = 'gen';  % {'load' | 'gen'}
-  weightInitSequenceList = {{'compRand', 'compRand', 'compRand', 'compRand', 'compRand'}};
+  % weightInitSource = 'gen';  % {'load' | 'gen'}
+  % weightInitSequenceList = {{'compRand', 'compRand', 'compRand', 'compRand', 'compRand'}};
 
-  % weightInitSource = 'load';  % {'load' | 'gen'}
+  weightInitSource = 'load';  % {'load' | 'gen'}
   % % % weightInitTypes: {'baseline', 'compRand', '1D', '2D-positive', '2D-super', '2D-posneg', '2D-shiftflip', '2D-mult-randn', '2D-mult-kernel'};
   % % % weightInitSequenceList = {{'baseline', 'baseline', 'baseline', 'baseline', 'baseline'}};
   % % % weightInitSequenceList = { ...
@@ -60,11 +60,13 @@ function main_cnn_amir(varargin)
   % % %   {'2D-mult-randn', '2D-mult-randn', '1D', '1D', '1D'}, ...
   % % %   {'2D-mult-randn', '2D-mult-randn', 'compRand', 'compRand', 'compRand'}};ult-randn', '2D-mult-randn', 'compRand'}};
   % % weightInitSequenceList = {{'1D', '1D', '1D'}};
-  % weightInitSequenceList = { ...
-  %   % {'compRand', 'compRand', 'compRand'}, ...
-  %   % {'1D', '1D', '1D'}, ...
-  %   {'layerwise-1D-from-coil-100', 'layerwise-1D-from-coil-100', 'layerwise-1D-from-coil-100'}, ...
-  %   {'layerwise-1D-from-stl-10', 'layerwise-1D-from-stl-10', 'layerwise-1D-from-stl-10'}};
+  weightInitSequenceList = { ...
+    {'compRand', 'compRand', 'compRand'}, ...
+    {'1D', '1D', '1D'}, ...
+    {'layerwise-1D-from-cifar', 'layerwise-1D-from-cifar', 'layerwise-1D-from-cifar'}, ...
+    {'layerwise-1D-from-coil-100', 'layerwise-1D-from-coil-100', 'layerwise-1D-from-coil-100'}, ...
+    {'layerwise-1D-from-mnist', 'layerwise-1D-from-mnist', 'layerwise-1D-from-mnist'}, ...
+    {'layerwise-1D-from-stl-10', 'layerwise-1D-from-stl-10', 'layerwise-1D-from-stl-10'}};
 
   % imdbPortionList = [0.1, 0.25, 0.5, 1.0];
   imdbPortionList = [1.0];

@@ -8,7 +8,7 @@ function main_cnn_amir(varargin)
 % -- ==                        NETWORK ARCH                               -- ==
 % -- ==                                                                   -- ==
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
-  datasetList = {'mnist'}; % {'mnist', 'cifar', 'stl-10', 'coil-100'}
+  datasetList = {'cifar', 'stl-10', 'coil-100'}; % {'mnist', 'cifar', 'stl-10', 'coil-100'}
 
   % networkArch = 'mnistnet';
   % % backpropDepthList = [8, 6, 4];
@@ -45,10 +45,10 @@ function main_cnn_amir(varargin)
 % -- ==                                                                   -- ==
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 
-  weightInitSource = 'gen';  % {'load' | 'gen'}
-  weightInitSequenceList = {{'compRand', 'compRand', 'compRand', 'compRand', 'compRand'}};
+  % weightInitSource = 'gen';  % {'load' | 'gen'}
+  % weightInitSequenceList = {{'compRand', 'compRand', 'compRand', 'compRand', 'compRand'}};
 
-  % weightInitSource = 'load';  % {'load' | 'gen'}
+  weightInitSource = 'load';  % {'load' | 'gen'}
   % % % weightInitTypes: {'baseline', 'compRand', '1D', '2D-positive', '2D-super', '2D-posneg', '2D-shiftflip', '2D-mult-randn', '2D-mult-kernel'};
   % % % weightInitSequenceList = {{'baseline', 'baseline', 'baseline', 'baseline', 'baseline'}};
   % % % weightInitSequenceList = { ...
@@ -60,11 +60,8 @@ function main_cnn_amir(varargin)
   % % %   {'2D-mult-randn', '2D-mult-randn', '1D', '1D', '1D'}, ...
   % % %   {'2D-mult-randn', '2D-mult-randn', 'compRand', 'compRand', 'compRand'}};ult-randn', '2D-mult-randn', 'compRand'}};
   % % weightInitSequenceList = {{'1D', '1D', '1D'}};
-  % weightInitSequenceList = { ...
-  %   % {'compRand', 'compRand', 'compRand'}, ...
-  %   % {'1D', '1D', '1D'}, ...
-  %   {'layerwise-1D-from-coil-100', 'layerwise-1D-from-coil-100', 'layerwise-1D-from-coil-100'}, ...
-  %   {'layerwise-1D-from-stl-10', 'layerwise-1D-from-stl-10', 'layerwise-1D-from-stl-10'}};
+  weightInitSequenceList = { ...
+    {'layerwise-1D-from-mnist', 'layerwise-1D-from-mnist', 'layerwise-1D-from-mnist'}};
 
   % imdbPortionList = [0.1, 0.25, 0.5, 1.0];
   imdbPortionList = [1.0];
