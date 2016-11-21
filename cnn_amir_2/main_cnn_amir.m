@@ -65,7 +65,7 @@ function main_cnn_amir(varargin)
     {'8-clustered-layerwise-1D-from-cifar', '8-clustered-layerwise-1D-from-cifar', '8-clustered-layerwise-1D-from-cifar'}};
 
   % imdbPortionList = [0.1, 0.25, 0.5, 1.0];
-  imdbPortionList = [1];
+  imdbPortionList = [1.0];
 
   % weightDecayList = [0.1, 0.01, 0.001, 0.0001, 0]; % Works: {0.001, 0.0001, 0} Doesn't Work: {0.1, 0.01}
   weightDecayList = [0.0001];
