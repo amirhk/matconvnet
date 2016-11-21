@@ -8,7 +8,8 @@ function main_cnn_amir(varargin)
 % -- ==                        NETWORK ARCH                               -- ==
 % -- ==                                                                   -- ==
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
-  datasetList = {'cifar', 'stl-10', 'coil-100'}; % {'mnist', 'cifar', 'stl-10', 'coil-100'}
+  % datasetList = {'cifar', 'stl-10', 'coil-100'}; % {'mnist', 'cifar', 'stl-10', 'coil-100'}
+  datasetList = {'mnist'};
 
   % networkArch = 'mnistnet';
   % % backpropDepthList = [8, 6, 4];
@@ -45,26 +46,26 @@ function main_cnn_amir(varargin)
 % -- ==                                                                   -- ==
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 
-  % weightInitSource = 'gen';  % {'load' | 'gen'}
-  % weightInitSequenceList = {{'compRand', 'compRand', 'compRand', 'compRand', 'compRand'}};
+  weightInitSource = 'gen';  % {'load' | 'gen'}
+  weightInitSequenceList = {{'compRand', 'compRand', 'compRand', 'compRand', 'compRand'}};
 
-  weightInitSource = 'load';  % {'load' | 'gen'}
-  % % % weightInitTypes: {'baseline', 'compRand', '1D', '2D-positive', '2D-super', '2D-posneg', '2D-shiftflip', '2D-mult-randn', '2D-mult-kernel'};
-  % % % weightInitSequenceList = {{'baseline', 'baseline', 'baseline', 'baseline', 'baseline'}};
-  % % % weightInitSequenceList = { ...
-  % % %   {'baseline', 'baseline', 'baseline', 'baseline', 'baseline'}, ...
-  % % %   {'compRand', 'compRand', 'compRand', 'compRand', 'compRand'}, ...
-  % % %   {'1D', '1D', '1D', '1D', '1D'}, ...
-  % % %   {'2D-shiftflip', '2D-shiftflip', '1D', '1D', '1D'}, ...
-  % % %   {'2D-shiftflip', '2D-shiftflip', 'compRand', 'compRand', 'compRand'}, ...
-  % % %   {'2D-mult-randn', '2D-mult-randn', '1D', '1D', '1D'}, ...
-  % % %   {'2D-mult-randn', '2D-mult-randn', 'compRand', 'compRand', 'compRand'}};ult-randn', '2D-mult-randn', 'compRand'}};
-  % % weightInitSequenceList = {{'1D', '1D', '1D'}};
-  weightInitSequenceList = { ...
-    {'layerwise-1D-from-mnist', 'layerwise-1D-from-mnist', 'layerwise-1D-from-mnist'}};
+  % weightInitSource = 'load';  % {'load' | 'gen'}
+  % % % % weightInitTypes: {'baseline', 'compRand', '1D', '2D-positive', '2D-super', '2D-posneg', '2D-shiftflip', '2D-mult-randn', '2D-mult-kernel'};
+  % % % % weightInitSequenceList = {{'baseline', 'baseline', 'baseline', 'baseline', 'baseline'}};
+  % % % % weightInitSequenceList = { ...
+  % % % %   {'baseline', 'baseline', 'baseline', 'baseline', 'baseline'}, ...
+  % % % %   {'compRand', 'compRand', 'compRand', 'compRand', 'compRand'}, ...
+  % % % %   {'1D', '1D', '1D', '1D', '1D'}, ...
+  % % % %   {'2D-shiftflip', '2D-shiftflip', '1D', '1D', '1D'}, ...
+  % % % %   {'2D-shiftflip', '2D-shiftflip', 'compRand', 'compRand', 'compRand'}, ...
+  % % % %   {'2D-mult-randn', '2D-mult-randn', '1D', '1D', '1D'}, ...
+  % % % %   {'2D-mult-randn', '2D-mult-randn', 'compRand', 'compRand', 'compRand'}};ult-randn', '2D-mult-randn', 'compRand'}};
+  % % % weightInitSequenceList = {{'1D', '1D', '1D'}};
+  % weightInitSequenceList = { ...
+  %   {'layerwise-1D-from-mnist', 'layerwise-1D-from-mnist', 'layerwise-1D-from-mnist'}};
 
   % imdbPortionList = [0.1, 0.25, 0.5, 1.0];
-  imdbPortionList = [1.0];
+  imdbPortionList = [0.1];
 
   % weightDecayList = [0.1, 0.01, 0.001, 0.0001, 0]; % Works: {0.001, 0.0001, 0} Doesn't Work: {0.1, 0.01}
   weightDecayList = [0.0001];
