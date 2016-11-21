@@ -8,7 +8,8 @@ function main_cnn_amir(varargin)
 % -- ==                        NETWORK ARCH                               -- ==
 % -- ==                                                                   -- ==
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
-  datasetList = {'mnist'}; % {'mnist', 'cifar', 'stl-10', 'coil-100'}
+  % datasetList = {'cifar', 'stl-10', 'coil-100'}; % {'mnist', 'cifar', 'stl-10', 'coil-100'}
+  datasetList = {'cifar', 'coil-100', 'mnist', 'stl-10'};
 
   % networkArch = 'mnistnet';
   % % backpropDepthList = [8, 6, 4];
@@ -61,15 +62,10 @@ function main_cnn_amir(varargin)
   % % %   {'2D-mult-randn', '2D-mult-randn', 'compRand', 'compRand', 'compRand'}};ult-randn', '2D-mult-randn', 'compRand'}};
   % % weightInitSequenceList = {{'1D', '1D', '1D'}};
   weightInitSequenceList = { ...
-    {'compRand', 'compRand', 'compRand'}, ...
-    {'1D', '1D', '1D'}, ...
-    {'layerwise-1D-from-cifar', 'layerwise-1D-from-cifar', 'layerwise-1D-from-cifar'}, ...
-    {'layerwise-1D-from-coil-100', 'layerwise-1D-from-coil-100', 'layerwise-1D-from-coil-100'}, ...
-    {'layerwise-1D-from-mnist', 'layerwise-1D-from-mnist', 'layerwise-1D-from-mnist'}, ...
-    {'layerwise-1D-from-stl-10', 'layerwise-1D-from-stl-10', 'layerwise-1D-from-stl-10'}};
+    {'8-clustered-layerwise-1D-from-cifar', '8-clustered-layerwise-1D-from-cifar', '8-clustered-layerwise-1D-from-cifar'}};
 
   % imdbPortionList = [0.1, 0.25, 0.5, 1.0];
-  imdbPortionList = [1.0];
+  imdbPortionList = [1];
 
   % weightDecayList = [0.1, 0.01, 0.001, 0.0001, 0]; % Works: {0.001, 0.0001, 0} Doesn't Work: {0.1, 0.01}
   weightDecayList = [0.0001];
