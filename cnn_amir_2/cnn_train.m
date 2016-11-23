@@ -19,6 +19,7 @@ function [net, info] = cnn_train(net, imdb, getBatch, varargin)
 % This file is part of the VLFeat library and is made available under
 % the terms of the BSD license (see the COPYING file).
 
+opts.debugFlag = true;
 opts.weightInitSequence = {'compRand', 'compRand', 'compRand', 'compRand', 'compRand'};
 opts.weightInitSource = 'gen'; % {'load' | 'gen'}
 opts.backPropDepth = +inf;
@@ -232,6 +233,9 @@ err = zeros(0,1) ;
 % -------------------------------------------------------------------------
 function  [net_cpu,stats,prof] = process_epoch(opts, getBatch, epoch, subset, learningRate, imdb, net_cpu)
 % -------------------------------------------------------------------------
+if ~opts.debugFlag
+  fprintf('[INFO] processing epoch %02d...', epoch);
+end
 
 % move CNN to GPU as needed
 numGpus = numel(opts.gpus) ;
@@ -258,8 +262,10 @@ mmap = [] ;
 stats = [] ;
 
 for t=1:opts.batchSize:numel(subset)
-  fprintf('%s: epoch %02d: batch %3d/%3d: ', mode, epoch, ...
-          fix(t/opts.batchSize)+1, ceil(numel(subset)/opts.batchSize)) ;
+  if opts.debugFlag
+    fprintf('%s: epoch %02d: batch %3d/%3d: ', mode, epoch, ...
+            fix(t/opts.batchSize)+1, ceil(numel(subset)/opts.batchSize)) ;
+  end
   batchSize = min(opts.batchSize, numel(subset) - t + 1) ;
   batchTime = tic ;
   numDone = 0 ;
@@ -323,14 +329,16 @@ for t=1:opts.batchSize:numel(subset)
   stats = sum([stats,[batchTime ; error]],2); % works even when stats=[]
   speed = batchSize/batchTime ;
 
-  fprintf(' %.2f s (%.1f data/s)', batchTime, speed) ;
-  n = (t + batchSize - 1) / max(1,numlabs) ;
-  fprintf(' obj:%.3g', stats(2)/n) ;
-  for i=1:numel(opts.errorLabels)
-    fprintf(' %s:%.3g', opts.errorLabels{i}, stats(i+2)/n) ;
+  if opts.debugFlag
+    fprintf(' %.2f s (%.1f data/s)', batchTime, speed) ;
+    n = (t + batchSize - 1) / max(1,numlabs) ;
+    fprintf(' obj:%.3g', stats(2)/n) ;
+    for i=1:numel(opts.errorLabels)
+      fprintf(' %s:%.3g', opts.errorLabels{i}, stats(i+2)/n) ;
+    end
+    fprintf(' [%d/%d]', numDone, batchSize);
+    fprintf('\n') ;
   end
-  fprintf(' [%d/%d]', numDone, batchSize);
-  fprintf('\n') ;
 
   % debug info
   if opts.plotDiagnostics && numGpus <= 1
@@ -347,6 +355,10 @@ if numGpus >= 1
   net_cpu = vl_simplenn_move(net, 'cpu') ;
 else
   net_cpu = net ;
+end
+
+if ~opts.debugFlag
+  fprintf('done!\n');
 end
 
 % -------------------------------------------------------------------------

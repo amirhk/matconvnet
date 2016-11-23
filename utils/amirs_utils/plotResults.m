@@ -10,7 +10,7 @@ networkArch = 'lenet';
 switch dataset
   case 'cifar'
     experimentDir = '2016-11-18-21; Varying Layerwise Weight Initialization; CIFAR; LeNet; FC+{0-3}';
-    subDataDir = '1D';
+    subDataDir = 'kernelwise-1D';
     fc_plus_3_3x1D = load(fullfile(dataDir, experimentDir, subDataDir, 'cifar-lenet-18-Nov-2016-20-01-04-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
     fc_plus_2_3x1D = load(fullfile(dataDir, experimentDir, subDataDir, 'cifar-lenet-18-Nov-2016-20-34-20-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
     fc_plus_1_3x1D = load(fullfile(dataDir, experimentDir, subDataDir, 'cifar-lenet-18-Nov-2016-21-00-26-GPU1', epochFile)); fprintf('\t%d', i); i = i + 1;
@@ -59,7 +59,7 @@ switch dataset
     fc_plus_0_3x8_clustered_layerwise_1D_from_CIFAR = load(fullfile(dataDir, experimentDir, subDataDir, 'cifar-lenet-21-Nov-2016-17-56-01-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
   case 'coil-100'
     experimentDir = '2016-11-18-21; Varying Layerwise Weight Initialization; COIL-100; LeNet; FC+{0-3}';
-    subDataDir = '1D';
+    subDataDir = 'kernelwise-1D';
     fc_plus_3_3x1D = load(fullfile(dataDir, experimentDir, subDataDir, 'coil-100-lenet-18-Nov-2016-19-26-00-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
     fc_plus_2_3x1D = load(fullfile(dataDir, experimentDir, subDataDir, 'coil-100-lenet-18-Nov-2016-19-29-55-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
     fc_plus_1_3x1D = load(fullfile(dataDir, experimentDir, subDataDir, 'coil-100-lenet-18-Nov-2016-19-33-05-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
@@ -108,7 +108,7 @@ switch dataset
     fc_plus_0_3x8_clustered_layerwise_1D_from_CIFAR = load(fullfile(dataDir, experimentDir, subDataDir, 'coil-100-lenet-21-Nov-2016-18-22-39-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
   case 'mnist'
     experimentDir = '2016-11-18-21; Varying Layerwise Weight Initialization; MNIST; LeNet; FC+{0-3}';
-    subDataDir = '1D';
+    subDataDir = 'kernelwise-1D';
     fc_plus_3_3x1D = load(fullfile(dataDir, experimentDir, subDataDir, 'mnist-lenet-21-Nov-2016-01-44-03-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
     fc_plus_2_3x1D = load(fullfile(dataDir, experimentDir, subDataDir, 'mnist-lenet-21-Nov-2016-02-20-56-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
     fc_plus_1_3x1D = load(fullfile(dataDir, experimentDir, subDataDir, 'mnist-lenet-21-Nov-2016-02-50-30-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
@@ -157,7 +157,7 @@ switch dataset
     fc_plus_0_3x8_clustered_layerwise_1D_from_CIFAR = load(fullfile(dataDir, experimentDir, subDataDir, 'mnist-lenet-21-Nov-2016-19-59-47-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
   case 'stl-10'
     experimentDir = '2016-11-18-21; Varying Layerwise Weight Initialization; STL-10; LeNet; FC+{0-3}';
-    subDataDir = '1D';
+    subDataDir = 'kernelwise-1D';
     fc_plus_3_3x1D = load(fullfile(dataDir, experimentDir, subDataDir, 'stl-10-lenet-18-Nov-2016-18-24-40-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
     fc_plus_2_3x1D = load(fullfile(dataDir, experimentDir, subDataDir, 'stl-10-lenet-18-Nov-2016-18-30-24-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
     fc_plus_1_3x1D = load(fullfile(dataDir, experimentDir, subDataDir, 'stl-10-lenet-18-Nov-2016-18-35-23-GPU2', epochFile)); fprintf('\t%d', i); i = i + 1;
