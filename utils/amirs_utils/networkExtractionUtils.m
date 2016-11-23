@@ -463,20 +463,27 @@ function newWeights = saveNewWeights(dataset, networkArch, weightInitType, newWe
   % save(fullfile(folder, sprintf('W1-layer-%d.mat', layerNumber)), 'W1');
   % save(fullfile(folder, sprintf('W2-layer-%d.mat', layerNumber)), 'W2');
   devPath = getDevPath();
-  folder = fullfile( ...
+
+  if strcmp(weightInitType, 'compRand')
+    subDirName = 'w-compRand';
+  else
+    subDirName = sprintf('w-%s-from-%s', weightInitType, dataset);
+  end
+
+  directory = fullfile( ...
     devPath, ...
     'data', ...
     'generated_weights', ...
     sprintf('%s', networkArch), ...
-    sprintf('w-%s-from-%s', weightInitType, dataset));
-  if ~exist(folder)
-    mkdir(folder);
+    subDirName);
+  if ~exist(directory)
+    mkdir(directory);
   end
-  % then save the weights in the folder
+  % then save the weights in the directory
   W1 = newWeights{1};
   W2 = newWeights{2};
-  save(fullfile(folder, sprintf('W1-layer-%d.mat', layerNumber)), 'W1');
-  save(fullfile(folder, sprintf('W2-layer-%d.mat', layerNumber)), 'W2');
+  save(fullfile(directory, sprintf('W1-layer-%d.mat', layerNumber)), 'W1');
+  save(fullfile(directory, sprintf('W2-layer-%d.mat', layerNumber)), 'W2');
 
 % --------------------------------------------------------------------
 function printNetworkStructure(net)
