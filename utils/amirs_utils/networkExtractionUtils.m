@@ -14,8 +14,9 @@ function extractNewWeightsFromNetwork(dataset, networkArch, weightInitType)
   loadedFile = load(fullfile( ...
     devPath, ...
     'data', ...
-    sprintf('%s-%s', dataset, networkArch), ...
-    'pretrained.mat'));
+    'generated_weights', ...
+    sprintf('%s', networkArch), ...
+    sprintf('pretrained-%s-%s.mat', dataset, networkArch)));
   fprintf('[INFO] Loading data successful!\n\n');
   net = loadedFile.net;
   % printNetworkStructure(net);
@@ -25,8 +26,8 @@ function extractNewWeightsFromNetwork(dataset, networkArch, weightInitType)
       genWeightsMethod = @genBaselineWeights;
     case 'compRand'
       genWeightsMethod = @genCompRandWeights;
-    case '1D'
-      genWeightsMethod = @gen1DGaussianWeightsFromBaseline;
+    case 'kernelwise-1D'
+      genWeightsMethod = @genKernelwise1DGaussianWeightsFromBaseline;
     case 'layerwise-1D'
       genWeightsMethod = @genLayerwise1DGaussianWeightsFromBaseline;
     case 'clustered-layerwise-1D'
@@ -50,23 +51,23 @@ function extractNewWeightsFromNetwork(dataset, networkArch, weightInitType)
 function extractAllNewWeightsFromNetwork(dataset, networkArch)
   % networkArch = {'alexnet', 'lenet', 'mnistnet'}
 % --------------------------------------------------------------------
-  runInTryCatch(@extractNewWeightsFromNetwork, dataset, networkArch, 'baseline');
+  % runInTryCatch(@extractNewWeightsFromNetwork, dataset, networkArch, 'baseline');
   runInTryCatch(@extractNewWeightsFromNetwork, dataset, networkArch, 'compRand');
-  runInTryCatch(@extractNewWeightsFromNetwork, dataset, networkArch, '1D');
+  runInTryCatch(@extractNewWeightsFromNetwork, dataset, networkArch, 'kernelwise-1D');
   runInTryCatch(@extractNewWeightsFromNetwork, dataset, networkArch, 'layerwise-1D');
   runInTryCatch(@extractNewWeightsFromNetwork, dataset, networkArch, 'clustered-layerwise-1D');
-  runInTryCatch(@extractNewWeightsFromNetwork, dataset, networkArch, '2D-super');
-  runInTryCatch(@extractNewWeightsFromNetwork, dataset, networkArch, '2D-posneg');
-  runInTryCatch(@extractNewWeightsFromNetwork, dataset, networkArch, '2D-positive');
-  runInTryCatch(@extractNewWeightsFromNetwork, dataset, networkArch, '2D-shiftflip');
-  runInTryCatch(@extractNewWeightsFromNetwork, dataset, networkArch, '2D-mult-randn');
-  runInTryCatch(@extractNewWeightsFromNetwork, dataset, networkArch, '2D-mult-kernel');
+  % runInTryCatch(@extractNewWeightsFromNetwork, dataset, networkArch, '2D-super');
+  % runInTryCatch(@extractNewWeightsFromNetwork, dataset, networkArch, '2D-posneg');
+  % runInTryCatch(@extractNewWeightsFromNetwork, dataset, networkArch, '2D-positive');
+  % runInTryCatch(@extractNewWeightsFromNetwork, dataset, networkArch, '2D-shiftflip');
+  % runInTryCatch(@extractNewWeightsFromNetwork, dataset, networkArch, '2D-mult-randn');
+  % runInTryCatch(@extractNewWeightsFromNetwork, dataset, networkArch, '2D-mult-kernel');
 
 % --------------------------------------------------------------------
 function genNewWeights(dataset, networkArch, weightInitType, net, genWeightsMethod)
   % for all 'conv' layers...
 % --------------------------------------------------------------------
-  fprintf(sprintf('[INFO] Generating new `%s` weights from `%s`... \n', weightInitType, networkArch));
+  fprintf(sprintf('[INFO] Generating new `%s` weights from `%s`... \n\n', weightInitType, networkArch));
   layers = net.layers;
   for i = 1:numel(layers)
     if (strcmp(layers{i}.type, 'conv'))
@@ -75,7 +76,7 @@ function genNewWeights(dataset, networkArch, weightInitType, net, genWeightsMeth
       saveNewWeights(dataset, networkArch, weightInitType, newWeights, layerNumber);
     end
   end
-  fprintf('[INFO] Successfully finished generating weights!\n\n');
+  fprintf('[INFO] Successfully finished generating weights!\n');
 
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 % -- ==                                                                                           -- ==
@@ -122,7 +123,7 @@ function randomWeights = genCompRandWeights(dataset, networkArch, layers, layerN
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 
 % --------------------------------------------------------------------
-function newWeights = gen1DGaussianWeightsFromBaseline( ...
+function newWeights = genKernelwise1DGaussianWeightsFromBaseline( ...
   dataset, ...
   networkArch, ...
   layers, ...
@@ -222,18 +223,20 @@ function newWeights = genLayerwise1DGaussianWeightsFromBaseline( ...
   % vectorize all the kernels together, get global 1D distribution, sample from
   % that, reshape back to 4D matrix, and set the new value to newWeights{1}. For
   % newWeights{2} just use the baseline pretrain weights.
-  baselineWeights = layers{layerNumber}.weights{1};
-  matrixDims = size(baselineWeights);
-  vectorDims = [size(baselineWeights, 1) * size(baselineWeights, 2) * size(baselineWeights, 3) * size(baselineWeights, 4), 1];
-  vectorizedAllBaselineKernels = reshape(baselineWeights, vectorDims);
-  dist = fitdist(vectorizedAllBaselineKernels, 'Normal');
-  vectorizedAllNewKernels = random(dist, vectorDims);
-  newKernel = reshape(vectorizedAllNewKernels, matrixDims);
-  newWeights{1} = newKernel;
+  baseline_weights = layers{layerNumber}.weights{1};
+  % genNewKernelsFromApplying1DFitToBaselineKernels
+  utils = gaussianUtils;
+  matrix_dims = size(baseline_weights);
+  vector_dims = [size(baseline_weights, 1) * size(baseline_weights, 2) * size(baseline_weights, 3) * size(baseline_weights, 4), 1];
+  baseline_vectorized_kernels = reshape(baseline_weights, vector_dims);
+  new_vectorized_kernels = utils.fit1DGaussianAndDrawSamples(baseline_vectorized_kernels);
+  new_kernels = reshape(new_vectorized_kernels, matrix_dims);
+  % set new_kernels
+  newWeights{1} = new_kernels;
   newWeights{2} = layers{layerNumber}.weights{2};
   numberOfKernels = size(newWeights{1}, 3) * size(newWeights{1}, 4);
   fprintf( ...
-    ['[INFO] layer %d: Clustered Layerwise 1D weights generated for %d kernels. ', ...
+    ['[INFO] layer %d: Layerwise 1D weights generated for %d kernels. ', ...
     'Elapsed Time (since start): %f\n'], ...
     layerNumber, ...
     numberOfKernels, ...
@@ -252,24 +255,51 @@ function newWeights = genClusteredLayerwise1DGaussianWeightsFromBaseline( ...
   layers, ...
   layerNumber)
 % --------------------------------------------------------------------
-  cluster_count = 8;
   tic;
-  % vectorize all the kernels together, get global 1D distribution, sample from
-  % that, reshape back to 4D matrix, and set the new value to newWeights{1}. For
-  % newWeights{2} just use the baseline pretrain weights.
-  baselineWeights = layers{layerNumber}.weights{1};
-  new_kernels = [];
+  % 1. get baseline_kernels
+  baseline_kernels = layers{layerNumber}.weights{1};
+
+  % 2. convert baseline_kernels to size-format for k-means
+  ydim = size(baseline_kernels, 1);
+  xdim = size(baseline_kernels, 2);
+  zdim = size(baseline_kernels, 3);
+  tdim = size(baseline_kernels, 4);
+  assert(ydim == xdim);
+  data = reshape(baseline_kernels, ydim * xdim, zdim * tdim);
+  data = data';
+  % NOTE: reshape(A, a, b)' is NOT equal to reshape(A, b, a).
+
+  % 3. divide data into k clusters
+  cluster_count = 4;
+  clusters = getDataInKClusters(data, cluster_count);
+
+  % 4. for each cluster, find the distribution
+  utils = gaussianUtils;
   for i = 1:cluster_count
-    num_kernels_in_cluster = size(baselineWeights, 4) / cluster_count;
-    kernels_in_cluster = baselineWeights(:,:,:, (i-1) * num_kernels_in_cluster + 1 : i * num_kernels_in_cluster);
-    matrixDims = size(kernels_in_cluster);
-    vectorDims = [size(kernels_in_cluster, 1) * size(kernels_in_cluster, 2) * size(kernels_in_cluster, 3) * size(kernels_in_cluster, 4), 1];
-    vectorizedAllBaselineKernels = reshape(kernels_in_cluster, vectorDims);
-    dist = fitdist(vectorizedAllBaselineKernels, 'Normal');
-    vectorizedAllNewKernels = random(dist, vectorDims);
-    new_kernels_in_cluster = reshape(vectorizedAllNewKernels, matrixDims);
-    new_kernels = cat(4, new_kernels, new_kernels_in_cluster);
+    tmp = reshape(clusters{i}.data, [], 1);
+    clusters{i}.dist = fitdist(tmp, 'Normal');
+    clusters{i}.num_kernels_in_cluster = size(clusters{i}.data, 1);
   end
+
+  % 5. for each kernel index, find the dist of the associated cluster and sample
+  %    a new kernel (ydim * xdim elements)
+  new_kernels = zeros(ydim, xdim, zdim, tdim);
+  for i = 1:cluster_count
+    for j = 1:length([clusters{i}.indices_in_data_matrix])
+      index = clusters{i}.indices_in_data_matrix(j);
+      z_index_in_4D_matrix = mod(index, zdim); if z_index_in_4D_matrix == 0; z_index_in_4D_matrix = zdim; end;
+      t_index_in_4D_matrix = (index - z_index_in_4D_matrix) / zdim + 1;
+      % fprintf('index: %d, z: %d, t:%d\n', index, z_index_in_4D_matrix, t_index_in_4D_matrix);
+      new_sampled_kernel_from_cluster_distribution = random(clusters{i}.dist, [ydim, xdim]);
+      new_kernels(:,:,z_index_in_4D_matrix, t_index_in_4D_matrix) = new_sampled_kernel_from_cluster_distribution;
+    end
+  end
+
+  % for i = 1:cluster_count;
+  %   fprintf('[INFO] cluster %d: mu = %6.5f, sigma = %6.5f\n', i, clusters{i}.dist.mu, clusters{i}.dist.sigma);
+  % end
+
+  % 6. set new_kernels
   newWeights{1} = new_kernels;
   newWeights{2} = layers{layerNumber}.weights{2};
   numberOfKernels = size(newWeights{1}, 3) * size(newWeights{1}, 4);
@@ -280,6 +310,16 @@ function newWeights = genClusteredLayerwise1DGaussianWeightsFromBaseline( ...
     numberOfKernels, ...
     toc);
 
+% --------------------------------------------------------------------
+function clusters = getDataInKClusters(data, k)
+  % data is of size [n, k] where n is the number of vectors, k the dim of each
+% --------------------------------------------------------------------
+  idx = kmeans(data, k, 'maxIter', 250);
+  clustered_data = {};
+  for i = 1:k
+    clusters{i}.data = data(find(idx == i), :);
+    clusters{i}.indices_in_data_matrix = find(idx == i);
+  end
 
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 % -- ==                                                                                           -- ==
@@ -426,8 +466,9 @@ function newWeights = saveNewWeights(dataset, networkArch, weightInitType, newWe
   folder = fullfile( ...
     devPath, ...
     'data', ...
-    sprintf('%s-%s', dataset, networkArch), ...
-    sprintf('w_%s', weightInitType));
+    'generated_weights', ...
+    sprintf('%s', networkArch), ...
+    sprintf('w-%s-from-%s', weightInitType, dataset));
   if ~exist(folder)
     mkdir(folder);
   end

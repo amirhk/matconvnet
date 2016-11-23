@@ -1,6 +1,7 @@
 function fh = gaussianUtils()
   % assign function handles so we can call these local functions from elsewhere
   fh.testGaussianUtils = @testGaussianUtils;
+  fh.fit1DGaussianAndDrawSamples = @fit1DGaussianAndDrawSamples;
   fh.fit2DGaussianAndDrawSuperSamples = @fit2DGaussianAndDrawSuperSamples;
   fh.fit2DGaussianAndDrawPosNegSamples = @fit2DGaussianAndDrawPosNegSamples;
   fh.fit2DGaussianAndDrawPositiveSamples = @fit2DGaussianAndDrawPositiveSamples;
@@ -99,6 +100,39 @@ function testGaussianUtils(kernel)
 % -- ==                                       FITTING                                             -- ==
 % -- ==                                                                                           -- ==
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
+
+% --------------------------------------------------------------------
+function sample = fit1DGaussianAndDrawSamples(vector_of_kernels)
+% --------------------------------------------------------------------
+  dist = fitdist(vector_of_kernels, 'Normal');
+  sample = random(dist, [length(vector_of_kernels), 1]);
+
+  % positive_sample = fit2DGaussianAndDrawPositiveSamples(kernel, debug_flag);
+  % positive_sample = positive_sample / sum(positive_sample(:));
+  % sample = positive_sample .* kernel;
+
+  % % disp(sum(positive_sample(:)));
+  % % disp(positive_sample);
+  % % g = fspecial('gaussian', [size(kernel,1), size(kernel,1)], 1);
+  % % g = fspecial('gaussian', [size(kernel,1), size(kernel,1)], .1);
+  % % sample = g .* kernel;
+  % % sample2 = g .* kernel;
+  % if debug_flag
+  %   positive_sample = fit2DGaussianAndDrawPositiveSamples(kernel, debug_flag);
+  %   positive_sample = positive_sample / sum(positive_sample(:));
+  %   sample1 = positive_sample .* kernel;
+  %   g = fspecial('gaussian', [size(kernel,1), size(kernel,1)], 1);
+  %   sample2 = g .* kernel;
+  %   h = figure;
+  %   subplot(1,5,1), imshow(kernel, []), title('input kernel');
+  %   subplot(1,5,2), imshow(positive_sample, []), title('positive gaussian');
+  %   subplot(1,5,3), imshow(sample1, []), title('positive g * kernel ');
+  %   subplot(1,5,4), imshow(g, []), title('fixed gaussian');
+  %   subplot(1,5,5), imshow(sample2, []), title('fixed g * kernel');
+  %   saveas(h, sprintf('Gaussians - %s.png', datetime('now', 'Format', 'd-MMM-y-HH-mm-ss')));
+  % end
+  % sample = scaleDrawnSampleToInitialDynamicRange(kernel, sample);
+  % % sample = scaleDrawnSampleToInitialDynamicRangeMeanZero(sample);
 
 % --------------------------------------------------------------------
 function sample = fit2DGaussianAndDrawMultKernelSamples(kernel, debug_flag)
