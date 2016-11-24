@@ -3,7 +3,7 @@ resultsDir = '/Volumes/Amir/results/';
 epochNum = 50;
 epochFile = sprintf('net-epoch-%d.mat', epochNum);
 
-dataset = 'coil-100';
+dataset = 'stl-10';
 networkArch = 'lenet';
 
 switch dataset
