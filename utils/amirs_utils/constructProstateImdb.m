@@ -4,7 +4,8 @@ function imdb = constructProstateImdb(opts)
   fprintf('[INFO] Constructing Prostate imdb...\n');
 
   useLabels = 'PIRAD'; % 'Gleason' | 'PIRAD'
-  percentageTrain = .90;
+  % percentageTrain = .90;
+  numberOfTestPatients = 5;
   modalititesInUse = { ...
     'ADC_crop', ...
     'CDI_crop', ...
@@ -34,11 +35,18 @@ function imdb = constructProstateImdb(opts)
   labelsGleason = zeros(1, totalSuspiciousTissueCount);
   labelsPIRAD = zeros(1, totalSuspiciousTissueCount);
   labels = zeros(1, totalSuspiciousTissueCount);
+  set = zeros(1, totalSuspiciousTissueCount);
 
   % for every patient
   count = 0;
-  for i = 1:totalNumberOfPatients
-    fprintf('\t [INFO] Loading up suspicious tissues from patient #%02d of %d... ', i, totalNumberOfPatients);
+  % randomly select some to be training and others to be test
+  ix = randperm(totalNumberOfPatients);
+
+
+
+  fprintf('\t[INFO] Loading TRAIN Patients...\n');
+  for i = ix(1 : totalNumberOfPatients - numberOfTestPatients)
+    fprintf('\t\t[INFO] Loading up suspicious tissues from patient #%02d of %d... ', i, totalNumberOfPatients);
     % for every suspicious tissue
     singlePatientDirectory = char(allPatientsList(i).name);
     suspiciousTissuesForPatient = dir(fullfile(opts.dataDir, singlePatientDirectory, '*_Candidate*'));
@@ -53,13 +61,38 @@ function imdb = constructProstateImdb(opts)
       data(:,:,:,count) = tmp;
       labelsGleason(1, count) = suspiciousTissue.Gleason;
       labelsPIRAD(1, count) = suspiciousTissue.PIRAD;
+      set(1, count) = 1; % training data
     end
     fprintf('done.\n');
   end
+  fprintf('\tdone.\n');
 
 
-  % put all in a list
-  % randomly select some to be training and others to be test
+
+  fprintf('\t[INFO] Loading TEST Patients...\n');
+  for i = ix(totalNumberOfPatients - numberOfTestPatients + 1 : end)
+    fprintf('\t\t[INFO] Loading up suspicious tissues from patient #%02d of %d... ', i, totalNumberOfPatients);
+    % for every suspicious tissue
+    singlePatientDirectory = char(allPatientsList(i).name);
+    suspiciousTissuesForPatient = dir(fullfile(opts.dataDir, singlePatientDirectory, '*_Candidate*'));
+    for j = 1:length(suspiciousTissuesForPatient)
+      count = count + 1;
+      suspiciousTissueFile = char(suspiciousTissuesForPatient(j).name);
+      suspiciousTissue = load(fullfile(opts.dataDir, singlePatientDirectory, suspiciousTissueFile));
+      tmp = zeros(32, 32, numberOfModalities);
+      for k = 1:numberOfModalities
+        tmp(:,:,k) = suspiciousTissue.(modalititesInUse{k});
+      end
+      data(:,:,:,count) = tmp;
+      labelsGleason(1, count) = suspiciousTissue.Gleason;
+      labelsPIRAD(1, count) = suspiciousTissue.PIRAD;
+      set(1, count) = 3; % testing data
+    end
+    fprintf('done.\n');
+  end
+  fprintf('\tdone.\n');
+
+
 
   switch useLabels
     case 'Gleason'
@@ -70,17 +103,18 @@ function imdb = constructProstateImdb(opts)
   % labels start from 1
   labels = labels + 1;
 
-  % shuffle data and labels the same way
-  ix = randperm(totalSuspiciousTissueCount);
-  data = single(data(:,:,:,ix));
-  labels = labels(ix);
+  % % shuffle data and labels the same way
+  % ix = randperm(totalSuspiciousTissueCount);
+  % data = single(data(:,:,:,ix));
+  % labels = labels(ix);
 
-  % take the first 90% to be training data and last 10% to be testing data
+  % % take the first 90% to be training data and last 10% to be testing data
   totalNumberOfSamples = totalSuspiciousTissueCount;
-  numberOfTrainSamples = floor(totalNumberOfSamples * percentageTrain);
-  numberOfTestSamples = totalNumberOfSamples - numberOfTrainSamples;
-  set = [ones(1, numberOfTrainSamples) 3 * ones(1, numberOfTestSamples)];
+  % numberOfTrainSamples = floor(totalNumberOfSamples * percentageTrain);
+  % numberOfTestSamples = totalNumberOfSamples - numberOfTrainSamples;
+  % set = [ones(1, numberOfTrainSamples) 3 * ones(1, numberOfTestSamples)];
 
+  data = single(data);
   % remove mean in any case
   dataMean = mean(data(:,:,:,set == 1), 4);
   data = bsxfun(@minus, data, dataMean);
