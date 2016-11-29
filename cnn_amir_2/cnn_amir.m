@@ -5,9 +5,7 @@ function [net, info] = cnn_amir(varargin)
   fileName = mfilename; % 'cnn_amir'
   fullFilePath = mfilename('fullpath'); % '/Users/a6karimi/dev/matconvnet/cnn_amir_1/cnn_amir'
   parentFolderPath = fullFilePath(1:end-length(fileName)-1);
-  folderObj = dir(parentFolderPath);
-  folderString = folderObj(1).folder;
-  folderNumber = str2num(folderString(end:end));
+  folderNumber = str2num(parentFolderPath(end:end));
 
   % Setup -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
   opts.train = struct();
