@@ -4,7 +4,7 @@ function [net, info] = cnn_amir(varargin)
 
   % Setup -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
   opts.train = struct();
-  opts.folderNumber = 2;
+  opts.folderNumber = 1;
   opts.networkArch = 'alexnet';
   opts.dataset = 'cifar';
   opts.imdbPortion = 1.0;
@@ -83,6 +83,8 @@ function [net, info] = cnn_amir(varargin)
     imdb = load(opts.imdbPath);
   else
     switch opts.dataset
+      case 'prostate'
+        imdb = constructProstateImdb(opts);
       case 'cifar'
         imdb = constructCifarImdb(opts);
       case 'coil-100'

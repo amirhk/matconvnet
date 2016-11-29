@@ -13,6 +13,8 @@ rng(0);
 net.layers = {};
 % Meta parameters
 switch opts.networkArch
+  case 'prostatenet'
+    net.meta.trainOpts.learningRate = [0.001*ones(1,50)]; % matconvnet default
   case 'mnistnet'
     switch opts.dataset
       case 'mnist'
@@ -57,6 +59,47 @@ net.meta.trainOpts.batchSize = 100;
 opts = vl_argparse(opts, varargin);
 
 switch opts.networkArch
+  case 'prostatenet'
+    % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
+    % --- --- ---                                                     --- --- --
+    % --- --- ---                  PROSTATENET                        --- --- --
+    % --- --- ---                                                     --- --- --
+    % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
+    layerNumber = 1;
+    net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 5, 4, 32, 1/100, 2, char(opts.weightInitSequence{1}), opts.weightInitSource);
+    % net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 5, 8, 32, 1/100, 2, char(opts.weightInitSequence{1}), opts.weightInitSource);
+    net.layers{end+1} = poolingLayerLeNetMax(layerNumber);
+    net.layers{end+1} = reluLayer(layerNumber);
+
+    % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
+    layerNumber = layerNumber + 3;
+    net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 5, 32, 32, 5/100, 2, char(opts.weightInitSequence{2}), opts.weightInitSource);
+    net.layers{end+1} = reluLayer(layerNumber);
+    net.layers{end+1} = poolingLayerLeNetAvg(layerNumber);
+
+    % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
+    layerNumber = layerNumber + 3;
+    net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 5, 32, 64, 5/100, 2, char(opts.weightInitSequence{3}), opts.weightInitSource);
+    net.layers{end+1} = reluLayer(layerNumber);
+    net.layers{end+1} = poolingLayerLeNetAvg(layerNumber);
+
+    % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
+    % FULLY CONNECTED
+    layerNumber = layerNumber + 3;
+    net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 4, 64, 64, 5/100, 0, 'compRand', 'gen');
+    net.layers{end+1} = reluLayer(layerNumber);
+
+    % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
+    layerNumber = layerNumber + 2;
+    if strcmp(opts.dataset, 'coil-100')
+      net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 1, 64, 100, 5/100, 0, 'compRand', 'gen');
+    else
+      net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 1, 64, 10, 5/100, 0, 'compRand', 'gen');
+    end
+
+    % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
+    % Loss layer
+    net.layers{end+1} = struct('type', 'softmaxloss');
   case 'mnistnet'
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     % --- --- ---                                                     --- --- --

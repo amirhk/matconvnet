@@ -83,6 +83,8 @@ function [net, info] = cnn_amir(varargin)
     imdb = load(opts.imdbPath);
   else
     switch opts.dataset
+      case 'prostate'
+        imdb = constructProstateImdb(opts);
       case 'cifar'
         imdb = constructCifarImdb(opts);
       case 'coil-100'
