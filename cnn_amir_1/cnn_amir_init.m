@@ -66,8 +66,8 @@ switch opts.networkArch
     % --- --- ---                                                     --- --- --
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     layerNumber = 1;
-    % net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 5, 4, 32, 1/100, 2, char(opts.weightInitSequence{1}), opts.weightInitSource);
-    net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 5, 8, 32, 1/100, 2, char(opts.weightInitSequence{1}), opts.weightInitSource);
+    net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 5, 4, 32, 1/100, 2, char(opts.weightInitSequence{1}), opts.weightInitSource);
+    % net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 5, 8, 32, 1/100, 2, char(opts.weightInitSequence{1}), opts.weightInitSource);
     net.layers{end+1} = poolingLayerLeNetMax(layerNumber);
     net.layers{end+1} = reluLayer(layerNumber);
 
