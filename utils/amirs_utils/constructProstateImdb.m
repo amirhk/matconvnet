@@ -67,6 +67,8 @@ function imdb = constructProstateImdb(opts)
     case 'PIRAD'
       labels = labelsPIRAD >= 4;
   end
+  % labels start from 1
+  labels = labels + 1;
 
   % shuffle data and labels the same way
   ix = randperm(totalSuspiciousTissueCount);

@@ -2,9 +2,16 @@ function [net, info] = cnn_amir(varargin)
   run(fullfile(fileparts(mfilename('fullpath')), ...
     '..', 'matlab', 'vl_setupnn.m'));
 
+  fileName = mfilename; % 'cnn_amir'
+  fullFilePath = mfilename('fullpath'); % '/Users/a6karimi/dev/matconvnet/cnn_amir_1/cnn_amir'
+  parentFolderPath = fullFilePath(1:end-length(fileName)-1);
+  folderObj = dir(parentFolderPath);
+  folderString = folderObj(1).folder;
+  folderNumber = str2num(folderString(end:end));
+
   % Setup -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
   opts.train = struct();
-  opts.folderNumber = 1;
+  opts.folderNumber = folderNumber;
   opts.networkArch = 'alexnet';
   opts.dataset = 'cifar';
   opts.imdbPortion = 1.0;
@@ -99,6 +106,12 @@ function [net, info] = cnn_amir(varargin)
     fprintf('done.\n\n');
   end
 
+  if strcmp(opts.dataset, 'prostate')
+    opts.errorFunction = 'multiclass-prostate';
+  else
+    opts.errorFunction = 'multiclass';
+  end
+
   % net.meta.classes.name = imdb.meta.classes(:)';
 
   % -------------------------------------------------------------------------
@@ -106,6 +119,7 @@ function [net, info] = cnn_amir(varargin)
   % -------------------------------------------------------------------------
   [net, info] = cnn_train(net, imdb, getBatch(opts), ...
     'expDir', opts.expDir, ...
+    'errorFunction', opts.errorFunction, ...
     'debugFlag', opts.debugFlag, ...
     net.meta.trainOpts, ...
     opts.train, ...

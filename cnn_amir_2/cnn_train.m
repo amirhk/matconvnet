@@ -103,6 +103,9 @@ if isstr(opts.errorFunction)
     case 'multiclass'
       opts.errorFunction = @error_multiclass ;
       if isempty(opts.errorLabels), opts.errorLabels = {'top1e', 'top5e'} ; end
+    case 'multiclass-prostate'
+      opts.errorFunction = @error_multiclass_prostate ;
+      if isempty(opts.errorLabels), opts.errorLabels = {'top1e', 'top5e'} ; end
     case 'binary'
       opts.errorFunction = @error_binary ;
       if isempty(opts.errorLabels), opts.errorLabels = {'bine'} ; end
@@ -217,6 +220,29 @@ end
 error = ~bsxfun(@eq, predictions, labels) ;
 err(1,1) = sum(sum(sum(mass .* error(:,:,1,:)))) ;
 err(2,1) = sum(sum(sum(mass .* min(error(:,:,1:5,:),[],3)))) ;
+
+% -------------------------------------------------------------------------
+function err = error_multiclass_prostate(opts, labels, res)
+% -------------------------------------------------------------------------
+predictions = gather(res(end-1).x) ;
+[~,predictions] = sort(predictions, 3, 'descend') ;
+
+% be resilient to badly formatted labels
+if numel(labels) == size(predictions, 4)
+  labels = reshape(labels,1,1,1,[]) ;
+end
+
+% skip null labels
+mass = single(labels(:,:,1,:) > 0) ;
+if size(labels,3) == 2
+  % if there is a second channel in labels, used it as weights
+  mass = mass .* labels(:,:,2,:) ;
+  labels(:,:,2,:) = [] ;
+end
+
+error = ~bsxfun(@eq, predictions, labels) ;
+err(1,1) = sum(sum(sum(mass .* error(:,:,1,:)))) ;
+err(2,1) = sum(sum(sum(mass .* error(:,:,1,:)))) ;
 
 % -------------------------------------------------------------------------
 function err = error_binaryclass(opts, labels, res)
