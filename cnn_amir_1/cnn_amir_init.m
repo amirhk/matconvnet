@@ -18,7 +18,7 @@ switch opts.networkArch
     switch opts.dataset
       case 'prostate'
         % net.meta.trainOpts.learningRate = [0.001*ones(1,50)]; % matconvnet default
-        net.meta.trainOpts.learningRate = [0.001*ones(1,500)]; % matconvnet default
+        net.meta.trainOpts.learningRate = [0.001*ones(1,150) 0.0005*ones(1,350)]; % matconvnet default
     end
   case 'mnistnet'
     switch opts.dataset
