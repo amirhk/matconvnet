@@ -9,6 +9,7 @@ opts.bottleneckDivideBy = 1;
 opts = vl_argparse(opts, varargin);
 
 tic;
+s = rng;
 rng(0);
 net.layers = {};
 % Meta parameters
@@ -58,7 +59,7 @@ net.meta.trainOpts.backpropDepth = opts.backpropDepth;
 net.meta.trainOpts.numEpochs = numel(net.meta.trainOpts.learningRate);
 net.meta.inputSize = [32 32 3];
 net.meta.trainOpts.weightDecay = opts.weightDecay;
-net.meta.trainOpts.batchSize = 10;
+net.meta.trainOpts.batchSize = 250;
 opts = vl_argparse(opts, varargin);
 
 switch opts.networkArch
@@ -341,6 +342,9 @@ switch opts.networkArch
     % Loss layer
     net.layers{end+1} = struct('type', 'softmaxloss');
 end
+
+% very important to reset this afterwards so other modules are true random
+rng(s);
 
 % --------------------------------------------------------------------
 function structuredLayer = convLayer(dataset, networkArch, layerNumber, k, m, n, init_multiplier, pad, weightInitType, weightInitSource);
