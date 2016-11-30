@@ -171,6 +171,7 @@ function saveFinalSensitivitySpecificityInfo(info, expDir)
 % -------------------------------------------------------------------------
   fileID = fopen(fullfile(expDir, 'sensitivity_specificity.txt'), 'w');
   fprintf(fileID, '-- -- -- -- -- -- FINAL TRAINING VALUES -- -- -- -- -- --\n');
+  fprintf(fileID, '\t[INFO] Accuracy: %6.5f\n', info.train.error);
   fprintf(fileID, '\t[INFO] TP: %d\n', info.train.stats.TP);
   fprintf(fileID, '\t[INFO] TN: %d\n', info.train.stats.TN);
   fprintf(fileID, '\t[INFO] FP: %d\n', info.train.stats.FP);
@@ -179,6 +180,7 @@ function saveFinalSensitivitySpecificityInfo(info, expDir)
   fprintf(fileID, '\t[INFO] Specificity: %6.5f\n', info.train.stats.specificity);
   fprintf(fileID, '\t\n\n');
   fprintf(fileID, '-- -- -- -- -- -- FINAL TESTING VALUES -- -- -- -- -- --\n');
+  fprintf(fileID, '\t[INFO] Accuracy: %6.5f\n', info.val.error);
   fprintf(fileID, '\t[INFO] TP: %d\n', info.val.stats.TP);
   fprintf(fileID, '\t[INFO] TN: %d\n', info.val.stats.TN);
   fprintf(fileID, '\t[INFO] FP: %d\n', info.val.stats.FP);
