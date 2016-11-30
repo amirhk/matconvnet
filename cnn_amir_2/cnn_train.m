@@ -413,7 +413,7 @@ function  [net_cpu,stats,prof] = process_epoch(opts, getBatch, epoch, subset, le
   TN = stats(end-2);
   FP = stats(end-1);
   FN = stats(end-0);
-  stats(end+1) = TP / (TP + TN);
+  stats(end+1) = TP / (TP + FN);
   stats(end+1) = TN / (TN + FP);
   % if opts.debugFlag
   %   fprintf('\n --- --- --- --- --- --- --- --- --- --- --- --- --- \n\n');
