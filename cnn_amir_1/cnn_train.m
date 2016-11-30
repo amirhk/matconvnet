@@ -198,14 +198,14 @@ function [net, info] = cnn_train(net, imdb, getBatch, varargin)
       leg = horzcat(leg, strcat('val ', opts.errorLabels));
 
       % sensitivity
-      plot(1:epoch, info.train.sensitivity', 'b-', 'linewidth', 2);
+      plot(1:epoch, info.train.sensitivity', 'b-', 'linewidth', 1);
       leg = horzcat(leg, 'train sensitivity');
-      plot(1:epoch, info.val.sensitivity', 'b--', 'linewidth', 2);
+      plot(1:epoch, info.val.sensitivity', 'b--', 'linewidth', 1);
       leg = horzcat(leg, 'test sensitivity');
       % specificity
-      plot(1:epoch, info.train.specificity', 'g-', 'linewidth', 2);
+      plot(1:epoch, info.train.specificity', 'g-', 'linewidth', 1);
       leg = horzcat(leg, 'train specificity');
-      plot(1:epoch, info.val.specificity', 'g--', 'linewidth', 2);
+      plot(1:epoch, info.val.specificity', 'g--', 'linewidth', 1);
       leg = horzcat(leg, 'test specificity');
 
       set(legend(leg{:}),'color','none');
