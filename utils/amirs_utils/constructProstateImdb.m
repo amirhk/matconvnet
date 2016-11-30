@@ -108,6 +108,9 @@ function imdb = constructProstateImdb(opts)
 
   [data_train, labels_train] = balanceMalignantAndBenignTissues('train', data(:,:,:,1:train_count), labels(1:train_count));
   [data_test, labels_test] = balanceMalignantAndBenignTissues('test', data(:,:,:,train_count+1:end), labels(train_count+1:end));
+  [data_train, labels_train] = augmentData('train', data_train, labels_train);
+  [data_test, labels_test] = augmentData('test', data_test, labels_test);
+
   data = cat(4, data_train, data_test);
   labels = cat(2, labels_train, labels_test);
   set = [1*ones(1,length(labels_train)) 3*ones(1,length(labels_test))];
@@ -127,6 +130,7 @@ function imdb = constructProstateImdb(opts)
   % numberOfTrainSamples = floor(totalNumberOfSamples * percentageTrain);
   % numberOfTestSamples = totalNumberOfSamples - numberOfTrainSamples;
   % set = [ones(1, numberOfTrainSamples) 3 * ones(1, numberOfTestSamples)];
+
 
   data = single(data);
   % remove mean in any case
@@ -206,3 +210,38 @@ function [new_data, new_labels] = balanceMalignantAndBenignTissues(data_type, da
   fprintf('\t\t\tmalignant: %d \n', size(new_data(:,:,:,new_labels == 1), 4));
 
   fprintf('\tdone.\n');
+
+
+
+% --------------------------------------------------------------------
+function [new_data, new_labels] = augmentData(data_type, data, labels)
+% --------------------------------------------------------------------
+  fprintf('\t[INFO] Augmenting `%s` data...\n', data_type);
+  fprintf('\t\t[INFO] Initial `%s` data count: %d.\n', data_type, size(data, 4));
+  rotation_angle = 45;
+  degrees = 0:rotation_angle:360 - rotation_angle;
+  fprintf('\t\t[INFO] Number of degrees: %d.\n', length(degrees));
+  new_data = zeros(size(data, 1), size(data, 2), size(data, 3), size(data, 4) * length(degrees));
+  for i = 1:size(data, 4)
+    for degree = degrees
+      new_index =  (i - 1) * length(degrees) + (degree / rotation_angle) + 1;
+      new_data(:,:,:,new_index) = imrotate(data(:,:,:,i), degree, 'crop');
+    end
+  end
+
+  % repeat labels length(degrees) number of times...
+  new_labels = labels';
+  n = length(degrees);
+  r = repmat(labels', 1, n)';
+  new_labels = r(:)';
+  assert(size(new_data, 4) == length(new_labels));
+
+  % shuffle them so we have intermixed rotations of different images
+  total_new_count = size(new_data, 4);
+  ix = randperm(total_new_count);
+  new_data = new_data(:,:,:,ix);
+  new_labels = new_labels(ix);
+
+  fprintf('\t\t[INFO] Final `%s` data count: %d.\n', data_type, size(new_data, 4));
+  fprintf('\tdone.\n');
+
