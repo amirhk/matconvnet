@@ -5,7 +5,7 @@ function imdb = constructProstateImdb(opts)
 
   useLabels = 'Gleason'; % 'Gleason' | 'PIRAD'
   % percentageTrain = .90;
-  numberOfTestPatients = 5;
+  numberOfTestPatients = 1;
   modalititesInUse = { ...
     'ADC_crop', ...
     'CDI_crop', ...
@@ -31,14 +31,41 @@ function imdb = constructProstateImdb(opts)
     end
   end
 
+  % randomly select some to be training and others to be test.
+  % make sure the test index contains cancerous tissues!!!!
+  found_test_index_with_cancerous_tissue = false;
+  fprintf('[INFO] Trying to find test patient index with cancerous tissue...\n');
+  while ~found_test_index_with_cancerous_tissue
+    ix = randperm(totalNumberOfPatients);
+    test_patient_index = ix(end);
+    singlePatientDirectory = char(allPatientsList(test_patient_index).name);
+    suspiciousTissuesForPatient = dir(fullfile(opts.dataDir, singlePatientDirectory, '*_Candidate*'));
+    for j = 1:length(suspiciousTissuesForPatient)
+      % test_count = test_count + 1;
+      suspiciousTissueFile = char(suspiciousTissuesForPatient(j).name);
+      suspiciousTissue = load(fullfile(opts.dataDir, singlePatientDirectory, suspiciousTissueFile));
+      gleason = suspiciousTissue.Gleason;
+      pirad = suspiciousTissue.PIRAD;
+      switch useLabels
+        case 'Gleason'
+          if gleason >= 6
+            found_test_index_with_cancerous_tissue = true;
+          end
+        case 'PIRAD'
+          if pirad >= 4
+            found_test_index_with_cancerous_tissue = true;
+          end
+      end
+    end
+    fprintf('\tNot found. Retrying...\n');
+  end
+  fprintf('[INFO] Found (index %d)!!!\n', test_patient_index);
+
   data = zeros(32, 32, numberOfModalities, totalSuspiciousTissueCount);
   labelsGleason = zeros(1, totalSuspiciousTissueCount);
   labelsPIRAD = zeros(1, totalSuspiciousTissueCount);
-  labels = zeros(1, totalSuspiciousTissueCount);
-  set = zeros(1, totalSuspiciousTissueCount);
+  labels = zeros(1, totalSuspiciousTissueCount);  set = zeros(1, totalSuspiciousTissueCount);
 
-  % randomly select some to be training and others to be test
-  ix = randperm(totalNumberOfPatients);
 
   % ---- ---- ---- ---- TRAIN ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 
@@ -47,7 +74,7 @@ function imdb = constructProstateImdb(opts)
   fprintf('\t[INFO] Loading TRAIN Patients...\n');
   for i = ix(1 : totalNumberOfPatients - numberOfTestPatients)
     patient_count = patient_count + 1;
-    fprintf('\t\t[INFO] Loading up suspicious tissues from patient #%02d (%02d of %d)... ', i, patient_count, totalNumberOfPatients);
+    fprintf('\t\t[INFO] Loading up suspicious tissues from patient #%03d (%03d of %d)... ', i, patient_count, totalNumberOfPatients);
     % for every suspicious tissue
     singlePatientDirectory = char(allPatientsList(i).name);
     suspiciousTissuesForPatient = dir(fullfile(opts.dataDir, singlePatientDirectory, '*_Candidate*'));
@@ -75,7 +102,7 @@ function imdb = constructProstateImdb(opts)
   fprintf('\t[INFO] Loading TEST Patients...\n');
   for i = ix(totalNumberOfPatients - numberOfTestPatients + 1 : end)
     patient_count = patient_count + 1;
-    fprintf('\t\t[INFO] Loading up suspicious tissues from patient #%02d (%02d of %d)... ', i, patient_count, totalNumberOfPatients);
+    fprintf('\t\t[INFO] Loading up suspicious tissues from patient #%03d (%03d of %d)... ', i, patient_count, totalNumberOfPatients);
     % for every suspicious tissue
     singlePatientDirectory = char(allPatientsList(i).name);
     suspiciousTissuesForPatient = dir(fullfile(opts.dataDir, singlePatientDirectory, '*_Candidate*'));
@@ -109,7 +136,7 @@ function imdb = constructProstateImdb(opts)
   [data_train, labels_train] = balanceMalignantAndBenignTissues('train', data(:,:,:,1:train_count), labels(1:train_count));
   [data_test, labels_test] = balanceMalignantAndBenignTissues('test', data(:,:,:,train_count+1:end), labels(train_count+1:end));
   [data_train, labels_train] = augmentData('train', data_train, labels_train);
-  [data_test, labels_test] = augmentData('test', data_test, labels_test);
+  % [data_test, labels_test] = augmentData('test', data_test, labels_test);
 
   data = cat(4, data_train, data_test);
   labels = cat(2, labels_train, labels_test);
@@ -119,6 +146,12 @@ function imdb = constructProstateImdb(opts)
 
   assert(totalNumberOfSamples == length(labels));
   assert(totalNumberOfSamples == length(set));
+
+  fprintf('[INFO] total number of samples: %d\n', totalNumberOfSamples);
+  fprintf('[INFO] number of `train` data - cancer: %d\n', size(data_train(:,:,:,labels_train == 2),4));
+  fprintf('[INFO] number of `train` data - healthy: %d\n', size(data_train(:,:,:,labels_train == 1),4));
+  fprintf('[INFO] number of `test` data - cancer: %d\n', size(data_test(:,:,:,labels_test == 2),4));
+  fprintf('[INFO] number of `test` data - healthy: %d\n', size(data_test(:,:,:,labels_test == 1),4));
 
   % % shuffle data and labels the same way
   % ix = randperm(totalSuspiciousTissueCount);
@@ -147,18 +180,18 @@ function imdb = constructProstateImdb(opts)
     fprintf('done.\n');
   end
 
-  if opts.whitenData
-    fprintf('[INFO] whitening data... ');
-    z = reshape(data,[],totalNumberOfSamples);
-    W = z(:,set == 1)*z(:,set == 1)'/totalNumberOfSamples;
-    [V,D] = eig(W);
-    % the scale is selected to approximately preserve the norm of W
-    d2 = diag(D);
-    en = sqrt(mean(d2));
-    z = V*diag(en./max(sqrt(d2), 10))*V'*z;
-    data = reshape(z, 32, 32, numberOfModalities, []);
-    fprintf('done.\n');
-  end
+  % if opts.whitenData
+  %   fprintf('[INFO] whitening data... ');
+  %   z = reshape(data,[],totalNumberOfSamples);
+  %   W = z(:,set == 1)*z(:,set == 1)'/totalNumberOfSamples;
+  %   [V,D] = eig(W);
+  %   % the scale is selected to approximately preserve the norm of W
+  %   d2 = diag(D);
+  %   en = sqrt(mean(d2));
+  %   z = V*diag(en./max(sqrt(d2), 10))*V'*z;
+  %   data = reshape(z, 32, 32, numberOfModalities, []);
+  %   fprintf('done.\n');
+  % end
 
   imdb.images.data = data;
   imdb.images.labels = single(labels);
