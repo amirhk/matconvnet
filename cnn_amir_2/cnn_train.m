@@ -198,14 +198,14 @@ function [net, info] = cnn_train(net, imdb, getBatch, varargin)
       leg = horzcat(leg, strcat('val ', opts.errorLabels));
 
       % sensitivity
-      plot(1:epoch, info.train.sensitivity', 'b-', 'linewidth', 2);
+      plot(1:epoch, info.train.sensitivity', 'b-', 'linewidth', 1);
       leg = horzcat(leg, 'train sensitivity');
-      plot(1:epoch, info.val.sensitivity', 'b--', 'linewidth', 2);
+      plot(1:epoch, info.val.sensitivity', 'b--', 'linewidth', 1);
       leg = horzcat(leg, 'test sensitivity');
       % specificity
-      plot(1:epoch, info.train.specificity', 'g-', 'linewidth', 2);
+      plot(1:epoch, info.train.specificity', 'g-', 'linewidth', 1);
       leg = horzcat(leg, 'train specificity');
-      plot(1:epoch, info.val.specificity', 'g--', 'linewidth', 2);
+      plot(1:epoch, info.val.specificity', 'g--', 'linewidth', 1);
       leg = horzcat(leg, 'test specificity');
 
       set(legend(leg{:}),'color','none');
@@ -409,16 +409,16 @@ function  [net_cpu,stats,prof] = process_epoch(opts, getBatch, epoch, subset, le
       figure(2); vl_simplenn_diagnose(net,res); drawnow;
     end
   end
-  if opts.debugFlag
-    fprintf('\n --- --- --- --- --- --- --- --- --- --- --- --- --- \n\n');
-    TP = stats(end-3); fprintf('[INFO] TP: %d\n', TP);
-    TN = stats(end-2); fprintf('[INFO] TN: %d\n', TN);
-    FP = stats(end-1); fprintf('[INFO] FP: %d\n', FP);
-    FN = stats(end-0); fprintf('[INFO] FN: %d\n', FN);
-    stats(end+1) = TP / (TP + TN); fprintf('[INFO] Sensitivity: %6.5f\n', stats(end));
-    stats(end+1) = TN / (TN + FP); fprintf('[INFO] Specificity: %6.5f\n', stats(end));
-    fprintf('\n --- --- --- --- --- --- --- --- --- --- --- --- --- \n\n');
-  end
+  % if opts.debugFlag
+  %   fprintf('\n --- --- --- --- --- --- --- --- --- --- --- --- --- \n\n');
+  %   TP = stats(end-3); fprintf('[INFO] TP: %d\n', TP);
+  %   TN = stats(end-2); fprintf('[INFO] TN: %d\n', TN);
+  %   FP = stats(end-1); fprintf('[INFO] FP: %d\n', FP);
+  %   FN = stats(end-0); fprintf('[INFO] FN: %d\n', FN);
+  %   stats(end+1) = TP / (TP + TN); fprintf('[INFO] Sensitivity: %6.5f\n', stats(end));
+  %   stats(end+1) = TN / (TN + FP); fprintf('[INFO] Specificity: %6.5f\n', stats(end));
+  %   fprintf('\n --- --- --- --- --- --- --- --- --- --- --- --- --- \n\n');
+  % end
 
   if nargout > 2
     prof = mpiprofile('info');
