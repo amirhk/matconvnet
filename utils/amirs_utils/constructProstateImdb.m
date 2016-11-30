@@ -3,7 +3,7 @@ function imdb = constructProstateImdb(opts)
 % -------------------------------------------------------------------------
   fprintf('[INFO] Constructing Prostate imdb...\n');
 
-  useLabels = 'PIRAD'; % 'Gleason' | 'PIRAD'
+  useLabels = 'Gleason'; % 'Gleason' | 'PIRAD'
   % percentageTrain = .90;
   numberOfTestPatients = 5;
   modalititesInUse = { ...

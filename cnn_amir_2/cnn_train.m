@@ -169,6 +169,8 @@ function [net, info] = cnn_train(net, imdb, getBatch, varargin)
       info.(f).stats.FN = stats.(f)(end-2);
       info.(f).stats.sensitivity = stats.(f)(end-1);
       info.(f).stats.specificity = stats.(f)(end-0);
+      info.(f).sensitivity(:, epoch) = info.(f).stats.sensitivity;
+      info.(f).specificity(:, epoch) = info.(f).stats.specificity;
     end
     if ~evaluateMode, save(modelPath(epoch), 'net', 'info'); end
 
@@ -194,6 +196,14 @@ function [net, info] = cnn_train(net, imdb, getBatch, varargin)
       end
       plot(1:epoch, info.val.error', '.--');
       leg = horzcat(leg, strcat('val ', opts.errorLabels));
+
+      % sensitivity
+      plot(1:epoch, info.val.sensitivity', 'b--', 'linewidth', 2);
+      leg = horzcat(leg, 'sensitivity');
+      % specificity
+      plot(1:epoch, info.val.specificity', 'g--', 'linewidth', 2);
+      leg = horzcat(leg, 'specificity');
+
       set(legend(leg{:}),'color','none');
       grid on;
       xlabel('training epoch'); ylabel('error');
