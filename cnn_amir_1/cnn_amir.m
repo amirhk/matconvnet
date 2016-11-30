@@ -84,6 +84,9 @@ function [net, info] = cnn_amir(varargin)
     'bottleneckDivideBy', opts.bottleneckDivideBy);
   saveNetworkInfo(net, opts.expDir);
 
+  % very important to reset this afterwards so other modules are true random
+  rng default;
+
   if exist(opts.imdbPath, 'file')
     imdb = load(opts.imdbPath);
   else
