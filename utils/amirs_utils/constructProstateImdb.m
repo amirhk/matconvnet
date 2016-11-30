@@ -37,62 +37,65 @@ function imdb = constructProstateImdb(opts)
   labels = zeros(1, totalSuspiciousTissueCount);
   set = zeros(1, totalSuspiciousTissueCount);
 
-  % for every patient
-  count = 0;
   % randomly select some to be training and others to be test
   ix = randperm(totalNumberOfPatients);
 
+  % ---- ---- ---- ---- TRAIN ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 
-
+  train_count = 0;
+  patient_count = 0;
   fprintf('\t[INFO] Loading TRAIN Patients...\n');
   for i = ix(1 : totalNumberOfPatients - numberOfTestPatients)
-    fprintf('\t\t[INFO] Loading up suspicious tissues from patient #%02d of %d... ', i, totalNumberOfPatients);
+    patient_count = patient_count + 1;
+    fprintf('\t\t[INFO] Loading up suspicious tissues from patient #%02d (%02d of %d)... ', i, patient_count, totalNumberOfPatients);
     % for every suspicious tissue
     singlePatientDirectory = char(allPatientsList(i).name);
     suspiciousTissuesForPatient = dir(fullfile(opts.dataDir, singlePatientDirectory, '*_Candidate*'));
     for j = 1:length(suspiciousTissuesForPatient)
-      count = count + 1;
+      train_count = train_count + 1;
       suspiciousTissueFile = char(suspiciousTissuesForPatient(j).name);
       suspiciousTissue = load(fullfile(opts.dataDir, singlePatientDirectory, suspiciousTissueFile));
       tmp = zeros(32, 32, numberOfModalities);
       for k = 1:numberOfModalities
         tmp(:,:,k) = suspiciousTissue.(modalititesInUse{k});
       end
-      data(:,:,:,count) = tmp;
-      labelsGleason(1, count) = suspiciousTissue.Gleason;
-      labelsPIRAD(1, count) = suspiciousTissue.PIRAD;
-      set(1, count) = 1; % training data
+      index = train_count;
+      data(:,:,:,index) = tmp;
+      labelsGleason(1, index) = suspiciousTissue.Gleason;
+      labelsPIRAD(1, index) = suspiciousTissue.PIRAD;
+      set(1, index) = 1; % training data
     end
     fprintf('done.\n');
   end
   fprintf('\tdone.\n');
 
+  % ---- ---- ---- ---- TEST ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 
-
+  test_count = 0;
   fprintf('\t[INFO] Loading TEST Patients...\n');
   for i = ix(totalNumberOfPatients - numberOfTestPatients + 1 : end)
-    fprintf('\t\t[INFO] Loading up suspicious tissues from patient #%02d of %d... ', i, totalNumberOfPatients);
+    patient_count = patient_count + 1;
+    fprintf('\t\t[INFO] Loading up suspicious tissues from patient #%02d (%02d of %d)... ', i, patient_count, totalNumberOfPatients);
     % for every suspicious tissue
     singlePatientDirectory = char(allPatientsList(i).name);
     suspiciousTissuesForPatient = dir(fullfile(opts.dataDir, singlePatientDirectory, '*_Candidate*'));
     for j = 1:length(suspiciousTissuesForPatient)
-      count = count + 1;
+      test_count = test_count + 1;
       suspiciousTissueFile = char(suspiciousTissuesForPatient(j).name);
       suspiciousTissue = load(fullfile(opts.dataDir, singlePatientDirectory, suspiciousTissueFile));
       tmp = zeros(32, 32, numberOfModalities);
       for k = 1:numberOfModalities
         tmp(:,:,k) = suspiciousTissue.(modalititesInUse{k});
       end
-      data(:,:,:,count) = tmp;
-      labelsGleason(1, count) = suspiciousTissue.Gleason;
-      labelsPIRAD(1, count) = suspiciousTissue.PIRAD;
-      set(1, count) = 3; % testing data
+      index = train_count + test_count;
+      data(:,:,:,index) = tmp;
+      labelsGleason(1, index) = suspiciousTissue.Gleason;
+      labelsPIRAD(1, index) = suspiciousTissue.PIRAD;
+      set(1, index) = 3; % testing data
     end
     fprintf('done.\n');
   end
   fprintf('\tdone.\n');
-
-
 
   switch useLabels
     case 'Gleason'
@@ -103,13 +106,24 @@ function imdb = constructProstateImdb(opts)
   % labels start from 1
   labels = labels + 1;
 
+  [data_train, labels_train] = balanceMalignantAndBenignTissues('train', data(:,:,:,1:train_count), labels(1:train_count));
+  [data_test, labels_test] = balanceMalignantAndBenignTissues('test', data(:,:,:,train_count+1:end), labels(train_count+1:end));
+  data = cat(4, data_train, data_test);
+  labels = cat(2, labels_train, labels_test);
+  set = [1*ones(1,length(labels_train)) 3*ones(1,length(labels_test))];
+
+  totalNumberOfSamples = size(data,4);
+
+  assert(totalNumberOfSamples == length(labels));
+  assert(totalNumberOfSamples == length(set));
+
   % % shuffle data and labels the same way
   % ix = randperm(totalSuspiciousTissueCount);
   % data = single(data(:,:,:,ix));
   % labels = labels(ix);
 
   % % take the first 90% to be training data and last 10% to be testing data
-  totalNumberOfSamples = totalSuspiciousTissueCount;
+  % totalNumberOfSamples = totalSuspiciousTissueCount;
   % numberOfTrainSamples = floor(totalNumberOfSamples * percentageTrain);
   % numberOfTestSamples = totalNumberOfSamples - numberOfTrainSamples;
   % set = [ones(1, numberOfTrainSamples) 3 * ones(1, numberOfTestSamples)];
@@ -150,3 +164,45 @@ function imdb = constructProstateImdb(opts)
   imdb.meta.sets = {'train', 'val', 'test'};
   % imdb.meta.classes = train_file.class_names; % = test_file.class_names
   fprintf('done!\n\n');
+
+
+% --------------------------------------------------------------------
+function [new_data, new_labels] = balanceMalignantAndBenignTissues(data_type, data, labels)
+% --------------------------------------------------------------------
+  fprintf('\t[INFO] Balancing malignant and benign tissues in `%s` set...\n', data_type);
+  fprintf('\t\t[INFO] Identified %d total tissues\n', size(data, 4));
+  benign_data = data(:,:,:,labels == 1);
+  malignant_data = data(:,:,:,labels == 2);
+  benign_count = size(benign_data, 4);
+  malignant_count = size(malignant_data, 4);
+  fprintf('\t\t\tbenign:  %d \n', benign_count);
+  fprintf('\t\t\tmalignant: %d \n', malignant_count);
+
+  if ~benign_count
+    error('[ERROR]. Was not able to identify any benign tissues\n');
+  end
+
+  if ~malignant_count
+    error('[ERROR]. Was not able to identify any malignant tissues\n');
+  end
+
+  % choose N random indices from benign, where N = number of malignant tumors
+  fprintf('\t\t[INFO] Choosing %d out of %d benign tissues... ', malignant_count, benign_count);
+  ix = randperm(benign_count);
+  ix = ix(1:malignant_count);
+  subsampled_benign_data = benign_data(:,:,:,ix);
+  new_data = cat(4, subsampled_benign_data, malignant_data);
+  new_labels = [1*ones(1,malignant_count) 2*ones(1,malignant_count)]; % same number of benign and malignant now.
+  fprintf('done.\n');
+
+  % shuffle them so we have intermixed subsampled_benign_data and malignant_data
+  total_new_count = size(new_data, 4);
+  ix = randperm(total_new_count);
+  new_data = new_data(:,:,:,ix);
+  new_labels = new_labels(ix);
+
+  fprintf('\t\t[INFO] New `%s` data count: %d...\n', data_type, total_new_count);
+  fprintf('\t\t\tbenign:  %d \n', size(new_data(:,:,:,new_labels == 2), 4));
+  fprintf('\t\t\tmalignant: %d \n', size(new_data(:,:,:,new_labels == 1), 4));
+
+  fprintf('\tdone.\n');
