@@ -147,18 +147,18 @@ function imdb = constructProstateImdb(opts)
     fprintf('done.\n');
   end
 
-  % if opts.whitenData
-  %   fprintf('[INFO] whitening data... ');
-  %   z = reshape(data,[],totalNumberOfSamples);
-  %   W = z(:,set == 1)*z(:,set == 1)'/totalNumberOfSamples;
-  %   [V,D] = eig(W);
-  %   % the scale is selected to approximately preserve the norm of W
-  %   d2 = diag(D);
-  %   en = sqrt(mean(d2));
-  %   z = V*diag(en./max(sqrt(d2), 10))*V'*z;
-  %   data = reshape(z, 32, 32, numberOfModalities, []);
-  %   fprintf('done.\n');
-  % end
+  if opts.whitenData
+    fprintf('[INFO] whitening data... ');
+    z = reshape(data,[],totalNumberOfSamples);
+    W = z(:,set == 1)*z(:,set == 1)'/totalNumberOfSamples;
+    [V,D] = eig(W);
+    % the scale is selected to approximately preserve the norm of W
+    d2 = diag(D);
+    en = sqrt(mean(d2));
+    z = V*diag(en./max(sqrt(d2), 10))*V'*z;
+    data = reshape(z, 32, 32, numberOfModalities, []);
+    fprintf('done.\n');
+  end
 
   imdb.images.data = data;
   imdb.images.labels = single(labels);
