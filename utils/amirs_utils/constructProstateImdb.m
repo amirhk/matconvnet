@@ -220,18 +220,23 @@ function [new_data, new_labels] = augmentData(data_type, data, labels)
   fprintf('\t\t[INFO] Initial `%s` data count: %d.\n', data_type, size(data, 4));
   rotation_angle = 45;
   degrees = 0:rotation_angle:360 - rotation_angle;
-  fprintf('\t\t[INFO] Number of degrees: %d.\n', length(degrees));
-  new_data = zeros(size(data, 1), size(data, 2), size(data, 3), size(data, 4) * length(degrees));
+  fprintf('\t\t\t[INFO] Number of degrees: %d.\n', length(degrees));
+  fprintf('\t\t\t[INFO] Number of flips: %d.\n', 2);
+  new_data = zeros(size(data, 1), size(data, 2), size(data, 3), size(data, 4) * length(degrees) * 2);
   for i = 1:size(data, 4)
     for degree = degrees
-      new_index =  (i - 1) * length(degrees) + (degree / rotation_angle) + 1;
-      new_data(:,:,:,new_index) = imrotate(data(:,:,:,i), degree, 'crop');
+      new_index = (i - 1) * length(degrees) + (degree / rotation_angle) + 1;
+      new_index_left = new_index + 0;
+      new_index_right = new_index + 1;
+      rotated_image = imrotate(data(:,:,:,i), degree, 'crop');
+      new_data(:,:,:,new_index_left) = rotated_image;
+      new_data(:,:,:,new_index_right) = fliplr(rotated_image);
     end
   end
 
   % repeat labels length(degrees) number of times...
   new_labels = labels';
-  n = length(degrees);
+  n = length(degrees) * 2; % *2 for left right flip
   r = repmat(labels', 1, n)';
   new_labels = r(:)';
   assert(size(new_data, 4) == length(new_labels));
