@@ -409,14 +409,20 @@ function  [net_cpu,stats,prof] = process_epoch(opts, getBatch, epoch, subset, le
       figure(2); vl_simplenn_diagnose(net,res); drawnow;
     end
   end
+  TP = stats(end-3);
+  TN = stats(end-2);
+  FP = stats(end-1);
+  FN = stats(end-0);
+  stats(end+1) = TP / (TP + TN);
+  stats(end+1) = TN / (TN + FP);
   % if opts.debugFlag
   %   fprintf('\n --- --- --- --- --- --- --- --- --- --- --- --- --- \n\n');
-  %   TP = stats(end-3); fprintf('[INFO] TP: %d\n', TP);
-  %   TN = stats(end-2); fprintf('[INFO] TN: %d\n', TN);
-  %   FP = stats(end-1); fprintf('[INFO] FP: %d\n', FP);
-  %   FN = stats(end-0); fprintf('[INFO] FN: %d\n', FN);
-  %   stats(end+1) = TP / (TP + TN); fprintf('[INFO] Sensitivity: %6.5f\n', stats(end));
-  %   stats(end+1) = TN / (TN + FP); fprintf('[INFO] Specificity: %6.5f\n', stats(end));
+  %   fprintf('[INFO] TP: %d\n', TP);
+  %   fprintf('[INFO] TN: %d\n', TN);
+  %   fprintf('[INFO] FP: %d\n', FP);
+  %   fprintf('[INFO] FN: %d\n', FN);
+  %   fprintf('[INFO] Sensitivity: %6.5f\n', stats(end));
+  %   fprintf('[INFO] Specificity: %6.5f\n', stats(end));
   %   fprintf('\n --- --- --- --- --- --- --- --- --- --- --- --- --- \n\n');
   % end
 
