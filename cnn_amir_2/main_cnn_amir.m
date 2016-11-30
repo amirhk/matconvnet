@@ -1,8 +1,4 @@
-
 function main_cnn_amir(varargin)
-  folder = fileparts(mfilename('fullpath'));
-  folderNumber = str2num(folder(end));
-
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 % -- ==                                                                   -- ==
 % -- ==                        NETWORK ARCH                               -- ==
@@ -109,7 +105,6 @@ function main_cnn_amir(varargin)
           for weightDecay = weightDecayList
             for backpropDepth = backpropDepthList
               cnn_amir( ...
-                'folderNumber', folderNumber, ...
                 'networkArch', networkArch, ...
                 'dataset', char(dataset), ...
                 'imdbPortion', imdbPortion, ...

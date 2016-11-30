@@ -37,7 +37,7 @@ function [net, info] = cnn_amir(varargin)
 
   % Paths -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
   opts.timeString = sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
-  opts.backpropDepthString = sprintf('bpd-%d', opts.backpropDepth);
+  opts.backpropDepthString = sprintf('bpd-%02d', opts.backpropDepth);
   opts.dataFolderString = sprintf('data_%d', opts.folderNumber);
   opts.dataDir = fullfile(vl_rootnn, opts.dataFolderString, sprintf('_%s', opts.dataset));
   opts.imdbDir = fullfile(vl_rootnn, opts.dataFolderString, sprintf( ...
@@ -123,6 +123,8 @@ function [net, info] = cnn_amir(varargin)
     opts.train, ...
     'val', find(imdb.images.set == 3));
 
+  saveFinalSensitivitySpecificityInfo(info, opts.expDir);
+
   % -------------------------------------------------------------------------
   %                                             Delete All But Last Net Files
   % -------------------------------------------------------------------------
@@ -153,7 +155,7 @@ function [processorList, processorString] = getProcessor(opts)
   end;
 
 % -------------------------------------------------------------------------
-function randomGPUIndex = saveNetworkInfo(net, expDir)
+function saveNetworkInfo(net, expDir)
 % -------------------------------------------------------------------------
   fprintf('\n[INFO] Saving network info in readme...');
   struct2File( ...
@@ -162,6 +164,30 @@ function randomGPUIndex = saveNetworkInfo(net, expDir)
     'delimiter', ...
     '\n\n');
   fprintf('done!\n');
+
+
+% -------------------------------------------------------------------------
+function saveFinalSensitivitySpecificityInfo(info, expDir)
+% -------------------------------------------------------------------------
+  fileID = fopen(fullfile(expDir, 'sensitivity_specificity.txt'), 'w');
+  fprintf(fileID, '-- -- -- -- -- -- FINAL TRAINING VALUES -- -- -- -- -- --\n');
+  fprintf(fileID, '\t[INFO] TP: %d\n', info.train.stats.TP);
+  fprintf(fileID, '\t[INFO] TN: %d\n', info.train.stats.TN);
+  fprintf(fileID, '\t[INFO] FP: %d\n', info.train.stats.FP);
+  fprintf(fileID, '\t[INFO] FN: %d\n', info.train.stats.FN);
+  fprintf(fileID, '\t[INFO] Sensitivity: %6.5f\n', info.train.stats.sensitivity);
+  fprintf(fileID, '\t[INFO] Specificity: %6.5f\n', info.train.stats.specificity);
+  fprintf(fileID, '\t\n\n');
+  fprintf(fileID, '-- -- -- -- -- -- FINAL TESTING VALUES -- -- -- -- -- --\n');
+  fprintf(fileID, '\t[INFO] TP: %d\n', info.val.stats.TP);
+  fprintf(fileID, '\t[INFO] TN: %d\n', info.val.stats.TN);
+  fprintf(fileID, '\t[INFO] FP: %d\n', info.val.stats.FP);
+  fprintf(fileID, '\t[INFO] FN: %d\n', info.val.stats.FN);
+  fprintf(fileID, '\t[INFO] Sensitivity: %6.5f\n', info.val.stats.sensitivity);
+  fprintf(fileID, '\t[INFO] Specificity: %6.5f\n', info.val.stats.specificity);
+  fprintf(fileID, '\t\n\n');
+  fclose(fileID);
+
 
 % -------------------------------------------------------------------------
 function fn = getBatch(opts)
