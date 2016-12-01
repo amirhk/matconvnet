@@ -165,10 +165,10 @@ function imdb = constructProstateImdb2(opts)
 %   [data_train, labels_train] = balanceMalignantAndBenignTissues('train', data(:,:,:,1:train_count), labels(1:train_count));
 %   % [data_train, labels_train] = augmentData('train', data_train, labels_train);
 
-%   % [data_test, labels_test] = balanceMalignantAndBenignTissues('test', data(:,:,:,train_count+1:end), labels(train_count+1:end));
+%   [data_test, labels_test] = balanceMalignantAndBenignTissues('test', data(:,:,:,train_count+1:end), labels(train_count+1:end));
 %   % [data_test, labels_test] = augmentData('test', data_test, labels_test);
-%   data_test = data(:,:,:,train_count+1:end);
-%   labels_test = labels(train_count+1:end);
+%   % data_test = data(:,:,:,train_count+1:end);
+%   % labels_test = labels(train_count+1:end);
 
 %   data = cat(4, data_train, data_test);
 %   labels = cat(2, labels_train, labels_test);
