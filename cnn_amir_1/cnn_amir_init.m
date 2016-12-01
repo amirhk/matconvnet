@@ -56,9 +56,6 @@ switch opts.networkArch
     net.meta.trainOpts.learningRate = [0.005*ones(1,50)];
 end
 
-net.meta.trainOpts.learningRate = [1];
-
-
 net.meta.trainOpts.weightInitSequence = printWeightInitSequence(opts.weightInitSequence);
 net.meta.trainOpts.weightInitSource = opts.weightInitSource;
 net.meta.trainOpts.backpropDepth = opts.backpropDepth;

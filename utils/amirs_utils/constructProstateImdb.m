@@ -506,6 +506,10 @@ function [new_data, new_labels] = balanceMalignantAndBenignTissues(data_type, da
   fprintf('\t\t\tbenign:  %d \n', benign_count);
   fprintf('\t\t\tmalignant: %d \n', malignant_count);
 
+  if ~malignant_count
+    malignant_count = 1;
+  end
+
   % if ~benign_count
   %   error('[ERROR]. Was not able to identify any benign tissues\n');
   % end

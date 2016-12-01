@@ -18,9 +18,9 @@ switch opts.networkArch
     switch opts.dataset
       case 'prostate'
         % net.meta.trainOpts.learningRate = [0.001*ones(1,50)]; % matconvnet default
+        % net.meta.trainOpts.learningRate = [0.01*ones(1,50) 0.005*ones(1,50) 0.001*ones(1,100) 0.0005*ones(1,100)]; % matconvnet default
         % net.meta.trainOpts.learningRate = [0.005*ones(1,40) 0.001*ones(1,50) 0.0005*ones(1,110)]; % matconvnet default
         net.meta.trainOpts.learningRate = [0.005*ones(1,40) 0.001*ones(1,50)];
-        % net.meta.trainOpts.learningRate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)]; % matconvnet default
     end
   case 'mnistnet'
     switch opts.dataset
@@ -73,7 +73,8 @@ switch opts.networkArch
     % --- --- ---                                                     --- --- --
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     layerNumber = 1;
-    net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 5, 4, 32, 1/100, 2, char(opts.weightInitSequence{1}), opts.weightInitSource);
+    net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 5, 4, 32, 1/100, 2, char(opts.weightInitSequence{1}), 'gen');
+    % net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 5, 4, 32, 1/100, 2, char(opts.weightInitSequence{1}), opts.weightInitSource);
     % net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 5, 8, 32, 1/100, 2, char(opts.weightInitSequence{1}), opts.weightInitSource);
     net.layers{end+1} = poolingLayerLeNetMax(layerNumber);
     net.layers{end+1} = reluLayer(layerNumber);
