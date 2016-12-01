@@ -15,7 +15,7 @@ function main_cnn_amir(varargin)
   networkArch = 'prostatenet';
   % backpropDepthList = [13, 10, 7, 4];
   backpropDepthList = [4];
-  patientNumber = 1:1:104;
+  patientNumber = 1:1:345;
 
   % networkArch = 'lenet';
   % backpropDepthList = [13, 10, 7, 4]; % no dropout

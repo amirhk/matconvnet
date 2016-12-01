@@ -46,6 +46,16 @@ function [net, info] = cnn_amir(varargin)
     opts.dataset, ...
     opts.networkArch));
   opts.imdbPath = fullfile(opts.imdbDir, 'imdb.mat');
+  %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %%
+  %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %%
+  %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %%
+  opts.imdbBalancedDir = fullfile(vl_rootnn, opts.dataFolderString, sprintf( ...
+    'balanced-%s-%s', ...
+    opts.dataset, ...
+    opts.networkArch));
+  opts.imdbBalancedPath = fullfile(opts.imdbBalancedDir, 'imdb.mat');
+  %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %%
+  %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %%
   if ~exist(opts.imdbDir)
     mkdir(opts.imdbDir);
   else
@@ -90,7 +100,8 @@ function [net, info] = cnn_amir(varargin)
   else
     switch opts.dataset
       case 'prostate'
-        imdb = constructProstateImdb(opts);
+        % imdb = constructProstateImdb(opts);
+        imdb = constructProstateImdb2(opts);
       case 'cifar'
         imdb = constructCifarImdb(opts);
       case 'coil-100'
