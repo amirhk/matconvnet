@@ -9,6 +9,7 @@ function [net, info] = cnn_amir(varargin)
 
   % Setup -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
   opts.train = struct();
+  opts.patientNumber = 1;
   opts.folderNumber = folderNumber;
   opts.networkArch = 'alexnet';
   opts.dataset = 'cifar';
