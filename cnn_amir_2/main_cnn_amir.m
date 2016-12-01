@@ -48,11 +48,11 @@ function main_cnn_amir(varargin)
 % -- ==                                                                   -- ==
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 
-  % weightInitSource = 'gen';  % {'load' | 'gen'}
-  % weightInitSequenceList = {{'compRand', 'compRand', 'compRand'}};
+  weightInitSource = 'gen';  % {'load' | 'gen'}
+  weightInitSequenceList = {{'compRand', 'compRand', 'compRand'}};
 
-  weightInitSource = 'load';  % {'load' | 'gen'}
-  weightInitSequenceList = {{'compRand', 'layerwise-1D-from-cifar', 'layerwise-1D-from-cifar'}};
+  % weightInitSource = 'load';  % {'load' | 'gen'}
+  % weightInitSequenceList = {{'compRand', 'layerwise-1D-from-cifar', 'layerwise-1D-from-cifar'}};
   % weightInitSequenceList = { ...
   %   ... % {'1-clustered-layerwise-1D-from-cifar', '1-clustered-layerwise-1D-from-cifar', '1-clustered-layerwise-1D-from-cifar'}, ...
   %   ... % {'1-clustered-layerwise-1D-from-coil-100', '1-clustered-layerwise-1D-from-coil-100', '1-clustered-layerwise-1D-from-coil-100'}, ...
