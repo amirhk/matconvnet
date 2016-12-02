@@ -4,7 +4,8 @@ function output = compareProstateResults(opts)
   % from there, extract values for each patients leave-1-pateint-out test
   % average them
 % --------------------------------------------------------------------
-  experimentDirectory = '/Volumes/Amir/results/prostate compRandx3';
+  experimentDirectory = '/Volumes/Amir/results/2016-12-01-01; Radiomics; Gleason; balanced only train not balanced test, augment only train, epoch 30, leave-1-patient-out/leave 1 patient out';
+  experimentDirectory = '/Volumes/Amir/results/2016-12-01-01; Radiomics; Gleason; balanced only train not balanced test, augment only train, epoch 30, leave-1-patient-out/leave 1 sample out';
   % experimentDirectory = '/Volumes/Amir/results/prostate compRand + layerwise from cifar';
   allPatientExperimentDirectories = dir(fullfile(experimentDirectory, 'prostate-prostatenet-*'));
   totalNumberOfPatients = length(allPatientExperimentDirectories);
