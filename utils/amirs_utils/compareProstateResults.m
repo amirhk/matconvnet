@@ -6,7 +6,6 @@ function output = compareProstateResults(opts)
 % --------------------------------------------------------------------
   experimentDirectory = '/Volumes/Amir/results/2016-12-02-02; Radiomics; Gleason; train balanced and augmented; test not and not; epoch 30; bpd 13/leave 1 patient out';
   experimentDirectory = '/Volumes/Amir/results/2016-12-02-02; Radiomics; Gleason; train balanced and augmented; test not and not; epoch 30; bpd 13/leave 1 sample out';
-  % experimentDirectory = '/Volumes/Amir/results/prostate compRand + layerwise from cifar';
   allPatientExperimentDirectories = dir(fullfile(experimentDirectory, 'prostate-prostatenet-*'));
   totalNumberOfPatients = length(allPatientExperimentDirectories);
   allPatientResults = {};
@@ -83,14 +82,14 @@ function output = compareProstateResults(opts)
 
   fprintf('Average Train Accuracy: %6.5f\n', mean(allTrainAccuracy));
   fprintf('Average Train Sensitivity: %6.5f\n', mean(allTrainSensitivity));
-  fprintf('Average Train Sensitivity: %6.5f\n', mean(allTrainSensitivity));
+  fprintf('Average Train Specificity: %6.5f\n', mean(allTestSpecificity));
   fprintf('Average Test Accuracy: %6.5f\n', mean(allTestAccuracy));
   fprintf('Average Test Sensitivity: %6.5f\n', mean(allTestSensitivity));
   fprintf('Average Test Specificity: %6.5f\n', mean(allTestSpecificity));
 
   output.allTrainAccuracy = allTrainAccuracy;
   output.allTrainSensitivity = allTrainSensitivity;
-  output.allTrainSensitivity = allTrainSensitivity;
+  output.allTestSpecificity = allTestSpecificity;
   output.allTestAccuracy = allTestAccuracy;
   output.allTestSensitivity = allTestSensitivity;
   output.allTestSpecificity = allTestSpecificity;
