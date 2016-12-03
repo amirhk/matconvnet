@@ -102,13 +102,13 @@ function main_cnn_amir(varargin)
 % -- ==                           MAIN LOOP                               -- ==
 % -- ==                                                                   -- ==
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
-  for leaveOutIndex = leaveOutIndices
-    for dataset = datasetList
-      for weightInitSequence = weightInitSequenceList
-        for bottleneckDivideBy = bottleneckDivideByList
-          for imdbPortion = imdbPortionList
-            for weightDecay = weightDecayList
-              for backpropDepth = backpropDepthList
+  for dataset = datasetList
+    for weightInitSequence = weightInitSequenceList
+      for bottleneckDivideBy = bottleneckDivideByList
+        for imdbPortion = imdbPortionList
+          for weightDecay = weightDecayList
+            for backpropDepth = backpropDepthList
+              for leaveOutIndex = leaveOutIndices
                 cnn_amir( ...
                   'leaveOutType', leaveOutType, ...
                   'leaveOutIndex', leaveOutIndex, ...
