@@ -15,7 +15,11 @@ function main_cnn_amir(varargin)
   networkArch = 'prostatenet';
   % backpropDepthList = [13, 10, 7, 4];
   backpropDepthList = [13];
-  patientNumber = 1:1:266;
+  % leaveOutType = 'sample';
+  % leaveOutIndices = 1:1:266;
+  leaveOutType = 'patient';
+  leaveOutIndices = 1:1:104;
+
 
   % networkArch = 'lenet';
   % backpropDepthList = [13, 10, 7, 4]; % no dropout
@@ -98,7 +102,7 @@ function main_cnn_amir(varargin)
 % -- ==                           MAIN LOOP                               -- ==
 % -- ==                                                                   -- ==
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
-  for pn = patientNumber
+  for leaveOutIndex = leaveOutIndices
     for dataset = datasetList
       for weightInitSequence = weightInitSequenceList
         for bottleneckDivideBy = bottleneckDivideByList
@@ -106,10 +110,10 @@ function main_cnn_amir(varargin)
             for weightDecay = weightDecayList
               for backpropDepth = backpropDepthList
                 cnn_amir( ...
-                  'patientNumber', pn, ...
+                  'leaveOutType', leaveOutType, ...
+                  'leaveOutIndex', leaveOutIndex, ...
                   'networkArch', networkArch, ...
                   'dataset', char(dataset), ...
-                  'imdbPortion', imdbPortion, ...
                   'backpropDepth', backpropDepth, ...
                   'weightDecay', weightDecay, ...
                   'weightInitSequence', weightInitSequence{1}, ...

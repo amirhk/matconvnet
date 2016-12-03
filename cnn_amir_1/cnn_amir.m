@@ -9,11 +9,13 @@ function [net, info] = cnn_amir(varargin)
 
   % Setup -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
   opts.train = struct();
-  opts.patientNumber = 1;
+  opts.imdbOptions = {};
+  opts.leaveOutType = 'sample';
+  opts.leaveOutIndex = 1;
   opts.folderNumber = folderNumber;
   opts.networkArch = 'alexnet';
   opts.dataset = 'cifar';
-  opts.imdbPortion = 1.0;
+  opts.imdbPortion = 1;
   opts.backpropDepth = 20;
   opts.weightDecay = 0.0001;
   opts.weightInitSequence = {'1D', 'compRand', '1D', '2D-shiftflip', '1D'};
@@ -46,12 +48,21 @@ function [net, info] = cnn_amir(varargin)
     opts.dataset, ...
     opts.networkArch));
   opts.imdbPath = fullfile(opts.imdbDir, 'imdb.mat');
+  %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %%
+  %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %%
+  opts.imdbBalancedDir = fullfile(vl_rootnn, opts.dataFolderString, sprintf( ...
+    'balanced-%s-%s', ...
+    opts.dataset, ...
+    opts.networkArch));
+  opts.imdbBalancedPath = fullfile(opts.imdbBalancedDir, 'imdb.mat');
+  %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %%
+  %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %%
   if ~exist(opts.imdbDir)
     mkdir(opts.imdbDir);
   else
     % if folder exists, there may be an imdb inside there (that corresponds to
     % a different portion of CIFAR). just delete the imdb and remake to be safe.
-    % if opts.imdbPortion ~= 1
+    % if opts.imdbOptions.imdbPortion ~= 1
       delete(fullfile(opts.imdbDir, 'imdb.mat'));
     % end
   end
