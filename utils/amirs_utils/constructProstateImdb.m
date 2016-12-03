@@ -215,7 +215,6 @@ function [data, labels, set] = loadSamples(opts, set_type, patient_indices_in_se
       data(:,:,:,sample_count) = tmp;
       labels_gleason(1, sample_count) = suspicious_tissue.Gleason;
       labels_pirad(1, sample_count) = suspicious_tissue.PIRAD;
-      set(1, sample_count) = 1; % training data
     end
     fprintf('done.\n');
   end
@@ -227,6 +226,11 @@ function [data, labels, set] = loadSamples(opts, set_type, patient_indices_in_se
   end
   % labels start from 1
   labels = labels + 1;
+  if strcmp(set_type, 'train')
+    set = [1 * ones(1, length(labels))];
+  else
+    set = [3 * ones(1, length(labels))];
+  end
   fprintf('\tdone.\n');
 
 % --------------------------------------------------------------------
