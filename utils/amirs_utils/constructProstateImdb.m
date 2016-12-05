@@ -281,7 +281,7 @@ function [new_data, new_labels, new_set] = augmentData(set_type, data, labels)
   benign_data = data(:,:,:,labels == 1);
   malignant_data = data(:,:,:,labels == 2);
 
-  augmented_benign_data = augmentDataHelper(set_type, benign_data, 'rotate');
+  augmented_benign_data = augmentDataHelper(set_type, benign_data, 'none');
   augmented_malignant_data = augmentDataHelper(set_type, malignant_data, 'rotate-flip');
 
   augmented_benign_labels = 1 * ones(1, size(augmented_benign_data, 4));
@@ -333,6 +333,8 @@ function [new_data] = augmentDataHelper(set_type, data, augment_type)
         new_data(:,:,:,new_index) = rotated_image;
       end
     end
+  elseif strcmp(augment_type, 'none')
+    new_data = data;
   else
     fprintf('\n\nWRONG!!!!!!!!\n\n');
   end
