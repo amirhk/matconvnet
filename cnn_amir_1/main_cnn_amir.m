@@ -18,7 +18,8 @@ function main_cnn_amir(varargin)
   % leaveOutType = 'sample';
   % leaveOutIndices = 1:1:266;
   leaveOutType = 'patient';
-  leaveOutIndices = 1:1:104;
+  % leaveOutIndices = 1:1:104;
+  leaveOutIndices = 1:1:1;
 
 
   % networkArch = 'lenet';

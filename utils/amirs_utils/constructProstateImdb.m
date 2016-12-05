@@ -281,8 +281,8 @@ function [new_data, new_labels, new_set] = augmentData(set_type, data, labels)
   benign_data = data(:,:,:,labels == 1);
   malignant_data = data(:,:,:,labels == 2);
 
-  augmented_benign_data = augmentDataHelper(set_type, benign_data, 'none');
-  augmented_malignant_data = augmentDataHelper(set_type, malignant_data, 'none');
+  augmented_benign_data = augmentDataHelper(set_type, benign_data, 'flip');
+  augmented_malignant_data = augmentDataHelper(set_type, malignant_data, 'flip');
 
   augmented_benign_labels = 1 * ones(1, size(augmented_benign_data, 4));
   augmented_malignant_labels = 2 * ones(1, size(augmented_malignant_data, 4));
