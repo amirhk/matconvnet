@@ -4,8 +4,10 @@ function output = compareProstateResults(opts)
   % from there, extract values for each patients leave-1-pateint-out test
   % average them
 % --------------------------------------------------------------------
-  experimentDirectory = '/Volumes/Amir/results/2016-12-02-02; Radiomics; Gleason; train balanced and augmented; test not and not; epoch 30; bpd 13/leave 1 patient out';
-  experimentDirectory = '/Volumes/Amir/results/2016-12-02-02; Radiomics; Gleason; train balanced and augmented; test not and not; epoch 30; bpd 13/leave 1 sample out';
+  experimentDirectory = '/Volumes/Amir/results/2016-12-02-05; Radiomics; Gleason; leave-1-patient-out; bpd 04';
+  % experimentDirectory = '/Volumes/Amir/results/2016-12-02-05; Radiomics; Gleason; leave-1-patient-out; bpd 13';
+  experimentDirectory = '/Volumes/Amir/results/2016-12-02-05; Radiomics; Gleason; leave-1-sample-out; bpd 04';
+  experimentDirectory = '/Volumes/Amir/results/2016-12-02-05; Radiomics; Gleason; leave-1-sample-out; bpd 13';
   allPatientExperimentDirectories = dir(fullfile(experimentDirectory, 'prostate-prostatenet-*'));
   totalNumberOfPatients = length(allPatientExperimentDirectories);
   allPatientResults = {};
@@ -82,14 +84,14 @@ function output = compareProstateResults(opts)
 
   fprintf('Average Train Accuracy: %6.5f\n', mean(allTrainAccuracy));
   fprintf('Average Train Sensitivity: %6.5f\n', mean(allTrainSensitivity));
-  fprintf('Average Train Specificity: %6.5f\n', mean(allTestSpecificity));
+  fprintf('Average Train Specificity: %6.5f\n', mean(allTrainSpecificity));
   fprintf('Average Test Accuracy: %6.5f\n', mean(allTestAccuracy));
   fprintf('Average Test Sensitivity: %6.5f\n', mean(allTestSensitivity));
   fprintf('Average Test Specificity: %6.5f\n', mean(allTestSpecificity));
 
   output.allTrainAccuracy = allTrainAccuracy;
   output.allTrainSensitivity = allTrainSensitivity;
-  output.allTestSpecificity = allTestSpecificity;
+  output.allTrainSpecificity = allTrainSpecificity;
   output.allTestAccuracy = allTestAccuracy;
   output.allTestSensitivity = allTestSensitivity;
   output.allTestSpecificity = allTestSpecificity;

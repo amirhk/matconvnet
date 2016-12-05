@@ -415,16 +415,16 @@ function  [net_cpu,stats,prof] = process_epoch(opts, getBatch, epoch, subset, le
   FN = stats(end-0);
   stats(end+1) = TP / (TP + FN);
   stats(end+1) = TN / (TN + FP);
-  % if opts.debugFlag
-  %   fprintf('\n --- --- --- --- --- --- --- --- --- --- --- --- --- \n\n');
-  %   fprintf('[INFO] TP: %d\n', TP);
-  %   fprintf('[INFO] TN: %d\n', TN);
-  %   fprintf('[INFO] FP: %d\n', FP);
-  %   fprintf('[INFO] FN: %d\n', FN);
-  %   fprintf('[INFO] Sensitivity: %6.5f\n', stats(end));
-  %   fprintf('[INFO] Specificity: %6.5f\n', stats(end));
-  %   fprintf('\n --- --- --- --- --- --- --- --- --- --- --- --- --- \n\n');
-  % end
+  if opts.debugFlag
+    fprintf('\n --- --- --- --- --- --- --- --- --- --- --- --- --- \n\n');
+    fprintf('[INFO] TP: %d\n', TP);
+    fprintf('[INFO] TN: %d\n', TN);
+    fprintf('[INFO] FP: %d\n', FP);
+    fprintf('[INFO] FN: %d\n', FN);
+    fprintf('[INFO] Sensitivity: %6.5f\n', stats(end-1));
+    fprintf('[INFO] Specificity: %6.5f\n', stats(end));
+    fprintf('\n --- --- --- --- --- --- --- --- --- --- --- --- --- \n\n');
+  end
 
   if nargout > 2
     prof = mpiprofile('info');

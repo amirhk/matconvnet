@@ -10,8 +10,8 @@ function imdb = constructProstateImdb3(opts)
       train_balance = true;
       train_augment = true;
       test_patient_indices = opts.leaveOutIndex;
-      test_balance = false;
-      test_augment = false;
+      test_balance = true;
+      test_augment = true;
       % just use the helper with the indices above.
       imdb = constructProstateImdbHelper( ...
         opts, ...
@@ -278,32 +278,19 @@ function [new_data, new_labels, new_set] = balanceData(set_type, data, labels)
 % --------------------------------------------------------------------
 function [new_data, new_labels, new_set] = augmentData(set_type, data, labels)
 % --------------------------------------------------------------------
-  fprintf('\t[INFO] Augmenting `%s` data...\n', set_type);
-  fprintf('\t\t[INFO] Initial `%s` data count: %d.\n', set_type, size(data, 4));
-  rotation_angle = 45;
-  degrees = 0:rotation_angle:360 - rotation_angle;
-  fprintf('\t\t\t[INFO] Number of degrees: %d.\n', length(degrees));
-  fprintf('\t\t\t[INFO] Number of flips: %d.\n', 2);
-  new_data = zeros(size(data, 1), size(data, 2), size(data, 3), size(data, 4) * length(degrees) * 2);
-  for i = 1:size(data, 4)
-    for degree = degrees
-      new_index = (i - 1) * length(degrees) * 2 + (degree / rotation_angle) * 2 + 1;
-      new_index_left = new_index + 0;
-      new_index_right = new_index + 1;
-      rotated_image = imrotate(data(:,:,:,i), degree, 'crop');
-      new_data(:,:,:,new_index_left) = rotated_image;
-      new_data(:,:,:,new_index_right) = fliplr(rotated_image);
-    end
-  end
+  benign_data = data(:,:,:,labels == 1);
+  malignant_data = data(:,:,:,labels == 2);
 
-  % repeat labels length(degrees) number of times...
-  new_labels = labels';
-  n = length(degrees) * 2; % *2 for left right flip
-  r = repmat(labels', 1, n)';
-  new_labels = r(:)';
-  assert(size(new_data, 4) == length(new_labels));
+  augmented_benign_data = augmentDataHelper(set_type, benign_data, 'rotate');
+  augmented_malignant_data = augmentDataHelper(set_type, malignant_data, 'rotate');
 
-  % shuffle them so we have intermixed rotations and flippings of different images
+  augmented_benign_labels = 1 * ones(1, size(augmented_benign_data, 4));
+  augmented_malignant_labels = 2 * ones(1, size(augmented_malignant_data, 4));
+
+  new_data = cat(4, augmented_benign_data, augmented_malignant_data);
+  new_labels = cat(2, augmented_benign_labels, augmented_malignant_labels);
+
+  % shuffle them so we have intermixed benign and malignant data
   total_new_count = size(new_data, 4);
   ix = randperm(total_new_count);
   new_data = new_data(:,:,:,ix);
@@ -314,5 +301,49 @@ function [new_data, new_labels, new_set] = augmentData(set_type, data, labels)
     new_set = [3 * ones(1, length(new_labels))];
   end
 
+% --------------------------------------------------------------------
+function [new_data] = augmentDataHelper(set_type, data, augment_type)
+% --------------------------------------------------------------------
+  fprintf('\t[INFO] Augmenting `%s` data...\n', set_type);
+  fprintf('\t\t[INFO] Initial `%s` data count: %d.\n', set_type, size(data, 4));
+  rotation_angle = 45;
+  degrees = 0:rotation_angle:360 - rotation_angle;
+
+  if strcmp(augment_type, 'rotate-flip')
+    fprintf('\t\t\t[INFO] Number of degrees: %d.\n', length(degrees));
+    fprintf('\t\t\t[INFO] Number of flips: %d.\n', 2);
+    new_data = zeros(size(data, 1), size(data, 2), size(data, 3), size(data, 4) * length(degrees) * 2);
+    for i = 1:size(data, 4)
+      for degree = degrees
+        new_index = (i - 1) * length(degrees) * 2 + (degree / rotation_angle) * 2 + 1;
+        new_index_left = new_index + 0;
+        new_index_right = new_index + 1;
+        rotated_image = imrotate(data(:,:,:,i), degree, 'crop');
+        new_data(:,:,:,new_index_left) = rotated_image;
+        new_data(:,:,:,new_index_right) = fliplr(rotated_image);
+      end
+    end
+  elseif strcmp(augment_type, 'rotate')
+    fprintf('\t\t\t[INFO] Number of degrees: %d.\n', length(degrees));
+    new_data = zeros(size(data, 1), size(data, 2), size(data, 3), size(data, 4) * length(degrees));
+    for i = 1:size(data, 4)
+      for degree = degrees
+        new_index = (i - 1) * length(degrees) + (degree / rotation_angle) + 1;
+        rotated_image = imrotate(data(:,:,:,i), degree, 'crop');
+        new_data(:,:,:,new_index) = rotated_image;
+      end
+    end
+  else
+    fprintf('\n\nWRONG!!!!!!!!\n\n');
+  end
+
+
+  % shuffle them so we have intermixed rotations and flippings of different images
+  total_new_count = size(new_data, 4);
+  ix = randperm(total_new_count);
+  new_data = new_data(:,:,:,ix);
+  % new_labels = new_labels(ix);
+
   fprintf('\t\t[INFO] Final `%s` data count: %d.\n', set_type, size(new_data, 4));
   fprintf('\tdone.\n');
+
