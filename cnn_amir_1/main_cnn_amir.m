@@ -14,7 +14,8 @@ function main_cnn_amir(varargin)
 
   networkArch = 'prostatenet';
   % backpropDepthList = [13, 10, 7, 4];
-  backpropDepthList = [13, 4];
+  % backpropDepthList = [13, 4];
+  backpropDepthList = [4];
   % leaveOutType = 'sample';
   % leaveOutIndices = 1:1:266;
   leaveOutType = 'patient';
