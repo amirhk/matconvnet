@@ -7,7 +7,7 @@ function imdb = constructProstateImdb3(opts)
   switch opts.leaveOutType
     case 'patient'
       train_patient_indices = all_patient_indices(all_patient_indices ~= opts.leaveOutIndex);
-      train_balance = false;
+      train_balance = true;
       train_augment = true;
       test_patient_indices = opts.leaveOutIndex;
       test_balance = true;
@@ -281,7 +281,7 @@ function [new_data, new_labels, new_set] = augmentData(set_type, data, labels)
   benign_data = data(:,:,:,labels == 1);
   malignant_data = data(:,:,:,labels == 2);
 
-  augmented_benign_data = augmentDataHelper(set_type, benign_data, 'none');
+  augmented_benign_data = augmentDataHelper(set_type, benign_data, 'flip');
   augmented_malignant_data = augmentDataHelper(set_type, malignant_data, 'rotate-flip');
 
   augmented_benign_labels = 1 * ones(1, size(augmented_benign_data, 4));
@@ -332,6 +332,16 @@ function [new_data] = augmentDataHelper(set_type, data, augment_type)
         rotated_image = imrotate(data(:,:,:,i), degree, 'crop');
         new_data(:,:,:,new_index) = rotated_image;
       end
+    end
+  elseif strcmp(augment_type, 'flip')
+    fprintf('\t\t\t[INFO] Number of flips: %d.\n', 2);
+    new_data = zeros(size(data, 1), size(data, 2), size(data, 3), size(data, 4) * 2);
+    for i = 1:size(data, 4)
+      new_index = (i - 1) * 2 + 1;
+      new_index_left = new_index + 0;
+      new_index_right = new_index + 1;
+      new_data(:,:,:,new_index_left) = data(:,:,:,i);
+      new_data(:,:,:,new_index_right) = fliplr(data(:,:,:,i));
     end
   elseif strcmp(augment_type, 'none')
     new_data = data;
