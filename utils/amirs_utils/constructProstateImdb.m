@@ -318,7 +318,7 @@ function [new_data] = augmentDataHelper(set_type, data, augment_type)
 
   if strcmp(augment_type, 'special')
     % randomly choose 120% of the inital size
-    percent = 200;
+    percent = 150;
     % so create 16x samples
     fprintf('\t\t\t[INFO] Number of degrees: %d.\n', length(degrees));
     fprintf('\t\t\t[INFO] Number of flips: %d.\n', 2);
