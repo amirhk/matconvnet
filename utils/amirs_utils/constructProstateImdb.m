@@ -7,7 +7,7 @@ function imdb = constructProstateImdb3(opts)
   switch opts.leaveOutType
     case 'patient'
       train_patient_indices = all_patient_indices(all_patient_indices ~= opts.leaveOutIndex);
-      train_balance = true;
+      train_balance = false;
       train_augment = true;
       test_patient_indices = opts.leaveOutIndex;
       test_balance = true;
