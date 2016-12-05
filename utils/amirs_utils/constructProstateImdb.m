@@ -282,7 +282,7 @@ function [new_data, new_labels, new_set] = augmentData(set_type, data, labels)
   malignant_data = data(:,:,:,labels == 2);
 
   if strcmp(set_type, 'train')
-    augmented_benign_data = augmentDataHelper(set_type, benign_data, 'none');
+    augmented_benign_data = augmentDataHelper(set_type, benign_data, 'flip');
     augmented_malignant_data = augmentDataHelper(set_type, malignant_data, 'rotate-flip');
     augmented_benign_labels = 1 * ones(1, size(augmented_benign_data, 4));
     augmented_malignant_labels = 2 * ones(1, size(augmented_malignant_data, 4));
