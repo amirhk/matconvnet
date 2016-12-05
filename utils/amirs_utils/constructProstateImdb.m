@@ -7,7 +7,7 @@ function imdb = constructProstateImdb3(opts)
   switch opts.leaveOutType
     case 'patient'
       train_patient_indices = all_patient_indices(all_patient_indices ~= opts.leaveOutIndex);
-      train_balance = false;
+      train_balance = true;
       train_augment = true;
       test_patient_indices = opts.leaveOutIndex;
       test_balance = true;
@@ -283,7 +283,7 @@ function [new_data, new_labels, new_set] = augmentData(set_type, data, labels)
 
   if strcmp(set_type, 'train')
     augmented_benign_data = augmentDataHelper(set_type, benign_data, 'none');
-    augmented_malignant_data = augmentDataHelper(set_type, malignant_data, 'rotate-flip');
+    augmented_malignant_data = augmentDataHelper(set_type, malignant_data, 'special');
     augmented_benign_labels = 1 * ones(1, size(augmented_benign_data, 4));
     augmented_malignant_labels = 2 * ones(1, size(augmented_malignant_data, 4));
   else
@@ -316,7 +316,30 @@ function [new_data] = augmentDataHelper(set_type, data, augment_type)
   rotation_angle = 45;
   degrees = 0:rotation_angle:360 - rotation_angle;
 
-  if strcmp(augment_type, 'rotate-flip')
+  if strcmp(augment_type, 'special')
+    % randomly choose 120% of the inital size
+    percent = 120;
+    % so create 16x samples
+    fprintf('\t\t\t[INFO] Number of degrees: %d.\n', length(degrees));
+    fprintf('\t\t\t[INFO] Number of flips: %d.\n', 2);
+    new_data = zeros(size(data, 1), size(data, 2), size(data, 3), size(data, 4) * length(degrees) * 2);
+    for i = 1:size(data, 4)
+      for degree = degrees
+        new_index = (i - 1) * length(degrees) * 2 + (degree / rotation_angle) * 2 + 1;
+        new_index_left = new_index + 0;
+        new_index_right = new_index + 1;
+        rotated_image = imrotate(data(:,:,:,i), degree, 'crop');
+        new_data(:,:,:,new_index_left) = rotated_image;
+        new_data(:,:,:,new_index_right) = fliplr(rotated_image);
+      end
+    end
+    % shuffle them, and choose the first 120%
+    original_count = size(data, 4);
+    total_new_count = size(new_data, 4);
+    ix = randperm(total_new_count);
+    new_data = new_data(:,:,:,ix);
+    new_data = new_data(:,:,:,1:floor(original_count * percent / 100));
+  elseif strcmp(augment_type, 'rotate-flip')
     fprintf('\t\t\t[INFO] Number of degrees: %d.\n', length(degrees));
     fprintf('\t\t\t[INFO] Number of flips: %d.\n', 2);
     new_data = zeros(size(data, 1), size(data, 2), size(data, 3), size(data, 4) * length(degrees) * 2);
