@@ -63,7 +63,7 @@ net.meta.trainOpts.backpropDepth = opts.backpropDepth;
 net.meta.trainOpts.numEpochs = numel(net.meta.trainOpts.learningRate);
 net.meta.inputSize = [32 32 3];
 net.meta.trainOpts.weightDecay = opts.weightDecay;
-net.meta.trainOpts.batchSize = 250;
+net.meta.trainOpts.batchSize = 100;
 opts = vl_argparse(opts, varargin);
 
 switch opts.networkArch
