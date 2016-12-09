@@ -224,6 +224,9 @@ for i=1:n
     case 'relu'
       if isfield(l, 'leak'), leak = {'leak', l.leak} ; else leak = {} ; end
       res(i+1).x = vl_nnrelu(res(i).x,[],leak{:}) ;
+    case 'tanh'
+      if isfield(l, 'leak'), leak = {'leak', l.leak} ; else leak = {} ; end
+      res(i+1).x = vl_nntanh(res(i).x,[],leak{:}) ;
     case 'sigmoid'
       res(i+1).x = vl_nnsigmoid(res(i).x) ;
     case 'noffset'
@@ -253,7 +256,7 @@ for i=1:n
   end
   % optionally forget intermediate results
   forget = opts.conserveMemory ;
-  forget = forget & (~doder || strcmp(l.type, 'relu')) ;
+  forget = forget & (~doder || strcmp(l.type, 'relu') || strcmp(l.type, 'tanh')) ;
   forget = forget & ~(strcmp(l.type, 'loss') || strcmp(l.type, 'softmaxloss')) ;
   forget = forget & (~isfield(l, 'rememberOutput') || ~l.rememberOutput) ;
   if forget
@@ -367,6 +370,15 @@ if doder
           % if res(i).x is empty, it has been optimized away, so we use this
           % hack (which works only for ReLU):
           res(i).dzdx = vl_nnrelu(res(i+1).x, res(i+1).dzdx, leak{:}) ;
+        end
+      case 'tanh'
+        if isfield(l, 'leak'), leak = {'leak', l.leak} ; else leak = {} ; end
+        if ~isempty(res(i).x)
+          res(i).dzdx = vl_nntanh(res(i).x, res(i+1).dzdx, leak{:}) ;
+        else
+          % if res(i).x is empty, it has been optimized away, so we use this
+          % hack (which works only for tanh):
+          res(i).dzdx = vl_nntanh(res(i+1).x, res(i+1).dzdx, leak{:}) ;
         end
       case 'sigmoid'
         res(i).dzdx = vl_nnsigmoid(res(i).x, res(i+1).dzdx) ;
