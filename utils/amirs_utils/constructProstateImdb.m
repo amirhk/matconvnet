@@ -1,26 +1,50 @@
 % -------------------------------------------------------------------------
-function imdb = constructProstateImdb3(opts)
+function imdb = constructProstateImdb(opts)
 % -------------------------------------------------------------------------
   fprintf('[INFO] Constructing / loading Prostate imdb.\n');
 
   all_patient_indices = 1:1:104;
   switch opts.leaveOutType
-    case 'patient'
-      train_patient_indices = all_patient_indices(all_patient_indices ~= opts.leaveOutIndex);
-      train_balance = true;
-      train_augment = true;
-      test_patient_indices = opts.leaveOutIndex;
-      test_balance = true;
-      test_augment = true;
+    case 'none'
+      train_patient_indices = all_patient_indices;
+      train_balance = false;
+      train_augment_healthy = 'none';
+      train_augment_cancer = 'rotate-flip';
+      test_patient_indices = [];     % ignore - not in use!
+      test_balance = false;          % ignore - not in use!
+      test_augment_healthy = 'none'; % ignore - not in use!
+      test_augment_cancer = 'none';  % ignore - not in use!
       % just use the helper with the indices above.
       imdb = constructProstateImdbHelper( ...
         opts, ...
         train_patient_indices, ...
         train_balance, ...
-        train_augment, ...
+        train_augment_healthy, ...
+        train_augment_cancer, ...
         test_patient_indices, ...
         test_balance, ...
-        test_augment);
+        test_augment_healthy, ...
+        test_augment_cancer);
+    case 'patient'
+      train_patient_indices = all_patient_indices(all_patient_indices ~= opts.leaveOutIndex);
+      train_balance = true;
+      train_augment_healthy = 'none';
+      train_augment_cancer = 'none';
+      test_patient_indices = opts.leaveOutIndex;
+      test_balance = true;
+      test_augment_healthy = 'rotate-flip';
+      test_augment_cancer = 'rotate-flip';
+      % just use the helper with the indices above.
+      imdb = constructProstateImdbHelper( ...
+        opts, ...
+        train_patient_indices, ...
+        train_balance, ...
+        train_augment_healthy, ...
+        train_augment_cancer, ...
+        test_patient_indices, ...
+        test_balance, ...
+        test_augment_healthy, ...
+        test_augment_cancer);
     case 'sample'
       % 1. check for the existence of a consistent / saved (!) balanaced,
       %    non-augmented imdb (both train and test)
@@ -35,18 +59,22 @@ function imdb = constructProstateImdb3(opts)
         % 1.5. if not saved, create it
         train_patient_indices = all_patient_indices;
         train_balance = true;
-        train_augment = false;
+        train_augment_healthy = 'none';
+        train_augment_cancer = 'none';
         test_patient_indices = [];
         test_balance = true;
-        test_augment = false;
+        test_augment_healthy = 'none';
+        test_augment_cancer = 'none';
         imdb = constructProstateImdbHelper( ...
           opts, ...
           train_patient_indices, ...
           train_balance, ...
-          train_augment, ...
+          train_augment_healthy, ...
+          train_augment_cancer, ...
           test_patient_indices, ...
           test_balance, ...
-          test_augment);
+          test_augment_healthy, ...
+          test_augment_cancer);
         save(opts.imdbBalancedPath, '-struct', 'imdb');
       end;
       % 2. then from the imdb, choose indices from there for train and test set.
@@ -75,10 +103,12 @@ function imdb = constructProstateImdbHelper( ...
   opts, ...
   train_patient_indices, ...
   train_balance, ...
-  train_augment, ...
+  train_augment_healthy, ...
+  train_augment_cancer, ...
   test_patient_indices, ...
   test_balance, ...
-  test_augment)
+  test_augment_healthy, ...
+  test_augment_cancer)
 % -------------------------------------------------------------------------
 
   label_class = 'Gleason'; % 'Gleason' | 'PIRAD'
@@ -94,14 +124,20 @@ function imdb = constructProstateImdbHelper( ...
   };
 
   % TRAIN
-  [data_train, labels_train, set_train] = loadSamples(opts, 'train', train_patient_indices, modalitites_in_use, label_class);
-  if train_balance; [data_train, labels_train, set_train] = balanceData('train', data_train, labels_train); end;
-  if train_augment; [data_train, labels_train, set_train] = augmentData('train', data_train, labels_train); end;
+  fprintf('\n== == == == == == == == == == == == ==  TRAIN  == == == == == == == == == == == == == == == == == == == == ==\n\n');
+  [data_train, labels_train] = loadSamples(opts, train_patient_indices, modalitites_in_use, label_class);
+  [data_train, labels_train] = balanceData(data_train, labels_train, train_balance);
+  [data_train, labels_train] = augmentData(data_train, labels_train, train_augment_healthy, train_augment_cancer);
 
   % TEST
-  [data_test, labels_test, set_test] = loadSamples(opts, 'test', test_patient_indices, modalitites_in_use, label_class);
-  if test_balance; [data_test, labels_test, set_test] = balanceData('test', data_test, labels_test); end;
-  if test_augment; [data_test, labels_test, set_test] = augmentData('test', data_test, labels_test); end;
+  fprintf('\n== == == == == == == == == == == == ==  TEST  == == == == == == == == == == == == == == == == == == == == ==\n\n');
+  [data_test, labels_test] = loadSamples(opts, test_patient_indices, modalitites_in_use, label_class);
+  [data_test, labels_test] = balanceData(data_test, labels_test, test_balance);
+  [data_test, labels_test] = augmentData(data_test, labels_test, test_augment_healthy, test_augment_cancer);
+
+  fprintf('\n== == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == ==\n\n');
+  set_train = [1 * ones(1, length(labels_train))];
+  set_test = [3 * ones(1, length(labels_test))];
 
   if numel(data_test)
     data = cat(4, data_train, data_test);
@@ -118,10 +154,10 @@ function imdb = constructProstateImdbHelper( ...
   assert(totalNumberOfSamples == length(set));
 
   fprintf('[INFO] total number of samples: %d\n', totalNumberOfSamples);
-  fprintf('[INFO] number of `train` data - cancer: %d\n', size(data_train(:,:,:,labels_train == 2),4));
   fprintf('[INFO] number of `train` data - healthy: %d\n', size(data_train(:,:,:,labels_train == 1),4));
-  fprintf('[INFO] number of `test` data - cancer: %d\n', size(data_test(:,:,:,labels_test == 2),4));
+  fprintf('[INFO] number of `train` data - cancer: %d\n', size(data_train(:,:,:,labels_train == 2),4));
   fprintf('[INFO] number of `test` data - healthy: %d\n', size(data_test(:,:,:,labels_test == 1),4));
+  fprintf('[INFO] number of `test` data - cancer: %d\n', size(data_test(:,:,:,labels_test == 2),4));
 
   % remove mean in any case
   data = single(data);
@@ -158,10 +194,8 @@ function imdb = constructProstateImdbHelper( ...
   % imdb.meta.classes = ...
   fprintf('done!\n\n');
 
-
-
 % --------------------------------------------------------------------
-function [data, labels, set] = loadSamples(opts, set_type, patient_indices_in_set, modalitites_in_use, label_class)
+function [data, labels] = loadSamples(opts, patient_indices_in_set, modalitites_in_use, label_class)
 % --------------------------------------------------------------------
   data = [];
   labels = [];
@@ -178,7 +212,7 @@ function [data, labels, set] = loadSamples(opts, set_type, patient_indices_in_se
 
   total_suspicious_tissue_count_in_set = 0;
   all_patients_list = dir(fullfile(opts.dataDir, 'P0*'));
-  fprintf('\t[INFO] Total suspicious tissue count for %d `%s` patients: ', length(patient_indices_in_set), set_type);
+  fprintf('\t[INFO] Total suspicious tissue count for %d patients: ', length(patient_indices_in_set));
   for i = patient_indices_in_set
     single_patient_directory = char(all_patients_list(i).name);
     suspicious_tissues_for_patient = dir(fullfile(opts.dataDir, char(single_patient_directory), '*_Candidate*'));
@@ -198,7 +232,7 @@ function [data, labels, set] = loadSamples(opts, set_type, patient_indices_in_se
   total_patient_count_in_set = length(patient_indices_in_set);
   sample_count = 0;
   patient_count = 0;
-  fprintf('\t[INFO] Loading `%s` patients...\n', set_type);
+  fprintf('\t[INFO] Loading patients...\n');
   for i = patient_indices_in_set
     patient_count = patient_count + 1;
     fprintf('\t\t[INFO] Loading up suspicious tissues from patient #%03d (%03d of %03d)... ', i, patient_count, total_patient_count_in_set);
@@ -226,93 +260,71 @@ function [data, labels, set] = loadSamples(opts, set_type, patient_indices_in_se
   end
   % labels start from 1
   labels = labels + 1;
-  if strcmp(set_type, 'train')
-    set = [1 * ones(1, length(labels))];
-  else
-    set = [3 * ones(1, length(labels))];
-  end
   fprintf('\tdone.\n');
 
 % --------------------------------------------------------------------
-function [new_data, new_labels, new_set] = balanceData(set_type, data, labels)
+function [new_data, new_labels] = balanceData(data, labels, should_balance)
 % --------------------------------------------------------------------
-  fprintf('\t[INFO] Balancing malignant and benign tissues in `%s` set...\n', set_type);
-  fprintf('\t\t[INFO] Identified %d total tissues\n', size(data, 4));
-  benign_data = data(:,:,:,labels == 1);
-  malignant_data = data(:,:,:,labels == 2);
-  benign_count = size(benign_data, 4);
-  malignant_count = size(malignant_data, 4);
-  fprintf('\t\t\tbenign:  %d \n', benign_count);
-  fprintf('\t\t\tmalignant: %d \n', malignant_count);
+  if ~should_balance
+    new_data = data;
+    new_labels = labels;
+  else
+    fprintf('\t[INFO] Balancing healthy and cancer tissues...\n');
+    fprintf('\t\t[INFO] Identified %d total tissues\n', size(data, 4));
+    healthy_data = data(:,:,:,labels == 1);
+    cancer_data = data(:,:,:,labels == 2);
+    healthy_count = size(healthy_data, 4);
+    cancer_count = size(cancer_data, 4);
+    fprintf('\t\t\thealthy:  %d \n', healthy_count);
+    fprintf('\t\t\tcancer: %d \n', cancer_count);
 
-  % if ~malignant_count
-  %   malignant_count = 1;
-  % end
+    % choose N random indices from healthy, where N = number of cancer tumors
+    fprintf('\t\t[INFO] Choosing %d out of %d healthy tissues... ', cancer_count, healthy_count);
+    ix = randperm(healthy_count);
+    ix = ix(1:cancer_count);
+    subsampled_healthy_data = healthy_data(:,:,:,ix);
+    new_data = cat(4, subsampled_healthy_data, cancer_data);
+    new_labels = [1*ones(1,size(subsampled_healthy_data, 4)) 2*ones(1,cancer_count)]; % same number of healthy and cancer now.
+    fprintf('done.\n');
 
-  % choose N random indices from benign, where N = number of malignant tumors
-  fprintf('\t\t[INFO] Choosing %d out of %d benign tissues... ', malignant_count, benign_count);
-  ix = randperm(benign_count);
-  ix = ix(1:malignant_count);
-  subsampled_benign_data = benign_data(:,:,:,ix);
-  new_data = cat(4, subsampled_benign_data, malignant_data);
-  new_labels = [1*ones(1,size(subsampled_benign_data, 4)) 2*ones(1,malignant_count)]; % same number of benign and malignant now.
-  fprintf('done.\n');
+    % shuffle them so we have intermixed subsampled_healthy_data and cancer_data
+    total_new_count = size(new_data, 4);
+    ix = randperm(total_new_count);
+    new_data = new_data(:,:,:,ix);
+    new_labels = new_labels(ix);
 
-  % shuffle them so we have intermixed subsampled_benign_data and malignant_data
+    fprintf('\t\t[INFO] New data count: %d...\n', total_new_count);
+    fprintf('\t\t\thealthy:  %d \n', size(new_data(:,:,:,new_labels == 2), 4));
+    fprintf('\t\t\tcancer: %d \n', size(new_data(:,:,:,new_labels == 1), 4));
+
+    fprintf('\tdone.\n');
+  end
+
+% --------------------------------------------------------------------
+function [new_data, new_labels] = augmentData(data, labels, augment_healthy, augment_cancer)
+% --------------------------------------------------------------------
+  healthy_data = data(:,:,:,labels == 1);
+  cancer_data = data(:,:,:,labels == 2);
+
+  augmented_healthy_data = augmentDataHelper('healthy', healthy_data, augment_healthy);
+  augmented_cancer_data = augmentDataHelper('cancer', cancer_data, augment_cancer);
+  augmented_healthy_labels = 1 * ones(1, size(augmented_healthy_data, 4));
+  augmented_cancer_labels = 2 * ones(1, size(augmented_cancer_data, 4));
+
+  new_data = cat(4, augmented_healthy_data, augmented_cancer_data);
+  new_labels = cat(2, augmented_healthy_labels, augmented_cancer_labels);
+
+  % shuffle them so we have intermixed healthy and cancer data
   total_new_count = size(new_data, 4);
   ix = randperm(total_new_count);
   new_data = new_data(:,:,:,ix);
   new_labels = new_labels(ix);
-  if strcmp(set_type, 'train')
-    new_set = [1 * ones(1, length(new_labels))];
-  else
-    new_set = [3 * ones(1, length(new_labels))];
-  end
-
-  fprintf('\t\t[INFO] New `%s` data count: %d...\n', set_type, total_new_count);
-  fprintf('\t\t\tbenign:  %d \n', size(new_data(:,:,:,new_labels == 2), 4));
-  fprintf('\t\t\tmalignant: %d \n', size(new_data(:,:,:,new_labels == 1), 4));
-
-  fprintf('\tdone.\n');
 
 % --------------------------------------------------------------------
-function [new_data, new_labels, new_set] = augmentData(set_type, data, labels)
+function [new_data] = augmentDataHelper(data_class, data, augment_type)
 % --------------------------------------------------------------------
-  benign_data = data(:,:,:,labels == 1);
-  malignant_data = data(:,:,:,labels == 2);
-
-  if strcmp(set_type, 'train')
-    augmented_benign_data = augmentDataHelper(set_type, benign_data, 'none');
-    augmented_malignant_data = augmentDataHelper(set_type, malignant_data, 'rotate-flip');
-    augmented_benign_labels = 1 * ones(1, size(augmented_benign_data, 4));
-    augmented_malignant_labels = 2 * ones(1, size(augmented_malignant_data, 4));
-  else
-    augmented_benign_data = augmentDataHelper(set_type, benign_data, 'rotate-flip');
-    augmented_malignant_data = augmentDataHelper(set_type, malignant_data, 'rotate-flip');
-    augmented_benign_labels = 1 * ones(1, size(augmented_benign_data, 4));
-    augmented_malignant_labels = 2 * ones(1, size(augmented_malignant_data, 4));
-  end
-
-
-  new_data = cat(4, augmented_benign_data, augmented_malignant_data);
-  new_labels = cat(2, augmented_benign_labels, augmented_malignant_labels);
-
-  % shuffle them so we have intermixed benign and malignant data
-  total_new_count = size(new_data, 4);
-  ix = randperm(total_new_count);
-  new_data = new_data(:,:,:,ix);
-  new_labels = new_labels(ix);
-  if strcmp(set_type, 'train')
-    new_set = [1 * ones(1, length(new_labels))];
-  else
-    new_set = [3 * ones(1, length(new_labels))];
-  end
-
-% --------------------------------------------------------------------
-function [new_data] = augmentDataHelper(set_type, data, augment_type)
-% --------------------------------------------------------------------
-  fprintf('\t[INFO] Augmenting `%s` data...\n', set_type);
-  fprintf('\t\t[INFO] Initial `%s` data count: %d.\n', set_type, size(data, 4));
+  fprintf('\t[INFO] Augmenting `%s` data (type: %s)...\n', data_class, augment_type);
+  fprintf('\t\t[INFO] Initial data count: %d.\n', size(data, 4));
   rotation_angle = 45;
   degrees = 0:rotation_angle:360 - rotation_angle;
 
@@ -320,8 +332,8 @@ function [new_data] = augmentDataHelper(set_type, data, augment_type)
     % randomly choose 120% of the inital size
     percent = 150;
     % so create 16x samples
-    fprintf('\t\t\t[INFO] Number of degrees: %d.\n', length(degrees));
-    fprintf('\t\t\t[INFO] Number of flips: %d.\n', 2);
+    fprintf('\t\t\tnum_degrees: %d.\n', length(degrees));
+    fprintf('\t\t\tnum_flips: %d.\n', 2);
     new_data = zeros(size(data, 1), size(data, 2), size(data, 3), size(data, 4) * length(degrees) * 2);
     for i = 1:size(data, 4)
       for degree = degrees
@@ -340,8 +352,8 @@ function [new_data] = augmentDataHelper(set_type, data, augment_type)
     new_data = new_data(:,:,:,ix);
     new_data = new_data(:,:,:,1:floor(original_count * percent / 100));
   elseif strcmp(augment_type, 'rotate-flip')
-    fprintf('\t\t\t[INFO] Number of degrees: %d.\n', length(degrees));
-    fprintf('\t\t\t[INFO] Number of flips: %d.\n', 2);
+    fprintf('\t\t\tnum_degrees: %d.\n', length(degrees));
+    fprintf('\t\t\tnum_flips: %d.\n', 2);
     new_data = zeros(size(data, 1), size(data, 2), size(data, 3), size(data, 4) * length(degrees) * 2);
     for i = 1:size(data, 4)
       for degree = degrees
@@ -354,7 +366,7 @@ function [new_data] = augmentDataHelper(set_type, data, augment_type)
       end
     end
   elseif strcmp(augment_type, 'rotate')
-    fprintf('\t\t\t[INFO] Number of degrees: %d.\n', length(degrees));
+    fprintf('\t\t\tnum_degrees: %d.\n', length(degrees));
     new_data = zeros(size(data, 1), size(data, 2), size(data, 3), size(data, 4) * length(degrees));
     for i = 1:size(data, 4)
       for degree = degrees
@@ -364,7 +376,7 @@ function [new_data] = augmentDataHelper(set_type, data, augment_type)
       end
     end
   elseif strcmp(augment_type, 'flip')
-    fprintf('\t\t\t[INFO] Number of flips: %d.\n', 2);
+    fprintf('\t\t\tnum_flips: %d.\n', 2);
     new_data = zeros(size(data, 1), size(data, 2), size(data, 3), size(data, 4) * 2);
     for i = 1:size(data, 4)
       new_index = (i - 1) * 2 + 1;
@@ -386,6 +398,17 @@ function [new_data] = augmentDataHelper(set_type, data, augment_type)
   new_data = new_data(:,:,:,ix);
   % new_labels = new_labels(ix);
 
-  fprintf('\t\t[INFO] Final `%s` data count: %d.\n', set_type, size(new_data, 4));
+  fprintf('\t\t[INFO] Final data count: %d.\n', size(new_data, 4));
   fprintf('\tdone.\n');
 
+% --------------------------------------------------------------------
+function imdb = testProstateImdbConstructor()
+% --------------------------------------------------------------------
+  opts.dataDir = '/Users/a6karimi/dev/matconvnet/data_1/_prostate';
+  opts.imdbBalancedDir = '/Users/a6karimi/dev/matconvnet/data_1/balanced-prostate-prostatenet';
+  opts.imdbBalancedPath = '/Users/a6karimi/dev/matconvnet/data_1/balanced-prostate-prostatenet/imdb.mat';
+  opts.leaveOutType = 'none';
+  opts.leaveOutIndex = 1;
+  opts.contrastNormalization = true;
+  opts.whitenData = true;
+  imdb = constructProstateImdb(opts);

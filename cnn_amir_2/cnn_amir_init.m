@@ -142,29 +142,29 @@ switch opts.networkArch
     layerNumber = 1;
     net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 5, 3, 32, 1/100, 2, char(opts.weightInitSequence{1}), opts.weightInitSource);
     net.layers{end+1} = poolingLayerLeNetMax(layerNumber);
-    % net.layers{end+1} = reluLayer(layerNumber);
-    net.layers{end+1} = tanhLayer(layerNumber);
+    net.layers{end+1} = reluLayer(layerNumber);
+    % net.layers{end+1} = tanhLayer(layerNumber);
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     layerNumber = layerNumber + 3;
     net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 5, 32, 32, 5/100, 2, char(opts.weightInitSequence{2}), opts.weightInitSource);
-    % net.layers{end+1} = reluLayer(layerNumber);
-    net.layers{end+1} = tanhLayer(layerNumber);
+    net.layers{end+1} = reluLayer(layerNumber);
+    % net.layers{end+1} = tanhLayer(layerNumber);
     net.layers{end+1} = poolingLayerLeNetAvg(layerNumber);
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     layerNumber = layerNumber + 3;
     net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 5, 32, 64, 5/100, 2, char(opts.weightInitSequence{3}), opts.weightInitSource);
-    % net.layers{end+1} = reluLayer(layerNumber);
-    net.layers{end+1} = tanhLayer(layerNumber);
+    net.layers{end+1} = reluLayer(layerNumber);
+    % net.layers{end+1} = tanhLayer(layerNumber);
     net.layers{end+1} = poolingLayerLeNetAvg(layerNumber);
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     % FULLY CONNECTED
     layerNumber = layerNumber + 3;
     net.layers{end+1} = convLayer(opts.dataset, opts.networkArch, layerNumber, 4, 64, 64, 5/100, 0, 'compRand', 'gen');
-    % net.layers{end+1} = reluLayer(layerNumber);
-    net.layers{end+1} = tanhLayer(layerNumber);
+    net.layers{end+1} = reluLayer(layerNumber);
+    % net.layers{end+1} = tanhLayer(layerNumber);
 
     % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
     layerNumber = layerNumber + 2;
