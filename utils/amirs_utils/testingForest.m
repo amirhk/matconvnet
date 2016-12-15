@@ -66,8 +66,8 @@ confusion_matrix = bsxfun(@rdivide, confusionmat(Y(is_test), Yfit), tab(:,2)) * 
 
 
 acc = (1 - l_loss(end)) * 100;
-sens = confusion_matrix(1,1);
-spec = confusion_matrix(2,2)
+spec = confusion_matrix(1,1);
+sens = confusion_matrix(2,2)
 
 
 fprintf('[INFO] Acc: %6.2f\n', acc);
