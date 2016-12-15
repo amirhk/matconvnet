@@ -8,7 +8,7 @@ function imdb = constructProstateImdb(opts)
     case 'none'
       train_patient_indices = all_patient_indices;
       train_balance = false;
-      train_augment_healthy = 'none';
+      train_augment_healthy = 'rotate-flip';
       train_augment_cancer = 'rotate-flip';
       test_patient_indices = [];     % ignore - not in use!
       test_balance = false;          % ignore - not in use!
