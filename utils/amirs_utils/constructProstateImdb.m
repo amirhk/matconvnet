@@ -5,15 +5,15 @@ function imdb = constructProstateImdb(opts)
 
   all_patient_indices = 1:1:104;
   switch opts.leaveOutType
-    case 'none'
-      train_patient_indices = all_patient_indices;
+    case 'special'
+      train_patient_indices = setdiff(all_patient_indices, opts.leaveOutIndices);
       train_balance = false;
       train_augment_healthy = 'none';
       train_augment_cancer = 'rotate-flip';
-      test_patient_indices = [];     % ignore - not in use!
-      test_balance = false;          % ignore - not in use!
-      test_augment_healthy = 'none'; % ignore - not in use!
-      test_augment_cancer = 'none';  % ignore - not in use!
+      test_patient_indices = opts.leaveOutIndices;
+      test_balance = false;
+      test_augment_healthy = 'none';
+      test_augment_cancer = 'none';
       % just use the helper with the indices above.
       imdb = constructProstateImdbHelper( ...
         opts, ...
@@ -135,7 +135,6 @@ function imdb = constructProstateImdbHelper( ...
   [data_test, labels_test] = balanceData(data_test, labels_test, test_balance);
   [data_test, labels_test] = augmentData(data_test, labels_test, test_augment_healthy, test_augment_cancer);
 
-  fprintf('\n== == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == ==\n\n');
   set_train = [1 * ones(1, length(labels_train))];
   set_test = [3 * ones(1, length(labels_test))];
 
@@ -153,16 +152,12 @@ function imdb = constructProstateImdbHelper( ...
   assert(totalNumberOfSamples == length(labels));
   assert(totalNumberOfSamples == length(set));
 
-  fprintf('[INFO] total number of samples: %d\n', totalNumberOfSamples);
-  fprintf('[INFO] number of `train` data - healthy: %d\n', size(data_train(:,:,:,labels_train == 1),4));
-  fprintf('[INFO] number of `train` data - cancer: %d\n', size(data_train(:,:,:,labels_train == 2),4));
-  fprintf('[INFO] number of `test` data - healthy: %d\n', size(data_test(:,:,:,labels_test == 1),4));
-  fprintf('[INFO] number of `test` data - cancer: %d\n', size(data_test(:,:,:,labels_test == 2),4));
-
   % remove mean in any case
   data = single(data);
   dataMean = mean(data(:,:,:,set == 1), 4);
   data = bsxfun(@minus, data, dataMean);
+
+  fprintf('\n== == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == ==\n\n');
 
   if opts.contrastNormalization
     fprintf('[INFO] contrast-normalizing data... ');
@@ -186,6 +181,14 @@ function imdb = constructProstateImdbHelper( ...
   %   data = reshape(z, 32, 32, numberOfModalities, []);
   %   fprintf('done.\n');
   % end
+
+  fprintf('\n== == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == ==\n\n');
+
+  fprintf('[INFO] total number of samples: %d\n', totalNumberOfSamples);
+  fprintf('[INFO] number of `train` data - healthy: %d\n', size(data_train(:,:,:,labels_train == 1),4));
+  fprintf('[INFO] number of `train` data - cancer: %d\n', size(data_train(:,:,:,labels_train == 2),4));
+  fprintf('[INFO] number of `test` data - healthy: %d\n', size(data_test(:,:,:,labels_test == 1),4));
+  fprintf('[INFO] number of `test` data - cancer: %d\n', size(data_test(:,:,:,labels_test == 2),4));
 
   imdb.images.data = data;
   imdb.images.labels = single(labels);
