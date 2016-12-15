@@ -7,7 +7,7 @@ function imdb = constructProstateImdb(opts)
   switch opts.leaveOutType
     case 'none'
       train_patient_indices = all_patient_indices;
-      train_balance = false;
+      train_balance = true;
       train_augment_healthy = 'rotate-flip';
       train_augment_cancer = 'rotate-flip';
       test_patient_indices = [];     % ignore - not in use!
