@@ -22,9 +22,9 @@
 
 %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %%
 
-opts.dataDir = '/Users/a6karimi/dev/matconvnet/data_1/_prostate';
-opts.imdbBalancedDir = '/Users/a6karimi/dev/matconvnet/data_1/balanced-prostate-prostatenet';
-opts.imdbBalancedPath = '/Users/a6karimi/dev/matconvnet/data_1/balanced-prostate-prostatenet/imdb.mat';
+opts.dataDir = fullfile(getDevPath(), 'matconvnet/data_1/_prostate');
+opts.imdbBalancedDir = fullfile(getDevPath(), 'matconvnet/data_1/balanced-prostate-prostatenet');
+opts.imdbBalancedPath = fullfile(getDevPath(), 'matconvnet/data_1/balanced-prostate-prostatenet/imdb.mat');
 opts.leaveOutType = 'none';
 opts.leaveOutIndex = 1;
 opts.contrastNormalization = true;
