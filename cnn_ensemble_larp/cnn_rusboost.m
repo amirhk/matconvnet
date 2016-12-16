@@ -1,9 +1,8 @@
-function main_cnn_rusboost()
+function [B, H] = main_cnn_rusboost()
 
-
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % 0. some important parameter definition
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
   T = 3; % number of boosting iterations
   % E = 50; % number of epochs() % TODO: currently can't be used...
@@ -12,26 +11,21 @@ function main_cnn_rusboost()
   weightInitSequence = {'compRand', 'compRand', 'compRand'};
   random_undersampling_ratio = (65/35);
 
-
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % 1. take as input a pre-processed IMDB (augment cancer in training set, that's it!), say
   %   train: 94 patients
   %   test: 10 patients, ~1000 health, ~20 cancer
   % TODO: this can be extended to be say 10-fold ensemble larp, then average the folds
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  fprintf('[INFO]: Loading saved imdb... ');
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  fprintf('[INFO] Loading saved imdb... ');
   imdb = load(fullfile(getDevPath(), '/matconvnet/data_1/_prostate/_saved_prostate_imdb.mat'));
   imdb = imdb.imdb;
   fprintf('done!\n');
-  % fprintf('[INFO]: TRAINING SET data distribution:\n');
-  % tabulate(imdb.images.labels(imdb.images.set == 1))
-  % fprintf('[INFO]: TESTING SET data distribution:\n');
-  % tabulate(imdb.images.labels(imdb.images.set == 3))
 
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % 2. process the imdb to separate positive and negative samples (to be
   % randomly-undersampled later)
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   data_train = imdb.images.data(:,:,:,imdb.images.set == 1);
   labels_train = imdb.images.labels(imdb.images.set == 1);
   data_train_healthy = data_train(:,:,:,labels_train == 1);
@@ -48,29 +42,21 @@ function main_cnn_rusboost()
   data_test_healthy_count = size(data_test_healthy, 4);
   data_test_cancer_count = size(data_test_cancer, 4);
 
-  fprintf('\t[INFO]: TRAINING SET: total: %d, healthy: %d, cancer: %d\n', data_train_count, data_train_healthy_count, data_train_cancer_count);
-  fprintf('\t[INFO]: TESTING SET: total: %d, healthy: %d, cancer: %d\n', data_test_count, data_test_healthy_count, data_test_cancer_count);
+  fprintf('\t[INFO] TRAINING SET: total: %d, healthy: %d, cancer: %d\n', ...
+    data_train_count, ...
+    data_train_healthy_count, ...
+    data_train_cancer_count);
+  fprintf('\t[INFO] TESTING SET: total: %d, healthy: %d, cancer: %d\n', ...
+    data_test_count, ...
+    data_test_healthy_count, ...
+    data_test_cancer_count);
 
-  % m = size(TRAIN, 1);
-  % POS_DATA = TRAIN(TRAIN(:, end) == 1, :);
-  % NEG_DATA = TRAIN(TRAIN(:, end) == 0, :);
-  % pos_size = size(POS_DATA, 1);
-  % neg_size = size(NEG_DATA, 1);
-
-  % Reorganize TRAIN by putting all the positive and negative examples
-  % together, respectively.
-  % TODO: WHY???!!!?!?!?
-  % TRAIN = [POS_DATA; NEG_DATA];
-
-
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % 3. initialize training sample weights
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % W stores the weights of the instances in each row for every iteration of
   % boosting. Weights for all the instances are initialized by 1/m for the
   % first iteration.
-  % TODO: Make sure when you shuffle shit... these weights are also shuffled!!!
-  % same with undersampling!!
   W = zeros(1, data_train_count);
   for i = 1 : data_train_count
       W(1, i) = 1 / data_train_count;
@@ -84,175 +70,158 @@ function main_cnn_rusboost()
   H = {};
   B = [];
 
-  % Loop counter
-  t = 1;
+  t = 1; % loop counter
+  count = 1; % number of times the same boosting iteration have been repeated
 
-  % Keeps counts of the number of times the same boosting iteration have been
-  % repeated
-  count = 0;
-
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % 4. go through T iterations of RUSBoost, each of which trains a CNN over E epochs
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % 5. take output of CNN after E epochs, and adjust weights of each sample accordingly
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % 6. repeat steps 4 & 5 T times, saving model (to run test data on later), and beta for each
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  training_resampled_imdb.images.data = [];   % filled in below
+  training_resampled_imdb.images.labels = []; % filled in below
+  training_resampled_imdb.images.set = [];    % filled in below
+  training_resampled_imdb.meta.sets = {'train', 'val', 'test'};
 
   training_test_imdb.images.data = data_train;
   training_test_imdb.images.labels = labels_train;
   training_test_imdb.images.set = 3 * ones(length(labels_train), 1);
   training_test_imdb.meta.sets = {'train', 'val', 'test'};
 
-  fprintf('\n-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- \n');
-
-  while t <= T
-
-      fprintf('\n[INFO] Boosting iteration #%d (attempt %d)...\n', t, count + 1);
-
-      % Resampling NEG_DATA with weights of positive example
-      % TODO: oversample / repeat training samples based on W(t - 1)
-      fprintf('\t[INFO] Resampling healthy and cancer data (ratio = 65/35)... ');
-      initial_data_train_healthy_count = data_train_healthy_count;
-      resampled_data_train_healthy_count = round(data_train_cancer_count * random_undersampling_ratio);
-      resampled_data_train_healthy_indices = randsample(1:initial_data_train_healthy_count, resampled_data_train_healthy_count, false);
-      resampled_data_train_healthy = data_train_healthy(:,:,:, resampled_data_train_healthy_indices);
-      resampled_data_train_all = cat(4, data_train_cancer, resampled_data_train_healthy);
-      resampled_labels_train_all = cat(2, 2 * ones(1, data_train_cancer_count), 1 * ones(1, size(resampled_data_train_healthy, 4)));
-      % tabulate(resampled_labels_train_all)
-      fprintf('done!\n');
-
-      % Shuffle this to mixup order of healthy and cancer in imdb so we don't
-      % have the CNN overtrain in 1 particular direction. Only shuffling for
-      % training; later weights are calculated and updated for all training data.
-      ix = randperm(size(resampled_data_train_all, 4));
-      new_data = resampled_data_train_all(:,:,:,ix);
-      new_labels = resampled_labels_train_all(ix);
-
-      training_resampled_imdb.images.data = new_data;
-      training_resampled_imdb.images.labels = single(new_labels);
-      training_resampled_imdb.images.set = 1 * ones(length(new_labels), 1);
-      training_resampled_imdb.meta.sets = {'train', 'val', 'test'};
-
-      % Weird. Need at least 1 test sample for cnn_train to work. Ignore
-      training_resampled_imdb.images.data = cat(4, training_resampled_imdb.images.data, new_data(:,:,:, end));
-      training_resampled_imdb.images.labels = cat(2,training_resampled_imdb.images.labels, new_labels(end));
-      training_resampled_imdb.images.set = cat(1, training_resampled_imdb.images.set, 3);
-
-      fprintf('\t[INFO] Training model (healthy: %d, cancer: %d)...\n', size(resampled_data_train_healthy, 4), data_train_cancer_count);
-      [net, info] = cnn_amir( ...
-        'imdb', training_resampled_imdb, ...
-        'dataset', 'prostate', ...
-        'networkArch', 'prostatenet', ...
-        'backpropDepth', backpropDepth, ...
-        'weightInitSource', weightInitSource, ...
-        'weightInitSequence', weightInitSequence, ...
-        'debugFlag', false);
-      % fprintf('\tdone!\n');
-
-      fprintf('\t[INFO] Computing predictions (healthy: %d, cancer: %d)...\n', data_train_healthy_count, data_train_cancer_count);
-      % IMPORTANT NOTE: we randomly undersample when training a model, but then,
-      % we use all of the training samples (in their order) to update weights.
-      predictions = getPredictionsFromNetOnImdb(net, training_test_imdb);
-      % fprintf('done!\n');
-
-      % Computing the pseudo loss of hypothesis 'model'
-      fprintf('\t[INFO] Computing pseudo loss... ');
-      loss = 0;
-      for i = 1:data_train_count
-          if labels_train(i) == predictions(i)
-              continue;
-          else
-              loss = loss + W(t, i);
-          end
-      end
-      fprintf('Loss: %6.5f\n', loss);
-
-      % If count exceeds a pre-defined threshold (5 in the current
-      % implementation), the loop is broken and rolled back to the state
-      % where loss > 0.5 was not encountered.
-      if count > 5
-         L = L(1:t-1);
-         H = H(1:t-1);
-         B = B(1:t-1);
-         fprintf('\tToo many iterations have loss > 0.5\n');
-         fprintf('\tAborting boosting...\n');
-         break;
-      end
-
-      % If the loss is greater than 1/2, it means that an inverted
-      % hypothesis would perform better. In such cases, do not take that
-      % hypothesis into consideration and repeat the same iteration. 'count'
-      % keeps counts of the number of times the same boosting iteration have
-      % been repeated
-      if loss > 0.5
-          count = count + 1;
-          continue;
-      else
-          count = 1;
-      end
-
-      H{t} = net; % Hypothesis function / Trained CNN Network
-      L(t) = loss; % Pseudo-loss at each iteration
-      beta = loss / (1 - loss); % Setting weight update parameter 'beta'.
-      B(t) = log(1 / beta); % Weight of the hypothesis
-
-      % At the final iteration there is no need to update the weights any
-      % further
-      if t == T
-          break;
-      end
-
-      % Updating weight
-      fprintf('\t[INFO] Updating weights... ');
-      for i = 1:data_train_count
-          if labels_train(i) == predictions(i)
-              W(t + 1, i) = W(t, i) * beta;
-          else
-              W(t + 1, i) = W(t, i);
-          end
-      end
-      fprintf('done!\n');
-
-      % Normalizing the weight for the next iteration
-      sum_W = sum(W(t + 1, :));
-      for i = 1:data_train_count
-          W(t + 1, i) = W(t + 1, i) / sum_W;
-      end
-
-      % Incrementing loop counter
-      t = t + 1;
-  end
-
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % 7. test on test set, keeping in mind beta's between each mode
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
-  % The final hypothesis is calculated and tested on the test set
-  % simulteneously.
-
-  % Normalizing B
-  sum_B = sum(B);
-  for i = 1:size(B,2)
-     B(i) = B(i) / sum_B;
-  end
-
   test_imdb.images.data = data_test;
   test_imdb.images.labels = labels_test;
   test_imdb.images.set = 3 * ones(length(labels_test), 1);
   test_imdb.meta.sets = {'train', 'val', 'test'};
 
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % 4. go through T iterations of RUSBoost, each of which trains a CNN over E epochs
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  printOutputSeparator();
+  while t <= T
+
+    fprintf('\n[INFO] Boosting iteration #%d (attempt %d)...\n', t, count);
+
+    % Resampling NEG_DATA with weights of positive example
+    % TODO: oversample / repeat training samples based on W(t - 1)
+    fprintf('\t[INFO] Resampling healthy and cancer data (ratio = 65/35)... ');
+    [resampled_data, resampled_labels] = ...
+      resampleData(data_train, labels_train, W(t, :), random_undersampling_ratio);
+    fprintf('done!\n');
+
+    training_resampled_imdb.images.data = single(resampled_data);
+    training_resampled_imdb.images.labels = single(resampled_labels);
+    training_resampled_imdb.images.set = 1 * ones(length(resampled_labels), 1);
+
+    % Weird. Need at least 1 test sample for cnn_train to work. TODO: this is because of TP stuff in cnn_train
+    training_resampled_imdb.images.data = cat(4, training_resampled_imdb.images.data, resampled_data(:,:,:, end));
+    training_resampled_imdb.images.labels = cat(2,training_resampled_imdb.images.labels, resampled_labels(end));
+    training_resampled_imdb.images.set = cat(1, training_resampled_imdb.images.set, 3);
+
+    fprintf('\t[INFO] Training model (healthy: %d, cancer: %d)...\n', ...
+     numel(find(resampled_labels == 1)), ...
+     numel(find(resampled_labels == 2)));
+    [net, info] = cnn_amir( ...
+      'imdb', training_resampled_imdb, ...
+      'dataset', 'prostate', ...
+      'networkArch', 'prostatenet', ...
+      'backpropDepth', backpropDepth, ...
+      'weightInitSource', weightInitSource, ...
+      'weightInitSequence', weightInitSequence, ...
+      'debugFlag', false);
+    % fprintf('\tdone!\n');
+
+    fprintf('\t[INFO] Computing predictions (healthy: %d, cancer: %d)...\n', ...
+     data_train_healthy_count, ...
+     data_train_cancer_count);
+    % IMPORTANT NOTE: we randomly undersample when training a model, but then,
+    % we use all of the training samples (in their order) to update weights.
+    predictions = getPredictionsFromNetOnImdb(net, training_test_imdb);
+    % fprintf('done!\n');
+
+    % Computing the pseudo loss of hypothesis 'model'
+    fprintf('\t[INFO] Computing pseudo loss... ');
+    loss = 0;
+    for i = 1:data_train_count
+        if labels_train(i) == predictions(i)
+            continue;
+        else
+            loss = loss + W(t, i);
+        end
+    end
+    fprintf('Loss: %6.5f\n', loss);
+
+    % If count exceeds a pre-defined threshold (5 in the current
+    % implementation), the loop is broken and rolled back to the state
+    % where loss > 0.5 was not encountered.
+    if count > 5
+       L = L(1:t-1);
+       H = H(1:t-1);
+       B = B(1:t-1);
+       fprintf('\tToo many iterations have loss > 0.5\n');
+       fprintf('\tAborting boosting...\n');
+       break;
+    end
+
+    % If the loss is greater than 1/2, it means that an inverted
+    % hypothesis would perform better. In such cases, do not take that
+    % hypothesis into consideration and repeat the same iteration. 'count'
+    % keeps counts of the number of times the same boosting iteration have
+    % been repeated
+    if loss > 0.5
+        count = count + 1;
+        continue;
+    else
+        count = 1;
+    end
+
+    H{t} = net; % Hypothesis function / Trained CNN Network
+    L(t) = loss; % Pseudo-loss at each iteration
+    beta = loss / (1 - loss); % Setting weight update parameter 'beta'.
+    B(t) = log(1 / beta); % Weight of the hypothesis
+
+    % At the final iteration there is no need to update the weights any
+    % further
+    if t == T
+        break;
+    end
+
+    % Updating weight
+    fprintf('\t[INFO] Updating weights... ');
+    for i = 1:data_train_count
+        if labels_train(i) == predictions(i)
+            W(t + 1, i) = W(t, i) * beta;
+        else
+            W(t + 1, i) = W(t, i);
+        end
+    end
+    fprintf('done!\n');
+
+    % Normalizing the weight for the next iteration
+    sum_W = sum(W(t + 1, :));
+    for i = 1:data_train_count
+        W(t + 1, i) = W(t + 1, i) / sum_W;
+    end
+
+    % Incrementing loop counter
+    t = t + 1;
+  end
+
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % 5. test on test set, keeping in mind beta's between each mode
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  printOutputSeparator();
+  % The final hypothesis is calculated and tested on the test set
+  % simulteneously.
+
+  % Normalizing B
+  % sum_B = sum(B);
+  % for i = 1:size(B,2)
+  %    B(i) = B(i) / sum_B;
+  % end
+  B = B / sum(B);
+
   test_set_prediction_overall = zeros(data_test_count, 2);
-
-  fprintf('\n-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- \n');
-
   test_set_predictions_per_model = {};
   for i = 1:size(H, 2) % looping through all trained networks
-    fprintf('\n[INFO] Getting test set predictions for model #%d (healthy: %d, cancer: %d)...\n', i, data_test_healthy_count, data_test_cancer_count);
+    fprintf('\n[INFO] Getting test set predictions for model #%d (healthy: %d, cancer: %d)...\n', ...
+      i, ...
+      data_test_healthy_count, ...
+      data_test_cancer_count);
     net = H{i};
     test_set_predictions_per_model{i} = getPredictionsFromNetOnImdb(net, test_imdb);
     [acc, sens, spec] = getAccSensSpec(labels_test, test_set_predictions_per_model{i});
@@ -282,17 +251,88 @@ function main_cnn_rusboost()
     end
   end
 
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % 8. done, go treat yourself to something sugary!
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  fprintf('\n-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- \n');
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % 6. done, go treat yourself to something sugary!
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  printOutputSeparator();
   predictions_test = test_set_prediction_overall(:, 1)';
   [acc, sens, spec] = getAccSensSpec(labels_test, predictions_test);
   fprintf('[INFO] Overall Acc: %3.2f\n', acc);
   fprintf('[INFO] Overall Sens: %3.2f\n', sens);
   fprintf('[INFO] Overall Spec: %3.2f\n', spec);
-  fprintf('\n-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- \n');
+  printOutputSeparator();
 
+
+
+% -------------------------------------------------------------------------
+function [resampled_data, resampled_labels] = resampleData(data, labels, weights, ratio)
+% -------------------------------------------------------------------------
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % Initial stuff
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  data_healthy = data(:,:,:,labels == 1);
+  data_cancer = data(:,:,:,labels == 2);
+  data_count = size(data, 4);
+  data_healthy_count = size(data_healthy, 4);
+  data_cancer_count = size(data_cancer, 4);
+  data_healthy_indices = find(labels == 1);
+  data_cancer_indices = find(labels == 2);
+
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % Random Under-sampling (RUS): Healthy Data
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  downsampled_data_healthy_count = round(data_cancer_count * ratio);
+  downsampled_data_healthy_indices = randsample(data_healthy_indices, downsampled_data_healthy_count, false);
+  downsampled_data_healthy = data(:,:,:, downsampled_data_healthy_indices);
+
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % Weighted Upsampling (more weight -> more repeat): Healthy & Cancer Data
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  normalized_weights = weights / min(weights);
+  repeat_counts = ceil(normalized_weights);
+
+  healthy_repeat_counts = repeat_counts(downsampled_data_healthy_indices);
+  cancer_repeat_counts = repeat_counts(data_cancer_indices);
+
+  upsampled_data_healthy = upsample(downsampled_data_healthy, healthy_repeat_counts);
+  upsampled_data_cancer = upsample(data_cancer, cancer_repeat_counts);
+
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % Putting it all together
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  resampled_data_healthy_count = size(upsampled_data_healthy, 4);
+  resampled_data_cancer_count = size(upsampled_data_cancer, 4);
+  resampled_data_all = cat(4, upsampled_data_healthy, upsampled_data_cancer);
+  resampled_labels_all = cat( ...
+    2, ...
+    1 * ones(1, resampled_data_healthy_count), ...
+    2 * ones(1, resampled_data_cancer_count));
+
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % Shuffle this to mixup order of healthy and cancer in imdb so we don't
+  % have the CNN overtrain in 1 particular direction. Only shuffling for
+  % training; later weights are calculated and updated for all training data.
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  ix = randperm(size(resampled_data_all, 4));
+  resampled_data = resampled_data_all(:,:,:,ix);
+  resampled_labels = resampled_labels_all(ix);
+
+% -------------------------------------------------------------------------
+function [upsampled_data] = upsample(data, repeat_counts)
+  % remember, data is 4D, with N 3D samples
+% -------------------------------------------------------------------------
+  assert(size(data, 4) == length(repeat_counts));
+  total_repeat_count = sum(repeat_counts);
+  upsampled_data = zeros(size(data, 1), size(data, 2), size(data, 3), total_repeat_count);
+  counter = 1;
+  for i = 1:length(repeat_counts)
+    sample_repeat_count = repeat_counts(i);
+    tmp = repmat(data(:,:,:,i), [1,1,1,sample_repeat_count]);
+    upsampled_data(:,:,:, counter : counter + sample_repeat_count - 1) = tmp;
+    counter = counter + sample_repeat_count;
+  end
+
+% TODO: copy to central file
 % -------------------------------------------------------------------------
 function fn = getBatch()
 % -------------------------------------------------------------------------
@@ -326,3 +366,9 @@ function [acc, sens, spec] = getAccSensSpec(labels, predictions)
   acc = (TP + TN) / (TP + TN + FP + FN);
   sens = TP / (TP + FN);
   spec = TN / (TN + FP);
+
+% -------------------------------------------------------------------------
+function printOutputSeparator()
+% -------------------------------------------------------------------------
+  fprintf('\n-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- \n');
+
