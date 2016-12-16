@@ -163,6 +163,7 @@ function [net, info] = cnn_train(net, imdb, getBatch, varargin)
       n = numel(eval(f));
       info.(f).speed(epoch) = n / stats.(f)(1) * max(1, numGpus);
       info.(f).objective(epoch) = stats.(f)(2) / n;
+      % info.(f).error(:,epoch) = stats.(f)(3:end) / n ;
       info.(f).error(:,epoch) = stats.(f)(3 : 3 + numel(opts.errorLabels) - 1) / n;
       % added below by amir
       info.(f).stats.TP = stats.(f)(end-5);
@@ -298,7 +299,12 @@ function err = error_none(opts, labels, res)
 function  [net_cpu,stats,prof] = process_epoch(opts, getBatch, epoch, subset, learningRate, imdb, net_cpu)
 % -------------------------------------------------------------------------
   if ~opts.debugFlag
-    fprintf('\t[INFO] processing epoch %02d...', epoch);
+    if learningRate == 0
+      set = 'val';
+    else
+      set = 'train';
+    end
+    fprintf('\t\t[INFO] processing epoch %03d (%s)... ', epoch, set);
   end
 
   % move CNN to GPU as needed
@@ -413,12 +419,12 @@ function  [net_cpu,stats,prof] = process_epoch(opts, getBatch, epoch, subset, le
       figure(2); vl_simplenn_diagnose(net,res); drawnow;
     end
   end
-  TP = stats(end-3);
-  TN = stats(end-2);
-  FP = stats(end-1);
-  FN = stats(end-0);
-  stats(end+1) = TP / (TP + FN);
-  stats(end+1) = TN / (TN + FP);
+  TP = 0; %stats(end-3);
+  TN = 0; %stats(end-2);
+  FP = 0; %stats(end-1);
+  FN = 0; %stats(end-0);
+  stats(end+1) = 0; %TP / (TP + FN);
+  stats(end+1) = 0; %TN / (TN + FP);
   if opts.debugFlag
     fprintf('\n --- --- --- --- --- --- --- --- --- --- --- --- --- \n\n');
     fprintf('[INFO] TP: %d\n', TP);

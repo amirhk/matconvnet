@@ -16,7 +16,7 @@ function [net, info] = cnn_amir(varargin)
   opts.folderNumber = folderNumber;
   opts.networkArch = 'alexnet';
   opts.dataset = 'cifar';
-  opts.regenDatabase = 1;
+  opts.regenDatabase = 0;
   opts.backpropDepth = 20;
   opts.weightDecay = 0.0001;
   opts.weightInitSequence = {'1D', 'compRand', '1D', '2D-shiftflip', '1D'};
@@ -24,7 +24,7 @@ function [net, info] = cnn_amir(varargin)
   opts.bottleneckDivideBy = 1;
   opts.debugFlag = true;
   [opts, varargin] = vl_argparse(opts, varargin);
-  if ~opts.debugFlag
+  if opts.debugFlag
     fprintf('\n-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --\n\n');
     fprintf('[INFO] networkArch:\t %s\n', opts.networkArch);
     fprintf('[INFO] dataset:\t\t %s\n', opts.dataset);
@@ -116,9 +116,9 @@ function [net, info] = cnn_amir(varargin)
       case 'stl-10'
         imdb = constructSTL10Imdb(opts);
     end
-    if ~opts.debugFlag; fprintf('[INFO] saving new imdb... '); end;
+    if opts.debugFlag; fprintf('[INFO] saving new imdb... '); end;
     save(opts.imdbPath, '-struct', 'imdb');
-    if ~opts.debugFlag; fprintf('done.\n\n'); end;
+    if opts.debugFlag; fprintf('done.\n\n'); end;
   end
 
   if strcmp(opts.dataset, 'prostate')
@@ -132,7 +132,7 @@ function [net, info] = cnn_amir(varargin)
   % -------------------------------------------------------------------------
   %                                                                     Train
   % -------------------------------------------------------------------------
-  [net, info] = cnn_train(net, imdb, getBatch(opts), ...
+  [net, info] = cnn_train(net, imdb, getBatch(), ...
     'expDir', opts.expDir, ...
     'errorFunction', opts.errorFunction, ...
     'debugFlag', opts.debugFlag, ...
@@ -174,13 +174,13 @@ function [processorList, processorString] = getProcessor(opts)
 % -------------------------------------------------------------------------
 function saveNetworkInfo(net, opts)
 % -------------------------------------------------------------------------
-  if ~opts.debugFlag; fprintf('\n[INFO] Saving network info in readme...'); end;
+  if opts.debugFlag; fprintf('\n[INFO] Saving network info in readme... '); end;
   struct2File( ...
     net.meta.trainOpts, ...
     fullfile(opts.expDir, 'readme.txt'), ...
     'delimiter', ...
     '\n\n');
-  if ~opts.debugFlag; fprintf('done!\n'); end;
+  if opts.debugFlag; fprintf('done!\n'); end;
 
 
 % -------------------------------------------------------------------------
@@ -209,7 +209,7 @@ function saveFinalSensitivitySpecificityInfo(info, expDir)
 
 
 % -------------------------------------------------------------------------
-function fn = getBatch(opts)
+function fn = getBatch()
 % -------------------------------------------------------------------------
   fn = @(x,y) getSimpleNNBatch(x,y);
 
@@ -219,14 +219,3 @@ function [images, labels] = getSimpleNNBatch(imdb, batch)
   images = imdb.images.data(:,:,:,batch);
   labels = imdb.images.labels(1,batch);
   if rand > 0.5, images=fliplr(images); end
-
-% -------------------------------------------------------------------------
-function inputs = getDagNNBatch(opts, imdb, batch)
-% -------------------------------------------------------------------------
-  images = imdb.images.data(:,:,:,batch);
-  labels = imdb.images.labels(1,batch);
-  if rand > 0.5, images=fliplr(images); end
-  if opts.numGpus > 0
-    images = gpuArray(images);
-  end
-  inputs = {'input', images, 'label', labels};

@@ -109,6 +109,11 @@ function main_cnn_rusboost()
   % 6. repeat steps 4 & 5 T times, saving model (to run test data on later), and beta for each
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
+  prediction_imdb.images.data = data_train;
+  prediction_imdb.images.labels = labels_train;
+  prediction_imdb.images.set = 3 * ones(length(labels_train), 1);
+  prediction_imdb.meta.sets = {'train', 'val', 'test'};
+
   while t <= T
 
       fprintf('\n\n[INFO] Boosting iteration #%d...\n', t);
@@ -121,7 +126,7 @@ function main_cnn_rusboost()
       resampled_data_train_healthy_indices = randsample(1:initial_data_train_healthy_count, resampled_data_train_healthy_count, false);
       resampled_data_train_healthy = data_train_healthy(:,:,:, resampled_data_train_healthy_indices);
       resampled_data_train_all = cat(4, data_train_cancer, resampled_data_train_healthy);
-      resampled_labels_train_all = cat(2, 2 * ones(1, size(data_train_cancer, 4)), 1 * ones(1, size(resampled_data_train_healthy, 4)));
+      resampled_labels_train_all = cat(2, 2 * ones(1, data_train_cancer_count), 1 * ones(1, size(resampled_data_train_healthy, 4)));
       % tabulate(resampled_labels_train_all)
       fprintf('done!\n');
 
@@ -142,7 +147,7 @@ function main_cnn_rusboost()
       new_imdb.images.labels = cat(2,new_imdb.images.labels, new_labels(end));
       new_imdb.images.set = cat(1, new_imdb.images.set, 3);
 
-      fprintf('\t[INFO] Training model... ');
+      fprintf('\t[INFO] Training model (healthy: %d, cancer: %d)...\n', size(resampled_data_train_healthy, 4), data_train_cancer_count);
       [net, info] = cnn_amir( ...
         'imdb', new_imdb, ...
         'dataset', 'prostate', ...
@@ -150,13 +155,17 @@ function main_cnn_rusboost()
         'backpropDepth', backpropDepth, ...
         'weightInitSource', weightInitSource, ...
         'weightInitSequence', weightInitSequence, ...
-        'debugFlag', false); % TODO: fix this up to be pretty!!!
-      fprintf('done!\n');
+        'debugFlag', false);
+      % fprintf('\tdone!\n');
 
-      fprintf('\t[INFO] Getting predictions from trained model... ');
+      fprintf('\t[INFO] Getting predictions (healthy: %d, cancer: %d)...\n', data_train_healthy_count, data_train_cancer_count);
       % IMPORTANT NOTE: we randomly undersample when training a model, but then,
       % we use all of the training samples (in their order) to update weights.
       % same with undersampling!!
+      [net, info] = cnn_train(net, prediction_imdb, getBatch(), ...
+        'errorFunction', 'multiclass-prostate', ...
+        'debugFlag', false, ...
+        'continue', false);
       predictions = zeros(data_train_count, 1);
       for i = 1:data_train_count
         % TODO: pass all of the training data through the trained network and get class prediciton
@@ -251,65 +260,17 @@ function main_cnn_rusboost()
 
 
 
+% -------------------------------------------------------------------------
+function fn = getBatch()
+% -------------------------------------------------------------------------
+  fn = @(x,y) getSimpleNNBatch(x,y);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+% -------------------------------------------------------------------------
+function [images, labels] = getSimpleNNBatch(imdb, batch)
+% -------------------------------------------------------------------------
+  images = imdb.images.data(:,:,:,batch);
+  labels = imdb.images.labels(1,batch);
+  if rand > 0.5, images=fliplr(images); end
 
 
 
