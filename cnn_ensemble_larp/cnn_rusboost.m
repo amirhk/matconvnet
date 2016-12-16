@@ -154,7 +154,7 @@ function main_cnn_rusboost()
         'debugFlag', false);
       % fprintf('\tdone!\n');
 
-      fprintf('\t[INFO] Getting predictions (healthy: %d, cancer: %d)...\n', data_train_healthy_count, data_train_cancer_count);
+      fprintf('\t[INFO] Computing predictions (healthy: %d, cancer: %d)...\n', data_train_healthy_count, data_train_cancer_count);
       % IMPORTANT NOTE: we randomly undersample when training a model, but then,
       % we use all of the training samples (in their order) to update weights.
       predictions = getPredictionsFromNetOnImdb(net, training_test_imdb);

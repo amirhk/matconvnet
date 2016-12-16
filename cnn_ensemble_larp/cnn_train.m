@@ -581,6 +581,10 @@ function [all_predictions, all_labels] = evaluate_one_epoch_of_trained_network(o
     batchTime = tic;
     numDone = 0;
     error = [];
+
+    if ~opts.debugFlag
+      fprintf('\t\t[INFO] processed %d samples');
+    end
     for s=1:opts.numSubBatches
       % get this image batch and prefetch the next
       batchStart = t + (labindex-1) + (s-1) * numlabs;
@@ -627,6 +631,13 @@ function [all_predictions, all_labels] = evaluate_one_epoch_of_trained_network(o
         reshape(labels, 1, []));
 
       numDone = numDone + numel(batch);
+    end
+
+    if ~opts.debugFlag
+      for j = 0:log10(batchEnd - 1) + 8 % + 8 because of ' samples'
+        fprintf('\b'); % delete previous counter display
+      end
+      fprintf('%d samples', batchEnd);
     end
   end
 
