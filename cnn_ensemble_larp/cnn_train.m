@@ -125,7 +125,7 @@ function [net, info] = cnn_train(net, imdb, getBatch, varargin)
     end
     for epoch=1:opts.numEpochs
       if ~opts.debugFlag
-        for j = 0:log10(epoch - 1)
+        for j = 0:log10(epoch - 1) + 1
           fprintf('\b'); % delete previous counter display
         end
         fprintf('%02d', epoch);
