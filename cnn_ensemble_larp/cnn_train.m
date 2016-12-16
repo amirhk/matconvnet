@@ -187,49 +187,47 @@ function [net, info] = cnn_train(net, imdb, getBatch, varargin)
       end
       if ~evaluateMode, save(modelPath(epoch), 'net', 'info'); end
 
-      if opts.debugFlag
-        figure(1); clf;
-        hasError = isa(opts.errorFunction, 'function_handle');
-        subplot(1,1+hasError,1);
-        if ~evaluateMode
-          semilogy(1:epoch, info.train.objective, '.-', 'linewidth', 2);
-          hold on;
-        end
-        semilogy(1:epoch, info.val.objective, '.--');
-        xlabel('training epoch'); ylabel('energy');
-        grid on;
-        h=legend(sets);
-        set(h,'color','none');
-        title('objective');
-        if hasError
-          subplot(1,2,2); leg = {};
-          if ~evaluateMode
-            plot(1:epoch, info.train.error', '.-', 'linewidth', 2);
-            hold on;
-            leg = horzcat(leg, strcat('train ', opts.errorLabels));
-          end
-          plot(1:epoch, info.val.error', '.--');
-          leg = horzcat(leg, strcat('val ', opts.errorLabels));
-
-          % sensitivity
-          % plot(1:epoch, info.train.sensitivity', 'b-', 'linewidth', 1);
-          % leg = horzcat(leg, 'train sensitivity');
-          plot(1:epoch, info.val.sensitivity', 'b--', 'linewidth', 1);
-          leg = horzcat(leg, 'test sensitivity');
-          % specificity
-          % plot(1:epoch, info.train.specificity', 'g-', 'linewidth', 1);
-          % leg = horzcat(leg, 'train specificity');
-          plot(1:epoch, info.val.specificity', 'g--', 'linewidth', 1);
-          leg = horzcat(leg, 'test specificity');
-
-          set(legend(leg{:}),'color','none');
-          grid on;
-          xlabel('training epoch'); ylabel('error');
-          title('error');
-        end
-        drawnow;
-        print(1, modelFigPath, '-dpdf');
+      figure(1); clf;
+      hasError = isa(opts.errorFunction, 'function_handle');
+      subplot(1,1+hasError,1);
+      if ~evaluateMode
+        semilogy(1:epoch, info.train.objective, '.-', 'linewidth', 2);
+        hold on;
       end
+      semilogy(1:epoch, info.val.objective, '.--');
+      xlabel('training epoch'); ylabel('energy');
+      grid on;
+      h=legend(sets);
+      set(h,'color','none');
+      title('objective');
+      if hasError
+        subplot(1,2,2); leg = {};
+        if ~evaluateMode
+          plot(1:epoch, info.train.error', '.-', 'linewidth', 2);
+          hold on;
+          leg = horzcat(leg, strcat('train ', opts.errorLabels));
+        end
+        plot(1:epoch, info.val.error', '.--');
+        leg = horzcat(leg, strcat('val ', opts.errorLabels));
+
+        % sensitivity
+        % plot(1:epoch, info.train.sensitivity', 'b-', 'linewidth', 1);
+        % leg = horzcat(leg, 'train sensitivity');
+        plot(1:epoch, info.val.sensitivity', 'b--', 'linewidth', 1);
+        leg = horzcat(leg, 'test sensitivity');
+        % specificity
+        % plot(1:epoch, info.train.specificity', 'g-', 'linewidth', 1);
+        % leg = horzcat(leg, 'train specificity');
+        plot(1:epoch, info.val.specificity', 'g--', 'linewidth', 1);
+        leg = horzcat(leg, 'test specificity');
+
+        set(legend(leg{:}),'color','none');
+        grid on;
+        xlabel('training epoch'); ylabel('error');
+        title('error');
+      end
+      drawnow;
+      print(1, modelFigPath, '-dpdf');
     end
     if ~opts.debugFlag
       fprintf('\n');
