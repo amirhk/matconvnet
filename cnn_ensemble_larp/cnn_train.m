@@ -125,10 +125,11 @@ function [net, info] = cnn_train(net, imdb, getBatch, varargin)
     end
     for epoch=1:opts.numEpochs
       if ~opts.debugFlag
-        for j = 0:log10(epoch - 1) + 1
+        % for j = 0:log10(epoch - 1)
+        for j = 0:2
           fprintf('\b'); % delete previous counter display
         end
-        fprintf('%02d', epoch);
+        fprintf('%03d', epoch);
       end
 
       learningRate = opts.learningRate(min(epoch, numel(opts.learningRate)));
