@@ -165,13 +165,10 @@ function main_cnn_rusboost()
       [net, info] = cnn_train(net, prediction_imdb, getBatch(), ...
         'errorFunction', 'multiclass-prostate', ...
         'debugFlag', false, ...
-        'continue', false);
-      predictions = zeros(data_train_count, 1);
-      for i = 1:data_train_count
-        % TODO: pass all of the training data through the trained network and get class prediciton
-        % predictions(i) = model.classifyInstance(train.instance(i));
-        predictions(i) = 1;
-      end
+        'continue', false, ...
+        'numEpochs', 1, ...
+        'val', find(prediction_imdb.images.set == 3));
+      predictions = info.predictions;
       fprintf('done!\n');
 
       % Computing the pseudo loss of hypothesis 'model'
@@ -184,7 +181,7 @@ function main_cnn_rusboost()
               loss = loss + W(t, i);
           end
       end
-      fprintf('done!\n');
+      fprintf('done! Loss: %6.5f\n', loss);
 
       % If count exceeds a pre-defined threshold (5 in the current
       % implementation), the loop is broken and rolled back to the state
