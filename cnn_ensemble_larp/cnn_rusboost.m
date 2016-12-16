@@ -5,7 +5,7 @@ function main_cnn_rusboost()
   % 0. some important parameter definition
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-  T = 10; % number of boosting iterations
+  T = 3; % number of boosting iterations
   % E = 50; % number of epochs() % TODO: currently can't be used...
   backpropDepth = 4;
   weightInitSource = 'gen';  % {'load' | 'gen'}
