@@ -573,7 +573,7 @@ function [all_predictions, all_labels] = evaluate_one_epoch_of_trained_network(o
   all_labels = [];
 
   if ~opts.debugFlag
-    fprintf('\t\t[INFO] processed \t %d samples', 0);
+    fprintf('\t\t[INFO] processed     %d samples', 0);
   end
 
   for t=1:opts.batchSize:numel(subset)
