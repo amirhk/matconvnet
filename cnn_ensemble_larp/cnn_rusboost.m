@@ -135,12 +135,17 @@ function [B, H] = main_cnn_rusboost()
 
     % Computing the pseudo loss of hypothesis 'model'
     fprintf('\t[INFO] Computing pseudo loss... ');
+    cancer_to_healthy_ratio = data_train_cancer_count / data_train_healthy_count;
     loss = 0;
     for i = 1:data_train_count
         if labels_train(i) == predictions(i)
-            continue;
+          continue;
         else
+          if labels_train(i) == 2
+            loss = loss + cancer_to_healthy_ratio * W(t, i);
+          else
             loss = loss + W(t, i);
+          end
         end
     end
     fprintf('Loss: %6.5f\n', loss);
