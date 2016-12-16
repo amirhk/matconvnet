@@ -20,7 +20,7 @@ function main_cnn_rusboost()
   % TODO: this can be extended to be say 10-fold ensemble larp, then average the folds
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   fprintf('[INFO]: Loading saved imdb... ');
-  imdb = load(fullfile(getDevPath(), '/matconvnet/cnn_ensemble_larp/saved_prostate_imdb.mat'));
+  imdb = load(fullfile(getDevPath(), '/matconvnet/data_1/_prostate/_saved_prostate_imdb.mat'));
   imdb = imdb.imdb;
   fprintf('done!\n');
   % fprintf('[INFO]: TRAINING SET data distribution:\n');
@@ -109,14 +109,16 @@ function main_cnn_rusboost()
   % 6. repeat steps 4 & 5 T times, saving model (to run test data on later), and beta for each
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-  prediction_imdb.images.data = data_train;
-  prediction_imdb.images.labels = labels_train;
-  prediction_imdb.images.set = 3 * ones(length(labels_train), 1);
-  prediction_imdb.meta.sets = {'train', 'val', 'test'};
+  training_test_imdb.images.data = data_train;
+  training_test_imdb.images.labels = labels_train;
+  training_test_imdb.images.set = 3 * ones(length(labels_train), 1);
+  training_test_imdb.meta.sets = {'train', 'val', 'test'};
+
+  fprintf('\n-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- \n');
 
   while t <= T
 
-      fprintf('\n\n[INFO] Boosting iteration #%d...\n', t);
+      fprintf('\n[INFO] Boosting iteration #%d...\n', t);
 
       % Resampling NEG_DATA with weights of positive example
       % TODO: oversample / repeat training samples based on W(t - 1)
@@ -137,19 +139,19 @@ function main_cnn_rusboost()
       new_data = resampled_data_train_all(:,:,:,ix);
       new_labels = resampled_labels_train_all(ix);
 
-      new_imdb.images.data = new_data;
-      new_imdb.images.labels = single(new_labels);
-      new_imdb.images.set = 1 * ones(length(new_labels), 1);
-      new_imdb.meta.sets = {'train', 'val', 'test'};
+      training_resampled_imdb.images.data = new_data;
+      training_resampled_imdb.images.labels = single(new_labels);
+      training_resampled_imdb.images.set = 1 * ones(length(new_labels), 1);
+      training_resampled_imdb.meta.sets = {'train', 'val', 'test'};
 
       % Weird. Need at least 1 test sample for cnn_train to work. Ignore
-      new_imdb.images.data = cat(4, new_imdb.images.data, new_data(:,:,:, end));
-      new_imdb.images.labels = cat(2,new_imdb.images.labels, new_labels(end));
-      new_imdb.images.set = cat(1, new_imdb.images.set, 3);
+      training_resampled_imdb.images.data = cat(4, training_resampled_imdb.images.data, new_data(:,:,:, end));
+      training_resampled_imdb.images.labels = cat(2,training_resampled_imdb.images.labels, new_labels(end));
+      training_resampled_imdb.images.set = cat(1, training_resampled_imdb.images.set, 3);
 
       fprintf('\t[INFO] Training model (healthy: %d, cancer: %d)...\n', size(resampled_data_train_healthy, 4), data_train_cancer_count);
       [net, info] = cnn_amir( ...
-        'imdb', new_imdb, ...
+        'imdb', training_resampled_imdb, ...
         'dataset', 'prostate', ...
         'networkArch', 'prostatenet', ...
         'backpropDepth', backpropDepth, ...
@@ -161,15 +163,8 @@ function main_cnn_rusboost()
       fprintf('\t[INFO] Getting predictions (healthy: %d, cancer: %d)...\n', data_train_healthy_count, data_train_cancer_count);
       % IMPORTANT NOTE: we randomly undersample when training a model, but then,
       % we use all of the training samples (in their order) to update weights.
-      % same with undersampling!!
-      [net, info] = cnn_train(net, prediction_imdb, getBatch(), ...
-        'errorFunction', 'multiclass-prostate', ...
-        'debugFlag', false, ...
-        'continue', false, ...
-        'numEpochs', 1, ...
-        'val', find(prediction_imdb.images.set == 3));
-      predictions = info.predictions;
-      fprintf('done!\n');
+      predictions = getPredictionsFromNetOnImdb(net, training_test_imdb);
+      % fprintf('done!\n');
 
       % Computing the pseudo loss of hypothesis 'model'
       fprintf('\t[INFO] Computing pseudo loss... ');
@@ -243,10 +238,71 @@ function main_cnn_rusboost()
   % 7. test on test set, keeping in mind beta's between each mode
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
+  % The final hypothesis is calculated and tested on the test set
+  % simulteneously.
+
+  % Normalizing B
+  sum_B = sum(B);
+  for i = 1:size(B,2)
+     B(i) = B(i) / sum_B;
+  end
+
+  test_imdb.images.data = data_test;
+  test_imdb.images.labels = labels_test;
+  test_imdb.images.set = 3 * ones(length(labels_test), 1);
+  test_imdb.meta.sets = {'train', 'val', 'test'};
+
+  test_set_prediction_overall = zeros(data_test_count, 2);
+
+  fprintf('\n-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- \n');
+
+  test_set_predictions_per_model = {};
+  for i = 1:size(H, 2) % looping through all trained networks
+    fprintf('\n[INFO] Getting test set predictions for model #%d (healthy: %d, cancer: %d)...\n', i, data_test_healthy_count, data_test_cancer_count);
+    net = H{i};
+    test_set_predictions_per_model{i} = getPredictionsFromNetOnImdb(net, test_imdb);
+  end
+
+  for i = 1:data_test_count
+    % Calculating the total weight of the class labels from all the models
+    % produced during boosting
+    wt_healthy = 0; % class 1
+    wt_cancer = 0; % class 2
+    for j = 1:size(H, 2) % looping through all trained networks
+       p = test_set_predictions_per_model{j}(1);
+       if p == 2 % if is cancer
+           wt_cancer = wt_cancer + B(j);
+       else
+           wt_healthy = wt_healthy + B(j);
+       end
+    end
+
+    if (wt_cancer > wt_healthy)
+        test_set_prediction_overall(i,:) = [2 wt_cancer];
+    else
+        test_set_prediction_overall(i,:) = [1 wt_cancer]; % TODO: should this not be wt_healthy?!!?!?!
+    end
+  end
+  predictions_test = test_set_prediction_overall(:, 1)';
+
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % 8. done, go treat yourself to something sugary!
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
+  fprintf('\n-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- \n');
+  fprintf('\njigar talaaaaaa!!!\n');
+  TP = sum((labels_test == predictions_test) .* (predictions_test == 2)); % TP
+  TN = sum((labels_test == predictions_test) .* (predictions_test == 1)); % TN
+  FP = sum((labels_test ~= predictions_test) .* (predictions_test == 2)); % FP
+  FN = sum((labels_test ~= predictions_test) .* (predictions_test == 1)); % FN
+  fprintf('TP: %d', TP);
+  fprintf('TN: %d', TN);
+  fprintf('FP: %d', FP);
+  fprintf('FN: %d', FN);
+  fprintf('\n-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- \n\n');
+  fprintf('Acc: %3.2f\n', (TP + TN) / (TP + TN + FP + FN));
+  fprintf('Sens: %3.2f\n', TP / (TP + FN));
+  fprintf('Spec: %3.2f\n', TN / (TN + FP));
+  fprintf('\n\n-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- \n');
 
 
 
@@ -269,7 +325,16 @@ function [images, labels] = getSimpleNNBatch(imdb, batch)
   labels = imdb.images.labels(1,batch);
   if rand > 0.5, images=fliplr(images); end
 
-
+% -------------------------------------------------------------------------
+function predictions = getPredictionsFromNetOnImdb(net, imdb)
+% -------------------------------------------------------------------------
+  [net, info] = cnn_train(net, imdb, getBatch(), ...
+    'errorFunction', 'multiclass-prostate', ...
+    'debugFlag', false, ...
+    'continue', false, ...
+    'numEpochs', 1, ...
+    'val', find(imdb.images.set == 3));
+  predictions = info.predictions;
 
 
 
