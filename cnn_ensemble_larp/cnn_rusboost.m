@@ -118,7 +118,7 @@ function main_cnn_rusboost()
 
   while t <= T
 
-      fprintf('\n[INFO] Boosting iteration #%d...\n', t);
+      fprintf('\n[INFO] Boosting iteration #%d (attempt %d)...\n', t, count);
 
       % Resampling NEG_DATA with weights of positive example
       % TODO: oversample / repeat training samples based on W(t - 1)
@@ -261,6 +261,10 @@ function main_cnn_rusboost()
     fprintf('\n[INFO] Getting test set predictions for model #%d (healthy: %d, cancer: %d)...\n', i, data_test_healthy_count, data_test_cancer_count);
     net = H{i};
     test_set_predictions_per_model{i} = getPredictionsFromNetOnImdb(net, test_imdb);
+    [acc, sens, spec] = getAccSensSpec(labels_test, test_set_predictions_per_model{i});
+    fprintf('[INFO] Acc: %3.2f\n', acc);
+    fprintf('[INFO] Sens: %3.2f\n', sens);
+    fprintf('[INFO] Spec: %3.2f\n', spec);
   end
 
   for i = 1:data_test_count
@@ -298,19 +302,11 @@ function main_cnn_rusboost()
   fprintf('TN: %d\n', TN);
   fprintf('FP: %d\n', FP);
   fprintf('FN: %d\n', FN);
-  fprintf('\n\n-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- \n\n');
+  fprintf('\n-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- \n\n');
   fprintf('Acc: %3.2f\n', (TP + TN) / (TP + TN + FP + FN));
   fprintf('Sens: %3.2f\n', TP / (TP + FN));
   fprintf('Spec: %3.2f\n', TN / (TN + FP));
-  fprintf('\n\n-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- \n');
-
-
-
-
-
-
-
-
+  fprintf('\n-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- \n');
 
 
 % -------------------------------------------------------------------------
@@ -335,6 +331,17 @@ function predictions = getPredictionsFromNetOnImdb(net, imdb)
     'numEpochs', 1, ...
     'val', find(imdb.images.set == 3));
   predictions = info.predictions;
+
+% -------------------------------------------------------------------------
+function [acc, sens, spec] = getAccSensSpec(labels, predictions)
+% -------------------------------------------------------------------------
+  TP = sum((labels == predictions) .* (predictions == 2)); % TP
+  TN = sum((labels == predictions) .* (predictions == 1)); % TN
+  FP = sum((labels ~= predictions) .* (predictions == 2)); % FP
+  FN = sum((labels ~= predictions) .* (predictions == 1)); % FN
+  acc = (TP + TN) / (TP + TN + FP + FN);
+  sens = TP / (TP + FN);
+  spec = TN / (TN + FP);
 
 
 
