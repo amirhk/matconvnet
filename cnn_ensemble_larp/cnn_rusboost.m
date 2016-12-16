@@ -262,9 +262,9 @@ function main_cnn_rusboost()
     net = H{i};
     test_set_predictions_per_model{i} = getPredictionsFromNetOnImdb(net, test_imdb);
     [acc, sens, spec] = getAccSensSpec(labels_test, test_set_predictions_per_model{i});
-    fprintf('[INFO] Acc: %3.2f\n', acc);
-    fprintf('[INFO] Sens: %3.2f\n', sens);
-    fprintf('[INFO] Spec: %3.2f\n', spec);
+    fprintf('\t[INFO] Acc: %3.2f\n', acc);
+    fprintf('\t[INFO] Sens: %3.2f\n', sens);
+    fprintf('\t[INFO] Spec: %3.2f\n', spec);
   end
 
   for i = 1:data_test_count
@@ -287,25 +287,16 @@ function main_cnn_rusboost()
         test_set_prediction_overall(i,:) = [1 wt_cancer]; % TODO: should this not be wt_healthy?!!?!?!
     end
   end
-  predictions_test = test_set_prediction_overall(:, 1)';
 
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % 8. done, go treat yourself to something sugary!
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   fprintf('\n-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- \n');
-  fprintf('\njigar talaaaaaa!!!\n');
-  TP = sum((labels_test == predictions_test) .* (predictions_test == 2)); % TP
-  TN = sum((labels_test == predictions_test) .* (predictions_test == 1)); % TN
-  FP = sum((labels_test ~= predictions_test) .* (predictions_test == 2)); % FP
-  FN = sum((labels_test ~= predictions_test) .* (predictions_test == 1)); % FN
-  fprintf('TP: %d\n', TP);
-  fprintf('TN: %d\n', TN);
-  fprintf('FP: %d\n', FP);
-  fprintf('FN: %d\n', FN);
-  fprintf('\n-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- \n\n');
-  fprintf('Acc: %3.2f\n', (TP + TN) / (TP + TN + FP + FN));
-  fprintf('Sens: %3.2f\n', TP / (TP + FN));
-  fprintf('Spec: %3.2f\n', TN / (TN + FP));
+  predictions_test = test_set_prediction_overall(:, 1)';
+  [acc, sens, spec] = getAccSensSpec(labels_test, predictions_test);
+  fprintf('\t[INFO] Overall Acc: %3.2f\n', acc);
+  fprintf('\t[INFO] Overall Sens: %3.2f\n', sens);
+  fprintf('\t[INFO] Overall Spec: %3.2f\n', spec);
   fprintf('\n-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- \n');
 
 
