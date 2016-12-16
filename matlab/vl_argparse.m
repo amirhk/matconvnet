@@ -97,7 +97,7 @@ for i = 1:numel(params)
     end
   else
     if nargout <= 1
-      error('Uknown parameter ''%s''', params{i}) ;
+      error('Unknown parameter ''%s''', params{i}) ;
     else
       args = horzcat(args, {params{i}, values{i}}) ;
     end
