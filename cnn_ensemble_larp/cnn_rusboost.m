@@ -4,12 +4,11 @@ function [B, H] = main_cnn_rusboost()
   % 0. some important parameter definition
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-  opts.T = 5; % number of boosting iterations
-  % E = 50; % number of epochs() % TODO: currently can't be used...
+  opts.iteration_count = 5; % number of boosting iterations
   opts.dataset = 'prostate';
   opts.networkArch = 'prostatenet';
   opts.backpropDepth = 4;
-  opts.weightInitSource = 'gen';  % {'load' | 'gen'}
+  opts.weightInitSource = 'gen';
   opts.weightInitSequence = {'compRand', 'compRand', 'compRand'};
   opts.random_undersampling_ratio = (65/35);
 
@@ -103,7 +102,7 @@ function [B, H] = main_cnn_rusboost()
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   printOutputSeparator();
   all_model_infos = {};
-  while t <= opts.T
+  while t <= opts.iteration_count
 
     fprintf('\n[INFO] Boosting iteration #%d (attempt %d)...\n', t, count);
 
@@ -191,7 +190,7 @@ function [B, H] = main_cnn_rusboost()
 
     % At the final iteration there is no need to update the weights any
     % further
-    if t == opts.T
+    if t == opts.iteration_count
         break;
     end
 
@@ -214,10 +213,6 @@ function [B, H] = main_cnn_rusboost()
 
     fprintf('\t[INFO] Saving model and info... ');
     [acc, sens, spec] = getAccSensSpec(labels_train, predictions);
-    % all_model_infos{t}.TP = ;
-    % all_model_infos{t}.TN = ;
-    % all_model_infos{t}.FP = ;
-    % all_model_infos{t}.FN = ;
     all_model_infos{t}.model_net = H{t};
     all_model_infos{t}.model_loss = L(t);
     all_model_infos{t}.model_weight = B(t);
@@ -244,11 +239,6 @@ function [B, H] = main_cnn_rusboost()
   % The final hypothesis is calculated and tested on the test set
   % simulteneously.
 
-  % Normalizing B
-  % sum_B = sum(B);
-  % for i = 1:size(B,2)
-  %    B(i) = B(i) / sum_B;
-  % end
   B = B / sum(B);
 
   test_set_prediction_overall = zeros(data_test_count, 2);
@@ -297,8 +287,6 @@ function [B, H] = main_cnn_rusboost()
   fprintf('[INFO] Overall Sens: %3.2f\n', sens);
   fprintf('[INFO] Overall Spec: %3.2f\n', spec);
   printOutputSeparator();
-
-
 
 % -------------------------------------------------------------------------
 function [resampled_data, resampled_labels] = resampleData(data, labels, weights, ratio)
@@ -385,7 +373,6 @@ function [images, labels] = getSimpleNNBatch(imdb, batch)
 function predictions = getPredictionsFromNetOnImdb(net, imdb)
 % -------------------------------------------------------------------------
   [net, info] = cnn_train(net, imdb, getBatch(), ...
-    'errorFunction', 'multiclass-prostate', ...
     'debugFlag', false, ...
     'continue', false, ...
     'numEpochs', 1, ...
@@ -395,10 +382,12 @@ function predictions = getPredictionsFromNetOnImdb(net, imdb)
 % -------------------------------------------------------------------------
 function [acc, sens, spec] = getAccSensSpec(labels, predictions)
 % -------------------------------------------------------------------------
-  TP = sum((labels == predictions) .* (predictions == 2)); % TP
-  TN = sum((labels == predictions) .* (predictions == 1)); % TN
-  FP = sum((labels ~= predictions) .* (predictions == 2)); % FP
-  FN = sum((labels ~= predictions) .* (predictions == 1)); % FN
+  positive_class_num = 2;
+  negative_class_num = 1;
+  TP = sum((labels == predictions) .* (predictions == positive_class_num)); % TP
+  TN = sum((labels == predictions) .* (predictions == negative_class_num)); % TN
+  FP = sum((labels ~= predictions) .* (predictions == positive_class_num)); % FP
+  FN = sum((labels ~= predictions) .* (predictions == negative_class_num)); % FN
   acc = (TP + TN) / (TP + TN + FP + FN);
   sens = TP / (TP + FN);
   spec = TN / (TN + FP);
