@@ -176,7 +176,7 @@ function main_cnn_rusboost()
               loss = loss + W(t, i);
           end
       end
-      fprintf('done! Loss: %6.5f\n', loss);
+      fprintf('Loss: %6.5f\n', loss);
 
       % If count exceeds a pre-defined threshold (5 in the current
       % implementation), the loop is broken and rolled back to the state
@@ -294,11 +294,11 @@ function main_cnn_rusboost()
   TN = sum((labels_test == predictions_test) .* (predictions_test == 1)); % TN
   FP = sum((labels_test ~= predictions_test) .* (predictions_test == 2)); % FP
   FN = sum((labels_test ~= predictions_test) .* (predictions_test == 1)); % FN
-  fprintf('TP: %d', TP);
-  fprintf('TN: %d', TN);
-  fprintf('FP: %d', FP);
-  fprintf('FN: %d', FN);
-  fprintf('\n-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- \n\n');
+  fprintf('TP: %d\n', TP);
+  fprintf('TN: %d\n', TN);
+  fprintf('FP: %d\n', FP);
+  fprintf('FN: %d\n', FN);
+  fprintf('\n\n-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- \n\n');
   fprintf('Acc: %3.2f\n', (TP + TN) / (TP + TN + FP + FN));
   fprintf('Sens: %3.2f\n', TP / (TP + FN));
   fprintf('Spec: %3.2f\n', TN / (TN + FP));

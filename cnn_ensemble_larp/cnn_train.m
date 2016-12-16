@@ -91,7 +91,7 @@ function [net, info] = cnn_train(net, imdb, getBatch, varargin)
       spmd, gpuDevice(opts.gpus(labindex)), end
     end
   elseif numGpus == 1
-    gpuDevice(opts.gpus)
+    gpuDevice(opts.gpus);
   end
   if exist(opts.memoryMapFile), delete(opts.memoryMapFile); end
 
@@ -120,7 +120,17 @@ function [net, info] = cnn_train(net, imdb, getBatch, varargin)
   % -------------------------------------------------------------------------
 
   if ~evaluateMode
+    if ~opts.debugFlag
+      fprintf('\t\t[INFO] processing epoch #');
+    end
     for epoch=1:opts.numEpochs
+      if ~opts.debugFlag
+        for j = 0:log10(epoch - 1)
+          fprintf('\b'); % delete previous counter display
+        end
+        fprintf('%02d', epoch);
+      end
+
       learningRate = opts.learningRate(min(epoch, numel(opts.learningRate)));
 
       % fast-forward to last checkpoint
@@ -164,7 +174,6 @@ function [net, info] = cnn_train(net, imdb, getBatch, varargin)
         n = numel(eval(f));
         info.(f).speed(epoch) = n / stats.(f)(1) * max(1, numGpus);
         info.(f).objective(epoch) = stats.(f)(2) / n;
-        % info.(f).error(:,epoch) = stats.(f)(3:end) / n ;
         info.(f).error(:,epoch) = stats.(f)(3 : 3 + numel(opts.errorLabels) - 1) / n;
         % added below by amir
         info.(f).stats.TP = stats.(f)(end-5);
@@ -222,24 +231,21 @@ function [net, info] = cnn_train(net, imdb, getBatch, varargin)
         print(1, modelFigPath, '-dpdf');
       end
     end
+    if ~opts.debugFlag
+      fprintf('\n');
+    end
   else
-    % train one epoch and validate
-    % train = opts.train(randperm(numel(opts.train))); % shuffle
+    % only to be used for validation
     epoch = 1;
     val = opts.val;
     if numGpus <= 1
-      % [net,stats.train] = evaluate_one_epoch_of_trained_network(opts, getBatch, epoch, train, learningRate, imdb, net);
       [predictions, labels] = evaluate_one_epoch_of_trained_network(opts, getBatch, epoch, val, 0, imdb, net);
     else
       spmd(numGpus)
-        % [net_, stats_train_] = evaluate_one_epoch_of_trained_network(opts, getBatch, epoch, train, learningRate, imdb, net);
         [predictions_, labels_] = evaluate_one_epoch_of_trained_network(opts, getBatch, epoch, val, 0, imdb, net);
       end
       % TODO: WARNING: because the returned predictions could be coming from
       % multiple GPUs, the ordering of the predicited class may be fucked!
-      % net = net_{1};
-      % stats.train = sum([stats_train_{:}],2);
-      % stats.val = sum([stats_val_{:}],2);
       predictions = cat(2, predictions_{:});
       labels = cat(2, labels_{:});
     end
@@ -323,15 +329,6 @@ function err = error_none(opts, labels, res)
 % -------------------------------------------------------------------------
 function  [net_cpu,stats,prof] = process_epoch(opts, getBatch, epoch, subset, learningRate, imdb, net_cpu)
 % -------------------------------------------------------------------------
-  if ~opts.debugFlag
-    if learningRate == 0
-      set = 'val';
-    else
-      set = 'train';
-    end
-    fprintf('\t\t[INFO] processing epoch %03d (%s)... ', epoch, set);
-  end
-
   % move CNN to GPU as needed
   numGpus = numel(opts.gpus);
   if numGpus >= 1
@@ -472,10 +469,6 @@ function  [net_cpu,stats,prof] = process_epoch(opts, getBatch, epoch, subset, le
     net_cpu = net;
   end
 
-  if ~opts.debugFlag
-    fprintf('done!\n');
-  end
-
 % -------------------------------------------------------------------------
 function [net,res] = accumulate_gradients(opts, lr, batchSize, net, res, mmap)
 % -------------------------------------------------------------------------
@@ -551,19 +544,9 @@ function write_gradients(mmap, net, res)
     end
   end
 
-
 % -------------------------------------------------------------------------
 function [all_predictions, all_labels] = evaluate_one_epoch_of_trained_network(opts, getBatch, epoch, subset, learningRate, imdb, net_cpu)
 % -------------------------------------------------------------------------
-  if ~opts.debugFlag
-    if learningRate == 0
-      set = 'val';
-    else
-      set = 'train';
-    end
-    fprintf('\t\t[INFO] processing epoch %03d (%s)... ', epoch, set);
-  end
-
   % move CNN to GPU as needed
   numGpus = numel(opts.gpus);
   if numGpus >= 1
@@ -586,7 +569,6 @@ function [all_predictions, all_labels] = evaluate_one_epoch_of_trained_network(o
   end
   res = [];
   mmap = [];
-  % stats = [];
   all_predictions = [];
   all_labels = [];
 
@@ -632,31 +614,8 @@ function [all_predictions, all_labels] = evaluate_one_epoch_of_trained_network(o
                         'sync', opts.sync, ...
                         'cudnn', opts.cudnn);
 
-      % accumulate training errors
-      % error = sum([ ...
-      %   error, ...
-      %   [ ...
-      %     sum(double(gather(res(end).x))); ...
-      %     reshape(opts.errorFunction(opts, labels, res),[],1); ...
-      %   ] ...
-      % ], 2);
-
-
-
-
-
-
-
-
-
       predictions = gather(res(end-1).x);
       [~,predictions] = sort(predictions, 3, 'descend');
-
-      % be resilient to badly formatted labels
-      if numel(labels) == size(predictions, 4)
-        labels = reshape(labels,1,1,1,[]);
-      end
-
 
       all_predictions = cat( ...
         2, ...
@@ -667,76 +626,12 @@ function [all_predictions, all_labels] = evaluate_one_epoch_of_trained_network(o
         all_labels, ...
         reshape(labels, 1, []));
 
-
-
-
-
       numDone = numDone + numel(batch);
     end
-
-    % gather and accumulate gradients across labs
-    % if training
-    %   if numGpus <= 1
-    %     [net,res] = accumulate_gradients(opts, learningRate, batchSize, net, res);
-    %   else
-    %     if isempty(mmap)
-    %       mmap = map_gradients(opts.memoryMapFile, net, res, numGpus);
-    %     end
-    %     write_gradients(mmap, net, res);
-    %     labBarrier();
-    %     [net,res] = accumulate_gradients(opts, learningRate, batchSize, net, res, mmap);
-    %   end
-    % end
-
-    % print learning statistics
-    % batchTime = toc(batchTime);
-  %   stats = sum([stats,[batchTime; error]],2); % works even when stats=[]
-  %   speed = batchSize/batchTime;
-
-  %   if opts.debugFlag
-  %     fprintf(' %.2f s (%.1f data/s)', batchTime, speed);
-  %     n = (t + batchSize - 1) / max(1,numlabs);
-  %     fprintf(' obj:%.3g', stats(2)/n);
-  %     for i=1:numel(opts.errorLabels)
-  %       fprintf(' %s:%.3g', opts.errorLabels{i}, stats(i+2)/n);
-  %     end
-  %     fprintf(' [%d/%d]', numDone, batchSize);
-  %     fprintf('\n');
-  %   end
-
-  %   % debug info
-  %   if opts.plotDiagnostics && numGpus <= 1
-  %     figure(2); vl_simplenn_diagnose(net,res); drawnow;
-  %   end
-  % end
-  % TP = 0; %stats(end-3);
-  % TN = 0; %stats(end-2);
-  % FP = 0; %stats(end-1);
-  % FN = 0; %stats(end-0);
-  % stats(end+1) = 0; %TP / (TP + FN);
-  % stats(end+1) = 0; %TN / (TN + FP);
-  % if opts.debugFlag
-  %   fprintf('\n --- --- --- --- --- --- --- --- --- --- --- --- --- \n\n');
-  %   fprintf('[INFO] TP: %d\n', TP);
-  %   fprintf('[INFO] TN: %d\n', TN);
-  %   fprintf('[INFO] FP: %d\n', FP);
-  %   fprintf('[INFO] FN: %d\n', FN);
-  %   fprintf('[INFO] Sensitivity: %6.5f\n', stats(end-1));
-  %   fprintf('[INFO] Specificity: %6.5f\n', stats(end));
-  %   fprintf('\n --- --- --- --- --- --- --- --- --- --- --- --- --- \n\n');
   end
-
-  % if nargout > 2
-  %   prof = mpiprofile('info');
-  %   mpiprofile off;
-  % end
 
   if numGpus >= 1
     net_cpu = vl_simplenn_move(net, 'cpu');
   else
     net_cpu = net;
-  end
-
-  if ~opts.debugFlag
-    fprintf('done!\n');
   end
