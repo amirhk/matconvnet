@@ -4,12 +4,22 @@ function [B, H] = main_cnn_rusboost()
   % 0. some important parameter definition
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-  T = 5; % number of boosting iterations
+  opts.T = 5; % number of boosting iterations
   % E = 50; % number of epochs() % TODO: currently can't be used...
-  backpropDepth = 4;
-  weightInitSource = 'gen';  % {'load' | 'gen'}
-  weightInitSequence = {'compRand', 'compRand', 'compRand'};
-  random_undersampling_ratio = (65/35);
+  opts.dataset = 'prostate';
+  opts.networkArch = 'prostatenet';
+  opts.backpropDepth = 4;
+  opts.weightInitSource = 'gen';  % {'load' | 'gen'}
+  opts.weightInitSequence = {'compRand', 'compRand', 'compRand'};
+  opts.random_undersampling_ratio = (65/35);
+
+  opts.imdbPath = fullfile(getDevPath(), '/matconvnet/data_1/_prostate/_saved_prostate_imdb.mat');
+  opts.timeString = sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
+  opts.experimentDirPath = sprintf('data_rusboost/rusboost-%s-%s-%s', opts.dataset, opts.networkArch, opts.timeString);
+  opts.allModelInfosPath = fullfile(opts.experimentDirPath, 'all_model_infos.mat');
+  if ~exist(opts.experimentDirPath)
+    mkdir(opts.experimentDirPath);
+  end
 
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % 1. take as input a pre-processed IMDB (augment cancer in training set, that's it!), say
@@ -18,7 +28,7 @@ function [B, H] = main_cnn_rusboost()
   % TODO: this can be extended to be say 10-fold ensemble larp, then average the folds
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   fprintf('[INFO] Loading saved imdb... ');
-  imdb = load(fullfile(getDevPath(), '/matconvnet/data_1/_prostate/_saved_prostate_imdb.mat'));
+  imdb = load(opts.imdbPath);
   imdb = imdb.imdb;
   fprintf('done!\n');
 
@@ -78,10 +88,10 @@ function [B, H] = main_cnn_rusboost()
   training_resampled_imdb.images.set = [];    % filled in below
   training_resampled_imdb.meta.sets = {'train', 'val', 'test'};
 
-  training_test_imdb.images.data = data_train;
-  training_test_imdb.images.labels = labels_train;
-  training_test_imdb.images.set = 3 * ones(length(labels_train), 1);
-  training_test_imdb.meta.sets = {'train', 'val', 'test'};
+  validation_imdb.images.data = data_train;
+  validation_imdb.images.labels = labels_train;
+  validation_imdb.images.set = 3 * ones(length(labels_train), 1);
+  validation_imdb.meta.sets = {'train', 'val', 'test'};
 
   test_imdb.images.data = data_test;
   test_imdb.images.labels = labels_test;
@@ -92,15 +102,15 @@ function [B, H] = main_cnn_rusboost()
   % 4. go through T iterations of RUSBoost, each of which trains a CNN over E epochs
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   printOutputSeparator();
-  while t <= T
+  all_model_infos = {};
+  while t <= opts.T
 
     fprintf('\n[INFO] Boosting iteration #%d (attempt %d)...\n', t, count);
 
     % Resampling NEG_DATA with weights of positive example
-    % TODO: oversample / repeat training samples based on W(t - 1)
     fprintf('\t[INFO] Resampling healthy and cancer data (ratio = 65/35)... ');
     [resampled_data, resampled_labels] = ...
-      resampleData(data_train, labels_train, W(t, :), random_undersampling_ratio);
+      resampleData(data_train, labels_train, W(t, :), opts.random_undersampling_ratio);
     fprintf('done!\n');
 
     training_resampled_imdb.images.data = single(resampled_data);
@@ -117,11 +127,11 @@ function [B, H] = main_cnn_rusboost()
      numel(find(resampled_labels == 2)));
     [net, info] = cnn_amir( ...
       'imdb', training_resampled_imdb, ...
-      'dataset', 'prostate', ...
-      'networkArch', 'prostatenet', ...
-      'backpropDepth', backpropDepth, ...
-      'weightInitSource', weightInitSource, ...
-      'weightInitSequence', weightInitSequence, ...
+      'dataset', opts.dataset, ...
+      'networkArch', opts.networkArch, ...
+      'backpropDepth', opts.backpropDepth, ...
+      'weightInitSource', opts.weightInitSource, ...
+      'weightInitSequence', opts.weightInitSequence, ...
       'debugFlag', false);
     % fprintf('\tdone!\n');
 
@@ -130,7 +140,7 @@ function [B, H] = main_cnn_rusboost()
      data_train_cancer_count);
     % IMPORTANT NOTE: we randomly undersample when training a model, but then,
     % we use all of the training samples (in their order) to update weights.
-    predictions = getPredictionsFromNetOnImdb(net, training_test_imdb);
+    predictions = getPredictionsFromNetOnImdb(net, validation_imdb);
     % fprintf('done!\n');
 
     % Computing the pseudo loss of hypothesis 'model'
@@ -181,7 +191,7 @@ function [B, H] = main_cnn_rusboost()
 
     % At the final iteration there is no need to update the weights any
     % further
-    if t == T
+    if t == opts.T
         break;
     end
 
@@ -201,6 +211,27 @@ function [B, H] = main_cnn_rusboost()
     for i = 1:data_train_count
         W(t + 1, i) = W(t + 1, i) / sum_W;
     end
+
+    fprintf('\t[INFO] Saving model and info... ');
+    [acc, sens, spec] = getAccSensSpec(labels_train, predictions);
+    % all_model_infos{t}.TP = ;
+    % all_model_infos{t}.TN = ;
+    % all_model_infos{t}.FP = ;
+    % all_model_infos{t}.FN = ;
+    all_model_infos{t}.model_net = H{t};
+    all_model_infos{t}.model_loss = L(t);
+    all_model_infos{t}.model_weight = B(t);
+    all_model_infos{t}.perf_accuracy = acc;
+    all_model_infos{t}.perf_sensitivity = sens;
+    all_model_infos{t}.perf_specificity = spec;
+    all_model_infos{t}.train_healthy_count = numel(find(resampled_labels == 1));
+    all_model_infos{t}.train_cancer_count = numel(find(resampled_labels == 2));
+    all_model_infos{t}.validation_healthy_count = data_train_healthy_count;
+    all_model_infos{t}.validation_cancer_count = data_train_cancer_count;
+    all_model_infos{t}.validation_predictions = labels_train;
+    all_model_infos{t}.validation_labels = labels_train;
+    save(opts.allModelInfosPath, 'all_model_infos');
+    fprintf('done!\n');
 
     % Incrementing loop counter
     t = t + 1;
