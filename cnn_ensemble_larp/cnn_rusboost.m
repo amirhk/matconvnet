@@ -417,7 +417,7 @@ function testAllModelsOnTestImdb(all_model_infos, imdb)
     wt_healthy = 0; % class 1
     wt_cancer = 0; % class 2
     for j = 1:size(H, 2) % looping through all trained networks
-       p = test_set_predictions_per_model{j}(1);
+       p = test_set_predictions_per_model{j}(i);
        if p == 2 % if is cancer
            wt_cancer = wt_cancer + B(j);
        else
