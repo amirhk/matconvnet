@@ -1,15 +1,14 @@
 % -------------------------------------------------------------------------
 function imdb = constructProstateImdb(opts)
 % -------------------------------------------------------------------------
-  fprintf('[INFO] Constructing / loading Prostate imdb.\n');
-
+  afprintf(sprintf('[INFO] Constructing / loading Prostate imdb.\n'));
   all_patient_indices = 1:1:104;
   switch opts.leaveOutType
     case 'special'
       train_patient_indices = setdiff(all_patient_indices, opts.leaveOutIndices);
       train_balance = false;
       train_augment_healthy = 'none';
-      train_augment_cancer = 'rotate-flip';
+      train_augment_cancer = 'none';
       test_patient_indices = opts.leaveOutIndices;
       test_balance = false;
       test_augment_healthy = 'none';
@@ -52,10 +51,10 @@ function imdb = constructProstateImdb(opts)
         mkdir(opts.imdbBalancedDir);
       end
       if exist(opts.imdbBalancedPath, 'file')
-        fprintf('[INFO] Loading Prostate imdb...\n');
+        afprintf(sprintf('[INFO] Loading Prostate imdb...\n'));
         imdb = load(opts.imdbBalancedPath);
       else
-        fprintf('[INFO] No saved Prostate imdb found, creating new one...\n');
+        afprintf(sprintf('[INFO] No saved Prostate imdb found, creating new one...\n'));
         % 1.5. if not saved, create it
         train_patient_indices = all_patient_indices;
         train_balance = true;
@@ -96,7 +95,7 @@ function imdb = constructProstateImdb(opts)
       imdb.images.set(tmp(first_random_shuffle)) = 3;
   end
 
-  fprintf('[INFO] Finished constructing / loading Prostate imdb.\n');
+  afprintf(sprintf('[INFO] Finished constructing / loading Prostate imdb.\n'));
 
 % -------------------------------------------------------------------------
 function imdb = constructProstateImdbHelper( ...
@@ -124,13 +123,13 @@ function imdb = constructProstateImdbHelper( ...
   };
 
   % TRAIN
-  fprintf('\n== == == == == == == == == == == == ==  TRAIN  == == == == == == == == == == == == == == == == == == == == ==\n\n');
+  afprintf(sprintf('== == == == == == == == == == == == ==  TRAIN  == == == == == == == == == == == == == == == == == == == == ==\n\n'));
   [data_train, labels_train] = loadSamples(opts, train_patient_indices, modalitites_in_use, label_class);
   [data_train, labels_train] = balanceData(data_train, labels_train, train_balance);
   [data_train, labels_train] = augmentData(data_train, labels_train, train_augment_healthy, train_augment_cancer);
 
   % TEST
-  fprintf('\n== == == == == == == == == == == == ==  TEST  == == == == == == == == == == == == == == == == == == == == ==\n\n');
+  afprintf(sprintf('== == == == == == == == == == == == ==  TEST  == == == == == == == == == == == == == == == == == == == == ==\n\n'));
   [data_test, labels_test] = loadSamples(opts, test_patient_indices, modalitites_in_use, label_class);
   [data_test, labels_test] = balanceData(data_test, labels_test, test_balance);
   [data_test, labels_test] = augmentData(data_test, labels_test, test_augment_healthy, test_augment_cancer);
@@ -157,20 +156,20 @@ function imdb = constructProstateImdbHelper( ...
   dataMean = mean(data(:,:,:,set == 1), 4);
   data = bsxfun(@minus, data, dataMean);
 
-  fprintf('\n== == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == ==\n\n');
+  afprintf(sprintf('== == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == ==\n\n'));
 
   if opts.contrastNormalization
-    fprintf('[INFO] contrast-normalizing data... ');
+    afprintf(sprintf('[INFO] contrast-normalizing data... '));
     z = reshape(data,[],totalNumberOfSamples);
     z = bsxfun(@minus, z, mean(z,1));
     n = std(z,0,1);
     z = bsxfun(@times, z, mean(n) ./ max(n, 40));
     data = reshape(z, 32, 32, numel(modalitites_in_use), []);
-    fprintf('done.\n');
+    afprintf(sprintf('done.\n'));
   end
 
   % if opts.whitenData
-  %   fprintf('[INFO] whitening data... ');
+  %   afprintf(sprintf('[INFO] whitening data... '));
   %   z = reshape(data,[],totalNumberOfSamples);
   %   W = z(:,set == 1)*z(:,set == 1)'/totalNumberOfSamples;
   %   [V,D] = eig(W);
@@ -179,23 +178,23 @@ function imdb = constructProstateImdbHelper( ...
   %   en = sqrt(mean(d2));
   %   z = V*diag(en./max(sqrt(d2), 10))*V'*z;
   %   data = reshape(z, 32, 32, numberOfModalities, []);
-  %   fprintf('done.\n');
+  %   afprintf(sprintf('done.\n'));
   % end
 
-  fprintf('\n== == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == ==\n\n');
+  afprintf(sprintf('== == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == ==\n\n'));
 
-  fprintf('[INFO] total number of samples: %d\n', totalNumberOfSamples);
-  fprintf('[INFO] number of `train` data - healthy: %d\n', size(data_train(:,:,:,labels_train == 1),4));
-  fprintf('[INFO] number of `train` data - cancer: %d\n', size(data_train(:,:,:,labels_train == 2),4));
-  fprintf('[INFO] number of `test` data - healthy: %d\n', size(data_test(:,:,:,labels_test == 1),4));
-  fprintf('[INFO] number of `test` data - cancer: %d\n', size(data_test(:,:,:,labels_test == 2),4));
+  afprintf(sprintf('[INFO] total number of samples: %d\n', totalNumberOfSamples));
+  afprintf(sprintf('[INFO] number of `train` data - healthy: %d\n', size(data_train(:,:,:,labels_train == 1),4)));
+  afprintf(sprintf('[INFO] number of `train` data - cancer: %d\n', size(data_train(:,:,:,labels_train == 2),4)));
+  afprintf(sprintf('[INFO] number of `test` data - healthy: %d\n', size(data_test(:,:,:,labels_test == 1),4)));
+  afprintf(sprintf('[INFO] number of `test` data - cancer: %d\n', size(data_test(:,:,:,labels_test == 2),4)));
 
   imdb.images.data = data;
   imdb.images.labels = single(labels);
   imdb.images.set = set;
   imdb.meta.sets = {'train', 'val', 'test'};
   % imdb.meta.classes = ...
-  fprintf('done!\n\n');
+  afprintf(sprintf('done!\n\n'));
 
 % --------------------------------------------------------------------
 function [data, labels] = loadSamples(opts, patient_indices_in_set, modalitites_in_use, label_class)
@@ -215,7 +214,6 @@ function [data, labels] = loadSamples(opts, patient_indices_in_set, modalitites_
 
   total_suspicious_tissue_count_in_set = 0;
   all_patients_list = dir(fullfile(opts.dataDir, 'P0*'));
-  fprintf('\t[INFO] Total suspicious tissue count for %d patients: ', length(patient_indices_in_set));
   for i = patient_indices_in_set
     single_patient_directory = char(all_patients_list(i).name);
     suspicious_tissues_for_patient = dir(fullfile(opts.dataDir, char(single_patient_directory), '*_Candidate*'));
@@ -223,7 +221,9 @@ function [data, labels] = loadSamples(opts, patient_indices_in_set, modalitites_
       total_suspicious_tissue_count_in_set = total_suspicious_tissue_count_in_set + 1;
     end
   end
-  fprintf('%d\n', total_suspicious_tissue_count_in_set);
+  afprintf(sprintf('[INFO] Total suspicious tissue count (healthy or cancer) for %d patients: %d\n', ...
+    numel(patient_indices_in_set), ...
+    total_suspicious_tissue_count_in_set));
 
   % alloc memory for the matrices
   data = zeros(32, 32, modality_count, total_suspicious_tissue_count_in_set);
@@ -235,10 +235,15 @@ function [data, labels] = loadSamples(opts, patient_indices_in_set, modalitites_
   total_patient_count_in_set = length(patient_indices_in_set);
   sample_count = 0;
   patient_count = 0;
-  fprintf('\t[INFO] Loading patients...\n');
+  afprintf(sprintf('[INFO] Loading patients... #'));
   for i = patient_indices_in_set
     patient_count = patient_count + 1;
-    fprintf('\t\t[INFO] Loading up suspicious tissues from patient #%03d (%03d of %03d)... ', i, patient_count, total_patient_count_in_set);
+    for j = 0:log10(patient_count - 1) + 5 % + 5 because of ` / ###`
+      fprintf('\b'); % delete previous counter display
+    end
+    fprintf('%d / %d', patient_count, total_patient_count_in_set);
+
+    % afprintf(sprintf('[INFO] Loading up suspicious tissues from patient #%03d (%03d of %03d)... ', i, patient_count, total_patient_count_in_set));
     single_patient_directory = char(all_patients_list(i).name);
     suspicious_tissues_for_patient = dir(fullfile(opts.dataDir, single_patient_directory, '*_Candidate*'));
     for j = 1:length(suspicious_tissues_for_patient)
@@ -253,7 +258,7 @@ function [data, labels] = loadSamples(opts, patient_indices_in_set, modalitites_
       labels_gleason(1, sample_count) = suspicious_tissue.Gleason;
       labels_pirad(1, sample_count) = suspicious_tissue.PIRAD;
     end
-    fprintf('done.\n');
+    % afprintf(sprintf('done.\n'));
   end
   switch label_class
     case 'Gleason'
@@ -263,7 +268,7 @@ function [data, labels] = loadSamples(opts, patient_indices_in_set, modalitites_
   end
   % labels start from 1
   labels = labels + 1;
-  fprintf('\tdone.\n');
+  afprintf(sprintf('done.\n'));
 
 % --------------------------------------------------------------------
 function [new_data, new_labels] = balanceData(data, labels, should_balance)
@@ -272,23 +277,23 @@ function [new_data, new_labels] = balanceData(data, labels, should_balance)
     new_data = data;
     new_labels = labels;
   else
-    fprintf('\t[INFO] Balancing healthy and cancer tissues...\n');
-    fprintf('\t\t[INFO] Identified %d total tissues\n', size(data, 4));
+    afprintf(sprintf('[INFO] Balancing healthy and cancer tissues...\n'));
+    afprintf(sprintf('[INFO] Identified %d total tissues\n', size(data, 4)));
     healthy_data = data(:,:,:,labels == 1);
     cancer_data = data(:,:,:,labels == 2);
     healthy_count = size(healthy_data, 4);
     cancer_count = size(cancer_data, 4);
-    fprintf('\t\t\thealthy:  %d \n', healthy_count);
-    fprintf('\t\t\tcancer: %d \n', cancer_count);
+    afprintf(sprintf('healthy:  %d \n', healthy_count));
+    afprintf(sprintf('cancer: %d \n', cancer_count));
 
     % choose N random indices from healthy, where N = number of cancer tumors
-    fprintf('\t\t[INFO] Choosing %d out of %d healthy tissues... ', cancer_count, healthy_count);
+    afprintf(sprintf('[INFO] Choosing %d out of %d healthy tissues... ', cancer_count, healthy_count));
     ix = randperm(healthy_count);
     ix = ix(1:cancer_count);
     subsampled_healthy_data = healthy_data(:,:,:,ix);
     new_data = cat(4, subsampled_healthy_data, cancer_data);
     new_labels = [1*ones(1,size(subsampled_healthy_data, 4)) 2*ones(1,cancer_count)]; % same number of healthy and cancer now.
-    fprintf('done.\n');
+    afprintf(sprintf('done.\n'));
 
     % shuffle them so we have intermixed subsampled_healthy_data and cancer_data
     total_new_count = size(new_data, 4);
@@ -296,11 +301,11 @@ function [new_data, new_labels] = balanceData(data, labels, should_balance)
     new_data = new_data(:,:,:,ix);
     new_labels = new_labels(ix);
 
-    fprintf('\t\t[INFO] New data count: %d...\n', total_new_count);
-    fprintf('\t\t\thealthy:  %d \n', size(new_data(:,:,:,new_labels == 2), 4));
-    fprintf('\t\t\tcancer: %d \n', size(new_data(:,:,:,new_labels == 1), 4));
+    afprintf(sprintf('[INFO] New data count: %d...\n', total_new_count));
+    afprintf(sprintf('healthy:  %d \n', size(new_data(:,:,:,new_labels == 2), 4)));
+    afprintf(sprintf('cancer: %d \n', size(new_data(:,:,:,new_labels == 1), 4)));
 
-    fprintf('\tdone.\n');
+    afprintf(sprintf('done.\n'));
   end
 
 % --------------------------------------------------------------------
@@ -326,83 +331,87 @@ function [new_data, new_labels] = augmentData(data, labels, augment_healthy, aug
 % --------------------------------------------------------------------
 function [new_data] = augmentDataHelper(data_class, data, augment_type)
 % --------------------------------------------------------------------
-  fprintf('\t[INFO] Augmenting `%s` data (type: %s)...\n', data_class, augment_type);
-  fprintf('\t\t[INFO] Initial data count: %d.\n', size(data, 4));
-  rotation_angle = 45;
-  degrees = 0:rotation_angle:360 - rotation_angle;
+  if ~strcmp(augment_type, 'none')
+    afprintf(sprintf('[INFO] Augmenting `%s` data (type: %s)...\n', data_class, augment_type));
+    afprintf(sprintf('[INFO] Initial data count: %d.\n', size(data, 4)));
+    rotation_angle = 45;
+    degrees = 0:rotation_angle:360 - rotation_angle;
 
-  if strcmp(augment_type, 'special')
-    % randomly choose 120% of the inital size
-    percent = 150;
-    % so create 16x samples
-    fprintf('\t\t\tnum_degrees: %d.\n', length(degrees));
-    fprintf('\t\t\tnum_flips: %d.\n', 2);
-    new_data = zeros(size(data, 1), size(data, 2), size(data, 3), size(data, 4) * length(degrees) * 2);
-    for i = 1:size(data, 4)
-      for degree = degrees
-        new_index = (i - 1) * length(degrees) * 2 + (degree / rotation_angle) * 2 + 1;
+    if strcmp(augment_type, 'special')
+      % randomly choose 120% of the inital size
+      percent = 150;
+      % so create 16x samples
+      afprintf(sprintf('num_degrees: %d.\n', length(degrees)));
+      afprintf(sprintf('num_flips: %d.\n', 2));
+      new_data = zeros(size(data, 1), size(data, 2), size(data, 3), size(data, 4) * length(degrees) * 2);
+      for i = 1:size(data, 4)
+        for degree = degrees
+          new_index = (i - 1) * length(degrees) * 2 + (degree / rotation_angle) * 2 + 1;
+          new_index_left = new_index + 0;
+          new_index_right = new_index + 1;
+          rotated_image = imrotate(data(:,:,:,i), degree, 'crop');
+          new_data(:,:,:,new_index_left) = rotated_image;
+          new_data(:,:,:,new_index_right) = fliplr(rotated_image);
+        end
+      end
+      % shuffle them, and choose the first 120%
+      original_count = size(data, 4);
+      total_new_count = size(new_data, 4);
+      ix = randperm(total_new_count);
+      new_data = new_data(:,:,:,ix);
+      new_data = new_data(:,:,:,1:floor(original_count * percent / 100));
+    elseif strcmp(augment_type, 'rotate-flip')
+      afprintf(sprintf('num_degrees: %d.\n', length(degrees)));
+      afprintf(sprintf('num_flips: %d.\n', 2));
+      new_data = zeros(size(data, 1), size(data, 2), size(data, 3), size(data, 4) * length(degrees) * 2);
+      for i = 1:size(data, 4)
+        for degree = degrees
+          new_index = (i - 1) * length(degrees) * 2 + (degree / rotation_angle) * 2 + 1;
+          new_index_left = new_index + 0;
+          new_index_right = new_index + 1;
+          rotated_image = imrotate(data(:,:,:,i), degree, 'crop');
+          new_data(:,:,:,new_index_left) = rotated_image;
+          new_data(:,:,:,new_index_right) = fliplr(rotated_image);
+        end
+      end
+    elseif strcmp(augment_type, 'rotate')
+      afprintf(sprintf('num_degrees: %d.\n', length(degrees)));
+      new_data = zeros(size(data, 1), size(data, 2), size(data, 3), size(data, 4) * length(degrees));
+      for i = 1:size(data, 4)
+        for degree = degrees
+          new_index = (i - 1) * length(degrees) + (degree / rotation_angle) + 1;
+          rotated_image = imrotate(data(:,:,:,i), degree, 'crop');
+          new_data(:,:,:,new_index) = rotated_image;
+        end
+      end
+    elseif strcmp(augment_type, 'flip')
+      afprintf(sprintf('num_flips: %d.\n', 2));
+      new_data = zeros(size(data, 1), size(data, 2), size(data, 3), size(data, 4) * 2);
+      for i = 1:size(data, 4)
+        new_index = (i - 1) * 2 + 1;
         new_index_left = new_index + 0;
         new_index_right = new_index + 1;
-        rotated_image = imrotate(data(:,:,:,i), degree, 'crop');
-        new_data(:,:,:,new_index_left) = rotated_image;
-        new_data(:,:,:,new_index_right) = fliplr(rotated_image);
+        new_data(:,:,:,new_index_left) = data(:,:,:,i);
+        new_data(:,:,:,new_index_right) = fliplr(data(:,:,:,i));
       end
+    elseif strcmp(augment_type, 'none')
+      new_data = data;
+    else
+      afprintf(sprintf('\nWRONG!!!!!!!!\n\n'));
     end
-    % shuffle them, and choose the first 120%
-    original_count = size(data, 4);
+
+
+    % shuffle them so we have intermixed rotations and flippings of different images
     total_new_count = size(new_data, 4);
     ix = randperm(total_new_count);
     new_data = new_data(:,:,:,ix);
-    new_data = new_data(:,:,:,1:floor(original_count * percent / 100));
-  elseif strcmp(augment_type, 'rotate-flip')
-    fprintf('\t\t\tnum_degrees: %d.\n', length(degrees));
-    fprintf('\t\t\tnum_flips: %d.\n', 2);
-    new_data = zeros(size(data, 1), size(data, 2), size(data, 3), size(data, 4) * length(degrees) * 2);
-    for i = 1:size(data, 4)
-      for degree = degrees
-        new_index = (i - 1) * length(degrees) * 2 + (degree / rotation_angle) * 2 + 1;
-        new_index_left = new_index + 0;
-        new_index_right = new_index + 1;
-        rotated_image = imrotate(data(:,:,:,i), degree, 'crop');
-        new_data(:,:,:,new_index_left) = rotated_image;
-        new_data(:,:,:,new_index_right) = fliplr(rotated_image);
-      end
-    end
-  elseif strcmp(augment_type, 'rotate')
-    fprintf('\t\t\tnum_degrees: %d.\n', length(degrees));
-    new_data = zeros(size(data, 1), size(data, 2), size(data, 3), size(data, 4) * length(degrees));
-    for i = 1:size(data, 4)
-      for degree = degrees
-        new_index = (i - 1) * length(degrees) + (degree / rotation_angle) + 1;
-        rotated_image = imrotate(data(:,:,:,i), degree, 'crop');
-        new_data(:,:,:,new_index) = rotated_image;
-      end
-    end
-  elseif strcmp(augment_type, 'flip')
-    fprintf('\t\t\tnum_flips: %d.\n', 2);
-    new_data = zeros(size(data, 1), size(data, 2), size(data, 3), size(data, 4) * 2);
-    for i = 1:size(data, 4)
-      new_index = (i - 1) * 2 + 1;
-      new_index_left = new_index + 0;
-      new_index_right = new_index + 1;
-      new_data(:,:,:,new_index_left) = data(:,:,:,i);
-      new_data(:,:,:,new_index_right) = fliplr(data(:,:,:,i));
-    end
-  elseif strcmp(augment_type, 'none')
-    new_data = data;
+    % new_labels = new_labels(ix);
+
+    afprintf(sprintf('[INFO] Final data count: %d.\n', size(new_data, 4)));
+    afprintf(sprintf('done.\n'));
   else
-    fprintf('\n\nWRONG!!!!!!!!\n\n');
+    new_data = data;
   end
-
-
-  % shuffle them so we have intermixed rotations and flippings of different images
-  total_new_count = size(new_data, 4);
-  ix = randperm(total_new_count);
-  new_data = new_data(:,:,:,ix);
-  % new_labels = new_labels(ix);
-
-  fprintf('\t\t[INFO] Final data count: %d.\n', size(new_data, 4));
-  fprintf('\tdone.\n');
 
 % --------------------------------------------------------------------
 function imdb = testProstateImdbConstructor()

@@ -121,7 +121,7 @@ function [net, info] = cnn_train(net, imdb, getBatch, varargin)
 
   if ~evaluateMode
     if ~opts.debugFlag
-      fprintf('\t\t[INFO] processing epoch #');
+      afprintf(sprintf('[INFO] processing epoch #'));
     end
     for epoch=1:opts.numEpochs
       if ~opts.debugFlag
@@ -571,7 +571,7 @@ function [all_predictions, all_labels] = evaluate_one_epoch_of_trained_network(o
   all_labels = [];
 
   if ~opts.debugFlag
-    fprintf('\t\t[INFO] processed     %d samples', 0);
+    fprintf(sprintf('[INFO] processed     %d samples', 0));
   end
 
   for t=1:opts.batchSize:numel(subset)

@@ -2,16 +2,103 @@ function fh = cnnRusboost()
   % assign function handles so we can call these local functions from elsewhere
   fh.getInitialImdb = @getInitialImdb;
   fh.mainCNNRusboost = @mainCNNRusboost;
+  fh.kFoldCNNRusboost = @kFoldCNNRusboost;
   fh.testAllModelsOnTestImdb = @testAllModelsOnTestImdb;
 
+
+
 % -------------------------------------------------------------------------
-function [B, H] = mainCNNRusboost()
+function folds = kFoldCNNRusboost()
+% -------------------------------------------------------------------------
+  opts.numPatients = 104;
+  opts.numberOfFolds = 3;
+  afprintf(sprintf('[INFO] Running K-fold CNN Rusboost (K = %d)...\n', opts.numberOfFolds), 1);
+
+  patients_per_fold = ceil(opts.numPatients / opts.numberOfFolds);
+  random_patient_indices = randperm(104);
+  folds = {};
+
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % 1. randomly divide off patients into K folds
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  afprintf(sprintf('\n'));
+  afprintf(sprintf('[INFO] Randomly dividing patients into K folds...\n'));
+  for i = 1:opts.numberOfFolds
+    start_index = 1 + (i - 1) * patients_per_fold;
+    end_index = min(104, i * patients_per_fold);
+    folds.(sprintf('fold_%d', i)).patient_indices = random_patient_indices(start_index : end_index);
+  end
+
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % 2. create a non-balanced, non-augmented imdb for each fold
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  opts.dataDir = fullfile(getDevPath(), 'matconvnet/data_1/_prostate');
+  opts.imdbBalancedDir = fullfile(getDevPath(), 'matconvnet/data_1/balanced-prostate-prostatenet');
+  opts.imdbBalancedPath = fullfile(getDevPath(), 'matconvnet/data_1/balanced-prostate-prostatenet/imdb.mat');
+  opts.leaveOutType = 'special';
+  opts.contrastNormalization = true;
+  opts.whitenData = true;
+  for i = 1:opts.numberOfFolds
+    afprintf(sprintf('\n'));
+    afprintf(sprintf('[INFO] Constructing imdb for fold #%d...\n', i));
+    opts.leaveOutIndices = folds.(sprintf('fold_%d', i)).patient_indices;
+    imdb = constructProstateImdb(opts);
+    folds.(sprintf('fold_%d', i)).imdb = imdb;
+    afprintf(sprintf('[INFO] done!\n'));
+
+  end
+
+  opts.timeString = sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
+  experimentDirParentPath = fullfile('data_rusboost', sprintf('k-fold-rusboost-%s', opts.timeString));
+  for i = 1:opts.numberOfFolds
+    afprintf(sprintf('[INFO] Running cnn_rusboost on fold #%d...\n', i));
+    folds.(sprintf('fold_%d', i)).all_model_infos = mainCNNRusboost(folds.(sprintf('fold_%d', i)).imdb, experimentDirParentPath);
+  end
+  afprintf(sprintf('[INFO] Finished running K-fold CNN Rusboost (K = %d)...\n', opts.numberOfFolds), 1);
+
+  all_folds_acc = [];
+  all_folds_sens = [];
+  all_folds_spec = [];
+
+
+  for i = 1:opts.numberOfFolds
+    afprintf(sprintf('[INFO] Computing overall results for fold #%d...\n', i));
+    all_model_infos = folds.(sprintf('fold_%d', i)).all_model_infos;
+    imdb = folds.(sprintf('fold_%d', i)).imdb;
+    overall_fold_results = testAllModelsOnTestImdb(all_model_infos, imdb);
+    folds.(sprintf('fold_%d', i)).overall_fold_results = overall_fold_results;
+    all_folds_acc(i) = overall_fold_results.overall_acc;;
+    all_folds_sens(i) = overall_fold_results.overall_sens;;
+    all_folds_spec(i) = overall_fold_results.overall_spec;;
+  end
+
+  afprintf(sprintf('[INFO] k-fold acc avg: %3.2f std: %3.2f\n', avg(all_folds_acc), std(all_folds_acc)));
+  afprintf(sprintf('[INFO] k-fold sens avg: %3.2f std: %3.2f\n', avg(all_folds_sens), std(all_folds_sens)));
+  afprintf(sprintf('[INFO] k-fold spec avg: %3.2f std: %3.2f\n', avg(all_folds_spec), std(all_folds_spec)));
+
+% -------------------------------------------------------------------------
+function all_model_infos = mainCNNRusboost(imdb, experimentDirParentPath)
 % -------------------------------------------------------------------------
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % 0. some important parameter definition
+  % 0. take as input a pre-processed IMDB (augment cancer in training set, that's it!), say
+  %   train: 94 patients
+  %   test: 10 patients, ~1000 health, ~20 cancer
+  % TODO: this can be extended to be say 10-fold ensemble larp, then average the folds
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  if nargin == 0
+    imdb = getInitialImdb();
+    experimentDirParentPath = 'data_rusboost';
+  else
+    % TODO: only input currently designed for is imdb (for k-fold)!
+    imdb = imdb;
+    experimentDirParentPath = experimentDirParentPath;
+  end
+
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % 1. some important parameter definition
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-  opts.iteration_count = 500; % number of boosting iterations
+  opts.iteration_count = 3; % number of boosting iterations
   opts.dataset = 'prostate';
   opts.networkArch = 'prostatenet';
   opts.backpropDepth = 4;
@@ -20,19 +107,11 @@ function [B, H] = mainCNNRusboost()
   opts.random_undersampling_ratio = (65/35);
 
   opts.timeString = sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
-  opts.experimentDirPath = sprintf('data_rusboost/rusboost-%s-%s-%s', opts.dataset, opts.networkArch, opts.timeString);
+  opts.experimentDirPath = fullfile(experimentDirParentPath, sprintf('rusboost-%s-%s-%s', opts.dataset, opts.networkArch, opts.timeString));
   opts.allModelInfosPath = fullfile(opts.experimentDirPath, 'all_model_infos.mat');
   if ~exist(opts.experimentDirPath)
     mkdir(opts.experimentDirPath);
   end
-
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % 1. take as input a pre-processed IMDB (augment cancer in training set, that's it!), say
-  %   train: 94 patients
-  %   test: 10 patients, ~1000 health, ~20 cancer
-  % TODO: this can be extended to be say 10-fold ensemble larp, then average the folds
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  imdb = getInitialImdb();
 
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % 2. process the imdb to separate positive and negative samples (to be
@@ -54,14 +133,14 @@ function [B, H] = mainCNNRusboost()
   data_test_healthy_count = size(data_test_healthy, 4);
   data_test_cancer_count = size(data_test_cancer, 4);
 
-  fprintf('\t[INFO] TRAINING SET: total: %d, healthy: %d, cancer: %d\n', ...
+  afprintf(sprintf('[INFO] TRAINING SET: total: %d, healthy: %d, cancer: %d\n', ...
     data_train_count, ...
     data_train_healthy_count, ...
-    data_train_cancer_count);
-  fprintf('\t[INFO] TESTING SET: total: %d, healthy: %d, cancer: %d\n', ...
+    data_train_cancer_count));
+  afprintf(sprintf('[INFO] TESTING SET: total: %d, healthy: %d, cancer: %d\n', ...
     data_test_count, ...
     data_test_healthy_count, ...
-    data_test_cancer_count);
+    data_test_cancer_count));
 
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % 3. initialize training sample weights
@@ -97,14 +176,14 @@ function [B, H] = mainCNNRusboost()
   printOutputSeparator();
   all_model_infos = {};
   while t <= opts.iteration_count
-
-    fprintf('\n[INFO] Boosting iteration #%d (attempt %d)...\n', t, count);
+    afprintf(sprintf('\n'));
+    afprintf(sprintf('[INFO] Boosting iteration #%d (attempt %d)...\n', t, count));
 
     % Resampling NEG_DATA with weights of positive example
-    fprintf('\t[INFO] Resampling healthy and cancer data (ratio = 65/35)... ');
+    afprintf(sprintf('[INFO] Resampling healthy and cancer data (ratio = 65/35)... '));
     [resampled_data, resampled_labels] = ...
       resampleData(data_train, labels_train, W(t, :), opts.random_undersampling_ratio);
-    fprintf('done!\n');
+    afprintf(sprintf('done!\n'));
 
     training_resampled_imdb.images.data = single(resampled_data);
     training_resampled_imdb.images.labels = single(resampled_labels);
@@ -115,9 +194,9 @@ function [B, H] = mainCNNRusboost()
     training_resampled_imdb.images.labels = cat(2,training_resampled_imdb.images.labels, resampled_labels(end));
     training_resampled_imdb.images.set = cat(1, training_resampled_imdb.images.set, 3);
 
-    fprintf('\t[INFO] Training model (healthy: %d, cancer: %d)...\n', ...
+    afprintf(sprintf('[INFO] Training model (healthy: %d, cancer: %d)...\n', ...
       numel(find(resampled_labels == 1)), ...
-      numel(find(resampled_labels == 2)));
+      numel(find(resampled_labels == 2))));
     [net, info] = cnn_amir( ...
       'imdb', training_resampled_imdb, ...
       'dataset', opts.dataset, ...
@@ -126,18 +205,16 @@ function [B, H] = mainCNNRusboost()
       'weightInitSource', opts.weightInitSource, ...
       'weightInitSequence', opts.weightInitSequence, ...
       'debugFlag', false);
-    % fprintf('\tdone!\n');
 
-    fprintf('\t[INFO] Computing validation set predictions (healthy: %d, cancer: %d)...\n', ...
+    afprintf(sprintf('[INFO] Computing validation set predictions (healthy: %d, cancer: %d)...\n', ...
       data_train_healthy_count, ...
-      data_train_cancer_count);
+      data_train_cancer_count));
     % IMPORTANT NOTE: we randomly undersample when training a model, but then,
     % we use all of the training samples (in their order) to update weights.
     predictions = getPredictionsFromNetOnImdb(net, validation_imdb);
-    % fprintf('done!\n');
 
     % Computing the pseudo loss of hypothesis 'model'
-    fprintf('\t[INFO] Computing pseudo loss... ');
+    afprintf(sprintf('[INFO] Computing pseudo loss... '));
     cancer_to_healthy_ratio = 1 / (data_train_cancer_count / data_train_healthy_count);
     loss = 0;
     for i = 1:data_train_count
@@ -158,7 +235,7 @@ function [B, H] = mainCNNRusboost()
     %     end
     %   end
     % end
-    fprintf('Loss: %6.5f\n', loss);
+    afprintf(sprintf('Loss: %6.5f\n', loss));
 
     % If count exceeds a pre-defined threshold (5 in the current
     % implementation), the loop is broken and rolled back to the state
@@ -167,8 +244,8 @@ function [B, H] = mainCNNRusboost()
       L = L(1:t-1);
       H = H(1:t-1);
       B = B(1:t-1);
-      fprintf('\tToo many iterations have loss > 0.5\n');
-      fprintf('\tAborting boosting...\n');
+      afprintf(sprintf('Too many iterations have loss > 0.5\n'));
+      afprintf(sprintf('Aborting boosting...\n'));
       break;
     end
 
@@ -196,7 +273,7 @@ function [B, H] = mainCNNRusboost()
     % end
 
     % Updating weight
-    fprintf('\t[INFO] Updating weights... ');
+    afprintf(sprintf('[INFO] Updating weights... '));
     % for i = 1:data_train_count
     %   if labels_train(i) == predictions(i)
     %     W(t + 1, i) = W(t, i) * beta;
@@ -215,7 +292,7 @@ function [B, H] = mainCNNRusboost()
         end
       end
     end
-    fprintf('done!\n');
+    afprintf(sprintf('done!\n'));
 
     % Normalizing the weight for the next iteration
     sum_W = sum(W(t + 1, :));
@@ -223,7 +300,7 @@ function [B, H] = mainCNNRusboost()
       W(t + 1, i) = W(t + 1, i) / sum_W;
     end
 
-    fprintf('\t[INFO] Saving model and info... ');
+    afprintf(sprintf('[INFO] Saving model and info... '));
     [acc, sens, spec] = getAccSensSpec(labels_train, predictions);
     all_model_infos{t}.model_net = H{t};
     all_model_infos{t}.model_loss = L(t);
@@ -240,11 +317,11 @@ function [B, H] = mainCNNRusboost()
     all_model_infos{t}.validation_weights_pre_update = W(t,:);
     all_model_infos{t}.validation_weights_post_update = W(t + 1,:);
     save(opts.allModelInfosPath, 'all_model_infos');
-    fprintf('done!\n');
-    fprintf('\t[INFO] Acc: %3.2f Sens: %3.2f Spec: %3.2f\n', ...
+    afprintf(sprintf('done!\n'));
+    afprintf(sprintf('[INFO] Acc: %3.2f Sens: %3.2f Spec: %3.2f\n', ...
       all_model_infos{t}.perf_accuracy, ...
       all_model_infos{t}.perf_sensitivity, ...
-      all_model_infos{t}.perf_specificity);
+      all_model_infos{t}.perf_specificity));
 
     % Incrementing loop counter
     t = t + 1;
@@ -361,7 +438,7 @@ function [repeated_sample_4D_matrix] = augmentSample(sample, repeat_count, augme
       for degree = degrees
         rotated_3D_image = imrotate(sample, degree, 'crop');
         repeated_sample_4D_matrix(:,:,:,index) = rotated_3D_image;
-        repeated_sample_4D_matrix(:,:,:,index + 1) = fliplr(rotated_image);
+        repeated_sample_4D_matrix(:,:,:,index + 1) = fliplr(rotated_3D_image);
         index = index + 2;
       end
       if mod(repeat_count, 2)
@@ -411,7 +488,8 @@ function [acc, sens, spec] = getAccSensSpec(labels, predictions)
 % -------------------------------------------------------------------------
 function printOutputSeparator()
 % -------------------------------------------------------------------------
-  fprintf('\n-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- \n');
+  afprintf(sprintf('\n'));
+  afprintf(sprintf('-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- \n'));
 
 % -------------------------------------------------------------------------
 function imdb = constructPartialImdb(data, labels, set_number)
@@ -424,14 +502,14 @@ function imdb = constructPartialImdb(data, labels, set_number)
 % -------------------------------------------------------------------------
 function imdb = getInitialImdb()
 % -------------------------------------------------------------------------
-  fprintf('[INFO] Loading saved imdb... ');
+  afprintf(sprintf('[INFO] Loading saved imdb... '));
   imdbPath = fullfile(getDevPath(), '/matconvnet/data_1/_prostate/_saved_prostate_imdb.mat');
   imdb = load(imdbPath);
   imdb = imdb.imdb;
-  fprintf('done!\n');
+  afprintf(sprintf('done!\n'));
 
 % -------------------------------------------------------------------------
-function testAllModelsOnTestImdb(all_model_infos, imdb)
+function overall_results = testAllModelsOnTestImdb(all_model_infos, imdb)
 % -------------------------------------------------------------------------
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % Initial stuff
@@ -461,17 +539,18 @@ function testAllModelsOnTestImdb(all_model_infos, imdb)
   test_set_prediction_overall = zeros(data_test_count, 2);
   test_set_predictions_per_model = {};
   for i = 1:size(H, 2) % looping through all trained networks
-    fprintf('\n\t[INFO] Computing test set predictions for model #%d (healthy: %d, cancer: %d)...\n', ...
+    afprintf(sprintf('\n'));
+    afprintf(sprintf('\t[INFO] Computing test set predictions for model #%d (healthy: %d, cancer: %d)...\n', ...
       i, ...
       data_test_healthy_count, ...
-      data_test_cancer_count);
+      data_test_cancer_count));
     net = H{i};
     test_set_predictions_per_model{i} = getPredictionsFromNetOnImdb(net, test_imdb);
     [acc, sens, spec] = getAccSensSpec(labels_test, test_set_predictions_per_model{i});
-    % fprintf('\t[INFO] Acc: %3.2f Sens: %3.2f Spec: %3.2f\n', acc, sens, spec);
-    fprintf('\t[INFO] Acc: %3.2f\n', acc);
-    fprintf('\t[INFO] Sens: %3.2f\n', sens);
-    fprintf('\t[INFO] Spec: %3.2f\n', spec);
+    % afprintf(sprintf('\t[INFO] Acc: %3.2f Sens: %3.2f Spec: %3.2f\n', acc, sens, spec));
+    afprintf(sprintf('\t[INFO] Acc: %3.2f\n', acc));
+    afprintf(sprintf('\t[INFO] Sens: %3.2f\n', sens));
+    afprintf(sprintf('\t[INFO] Spec: %3.2f\n', spec));
   end
 
   for i = 1:data_test_count
@@ -500,12 +579,15 @@ function testAllModelsOnTestImdb(all_model_infos, imdb)
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   printOutputSeparator();
   predictions_test = test_set_prediction_overall(:, 1)';
-  [acc, sens, spec] = getAccSensSpec(labels_test, predictions_test);
-  fprintf('Model weights: ')
+  [overall_acc, overall_sens, overall_spec] = getAccSensSpec(labels_test, predictions_test);
+  afprintf(sprintf('Model weights: '))
   disp(B);
-  fprintf('[INFO] Overall Acc: %3.2f\n', acc);
-  fprintf('[INFO] Overall Sens: %3.2f\n', sens);
-  fprintf('[INFO] Overall Spec: %3.2f\n', spec);
+  afprintf(sprintf('[INFO] Overall Acc: %3.2f\n', overall_acc));
+  afprintf(sprintf('[INFO] Overall Sens: %3.2f\n', overall_sens));
+  afprintf(sprintf('[INFO] Overall Spec: %3.2f\n', overall_spec));
+  overall_results.acc = overall_acc;
+  overall_results.sens = overall_sens;
+  overall_results.spec = overall_spec;
 
 
 
