@@ -128,7 +128,7 @@ function [B, H] = mainCNNRusboost()
       'debugFlag', false);
     % fprintf('\tdone!\n');
 
-    fprintf('\t[INFO] Computing predictions (healthy: %d, cancer: %d)...\n', ...
+    fprintf('\t[INFO] Computing validation set predictions (healthy: %d, cancer: %d)...\n', ...
       data_train_healthy_count, ...
       data_train_cancer_count);
     % IMPORTANT NOTE: we randomly undersample when training a model, but then,
@@ -209,7 +209,7 @@ function [B, H] = mainCNNRusboost()
         W(t + 1, i) = W(t, i) * beta;
       else
         if labels_train(i) == 2
-          W(t + 1, i) = 10 * cancer_to_healthy_ratio * W(t, i);
+          W(t + 1, i) = cancer_to_healthy_ratio * W(t, i);
         else
           W(t + 1, i) = W(t, i);
         end
@@ -237,7 +237,8 @@ function [B, H] = mainCNNRusboost()
     all_model_infos{t}.validation_cancer_count = data_train_cancer_count;
     all_model_infos{t}.validation_predictions = labels_train;
     all_model_infos{t}.validation_labels = labels_train;
-    all_model_infos{t}.validation_weights = W(t,:);
+    all_model_infos{t}.validation_weights_pre_update = W(t,:);
+    all_model_infos{t}.validation_weights_post_update = W(t + 1,:);
     save(opts.allModelInfosPath, 'all_model_infos');
     fprintf('done!\n');
     fprintf('\t[INFO] Acc: %3.2f Sens: %3.2f Spec: %3.2f\n', ...
@@ -426,7 +427,7 @@ function testAllModelsOnTestImdb(all_model_infos, imdb)
   test_set_prediction_overall = zeros(data_test_count, 2);
   test_set_predictions_per_model = {};
   for i = 1:size(H, 2) % looping through all trained networks
-    fprintf('\n\t[INFO] Getting test set predictions for model #%d (healthy: %d, cancer: %d)...\n', ...
+    fprintf('\n\t[INFO] Computing test set predictions for model #%d (healthy: %d, cancer: %d)...\n', ...
       i, ...
       data_test_healthy_count, ...
       data_test_cancer_count);
@@ -456,7 +457,7 @@ function testAllModelsOnTestImdb(all_model_infos, imdb)
     if (wt_cancer > wt_healthy)
         test_set_prediction_overall(i,:) = [2 wt_cancer];
     else
-        test_set_prediction_overall(i,:) = [1 wt_cancer]; % TODO: should this not be wt_healthy?!!?!?!
+        test_set_prediction_overall(i,:) = [1 wt_healthy];
     end
   end
 
