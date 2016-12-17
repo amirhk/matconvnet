@@ -232,7 +232,6 @@ function [B, H] = main_cnn_rusboost()
       all_model_infos{i}.perf_sensitivity, ...
       all_model_infos{i}.perf_specificity);
 
-
     % Incrementing loop counter
     t = t + 1;
   end
