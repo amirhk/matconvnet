@@ -219,7 +219,7 @@ function [B, H] = mainCNNRusboost()
     all_model_infos{t}.validation_cancer_count = data_train_cancer_count;
     all_model_infos{t}.validation_predictions = labels_train;
     all_model_infos{t}.validation_labels = labels_train;
-    all_model_infos{t}.validation_weights = W(t);
+    all_model_infos{t}.validation_weights = W(t,:);
     save(opts.allModelInfosPath, 'all_model_infos');
     fprintf('done!\n');
     fprintf('\t[INFO] Acc: %3.2f Sens: %3.2f Spec: %3.2f\n', ...
@@ -263,8 +263,8 @@ function [resampled_data, resampled_labels] = resampleData(data, labels, weights
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % Weighted Upsampling (more weight -> more repeat): Healthy & Cancer Data
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  max_repeat_healthy = 20;
-  max_repeat_cancer = 100;
+  max_repeat_healthy = 25;
+  max_repeat_cancer = 200;
   normalized_weights = weights / min(weights);
   repeat_counts = ceil(normalized_weights);
   for j = data_healthy_indices
