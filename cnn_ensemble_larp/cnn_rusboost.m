@@ -11,7 +11,7 @@ function [B, H] = mainCNNRusboost()
   % 0. some important parameter definition
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-  opts.iteration_count = 50; % number of boosting iterations
+  opts.iteration_count = 500; % number of boosting iterations
   opts.dataset = 'prostate';
   opts.networkArch = 'prostatenet';
   opts.backpropDepth = 4;
