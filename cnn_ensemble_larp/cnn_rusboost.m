@@ -145,7 +145,7 @@ function [B, H] = mainCNNRusboost()
         continue;
       else
         if labels_train(i) == 2
-          loss = loss + cancer_to_healthy_ratio * W(t, i);
+          loss = loss + 100 * cancer_to_healthy_ratio * W(t, i);
         else
           loss = loss + W(t, i);
         end
