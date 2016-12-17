@@ -333,9 +333,43 @@ function [upsampled_data] = upsample(data, repeat_counts)
   counter = 1;
   for i = 1:length(repeat_counts)
     sample_repeat_count = repeat_counts(i);
-    tmp = repmat(data(:,:,:,i), [1,1,1,sample_repeat_count]);
-    upsampled_data(:,:,:, counter : counter + sample_repeat_count - 1) = tmp;
+    % repeated_sample = repmat(data(:,:,:,i), [1,1,1,sample_repeat_count]);
+    repeated_sample_4D_matrix = augmentSample(data(:,:,:,i), sample_repeat_count, 'rotate-flip');
+    upsampled_data(:,:,:, counter : counter + sample_repeat_count - 1) = repeated_sample_4D_matrix;
     counter = counter + sample_repeat_count;
+  end
+
+% -------------------------------------------------------------------------
+function [repeated_sample_4D_matrix] = augmentSample(sample, repeat_count, augment_type)
+  % augment_type = {'repmat', 'rotate', 'flip', 'rotate-flip'}
+% -------------------------------------------------------------------------
+  repeated_sample_4D_matrix = zeros(size(sample, 1), size(sample, 2), size(sample, 3), repeat_count);
+  switch augment_type
+    case 'repmat'
+      repeated_sample_4D_matrix = repmat(sample, [1,1,1,repeat_count]);
+    case 'rotate'
+      degrees = linspace(0, 360, repeat_count);
+      index = 1;
+      for degree = degrees
+        rotated_3D_image = imrotate(sample, degree, 'crop');
+        repeated_sample_4D_matrix(:,:,:,index) = rotated_3D_image;
+        index = index + 1;
+      end
+    case 'rotate-flip'
+      degrees = linspace(0, 360, floor(repeat_count / 2));
+      index = 1;
+      for degree = degrees
+        rotated_3D_image = imrotate(sample, degree, 'crop');
+        repeated_sample_4D_matrix(:,:,:,index) = rotated_3D_image;
+        repeated_sample_4D_matrix(:,:,:,index + 1) = fliplr(rotated_image);
+        index = index + 2;
+      end
+      if mod(repeat_count, 2)
+        % because of the `floor()` above, the last index of
+        % repeated_sample_4D_matrixhas not been augmented yet...
+        % just make it a simple copy of sample.
+        repeated_sample_4D_matrix(:,:,:,end) = sample;
+      end
   end
 
 % TODO: copy to central file
