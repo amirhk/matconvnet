@@ -144,13 +144,20 @@ function [B, H] = mainCNNRusboost()
       if labels_train(i) == predictions(i)
         continue;
       else
-        if labels_train(i) == 2
-          loss = loss + 10 * cancer_to_healthy_ratio * W(t, i);
-        else
-          loss = loss + W(t, i);
-        end
+        loss = loss + W(t, i);
       end
     end
+    % for i = 1:data_train_count
+    %   if labels_train(i) == predictions(i)
+    %     continue;
+    %   else
+    %     if labels_train(i) == 2
+    %       loss = loss + 10 * cancer_to_healthy_ratio * W(t, i);
+    %     else
+    %       loss = loss + W(t, i);
+    %     end
+    %   end
+    % end
     fprintf('Loss: %6.5f\n', loss);
 
     % If count exceeds a pre-defined threshold (5 in the current
@@ -190,11 +197,22 @@ function [B, H] = mainCNNRusboost()
 
     % Updating weight
     fprintf('\t[INFO] Updating weights... ');
+    % for i = 1:data_train_count
+    %   if labels_train(i) == predictions(i)
+    %     W(t + 1, i) = W(t, i) * beta;
+    %   else
+    %     W(t + 1, i) = W(t, i);
+    %   end
+    % end
     for i = 1:data_train_count
       if labels_train(i) == predictions(i)
         W(t + 1, i) = W(t, i) * beta;
       else
-        W(t + 1, i) = W(t, i);
+        if labels_train(i) == 2
+          W(t + 1, i) = cancer_to_healthy_ratio * W(t, i);
+        else
+          W(t + 1, i) = W(t, i);
+        end
       end
     end
     fprintf('done!\n');
