@@ -1,5 +1,12 @@
-function [B, H] = main_cnn_rusboost()
+function fh = cnnRusboost()
+  % assign function handles so we can call these local functions from elsewhere
+  fh.getInitialImdb = @getInitialImdb;
+  fh.mainCNNRusboost = @mainCNNRusboost;
+  fh.testAllModelsOnTestImdb = @testAllModelsOnTestImdb;
 
+% -------------------------------------------------------------------------
+function [B, H] = mainCNNRusboost()
+% -------------------------------------------------------------------------
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % 0. some important parameter definition
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
@@ -12,7 +19,6 @@ function [B, H] = main_cnn_rusboost()
   opts.weightInitSequence = {'compRand', 'compRand', 'compRand'};
   opts.random_undersampling_ratio = (65/35);
 
-  opts.imdbPath = fullfile(getDevPath(), '/matconvnet/data_1/_prostate/_saved_prostate_imdb.mat');
   opts.timeString = sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
   opts.experimentDirPath = sprintf('data_rusboost/rusboost-%s-%s-%s', opts.dataset, opts.networkArch, opts.timeString);
   opts.allModelInfosPath = fullfile(opts.experimentDirPath, 'all_model_infos.mat');
@@ -26,10 +32,7 @@ function [B, H] = main_cnn_rusboost()
   %   test: 10 patients, ~1000 health, ~20 cancer
   % TODO: this can be extended to be say 10-fold ensemble larp, then average the folds
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  fprintf('[INFO] Loading saved imdb... ');
-  imdb = load(opts.imdbPath);
-  imdb = imdb.imdb;
-  fprintf('done!\n');
+  imdb = getInitialImdb();
 
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % 2. process the imdb to separate positive and negative samples (to be
@@ -85,8 +88,8 @@ function [B, H] = main_cnn_rusboost()
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % 4. create training (barebones) and validation imdbs
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  training_resampled_imdb = constructImdb([], [], 3); % barebones; filled in below
-  validation_imdb = constructImdb(data_train, labels_train, 3);
+  training_resampled_imdb = constructPartialImdb([], [], 3); % barebones; filled in below
+  validation_imdb = constructPartialImdb(data_train, labels_train, 3);
 
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % 5. go through T iterations of RUSBoost, each of which trains a CNN over E epochs
@@ -179,11 +182,11 @@ function [B, H] = main_cnn_rusboost()
     beta = loss / (1 - loss); % Setting weight update parameter 'beta'.
     B(t) = log(1 / beta); % Weight of the hypothesis
 
-    % At the final iteration there is no need to update the weights any
-    % further
-    if t == opts.iteration_count
-        break;
-    end
+    % % At the final iteration there is no need to update the weights any
+    % % further
+    % if t == opts.iteration_count
+    %     break;
+    % end
 
     % Updating weight
     fprintf('\t[INFO] Updating weights... ');
@@ -232,7 +235,7 @@ function [B, H] = main_cnn_rusboost()
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % The final hypothesis is calculated and tested on the test set simulteneously
   printOutputSeparator();
-  testSavedAllModelInfos(imdb, all_model_infos);
+  testAllModelsOnTestImdb(all_model_infos, imdb);
   printOutputSeparator();
 
 % -------------------------------------------------------------------------
@@ -345,7 +348,7 @@ function printOutputSeparator()
   fprintf('\n-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- \n');
 
 % -------------------------------------------------------------------------
-function imdb = constructImdb(data, labels, set_number)
+function imdb = constructPartialImdb(data, labels, set_number)
 % -------------------------------------------------------------------------
   imdb.images.data = data;
   imdb.images.labels = labels;
@@ -353,7 +356,16 @@ function imdb = constructImdb(data, labels, set_number)
   imdb.meta.sets = {'train', 'val', 'test'};
 
 % -------------------------------------------------------------------------
-function testSavedAllModelInfos(imdb, all_model_infos)
+function imdb = getInitialImdb()
+% -------------------------------------------------------------------------
+  fprintf('[INFO] Loading saved imdb... ');
+  imdbPath = fullfile(getDevPath(), '/matconvnet/data_1/_prostate/_saved_prostate_imdb.mat');
+  imdb = load(imdbPath);
+  imdb = imdb.imdb;
+  fprintf('done!\n');
+
+% -------------------------------------------------------------------------
+function testAllModelsOnTestImdb(all_model_infos, imdb)
 % -------------------------------------------------------------------------
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % Initial stuff
@@ -369,7 +381,7 @@ function testSavedAllModelInfos(imdb, all_model_infos)
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % Construct IMDB
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  test_imdb = constructImdb(data_test, labels_test, 3);
+  test_imdb = constructPartialImdb(data_test, labels_test, 3);
 
   H = {};
   B = zeros(1, numel(all_model_infos));
@@ -383,7 +395,7 @@ function testSavedAllModelInfos(imdb, all_model_infos)
   test_set_prediction_overall = zeros(data_test_count, 2);
   test_set_predictions_per_model = {};
   for i = 1:size(H, 2) % looping through all trained networks
-    fprintf('\n[INFO] Getting test set predictions for model #%d (healthy: %d, cancer: %d)...\n', ...
+    fprintf('\n\t[INFO] Getting test set predictions for model #%d (healthy: %d, cancer: %d)...\n', ...
       i, ...
       data_test_healthy_count, ...
       data_test_cancer_count);
@@ -422,6 +434,15 @@ function testSavedAllModelInfos(imdb, all_model_infos)
   printOutputSeparator();
   predictions_test = test_set_prediction_overall(:, 1)';
   [acc, sens, spec] = getAccSensSpec(labels_test, predictions_test);
+  fprintf('Model weights: ')
+  disp(B);
   fprintf('[INFO] Overall Acc: %3.2f\n', acc);
   fprintf('[INFO] Overall Sens: %3.2f\n', sens);
   fprintf('[INFO] Overall Spec: %3.2f\n', spec);
+
+
+
+% fh = cnn_rusboost();
+% imdb  = fh.getInitialImdb();
+% fh.testAllModelsOnTestImdb(all_model_infos, imdb)
+
