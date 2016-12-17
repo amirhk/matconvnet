@@ -5,13 +5,11 @@ function fh = cnnRusboost()
   fh.kFoldCNNRusboost = @kFoldCNNRusboost;
   fh.testAllModelsOnTestImdb = @testAllModelsOnTestImdb;
 
-
-
 % -------------------------------------------------------------------------
 function folds = kFoldCNNRusboost()
 % -------------------------------------------------------------------------
   opts.numPatients = 104;
-  opts.numberOfFolds = 3;
+  opts.numberOfFolds = 10;
   afprintf(sprintf('[INFO] Running K-fold CNN Rusboost (K = %d)...\n', opts.numberOfFolds), 1);
 
   patients_per_fold = ceil(opts.numPatients / opts.numberOfFolds);
@@ -98,7 +96,7 @@ function all_model_infos = mainCNNRusboost(imdb, experimentDirParentPath)
   % 1. some important parameter definition
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-  opts.iteration_count = 3; % number of boosting iterations
+  opts.iteration_count = 5; % number of boosting iterations
   opts.dataset = 'prostate';
   opts.networkArch = 'prostatenet';
   opts.backpropDepth = 4;
