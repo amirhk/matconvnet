@@ -138,7 +138,7 @@ function [B, H] = mainCNNRusboost()
 
     % Computing the pseudo loss of hypothesis 'model'
     fprintf('\t[INFO] Computing pseudo loss... ');
-    cancer_to_healthy_ratio = data_train_cancer_count / data_train_healthy_count;
+    cancer_to_healthy_ratio = 1 / (data_train_cancer_count / data_train_healthy_count);
     loss = 0;
     for i = 1:data_train_count
       if labels_train(i) == predictions(i)
@@ -209,7 +209,7 @@ function [B, H] = mainCNNRusboost()
         W(t + 1, i) = W(t, i) * beta;
       else
         if labels_train(i) == 2
-          W(t + 1, i) = 10 * cancer_to_healthy_ratio * W(t, i);
+          W(t + 1, i) = cancer_to_healthy_ratio * W(t, i);
         else
           W(t + 1, i) = W(t, i);
         end
