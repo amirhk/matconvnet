@@ -263,10 +263,20 @@ function [resampled_data, resampled_labels] = resampleData(data, labels, weights
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % Weighted Upsampling (more weight -> more repeat): Healthy & Cancer Data
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  max_repeat = 20;
+  max_repeat_healthy = 20;
+  max_repeat_cancer = 100;
   normalized_weights = weights / min(weights);
   repeat_counts = ceil(normalized_weights);
-  repeat_counts(repeat_counts > max_repeat) = max_repeat;
+  for j = data_healthy_indices
+    if repeat_counts(j) > max_repeat_healthy
+      repeat_counts(j) = max_repeat_healthy;
+    end
+  end
+  for j = data_cancer_indices
+    if repeat_counts(j) > max_repeat_cancer
+      repeat_counts(j) = max_repeat_cancer;
+    end
+  end
 
   healthy_repeat_counts = repeat_counts(downsampled_data_healthy_indices);
   cancer_repeat_counts = repeat_counts(data_cancer_indices);
