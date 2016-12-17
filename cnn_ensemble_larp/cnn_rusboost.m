@@ -227,6 +227,11 @@ function [B, H] = main_cnn_rusboost()
     all_model_infos{t}.validation_labels = labels_train;
     save(opts.allModelInfosPath, 'all_model_infos');
     fprintf('done!\n');
+    fprintf('\t[INFO] Acc: %3.2f Sens: %3.2f Spec: %3.2f\n', ...
+      all_model_infos{i}.perf_accuracy, ...
+      all_model_infos{i}.perf_sensitivity, ...
+      all_model_infos{i}.perf_specificity);
+
 
     % Incrementing loop counter
     t = t + 1;
