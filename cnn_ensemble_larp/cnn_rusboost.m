@@ -4,7 +4,7 @@ function [B, H] = main_cnn_rusboost()
   % 0. some important parameter definition
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-  opts.iteration_count = 50; % number of boosting iterations
+  opts.iteration_count = 3; % number of boosting iterations
   opts.dataset = 'prostate';
   opts.networkArch = 'prostatenet';
   opts.backpropDepth = 4;
@@ -82,23 +82,14 @@ function [B, H] = main_cnn_rusboost()
   t = 1; % loop counter
   count = 1; % number of times the same boosting iteration have been repeated
 
-  training_resampled_imdb.images.data = [];   % filled in below
-  training_resampled_imdb.images.labels = []; % filled in below
-  training_resampled_imdb.images.set = [];    % filled in below
-  training_resampled_imdb.meta.sets = {'train', 'val', 'test'};
-
-  validation_imdb.images.data = data_train;
-  validation_imdb.images.labels = labels_train;
-  validation_imdb.images.set = 3 * ones(length(labels_train), 1);
-  validation_imdb.meta.sets = {'train', 'val', 'test'};
-
-  test_imdb.images.data = data_test;
-  test_imdb.images.labels = labels_test;
-  test_imdb.images.set = 3 * ones(length(labels_test), 1);
-  test_imdb.meta.sets = {'train', 'val', 'test'};
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % 4. create training (barebones) and validation imdbs
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  training_resampled_imdb = constructImdb([], [], 3); % barebones; filled in below
+  validation_imdb = constructImdb(data_train, labels_train, 3);
 
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % 4. go through T iterations of RUSBoost, each of which trains a CNN over E epochs
+  % 5. go through T iterations of RUSBoost, each of which trains a CNN over E epochs
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   printOutputSeparator();
   all_model_infos = {};
@@ -237,59 +228,11 @@ function [B, H] = main_cnn_rusboost()
   end
 
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % 5. test on test set, keeping in mind beta's between each mode
+  % 6. test on test set, keeping in mind beta's between each mode
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % The final hypothesis is calculated and tested on the test set simulteneously
   printOutputSeparator();
-  % The final hypothesis is calculated and tested on the test set
-  % simulteneously.
-
-  B = B / sum(B);
-
-  test_set_prediction_overall = zeros(data_test_count, 2);
-  test_set_predictions_per_model = {};
-  for i = 1:size(H, 2) % looping through all trained networks
-    fprintf('\n[INFO] Getting test set predictions for model #%d (healthy: %d, cancer: %d)...\n', ...
-      i, ...
-      data_test_healthy_count, ...
-      data_test_cancer_count);
-    net = H{i};
-    test_set_predictions_per_model{i} = getPredictionsFromNetOnImdb(net, test_imdb);
-    [acc, sens, spec] = getAccSensSpec(labels_test, test_set_predictions_per_model{i});
-    fprintf('\t[INFO] Acc: %3.2f\n', acc);
-    fprintf('\t[INFO] Sens: %3.2f\n', sens);
-    fprintf('\t[INFO] Spec: %3.2f\n', spec);
-  end
-
-  for i = 1:data_test_count
-    % Calculating the total weight of the class labels from all the models
-    % produced during boosting
-    wt_healthy = 0; % class 1
-    wt_cancer = 0; % class 2
-    for j = 1:size(H, 2) % looping through all trained networks
-       p = test_set_predictions_per_model{j}(1);
-       if p == 2 % if is cancer
-           wt_cancer = wt_cancer + B(j);
-       else
-           wt_healthy = wt_healthy + B(j);
-       end
-    end
-
-    if (wt_cancer > wt_healthy)
-        test_set_prediction_overall(i,:) = [2 wt_cancer];
-    else
-        test_set_prediction_overall(i,:) = [1 wt_cancer]; % TODO: should this not be wt_healthy?!!?!?!
-    end
-  end
-
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % 6. done, go treat yourself to something sugary!
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  printOutputSeparator();
-  predictions_test = test_set_prediction_overall(:, 1)';
-  [acc, sens, spec] = getAccSensSpec(labels_test, predictions_test);
-  fprintf('[INFO] Overall Acc: %3.2f\n', acc);
-  fprintf('[INFO] Overall Sens: %3.2f\n', sens);
-  fprintf('[INFO] Overall Spec: %3.2f\n', spec);
+  testSavedAllModelInfos(imdb, all_model_infos);
   printOutputSeparator();
 
 % -------------------------------------------------------------------------
@@ -401,3 +344,84 @@ function printOutputSeparator()
 % -------------------------------------------------------------------------
   fprintf('\n-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- \n');
 
+% -------------------------------------------------------------------------
+function imdb = constructImdb(data, labels, set_number)
+% -------------------------------------------------------------------------
+  imdb.images.data = data;
+  imdb.images.labels = labels;
+  imdb.images.set = set_number * ones(length(labels), 1);
+  imdb.meta.sets = {'train', 'val', 'test'};
+
+% -------------------------------------------------------------------------
+function testSavedAllModelInfos(imdb, all_model_infos)
+% -------------------------------------------------------------------------
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % Initial stuff
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  data_test = imdb.images.data(:,:,:,imdb.images.set == 3);
+  labels_test = imdb.images.labels(imdb.images.set == 3);
+  data_test_healthy = data_test(:,:,:,labels_test == 1);
+  data_test_cancer = data_test(:,:,:,labels_test == 2);
+  data_test_count = size(data_test, 4);
+  data_test_healthy_count = size(data_test_healthy, 4);
+  data_test_cancer_count = size(data_test_cancer, 4);
+
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % Construct IMDB
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  test_imdb = constructImdb(data_test, labels_test, 3);
+
+  H = {};
+  B = zeros(1, numel(all_model_infos));
+  for i = 1:numel(B)
+    H{i} = all_model_infos{i}.model_net;
+    B(i) = all_model_infos{i}.model_weight;
+  end
+  assert(numel(H) == numel(B))
+  B = B / sum(B);
+
+  test_set_prediction_overall = zeros(data_test_count, 2);
+  test_set_predictions_per_model = {};
+  for i = 1:size(H, 2) % looping through all trained networks
+    fprintf('\n[INFO] Getting test set predictions for model #%d (healthy: %d, cancer: %d)...\n', ...
+      i, ...
+      data_test_healthy_count, ...
+      data_test_cancer_count);
+    net = H{i};
+    test_set_predictions_per_model{i} = getPredictionsFromNetOnImdb(net, test_imdb);
+    [acc, sens, spec] = getAccSensSpec(labels_test, test_set_predictions_per_model{i});
+    fprintf('\t[INFO] Acc: %3.2f\n', acc);
+    fprintf('\t[INFO] Sens: %3.2f\n', sens);
+    fprintf('\t[INFO] Spec: %3.2f\n', spec);
+  end
+
+  for i = 1:data_test_count
+    % Calculating the total weight of the class labels from all the models
+    % produced during boosting
+    wt_healthy = 0; % class 1
+    wt_cancer = 0; % class 2
+    for j = 1:size(H, 2) % looping through all trained networks
+       p = test_set_predictions_per_model{j}(1);
+       if p == 2 % if is cancer
+           wt_cancer = wt_cancer + B(j);
+       else
+           wt_healthy = wt_healthy + B(j);
+       end
+    end
+
+    if (wt_cancer > wt_healthy)
+        test_set_prediction_overall(i,:) = [2 wt_cancer];
+    else
+        test_set_prediction_overall(i,:) = [1 wt_cancer]; % TODO: should this not be wt_healthy?!!?!?!
+    end
+  end
+
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % 7. done, go treat yourself to something sugary!
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  printOutputSeparator();
+  predictions_test = test_set_prediction_overall(:, 1)';
+  [acc, sens, spec] = getAccSensSpec(labels_test, predictions_test);
+  fprintf('[INFO] Overall Acc: %3.2f\n', acc);
+  fprintf('[INFO] Overall Sens: %3.2f\n', sens);
+  fprintf('[INFO] Overall Spec: %3.2f\n', spec);
