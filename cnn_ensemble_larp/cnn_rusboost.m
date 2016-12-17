@@ -71,7 +71,7 @@ function [B, H] = mainCNNRusboost()
   % first iteration.
   W = zeros(1, data_train_count);
   for i = 1 : data_train_count
-      W(1, i) = 1 / data_train_count;
+    W(1, i) = 1 / data_train_count;
   end
 
   % L stores pseudo loss values, H stores hypothesis, B stores (1/beta)
@@ -116,8 +116,8 @@ function [B, H] = mainCNNRusboost()
     training_resampled_imdb.images.set = cat(1, training_resampled_imdb.images.set, 3);
 
     fprintf('\t[INFO] Training model (healthy: %d, cancer: %d)...\n', ...
-     numel(find(resampled_labels == 1)), ...
-     numel(find(resampled_labels == 2)));
+      numel(find(resampled_labels == 1)), ...
+      numel(find(resampled_labels == 2)));
     [net, info] = cnn_amir( ...
       'imdb', training_resampled_imdb, ...
       'dataset', opts.dataset, ...
@@ -129,8 +129,8 @@ function [B, H] = mainCNNRusboost()
     % fprintf('\tdone!\n');
 
     fprintf('\t[INFO] Computing predictions (healthy: %d, cancer: %d)...\n', ...
-     data_train_healthy_count, ...
-     data_train_cancer_count);
+      data_train_healthy_count, ...
+      data_train_cancer_count);
     % IMPORTANT NOTE: we randomly undersample when training a model, but then,
     % we use all of the training samples (in their order) to update weights.
     predictions = getPredictionsFromNetOnImdb(net, validation_imdb);
@@ -141,15 +141,15 @@ function [B, H] = mainCNNRusboost()
     cancer_to_healthy_ratio = data_train_cancer_count / data_train_healthy_count;
     loss = 0;
     for i = 1:data_train_count
-        if labels_train(i) == predictions(i)
-          continue;
+      if labels_train(i) == predictions(i)
+        continue;
+      else
+        if labels_train(i) == 2
+          loss = loss + cancer_to_healthy_ratio * W(t, i);
         else
-          if labels_train(i) == 2
-            loss = loss + cancer_to_healthy_ratio * W(t, i);
-          else
-            loss = loss + W(t, i);
-          end
+          loss = loss + W(t, i);
         end
+      end
     end
     fprintf('Loss: %6.5f\n', loss);
 
@@ -157,12 +157,12 @@ function [B, H] = mainCNNRusboost()
     % implementation), the loop is broken and rolled back to the state
     % where loss > 0.5 was not encountered.
     if count > 5
-       L = L(1:t-1);
-       H = H(1:t-1);
-       B = B(1:t-1);
-       fprintf('\tToo many iterations have loss > 0.5\n');
-       fprintf('\tAborting boosting...\n');
-       break;
+      L = L(1:t-1);
+      H = H(1:t-1);
+      B = B(1:t-1);
+      fprintf('\tToo many iterations have loss > 0.5\n');
+      fprintf('\tAborting boosting...\n');
+      break;
     end
 
     % If the loss is greater than 1/2, it means that an inverted
@@ -171,10 +171,10 @@ function [B, H] = mainCNNRusboost()
     % keeps counts of the number of times the same boosting iteration have
     % been repeated
     if loss > 0.5
-        count = count + 1;
-        continue;
+      count = count + 1;
+      continue;
     else
-        count = 1;
+      count = 1;
     end
 
     H{t} = net; % Hypothesis function / Trained CNN Network
@@ -191,18 +191,18 @@ function [B, H] = mainCNNRusboost()
     % Updating weight
     fprintf('\t[INFO] Updating weights... ');
     for i = 1:data_train_count
-        if labels_train(i) == predictions(i)
-            W(t + 1, i) = W(t, i) * beta;
-        else
-            W(t + 1, i) = W(t, i);
-        end
+      if labels_train(i) == predictions(i)
+        W(t + 1, i) = W(t, i) * beta;
+      else
+        W(t + 1, i) = W(t, i);
+      end
     end
     fprintf('done!\n');
 
     % Normalizing the weight for the next iteration
     sum_W = sum(W(t + 1, :));
     for i = 1:data_train_count
-        W(t + 1, i) = W(t + 1, i) / sum_W;
+      W(t + 1, i) = W(t + 1, i) / sum_W;
     end
 
     fprintf('\t[INFO] Saving model and info... ');
