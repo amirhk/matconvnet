@@ -65,9 +65,9 @@ function folds = kFoldCNNRusboost()
       folds.(sprintf('fold_%d', i)).weighted_results, ...
     ] = mainCNNRusboost(imdbs{i}, opts.experimentDirParentPath);
     % ] = mainCNNRusboost(folds.(sprintf('fold_%d', i)).imdb, opts.experimentDirParentPath);
-    all_folds_acc(i) = folds.(sprintf('fold_%d', i)).weighted_results.weighted_acc;
-    all_folds_sens(i) = folds.(sprintf('fold_%d', i)).weighted_results.weighted_sens;
-    all_folds_spec(i) = folds.(sprintf('fold_%d', i)).weighted_results.weighted_spec;
+    all_folds_acc(i) = folds.(sprintf('fold_%d', i)).weighted_results.acc;
+    all_folds_sens(i) = folds.(sprintf('fold_%d', i)).weighted_results.sens;
+    all_folds_spec(i) = folds.(sprintf('fold_%d', i)).weighted_results.spec;
   end
 
   save(opts.experimentDirParentPath, 'folds');
