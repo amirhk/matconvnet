@@ -43,39 +43,35 @@ function folds = kFoldCNNRusboost()
     imdb = constructProstateImdb(opts);
     folds.(sprintf('fold_%d', i)).imdb = imdb;
     afprintf(sprintf('[INFO] done!\n'));
-
   end
-
-  opts.timeString = sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
-  experimentDirParentPath = fullfile('data_rusboost', sprintf('k-fold-rusboost-%s', opts.timeString));
-  for i = 1:opts.numberOfFolds
-    afprintf(sprintf('[INFO] Running cnn_rusboost on fold #%d...\n', i));
-    folds.(sprintf('fold_%d', i)).all_model_infos = mainCNNRusboost(folds.(sprintf('fold_%d', i)).imdb, experimentDirParentPath);
-  end
-  afprintf(sprintf('[INFO] Finished running K-fold CNN Rusboost (K = %d)...\n', opts.numberOfFolds), 1);
 
   all_folds_acc = [];
   all_folds_sens = [];
   all_folds_spec = [];
 
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % 2. train ensemble larp for each fold!
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
+  opts.timeString = sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
+  experimentDirParentPath = fullfile('data_rusboost', sprintf('k-fold-rusboost-%s', opts.timeString));
   for i = 1:opts.numberOfFolds
-    afprintf(sprintf('[INFO] Computing overall results for fold #%d...\n', i));
-    all_model_infos = folds.(sprintf('fold_%d', i)).all_model_infos;
-    imdb = folds.(sprintf('fold_%d', i)).imdb;
-    overall_fold_results = testAllModelsOnTestImdb(all_model_infos, imdb);
-    folds.(sprintf('fold_%d', i)).overall_fold_results = overall_fold_results;
-    all_folds_acc(i) = overall_fold_results.overall_acc;;
-    all_folds_sens(i) = overall_fold_results.overall_sens;;
-    all_folds_spec(i) = overall_fold_results.overall_spec;;
+    afprintf(sprintf('[INFO] Running cnn_rusboost on fold #%d...\n', i));
+    [ ...
+      folds.(sprintf('fold_%d', i)).all_model_infos, ...
+      folds.(sprintf('fold_%d', i)).weighted_results, ...
+    ] = mainCNNRusboost(folds.(sprintf('fold_%d', i)).imdb, experimentDirParentPath);
+    all_folds_acc(i) = folds.(sprintf('fold_%d', i)).weighted_results.weighted_acc;
+    all_folds_sens(i) = folds.(sprintf('fold_%d', i)).weighted_results.weighted_sens;
+    all_folds_spec(i) = folds.(sprintf('fold_%d', i)).weighted_results.weighted_spec;
   end
-
+  afprintf(sprintf('[INFO] Finished running K-fold CNN Rusboost (K = %d)...\n', opts.numberOfFolds), 1);
   afprintf(sprintf('[INFO] k-fold acc avg: %3.2f std: %3.2f\n', avg(all_folds_acc), std(all_folds_acc)));
   afprintf(sprintf('[INFO] k-fold sens avg: %3.2f std: %3.2f\n', avg(all_folds_sens), std(all_folds_sens)));
   afprintf(sprintf('[INFO] k-fold spec avg: %3.2f std: %3.2f\n', avg(all_folds_spec), std(all_folds_spec)));
 
 % -------------------------------------------------------------------------
-function all_model_infos = mainCNNRusboost(imdb, experimentDirParentPath)
+function [all_model_infos, weighted_results] = mainCNNRusboost(imdb, experimentDirParentPath)
 % -------------------------------------------------------------------------
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % 0. take as input a pre-processed IMDB (augment cancer in training set, that's it!), say
@@ -233,7 +229,7 @@ function all_model_infos = mainCNNRusboost(imdb, experimentDirParentPath)
     %     end
     %   end
     % end
-    afprintf(sprintf('Loss: %6.5f\n', loss));
+    fprintf('Loss: %6.5f\n', loss);
 
     % If count exceeds a pre-defined threshold (5 in the current
     % implementation), the loop is broken and rolled back to the state
@@ -290,7 +286,7 @@ function all_model_infos = mainCNNRusboost(imdb, experimentDirParentPath)
         end
       end
     end
-    afprintf(sprintf('done!\n'));
+    fprintf('done!\n');
 
     % Normalizing the weight for the next iteration
     sum_W = sum(W(t + 1, :));
@@ -315,7 +311,7 @@ function all_model_infos = mainCNNRusboost(imdb, experimentDirParentPath)
     all_model_infos{t}.validation_weights_pre_update = W(t,:);
     all_model_infos{t}.validation_weights_post_update = W(t + 1,:);
     save(opts.allModelInfosPath, 'all_model_infos');
-    afprintf(sprintf('done!\n'));
+    fprintf('done!\n');
     afprintf(sprintf('[INFO] Acc: %3.2f Sens: %3.2f Spec: %3.2f\n', ...
       all_model_infos{t}.perf_accuracy, ...
       all_model_infos{t}.perf_sensitivity, ...
@@ -330,7 +326,7 @@ function all_model_infos = mainCNNRusboost(imdb, experimentDirParentPath)
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % The final hypothesis is calculated and tested on the test set simulteneously
   printOutputSeparator();
-  testAllModelsOnTestImdb(all_model_infos, imdb);
+  weighted_results = testAllModelsOnTestImdb(all_model_infos, imdb);
   printOutputSeparator();
 
 % -------------------------------------------------------------------------
@@ -507,7 +503,7 @@ function imdb = getInitialImdb()
   afprintf(sprintf('done!\n'));
 
 % -------------------------------------------------------------------------
-function overall_results = testAllModelsOnTestImdb(all_model_infos, imdb)
+function weighted_results = testAllModelsOnTestImdb(all_model_infos, imdb)
 % -------------------------------------------------------------------------
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % Initial stuff
@@ -534,7 +530,7 @@ function overall_results = testAllModelsOnTestImdb(all_model_infos, imdb)
   assert(numel(H) == numel(B))
   B = B / sum(B);
 
-  test_set_prediction_overall = zeros(data_test_count, 2);
+  weighted_test_set_predictions = zeros(data_test_count, 2);
   test_set_predictions_per_model = {};
   for i = 1:size(H, 2) % looping through all trained networks
     afprintf(sprintf('\n'));
@@ -566,9 +562,9 @@ function overall_results = testAllModelsOnTestImdb(all_model_infos, imdb)
     end
 
     if (wt_cancer > wt_healthy)
-        test_set_prediction_overall(i,:) = [2 wt_cancer];
+        weighted_test_set_predictions(i,:) = [2 wt_cancer];
     else
-        test_set_prediction_overall(i,:) = [1 wt_healthy];
+        weighted_test_set_predictions(i,:) = [1 wt_healthy];
     end
   end
 
@@ -576,16 +572,16 @@ function overall_results = testAllModelsOnTestImdb(all_model_infos, imdb)
   % 7. done, go treat yourself to something sugary!
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   printOutputSeparator();
-  predictions_test = test_set_prediction_overall(:, 1)';
-  [overall_acc, overall_sens, overall_spec] = getAccSensSpec(labels_test, predictions_test);
+  predictions_test = weighted_test_set_predictions(:, 1)';
+  [weighted_acc, weighted_sens, weighted_spec] = getAccSensSpec(labels_test, predictions_test);
   afprintf(sprintf('Model weights: '))
   disp(B);
-  afprintf(sprintf('[INFO] Overall Acc: %3.2f\n', overall_acc));
-  afprintf(sprintf('[INFO] Overall Sens: %3.2f\n', overall_sens));
-  afprintf(sprintf('[INFO] Overall Spec: %3.2f\n', overall_spec));
-  overall_results.acc = overall_acc;
-  overall_results.sens = overall_sens;
-  overall_results.spec = overall_spec;
+  afprintf(sprintf('[INFO] Weighted Acc: %3.2f\n', weighted_acc));
+  afprintf(sprintf('[INFO] Weighted Sens: %3.2f\n', weighted_sens));
+  afprintf(sprintf('[INFO] Weighted Spec: %3.2f\n', weighted_spec));
+  weighted_results.acc = weighted_acc;
+  weighted_results.sens = weighted_sens;
+  weighted_results.spec = weighted_spec;
 
 
 
