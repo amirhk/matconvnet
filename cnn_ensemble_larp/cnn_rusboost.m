@@ -487,7 +487,7 @@ function [acc, sens, spec] = getAccSensSpec(labels, predictions)
 function printOutputSeparator()
 % -------------------------------------------------------------------------
   afprintf(sprintf('\n'));
-  afprintf(sprintf('-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- \n'));
+  afprintf(sprintf('-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- \n'), 1);
 
 % -------------------------------------------------------------------------
 function imdb = constructPartialImdb(data, labels, set_number)
@@ -538,17 +538,17 @@ function overall_results = testAllModelsOnTestImdb(all_model_infos, imdb)
   test_set_predictions_per_model = {};
   for i = 1:size(H, 2) % looping through all trained networks
     afprintf(sprintf('\n'));
-    afprintf(sprintf('\t[INFO] Computing test set predictions for model #%d (healthy: %d, cancer: %d)...\n', ...
+    afprintf(sprintf('[INFO] Computing test set predictions for model #%d (healthy: %d, cancer: %d)...\n', ...
       i, ...
       data_test_healthy_count, ...
       data_test_cancer_count));
     net = H{i};
     test_set_predictions_per_model{i} = getPredictionsFromNetOnImdb(net, test_imdb);
     [acc, sens, spec] = getAccSensSpec(labels_test, test_set_predictions_per_model{i});
-    % afprintf(sprintf('\t[INFO] Acc: %3.2f Sens: %3.2f Spec: %3.2f\n', acc, sens, spec));
-    afprintf(sprintf('\t[INFO] Acc: %3.2f\n', acc));
-    afprintf(sprintf('\t[INFO] Sens: %3.2f\n', sens));
-    afprintf(sprintf('\t[INFO] Spec: %3.2f\n', spec));
+    % afprintf(sprintf('[INFO] Acc: %3.2f Sens: %3.2f Spec: %3.2f\n', acc, sens, spec));
+    afprintf(sprintf('[INFO] Acc: %3.2f\n', acc));
+    afprintf(sprintf('[INFO] Sens: %3.2f\n', sens));
+    afprintf(sprintf('[INFO] Spec: %3.2f\n', spec));
   end
 
   for i = 1:data_test_count
