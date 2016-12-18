@@ -3,6 +3,7 @@ function fh = cnnRusboost()
   fh.getInitialImdb = @getInitialImdb;
   fh.mainCNNRusboost = @mainCNNRusboost;
   fh.kFoldCNNRusboost = @kFoldCNNRusboost;
+  fh.printWeightedRepeats = @printWeightedRepeats;
   fh.testAllModelsOnTestImdb = @testAllModelsOnTestImdb;
 
 % -------------------------------------------------------------------------
@@ -582,6 +583,34 @@ function weighted_results = testAllModelsOnTestImdb(all_model_infos, imdb)
   weighted_results.acc = weighted_acc;
   weighted_results.sens = weighted_sens;
   weighted_results.spec = weighted_spec;
+
+% -------------------------------------------------------------------------
+function printWeightedRepeats(all_model_infos, imdb)
+% -------------------------------------------------------------------------
+  format shortG
+  for i = 1:numel(all_model_infos)
+    vw = all_model_infos{i}.validation_weights_post_update;
+    vl = all_model_infos{i}.validation_labels;
+    healthy_repeats = ceil(vw(vl == 1) / min(vw));
+    cancer_repeats = ceil(vw(vl == 2) / min(vw));
+    tmp = tabulate(healthy_repeats);
+    healthy_occurances = tmp(tmp(:,2) > 0, :);
+    disp(healthy_occurances);
+    tmp = sum(healthy_occurances(:,1) .* healthy_occurances(:,2));
+    fprintf('weighted healthy repeats: %d (really %d)\n', tmp, round(tmp * (1856 / 11380) * (65 / 35)));
+    % tmp = healthy_occurances;
+    % healthy_occurances(healthy_occurances(:,1) > 25,1) = 25;
+    % max_limited_healthy_occurances = healthy_occurances;
+    % tmp = sum(max_limited_healthy_occurances(:,1) .* max_limited_healthy_occurances(:,2));
+    % fprintf('max allowed weighted healthy repeats: %d (really %d)\n', tmp, round(tmp * (1856 / 11380) * (65 / 35)));
+    fprintf('\n-- -- -- -- --\n');
+    tmp = tabulate(cancer_repeats);
+    cancer_occurances = tmp(tmp(:,2) > 0, :);
+    disp(cancer_occurances);
+    tmp = sum(cancer_occurances(:,1) .* cancer_occurances(:,2));
+    fprintf('weighted cancer repeats: %d\n', tmp);
+    fprintf('\n\n== == == == == == == == == == == == == == == == == == == == == ==\n\n\n');
+  end
 
 
 
