@@ -68,9 +68,12 @@ function folds = kFoldCNNRusboost()
     all_folds_acc(i) = folds.(sprintf('fold_%d', i)).weighted_results.acc;
     all_folds_sens(i) = folds.(sprintf('fold_%d', i)).weighted_results.sens;
     all_folds_spec(i) = folds.(sprintf('fold_%d', i)).weighted_results.spec;
-  end
 
-  save(opts.experimentDirParentPath, 'folds');
+    folds.all_folds_acc = all_folds_acc;  % overwrite
+    folds.all_folds_sens = all_folds_sens;  % overwrite
+    folds.all_folds_spec = all_folds_spec;  % overwrite
+    save(opts.experimentDirParentPath, 'folds'); % overwrite and save
+  end
 
   afprintf(sprintf('[INFO] Finished running K-fold CNN Rusboost (K = %d)...\n', opts.numberOfFolds), 1);
   afprintf(sprintf('[INFO] k-fold acc avg: %3.2f std: %3.2f\n', avg(all_folds_acc), std(all_folds_acc)));
