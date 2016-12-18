@@ -55,17 +55,19 @@ function folds = kFoldCNNRusboost()
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
   opts.timeString = sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
-  experimentDirParentPath = fullfile('data_rusboost', sprintf('k-fold-rusboost-%s', opts.timeString));
+  opts.experimentDirParentPath = fullfile('data_rusboost', sprintf('k-fold-rusboost-%s', opts.timeString));
   for i = 1:opts.numberOfFolds
     afprintf(sprintf('[INFO] Running cnn_rusboost on fold #%d...\n', i));
     [ ...
       folds.(sprintf('fold_%d', i)).all_model_infos, ...
       folds.(sprintf('fold_%d', i)).weighted_results, ...
-    ] = mainCNNRusboost(folds.(sprintf('fold_%d', i)).imdb, experimentDirParentPath);
+    ] = mainCNNRusboost(folds.(sprintf('fold_%d', i)).imdb, opts.experimentDirParentPath);
     all_folds_acc(i) = folds.(sprintf('fold_%d', i)).weighted_results.weighted_acc;
     all_folds_sens(i) = folds.(sprintf('fold_%d', i)).weighted_results.weighted_sens;
     all_folds_spec(i) = folds.(sprintf('fold_%d', i)).weighted_results.weighted_spec;
   end
+
+  save(opts.experimentDirParentPath, 'folds'); % ~1.5GB!
   afprintf(sprintf('[INFO] Finished running K-fold CNN Rusboost (K = %d)...\n', opts.numberOfFolds), 1);
   afprintf(sprintf('[INFO] k-fold acc avg: %3.2f std: %3.2f\n', avg(all_folds_acc), std(all_folds_acc)));
   afprintf(sprintf('[INFO] k-fold sens avg: %3.2f std: %3.2f\n', avg(all_folds_sens), std(all_folds_sens)));
