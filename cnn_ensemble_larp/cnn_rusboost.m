@@ -37,12 +37,14 @@ function folds = kFoldCNNRusboost()
   opts.leaveOutType = 'special';
   opts.contrastNormalization = true;
   opts.whitenData = true;
+  imdbs = {}; % separate so don't have to save ~1.5 GB of imdbs!!!
   for i = 1:opts.numberOfFolds
     afprintf(sprintf('\n'));
     afprintf(sprintf('[INFO] Constructing imdb for fold #%d...\n', i));
     opts.leaveOutIndices = folds.(sprintf('fold_%d', i)).patient_indices;
     imdb = constructProstateImdb(opts);
-    folds.(sprintf('fold_%d', i)).imdb = imdb;
+    imdbs{i} = imdb;
+    % folds.(sprintf('fold_%d', i)).imdb = imdb;
     afprintf(sprintf('[INFO] done!\n'));
   end
 
@@ -61,13 +63,15 @@ function folds = kFoldCNNRusboost()
     [ ...
       folds.(sprintf('fold_%d', i)).all_model_infos, ...
       folds.(sprintf('fold_%d', i)).weighted_results, ...
-    ] = mainCNNRusboost(folds.(sprintf('fold_%d', i)).imdb, opts.experimentDirParentPath);
+    ] = mainCNNRusboost(imdbs{i}, opts.experimentDirParentPath);
+    % ] = mainCNNRusboost(folds.(sprintf('fold_%d', i)).imdb, opts.experimentDirParentPath);
     all_folds_acc(i) = folds.(sprintf('fold_%d', i)).weighted_results.weighted_acc;
     all_folds_sens(i) = folds.(sprintf('fold_%d', i)).weighted_results.weighted_sens;
     all_folds_spec(i) = folds.(sprintf('fold_%d', i)).weighted_results.weighted_spec;
   end
 
-  save(opts.experimentDirParentPath, 'folds'); % ~1.5GB!
+  save(opts.experimentDirParentPath, 'folds');
+
   afprintf(sprintf('[INFO] Finished running K-fold CNN Rusboost (K = %d)...\n', opts.numberOfFolds), 1);
   afprintf(sprintf('[INFO] k-fold acc avg: %3.2f std: %3.2f\n', avg(all_folds_acc), std(all_folds_acc)));
   afprintf(sprintf('[INFO] k-fold sens avg: %3.2f std: %3.2f\n', avg(all_folds_sens), std(all_folds_sens)));
