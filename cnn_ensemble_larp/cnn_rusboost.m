@@ -61,7 +61,7 @@ function folds = kFoldCNNRusboost()
   for i = 1:opts.numberOfFolds
     afprintf(sprintf('[INFO] Running cnn_rusboost on fold #%d...\n', i));
     [ ...
-      folds.(sprintf('fold_%d', i)).all_model_infos, ...
+      folds.(sprintf('fold_%d', i)).ensemble_models_info, ...
       folds.(sprintf('fold_%d', i)).weighted_results, ...
     ] = mainCNNRusboost(imdbs{i}, opts.experimentDirParentPath);
     % ] = mainCNNRusboost(folds.(sprintf('fold_%d', i)).imdb, opts.experimentDirParentPath);
@@ -76,12 +76,12 @@ function folds = kFoldCNNRusboost()
   end
 
   afprintf(sprintf('[INFO] Finished running K-fold CNN Rusboost (K = %d)...\n', opts.numberOfFolds), 1);
-  afprintf(sprintf('[INFO] k-fold acc avg: %3.2f std: %3.2f\n', avg(all_folds_acc), std(all_folds_acc)));
-  afprintf(sprintf('[INFO] k-fold sens avg: %3.2f std: %3.2f\n', avg(all_folds_sens), std(all_folds_sens)));
-  afprintf(sprintf('[INFO] k-fold spec avg: %3.2f std: %3.2f\n', avg(all_folds_spec), std(all_folds_spec)));
+  afprintf(sprintf('[INFO] k-fold acc avg: %3.2f std: %3.2f\n', mean(all_folds_acc), std(all_folds_acc)));
+  afprintf(sprintf('[INFO] k-fold sens avg: %3.2f std: %3.2f\n', mean(all_folds_sens), std(all_folds_sens)));
+  afprintf(sprintf('[INFO] k-fold spec avg: %3.2f std: %3.2f\n', mean(all_folds_spec), std(all_folds_spec)));
 
 % -------------------------------------------------------------------------
-function [all_model_infos, weighted_results] = mainCNNRusboost(imdb, experimentDirParentPath)
+function [ensemble_models_info, weighted_results] = mainCNNRusboost(imdb, experimentDirParentPath)
 % -------------------------------------------------------------------------
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % 0. take as input a pre-processed IMDB (augment cancer in training set, that's it!), say
@@ -112,7 +112,7 @@ function [all_model_infos, weighted_results] = mainCNNRusboost(imdb, experimentD
 
   opts.timeString = sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
   opts.experimentDirPath = fullfile(experimentDirParentPath, sprintf('rusboost-%s-%s-%s', opts.dataset, opts.networkArch, opts.timeString));
-  opts.allModelInfosPath = fullfile(opts.experimentDirPath, 'all_model_infos.mat');
+  opts.allModelInfosPath = fullfile(opts.experimentDirPath, 'ensemble_models_info.mat');
   if ~exist(opts.experimentDirPath)
     mkdir(opts.experimentDirPath);
   end
@@ -178,7 +178,7 @@ function [all_model_infos, weighted_results] = mainCNNRusboost(imdb, experimentD
   % 5. go through T iterations of RUSBoost, each of which trains a CNN over E epochs
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   printOutputSeparator();
-  all_model_infos = {};
+  ensemble_models_info = {};
   while t <= opts.iteration_count
     afprintf(sprintf('\n'));
     afprintf(sprintf('[INFO] Boosting iteration #%d (attempt %d)...\n', t, count));
@@ -306,26 +306,26 @@ function [all_model_infos, weighted_results] = mainCNNRusboost(imdb, experimentD
 
     afprintf(sprintf('[INFO] Saving model and info... '));
     [acc, sens, spec] = getAccSensSpec(labels_train, predictions);
-    all_model_infos{t}.model_net = H{t};
-    all_model_infos{t}.model_loss = L(t);
-    all_model_infos{t}.model_weight = B(t);
-    all_model_infos{t}.perf_accuracy = acc;
-    all_model_infos{t}.perf_sensitivity = sens;
-    all_model_infos{t}.perf_specificity = spec;
-    all_model_infos{t}.train_healthy_count = numel(find(resampled_labels == 1));
-    all_model_infos{t}.train_cancer_count = numel(find(resampled_labels == 2));
-    all_model_infos{t}.validation_healthy_count = data_train_healthy_count;
-    all_model_infos{t}.validation_cancer_count = data_train_cancer_count;
-    all_model_infos{t}.validation_predictions = labels_train;
-    all_model_infos{t}.validation_labels = labels_train;
-    all_model_infos{t}.validation_weights_pre_update = W(t,:);
-    all_model_infos{t}.validation_weights_post_update = W(t + 1,:);
-    save(opts.allModelInfosPath, 'all_model_infos');
+    ensemble_models_info{t}.model_net = H{t};
+    ensemble_models_info{t}.model_loss = L(t);
+    ensemble_models_info{t}.model_weight = B(t);
+    ensemble_models_info{t}.perf_accuracy = acc;
+    ensemble_models_info{t}.perf_sensitivity = sens;
+    ensemble_models_info{t}.perf_specificity = spec;
+    ensemble_models_info{t}.train_healthy_count = numel(find(resampled_labels == 1));
+    ensemble_models_info{t}.train_cancer_count = numel(find(resampled_labels == 2));
+    ensemble_models_info{t}.validation_healthy_count = data_train_healthy_count;
+    ensemble_models_info{t}.validation_cancer_count = data_train_cancer_count;
+    ensemble_models_info{t}.validation_predictions = labels_train;
+    ensemble_models_info{t}.validation_labels = labels_train;
+    ensemble_models_info{t}.validation_weights_pre_update = W(t,:);
+    ensemble_models_info{t}.validation_weights_post_update = W(t + 1,:);
+    save(opts.allModelInfosPath, 'ensemble_models_info');
     fprintf('done!\n');
     afprintf(sprintf('[INFO] Acc: %3.2f Sens: %3.2f Spec: %3.2f\n', ...
-      all_model_infos{t}.perf_accuracy, ...
-      all_model_infos{t}.perf_sensitivity, ...
-      all_model_infos{t}.perf_specificity));
+      ensemble_models_info{t}.perf_accuracy, ...
+      ensemble_models_info{t}.perf_sensitivity, ...
+      ensemble_models_info{t}.perf_specificity));
 
     % Incrementing loop counter
     t = t + 1;
@@ -336,7 +336,7 @@ function [all_model_infos, weighted_results] = mainCNNRusboost(imdb, experimentD
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % The final hypothesis is calculated and tested on the test set simulteneously
   printOutputSeparator();
-  weighted_results = testAllModelsOnTestImdb(all_model_infos, imdb);
+  weighted_results = testAllModelsOnTestImdb(ensemble_models_info, imdb);
   printOutputSeparator();
 
 % -------------------------------------------------------------------------
@@ -513,7 +513,7 @@ function imdb = getInitialImdb()
   afprintf(sprintf('done!\n'));
 
 % -------------------------------------------------------------------------
-function weighted_results = testAllModelsOnTestImdb(all_model_infos, imdb)
+function weighted_results = testAllModelsOnTestImdb(ensemble_models_info, imdb)
 % -------------------------------------------------------------------------
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % Initial stuff
@@ -532,10 +532,10 @@ function weighted_results = testAllModelsOnTestImdb(all_model_infos, imdb)
   test_imdb = constructPartialImdb(data_test, labels_test, 3);
 
   H = {};
-  B = zeros(1, numel(all_model_infos));
+  B = zeros(1, numel(ensemble_models_info));
   for i = 1:numel(B)
-    H{i} = all_model_infos{i}.model_net;
-    B(i) = all_model_infos{i}.model_weight;
+    H{i} = ensemble_models_info{i}.model_net;
+    B(i) = ensemble_models_info{i}.model_weight;
   end
   assert(numel(H) == numel(B))
   B = B / sum(B);
@@ -594,12 +594,12 @@ function weighted_results = testAllModelsOnTestImdb(all_model_infos, imdb)
   weighted_results.spec = weighted_spec;
 
 % -------------------------------------------------------------------------
-function printWeightedRepeats(all_model_infos, imdb)
+function printWeightedRepeats(ensemble_models_info)
 % -------------------------------------------------------------------------
   format shortG
-  for i = 1:numel(all_model_infos)
-    vw = all_model_infos{i}.validation_weights_post_update;
-    vl = all_model_infos{i}.validation_labels;
+  for i = 1:numel(ensemble_models_info)
+    vw = ensemble_models_info{i}.validation_weights_post_update;
+    vl = ensemble_models_info{i}.validation_labels;
     healthy_repeats = ceil(vw(vl == 1) / min(vw));
     cancer_repeats = ceil(vw(vl == 2) / min(vw));
     tmp = tabulate(healthy_repeats);
@@ -625,5 +625,5 @@ function printWeightedRepeats(all_model_infos, imdb)
 
 % fh = cnn_rusboost();
 % imdb  = fh.getInitialImdb();
-% fh.testAllModelsOnTestImdb(all_model_infos, imdb)
+% fh.testAllModelsOnTestImdb(ensemble_models_info, imdb)
 
