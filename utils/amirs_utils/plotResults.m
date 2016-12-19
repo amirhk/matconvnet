@@ -4,11 +4,12 @@ epochNum = 50;
 epochFile = sprintf('net-epoch-%d.mat', epochNum);
 
 dataset = 'cifar';
-networkArch = 'lenet';
+networkArch = 'alexnet';
 
 switch dataset
   case 'cifar'
     experimentDir = '2016-11-22-24; Varying Weight Initialization; CIFAR; LeNet; FC+{0-3}';
+    experimentDir = '2016-11-04-06; Varying Weight Initialization; CIFAR; AlexNet; FC+{0-5} 222';
   case 'coil-100'
     experimentDir = '2016-11-22-24; Varying Weight Initialization; COIL-100; LeNet; FC+{0-3}';
   case 'mnist'
@@ -25,7 +26,7 @@ subExperimentDirs = { ....
   ... '8_clustered_layerwise_1D_from_cifar', ...
   ... '16_clustered_layerwise_1D_from_cifar', ...
   'kernelwise_1D_from_cifar', ...
-  'layerwise_1D_from_cifar', ...
+  ... 'layerwise_1D_from_cifar', ...
   ... '1_clustered_layerwise_1D_from_coil_100', ...
   ... '2_clustered_layerwise_1D_from_coil_100', ...
   ... '4_clustered_layerwise_1D_from_coil_100', ...
@@ -177,7 +178,7 @@ for backPropDepth = 0:backPropDepthLimit
         ylabel('Validation Error');
         % fileName = sprintf('Validation Comparison - %s.png', experiment_title);
         fileName = sprintf('Validation Comparison - %s.eps', experiment_title);
-        % fileName = sprintf('fc_%d', backPropDepth);
+        fileName = sprintf('fc_%d', backPropDepth);
     end
     % saveas(h, fileName);
     saveas(h, fileName, 'epsc');
@@ -249,6 +250,21 @@ function bpd = getBPDForBPDLimit(index, bpd_bucket_count);
           bpd = 10;
         case 3
           bpd = 13;
+      end
+    case 5
+      switch index
+        case 0
+          bpd = 7;
+        case 1
+          bpd = 10;
+        case 2
+          bpd = 12;
+        case 3
+          bpd = 15;
+        case 4
+          bpd = 18;
+        case 5
+          bpd = 20;
       end
   end
 end

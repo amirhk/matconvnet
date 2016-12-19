@@ -108,7 +108,8 @@ function [ensemble_models_info, weighted_results] = mainCNNRusboost(imdb, experi
   opts.backpropDepth = 4;
   opts.weightInitSource = 'gen';
   opts.weightInitSequence = {'compRand', 'compRand', 'compRand'};
-  opts.random_undersampling_ratio = (65/35);
+  % opts.random_undersampling_ratio = (65/35);
+  opts.random_undersampling_ratio = (50/50);
 
   opts.timeString = sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
   opts.experimentDirPath = fullfile(experimentDirParentPath, sprintf('rusboost-%s-%s-%s', opts.dataset, opts.networkArch, opts.timeString));
@@ -290,7 +291,8 @@ function [ensemble_models_info, weighted_results] = mainCNNRusboost(imdb, experi
         W(t + 1, i) = W(t, i) * beta;
       else
         if labels_train(i) == 2
-          W(t + 1, i) = cancer_to_healthy_ratio * W(t, i);
+          % W(t + 1, i) = cancer_to_healthy_ratio * W(t, i);
+          W(t + 1, i) = W(t, i);
         else
           W(t + 1, i) = W(t, i);
         end
