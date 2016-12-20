@@ -59,6 +59,7 @@ function folds = kFoldCNNRusboost()
   all_folds_acc = [];
   all_folds_sens = [];
   all_folds_spec = [];
+  all_folds_ensemble_count = [];
 
 
   opts.singleRusboostIterationCount = 5;
@@ -76,17 +77,20 @@ function folds = kFoldCNNRusboost()
     all_folds_acc(i) = folds.(sprintf('fold_%d', i)).weighted_results.acc;
     all_folds_sens(i) = folds.(sprintf('fold_%d', i)).weighted_results.sens;
     all_folds_spec(i) = folds.(sprintf('fold_%d', i)).weighted_results.spec;
+    all_folds_ensemble_count(i) = numel(folds.(sprintf('fold_%d', i)).ensemble_models_info);
 
-    folds.all_folds_acc = all_folds_acc;   % overwritten every fold
-    folds.all_folds_sens = all_folds_sens; % overwritten every fold
-    folds.all_folds_spec = all_folds_spec; % overwritten every fold
+
+    folds.all_folds_acc = all_folds_acc;                       % overwritten every fold
+    folds.all_folds_sens = all_folds_sens;                     % overwritten every fold
+    folds.all_folds_spec = all_folds_spec;                     % overwritten every fold
+    folds.all_folds_ensemble_count = all_folds_ensemble_count; % overwritten every fold
     save(fullfile(opts.experimentDirParentPath, 'folds.mat'), 'folds'); % overwrite and save
   end
 
   results.all_folds_acc = all_folds_acc;
   results.all_folds_sens = all_folds_sens;
   results.all_folds_spec = all_folds_spec;
-
+  results.all_folds_ensemble_count = all_folds_ensemble_count;
 
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % 3. Save input arguments, results, and print results
