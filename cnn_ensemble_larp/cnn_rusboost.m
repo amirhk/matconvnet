@@ -657,7 +657,6 @@ function weighted_results = testAllEnsembleModelsOnTestImdb(ensemble_models_info
 
 
 
-
 % -------------------------------------------------------------------------
 function results = getKFoldResults(folds)
 % -------------------------------------------------------------------------
@@ -672,6 +671,15 @@ function results = getKFoldResults(folds)
     results.all_folds_spec(i) = folds.(sprintf('fold_%d', i)).weighted_results.spec;
     results.all_folds_ensemble_count(i) = numel(folds.(sprintf('fold_%d', i)).ensemble_models_info);
   end
+  results.avg_acc = mean(results.all_folds_acc);
+  results.avg_sens = mean(results.all_folds_sens);
+  results.avg_spec = mean(results.all_folds_spec);
+  results.avg_ensemble_count = mean(results.all_folds_ensemble_count);
+
+  results.std_acc = std(results.all_folds_acc);
+  results.std_sens = std(results.all_folds_sens);
+  results.std_spec = std(results.all_folds_spec);
+  results.std_ensemble_count = std(results.all_folds_ensemble_count);
 
 % -------------------------------------------------------------------------
 function saveKFoldResults(folds, resultsFilePath)
