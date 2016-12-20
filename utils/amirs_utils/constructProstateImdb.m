@@ -6,13 +6,13 @@ function imdb = constructProstateImdb(opts)
   switch opts.leaveOutType
     case 'special'
       train_patient_indices = setdiff(all_patient_indices, opts.leaveOutIndices);
-      train_balance = false;
-      train_augment_healthy = 'none';
-      train_augment_cancer = 'none';
-      test_patient_indices = opts.leaveOutIndices;
-      test_balance = false;
-      test_augment_healthy = 'none';
-      test_augment_cancer = 'none';
+      test_patient_indices  = opts.leaveOutIndices;
+      train_balance         = getValueFromFieldOrDefault(opts, 'train_balance', false);
+      train_augment_healthy = getValueFromFieldOrDefault(opts, 'train_augment_healthy', 'none');
+      train_augment_cancer  = getValueFromFieldOrDefault(opts, 'train_augment_cancer', 'none');
+      test_balance          = getValueFromFieldOrDefault(opts, 'test_balance', false);
+      test_augment_healthy  = getValueFromFieldOrDefault(opts, 'test_augment_healthy', 'none');
+      test_augment_cancer   = getValueFromFieldOrDefault(opts, 'test_augment_cancer', 'none');
       % just use the helper with the indices above.
       imdb = constructProstateImdbHelper( ...
         opts, ...
@@ -96,6 +96,15 @@ function imdb = constructProstateImdb(opts)
   end
 
   afprintf(sprintf('[INFO] Finished constructing / loading Prostate imdb.\n'));
+
+% -------------------------------------------------------------------------
+function output = getValueFromFieldOrDefault(opts, field_string, default_value)
+% -------------------------------------------------------------------------
+  if isfield(opts, field_string) % i.e., if the field is set (has a value)
+    output = opts.(field_string);
+  else
+    output = default_value;
+  end
 
 % -------------------------------------------------------------------------
 function imdb = constructProstateImdbHelper( ...

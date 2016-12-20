@@ -4,7 +4,7 @@ function fh = cnnRusboost()
   fh.mainCNNRusboost = @mainCNNRusboost;
   fh.kFoldCNNRusboost = @kFoldCNNRusboost;
   fh.printWeightedRepeats = @printWeightedRepeats;
-  fh.testAllModelsOnTestImdb = @testAllModelsOnTestImdb;
+  fh.testAllEnsembleModelsOnTestImdb = @testAllEnsembleModelsOnTestImdb;
   fh.printKFoldModelPerformances = @printKFoldModelPerformances;
 
 % -------------------------------------------------------------------------
@@ -33,11 +33,15 @@ function folds = kFoldCNNRusboost()
   % 2. create a non-balanced, non-augmented imdb for each fold
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   opts.dataDir = fullfile(getDevPath(), 'matconvnet/data_1/_prostate');
-  opts.imdbBalancedDir = fullfile(getDevPath(), 'matconvnet/data_1/balanced-prostate-prostatenet');
-  opts.imdbBalancedPath = fullfile(getDevPath(), 'matconvnet/data_1/balanced-prostate-prostatenet/imdb.mat');
   opts.leaveOutType = 'special';
   opts.contrastNormalization = true;
-  opts.whitenData = true;
+  % opts.whitenData = true;
+  opts.train_balance = false;
+  opts.train_augment_healthy = 'none';
+  opts.train_augment_cancer = 'none';
+  opts.test_balance = false;
+  opts.test_augment_healthy = 'none';
+  opts.test_augment_cancer = 'none';
   imdbs = {}; % separate so don't have to save ~1.5 GB of imdbs!!!
   for i = 1:opts.numberOfFolds
     afprintf(sprintf('\n'));
@@ -49,13 +53,12 @@ function folds = kFoldCNNRusboost()
     afprintf(sprintf('[INFO] done!\n'));
   end
 
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % 3. train ensemble larp for each fold!
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   all_folds_acc = [];
   all_folds_sens = [];
   all_folds_spec = [];
-
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % 2. train ensemble larp for each fold!
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
   opts.timeString = sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
   opts.experimentDirParentPath = fullfile('data_rusboost', sprintf('k-fold-rusboost-%s', opts.timeString));
@@ -65,21 +68,39 @@ function folds = kFoldCNNRusboost()
       folds.(sprintf('fold_%d', i)).ensemble_models_info, ...
       folds.(sprintf('fold_%d', i)).weighted_results, ...
     ] = mainCNNRusboost(imdbs{i}, opts.experimentDirParentPath);
-    % ] = mainCNNRusboost(folds.(sprintf('fold_%d', i)).imdb, opts.experimentDirParentPath);
     all_folds_acc(i) = folds.(sprintf('fold_%d', i)).weighted_results.acc;
     all_folds_sens(i) = folds.(sprintf('fold_%d', i)).weighted_results.sens;
     all_folds_spec(i) = folds.(sprintf('fold_%d', i)).weighted_results.spec;
 
-    folds.all_folds_acc = all_folds_acc;   % overwrite
-    folds.all_folds_sens = all_folds_sens; % overwrite
-    folds.all_folds_spec = all_folds_spec; % overwrite
+    folds.all_folds_acc = all_folds_acc;   % overwritten every fold
+    folds.all_folds_sens = all_folds_sens; % overwritten every fold
+    folds.all_folds_spec = all_folds_spec; % overwritten every fold
     save(fullfile(opts.experimentDirParentPath, 'folds.mat'), 'folds'); % overwrite and save
   end
 
-  afprintf(sprintf('[INFO] Finished running K-fold CNN Rusboost (K = %d)...\n', opts.numberOfFolds), 1);
-  afprintf(sprintf('[INFO] k-fold acc avg: %3.2f std: %3.2f\n', mean(all_folds_acc), std(all_folds_acc)));
-  afprintf(sprintf('[INFO] k-fold sens avg: %3.2f std: %3.2f\n', mean(all_folds_sens), std(all_folds_sens)));
-  afprintf(sprintf('[INFO] k-fold spec avg: %3.2f std: %3.2f\n', mean(all_folds_spec), std(all_folds_spec)));
+  results.all_folds_acc = all_folds_acc;
+  results.all_folds_sens = all_folds_sens;
+  results.all_folds_spec = all_folds_spec;
+
+
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % 3. Save input arguments, results, and print results
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  saveStruct2File(opts, fullfile(opts.experimentDirParentPath, 'options.txt'), 0);
+  saveStruct2File(results, fullfile(opts.experimentDirParentPath, 'results.txt'), 0);
+  printKFoldModelPerformances(folds);
+
+% -------------------------------------------------------------------------
+function printKFoldModelPerformances(folds)
+% -------------------------------------------------------------------------
+  for i = 1:10
+    afprintf(sprintf('Fold #%d Weighted RusBoost Performance:\n', i));
+    disp(folds.(sprintf('fold_%d', i)).weighted_results);
+  end
+  afprintf(sprintf(' -- -- -- -- -- -- -- -- -- OVERALL -- -- -- -- -- -- -- -- -- \n'));
+  afprintf(sprintf('acc: %3.2f, std: %3.2f\n', mean(folds.all_folds_acc), std(folds.all_folds_acc)));
+  afprintf(sprintf('sens: %3.2f, std: %3.2f\n', mean(folds.all_folds_sens), std(folds.all_folds_sens)));
+  afprintf(sprintf('spec: %3.2f, std: %3.2f\n', mean(folds.all_folds_spec), std(folds.all_folds_spec)));
 
 % -------------------------------------------------------------------------
 function [ensemble_models_info, weighted_results] = mainCNNRusboost(imdb, experimentDirParentPath)
@@ -113,7 +134,9 @@ function [ensemble_models_info, weighted_results] = mainCNNRusboost(imdb, experi
   opts.random_undersampling_ratio = (50/50);
 
   opts.timeString = sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
-  opts.experimentDirPath = fullfile(experimentDirParentPath, sprintf('rusboost-%s-%s-%s', opts.dataset, opts.networkArch, opts.timeString));
+  opts.experimentDirPath = fullfile( ...
+    experimentDirParentPath, ...
+    sprintf('rusboost-%s-%s-%s', opts.dataset, opts.networkArch, opts.timeString));
   opts.allModelInfosPath = fullfile(opts.experimentDirPath, 'ensemble_models_info.mat');
   if ~exist(opts.experimentDirPath)
     mkdir(opts.experimentDirPath);
@@ -179,7 +202,7 @@ function [ensemble_models_info, weighted_results] = mainCNNRusboost(imdb, experi
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % 5. go through T iterations of RUSBoost, each of which trains a CNN over E epochs
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  printOutputSeparator();
+  printConsoleOutputSeparator();
   ensemble_models_info = {};
   while t <= opts.iteration_count
     afprintf(sprintf('\n'));
@@ -230,17 +253,6 @@ function [ensemble_models_info, weighted_results] = mainCNNRusboost(imdb, experi
         loss = loss + W(t, i);
       end
     end
-    % for i = 1:data_train_count
-    %   if labels_train(i) == predictions(i)
-    %     continue;
-    %   else
-    %     if labels_train(i) == 2
-    %       loss = loss + 10 * cancer_to_healthy_ratio * W(t, i);
-    %     else
-    %       loss = loss + W(t, i);
-    %     end
-    %   end
-    % end
     fprintf('Loss: %6.5f\n', loss);
 
     % If count exceeds a pre-defined threshold (5 in the current
@@ -280,13 +292,6 @@ function [ensemble_models_info, weighted_results] = mainCNNRusboost(imdb, experi
 
     % Updating weight
     afprintf(sprintf('[INFO] Updating weights... '));
-    % for i = 1:data_train_count
-    %   if labels_train(i) == predictions(i)
-    %     W(t + 1, i) = W(t, i) * beta;
-    %   else
-    %     W(t + 1, i) = W(t, i);
-    %   end
-    % end
     for i = 1:data_train_count
       if labels_train(i) == predictions(i)
         W(t + 1, i) = W(t, i) * beta;
@@ -338,9 +343,9 @@ function [ensemble_models_info, weighted_results] = mainCNNRusboost(imdb, experi
   % 6. test on test set, keeping in mind beta's between each mode
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % The final hypothesis is calculated and tested on the test set simulteneously
-  printOutputSeparator();
-  weighted_results = testAllModelsOnTestImdb(ensemble_models_info, imdb);
-  printOutputSeparator();
+  printConsoleOutputSeparator();
+  weighted_results = testAllEnsembleModelsOnTestImdb(ensemble_models_info, imdb);
+  printConsoleOutputSeparator();
 
 % -------------------------------------------------------------------------
 function [resampled_data, resampled_labels] = resampleData(data, labels, weights, ratio)
@@ -470,35 +475,6 @@ function [images, labels] = getSimpleNNBatch(imdb, batch)
   if rand > 0.5, images=fliplr(images); end
 
 % -------------------------------------------------------------------------
-function predictions = getPredictionsFromNetOnImdb(net, imdb)
-% -------------------------------------------------------------------------
-  [net, info] = cnn_train(net, imdb, getBatch(), ...
-    'debugFlag', false, ...
-    'continue', false, ...
-    'numEpochs', 1, ...
-    'val', find(imdb.images.set == 3));
-  predictions = info.predictions;
-
-% -------------------------------------------------------------------------
-function [acc, sens, spec] = getAccSensSpec(labels, predictions)
-% -------------------------------------------------------------------------
-  positive_class_num = 2;
-  negative_class_num = 1;
-  TP = sum((labels == predictions) .* (predictions == positive_class_num)); % TP
-  TN = sum((labels == predictions) .* (predictions == negative_class_num)); % TN
-  FP = sum((labels ~= predictions) .* (predictions == positive_class_num)); % FP
-  FN = sum((labels ~= predictions) .* (predictions == negative_class_num)); % FN
-  acc = (TP + TN) / (TP + TN + FP + FN);
-  sens = TP / (TP + FN);
-  spec = TN / (TN + FP);
-
-% -------------------------------------------------------------------------
-function printOutputSeparator()
-% -------------------------------------------------------------------------
-  afprintf(sprintf('\n'));
-  afprintf(sprintf('-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- \n'), 1);
-
-% -------------------------------------------------------------------------
 function imdb = constructPartialImdb(data, labels, set_number)
 % -------------------------------------------------------------------------
   imdb.images.data = data;
@@ -516,7 +492,7 @@ function imdb = getInitialImdb()
   afprintf(sprintf('done!\n'));
 
 % -------------------------------------------------------------------------
-function weighted_results = testAllModelsOnTestImdb(ensemble_models_info, imdb)
+function weighted_results = testAllEnsembleModelsOnTestImdb(ensemble_models_info, imdb)
 % -------------------------------------------------------------------------
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % Initial stuff
@@ -584,7 +560,7 @@ function weighted_results = testAllModelsOnTestImdb(ensemble_models_info, imdb)
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % 7. done, go treat yourself to something sugary!
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  printOutputSeparator();
+  printConsoleOutputSeparator();
   predictions_test = weighted_test_set_predictions(:, 1)';
   [weighted_acc, weighted_sens, weighted_spec] = getAccSensSpec(labels_test, predictions_test);
   afprintf(sprintf('Model weights: '))
@@ -623,20 +599,3 @@ function printWeightedRepeats(ensemble_models_info)
     fprintf('weighted cancer repeats: %d\n', tmp);
     fprintf('\n\n== == == == == == == == == == == == == == == == == == == == == ==\n\n\n');
   end
-
-% -------------------------------------------------------------------------
-function printKFoldModelPerformances(folds)
-% -------------------------------------------------------------------------
-  for i = 1:10
-    afprintf(sprintf('Fold #%d Weighted RusBoost Performance:\n', i));
-    disp(folds.(sprintf('fold_%d', i)).weighted_results);
-  end
-  fprintf(' -- -- -- -- -- -- -- -- -- OVERALL -- -- -- -- -- -- -- -- -- \n');
-  fprintf('acc: %3.2f, std: %3.2f\n', mean(folds.all_folds_acc), std(folds.all_folds_acc));
-  fprintf('sens: %3.2f, std: %3.2f\n', mean(folds.all_folds_sens), std(folds.all_folds_sens));
-  fprintf('spec: %3.2f, std: %3.2f\n', mean(folds.all_folds_spec), std(folds.all_folds_spec));
-
-% fh = cnn_rusboost();
-% imdb  = fh.getInitialImdb();
-% fh.testAllModelsOnTestImdb(ensemble_models_info, imdb)
-
