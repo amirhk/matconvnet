@@ -60,14 +60,19 @@ function folds = kFoldCNNRusboost()
   all_folds_sens = [];
   all_folds_spec = [];
 
+
+  opts.singleRusboostIterationCount = 5;
   opts.timeString = sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
   opts.experimentDirParentPath = fullfile('data_rusboost', sprintf('k-fold-rusboost-%s', opts.timeString));
   for i = 1:opts.numberOfFolds
     afprintf(sprintf('[INFO] Running cnn_rusboost on fold #%d...\n', i));
+    singleRusboostOptions.imdb = imdbs{i};
+    singleRusboostOptions.experimentDirParentPath = opts.experimentDirParentPath;
+    singleRusboostOptions.iteration_count = opts.singleRusboostIterationCount;
     [ ...
       folds.(sprintf('fold_%d', i)).ensemble_models_info, ...
       folds.(sprintf('fold_%d', i)).weighted_results, ...
-    ] = mainCNNRusboost(imdbs{i}, opts.experimentDirParentPath);
+    ] = mainCNNRusboost(singleRusboostOptions);
     all_folds_acc(i) = folds.(sprintf('fold_%d', i)).weighted_results.acc;
     all_folds_sens(i) = folds.(sprintf('fold_%d', i)).weighted_results.sens;
     all_folds_spec(i) = folds.(sprintf('fold_%d', i)).weighted_results.spec;
@@ -103,7 +108,7 @@ function printKFoldModelPerformances(folds)
   afprintf(sprintf('spec: %3.2f, std: %3.2f\n', mean(folds.all_folds_spec), std(folds.all_folds_spec)));
 
 % -------------------------------------------------------------------------
-function [ensemble_models_info, weighted_results] = mainCNNRusboost(imdb, experimentDirParentPath)
+function [ensemble_models_info, weighted_results] = mainCNNRusboost(singleRusboostOptions)
 % -------------------------------------------------------------------------
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % 0. take as input a pre-processed IMDB (augment cancer in training set, that's it!), say
@@ -111,20 +116,23 @@ function [ensemble_models_info, weighted_results] = mainCNNRusboost(imdb, experi
   %   test: 10 patients, ~1000 health, ~20 cancer
   % TODO: this can be extended to be say 10-fold ensemble larp, then average the folds
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  if nargin == 0
-    imdb = getInitialImdb();
-    experimentDirParentPath = 'data_rusboost';
-  else
-    % TODO: only input currently designed for is imdb (for k-fold)!
-    imdb = imdb;
-    experimentDirParentPath = experimentDirParentPath;
-  end
+  % if nargin == 0
+  %   imdb = getInitialImdb();
+  %   experimentDirParentPath = 'data_rusboost';
+  % else
+  %   % TODO: only input currently designed for is imdb (for k-fold)!
+  %   imdb = imdb;
+  %   experimentDirParentPath = experimentDirParentPath;
+  % end
+  imdb = getValueFromFieldOrDefault(singleRusboostOptions, imdb, getInitialImdb());
+  experimentDirParentPath = getValueFromFieldOrDefault(singleRusboostOptions, experimentDirParentPath, 'data_rusboost');
+  iteration_count = getValueFromFieldOrDefault(singleRusboostOptions, iteration_count, 5);
 
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % 1. some important parameter definition
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-  opts.iteration_count = 2; % number of boosting iterations
+  opts.iteration_count = iteration_count; % number of boosting iterations
   opts.dataset = 'prostate';
   opts.networkArch = 'prostatenet';
   opts.backpropDepth = 4;

@@ -98,15 +98,6 @@ function imdb = constructProstateImdb(opts)
   afprintf(sprintf('[INFO] Finished constructing / loading Prostate imdb.\n'));
 
 % -------------------------------------------------------------------------
-function output = getValueFromFieldOrDefault(opts, field_string, default_value)
-% -------------------------------------------------------------------------
-  if isfield(opts, field_string) % i.e., if the field is set (has a value)
-    output = opts.(field_string);
-  else
-    output = default_value;
-  end
-
-% -------------------------------------------------------------------------
 function imdb = constructProstateImdbHelper( ...
   opts, ...
   train_patient_indices, ...
