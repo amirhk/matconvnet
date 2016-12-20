@@ -8,11 +8,15 @@ function saveStruct2File(input_struct, filePath, recursion_depth)
     value = input_struct.(fields{i});
     switch class(value)
       case 'char'
-
         for j = 1:recursion_depth
           fprintf(fileID, '\t');
         end
         fprintf(fileID, '%s: %s\n', fields{i}, value);
+      case 'logical'
+        for j = 1:recursion_depth
+          fprintf(fileID, '\t');
+        end
+        fprintf(fileID, '%s: %d\n', fields{i}, value);
       case 'double'
         for j = 1:recursion_depth
           fprintf(fileID, '\t');

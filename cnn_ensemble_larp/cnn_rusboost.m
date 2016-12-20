@@ -3,8 +3,9 @@ function fh = cnnRusboost()
   fh.getInitialImdb = @getInitialImdb;
   fh.mainCNNRusboost = @mainCNNRusboost;
   fh.kFoldCNNRusboost = @kFoldCNNRusboost;
-  fh.printWeightedRepeats = @printWeightedRepeats;
+  % fh.printWeightedRepeats = @printWeightedRepeats;
   fh.testAllEnsembleModelsOnTestImdb = @testAllEnsembleModelsOnTestImdb;
+  fh.saveKFoldResults = @saveKFoldResults;
   fh.printKFoldModelPerformances = @printKFoldModelPerformances;
 
 % -------------------------------------------------------------------------
@@ -36,22 +37,26 @@ function folds = kFoldCNNRusboost()
   opts.dataDir = fullfile(getDevPath(), 'matconvnet/data_1/_prostate');
   opts.timeString = sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
   opts.experimentDirParentPath = fullfile('data_rusboost', sprintf('k-fold-rusboost-%s', opts.timeString));
+  if ~exist(opts.experimentDirParentPath)
+    mkdir(opts.experimentDirParentPath);
+  end
+  opts.foldsFilePath = fullfile(opts.experimentDirParentPath, 'folds.mat');
+  opts.optionsFilePath = fullfile(opts.experimentDirParentPath, 'options.txt')
+  opts.resultsFilePath = fullfile(opts.experimentDirParentPath, 'results.txt');
 
-  saveStruct2File(opts, fullfile(opts.experimentDirParentPath, 'options.txt'), 0);
 
-
-
-
-
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % 0. Save experiment setup!
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  saveStruct2File(opts, opts.optionsFilePath, 0);
   afprintf(sprintf('[INFO] Running K-fold CNN Rusboost (K = %d)...\n', opts.numberOfFolds), 1);
-
-  patients_per_fold = ceil(opts.numPatients / opts.numberOfFolds);
-  random_patient_indices = randperm(104);
-  folds = {};
 
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % 1. randomly divide off patients into K folds
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  folds = {};
+  patients_per_fold = ceil(opts.numPatients / opts.numberOfFolds);
+  random_patient_indices = randperm(104);
   afprintf(sprintf('\n'));
   afprintf(sprintf('[INFO] Randomly dividing patients into K folds...\n'));
   for i = 1:opts.numberOfFolds
@@ -92,7 +97,7 @@ function folds = kFoldCNNRusboost()
       folds.(sprintf('fold_%d', i)).weighted_results, ...
     ] = mainCNNRusboost(singleRusboostOptions);
     % overwrite and save results so far
-    save(fullfile(opts.experimentDirParentPath, 'folds.mat'), 'folds');
+    save(opts.foldsFilePath, 'folds');
 
     % all_folds_acc(i) = folds.(sprintf('fold_%d', i)).weighted_results.acc;
     % all_folds_sens(i) = folds.(sprintf('fold_%d', i)).weighted_results.sens;
@@ -112,24 +117,12 @@ function folds = kFoldCNNRusboost()
   % results.all_folds_ensemble_count = all_folds_ensemble_count;
 
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % 3. Save and print results
+  % 4. Save and print results
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % saveStruct2File(opts, fullfile(opts.experimentDirParentPath, 'options.txt'), 0);
   % saveStruct2File(results, fullfile(opts.experimentDirParentPath, 'results.txt'), 0);
-  saveAllFoldsResults(opts.numberOfFolds, folds);
+  saveKFoldResults(opts.numberOfFolds, folds, opts.resultsFilePath);
   printKFoldModelPerformances(opts.numberOfFolds, folds);
-
-% -------------------------------------------------------------------------
-function printKFoldModelPerformances(numberOfFolds, folds)
-% -------------------------------------------------------------------------
-  for i = 1:numberOfFolds
-    afprintf(sprintf('Fold #%d Weighted RusBoost Performance:\n', i));
-    disp(folds.(sprintf('fold_%d', i)).weighted_results);
-  end
-  afprintf(sprintf(' -- -- -- -- -- -- -- -- -- OVERALL -- -- -- -- -- -- -- -- -- \n'));
-  afprintf(sprintf('acc: %3.2f, std: %3.2f\n', mean(folds.all_folds_acc), std(folds.all_folds_acc)));
-  afprintf(sprintf('sens: %3.2f, std: %3.2f\n', mean(folds.all_folds_sens), std(folds.all_folds_sens)));
-  afprintf(sprintf('spec: %3.2f, std: %3.2f\n', mean(folds.all_folds_spec), std(folds.all_folds_spec)));
 
 % -------------------------------------------------------------------------
 function [ensemble_models_info, weighted_results] = mainCNNRusboost(singleRusboostOptions)
@@ -591,37 +584,36 @@ function weighted_results = testAllEnsembleModelsOnTestImdb(ensemble_models_info
   weighted_results.sens = weighted_sens;
   weighted_results.spec = weighted_spec;
 
-% -------------------------------------------------------------------------
-function printWeightedRepeats(ensemble_models_info)
-% -------------------------------------------------------------------------
-  format shortG
-  for i = 1:numel(ensemble_models_info)
-    vw = ensemble_models_info{i}.validation_weights_post_update;
-    vl = ensemble_models_info{i}.validation_labels;
-    healthy_repeats = ceil(vw(vl == 1) / min(vw));
-    cancer_repeats = ceil(vw(vl == 2) / min(vw));
-    tmp = tabulate(healthy_repeats);
-    healthy_occurances = tmp(tmp(:,2) > 0, :);
-    disp(healthy_occurances);
-    tmp = sum(healthy_occurances(:,1) .* healthy_occurances(:,2));
-    fprintf('weighted healthy repeats: %d (really %d)\n', tmp, round(tmp * (1856 / 11380) * (65 / 35)));
-    % tmp = healthy_occurances;
-    % healthy_occurances(healthy_occurances(:,1) > 25,1) = 25;
-    % max_limited_healthy_occurances = healthy_occurances;
-    % tmp = sum(max_limited_healthy_occurances(:,1) .* max_limited_healthy_occurances(:,2));
-    % fprintf('max allowed weighted healthy repeats: %d (really %d)\n', tmp, round(tmp * (1856 / 11380) * (65 / 35)));
-    fprintf('\n-- -- -- -- --\n');
-    tmp = tabulate(cancer_repeats);
-    cancer_occurances = tmp(tmp(:,2) > 0, :);
-    disp(cancer_occurances);
-    tmp = sum(cancer_occurances(:,1) .* cancer_occurances(:,2));
-    fprintf('weighted cancer repeats: %d\n', tmp);
-    fprintf('\n\n== == == == == == == == == == == == == == == == == == == == == ==\n\n\n');
-  end
+% % -------------------------------------------------------------------------
+% function printWeightedRepeats(ensemble_models_info)
+% % -------------------------------------------------------------------------
+%   format shortG
+%   for i = 1:numel(ensemble_models_info)
+%     vw = ensemble_models_info{i}.validation_weights_post_update;
+%     vl = ensemble_models_info{i}.validation_labels;
+%     healthy_repeats = ceil(vw(vl == 1) / min(vw));
+%     cancer_repeats = ceil(vw(vl == 2) / min(vw));
+%     tmp = tabulate(healthy_repeats);
+%     healthy_occurances = tmp(tmp(:,2) > 0, :);
+%     disp(healthy_occurances);
+%     tmp = sum(healthy_occurances(:,1) .* healthy_occurances(:,2));
+%     fprintf('weighted healthy repeats: %d (really %d)\n', tmp, round(tmp * (1856 / 11380) * (65 / 35)));
+%     % tmp = healthy_occurances;
+%     % healthy_occurances(healthy_occurances(:,1) > 25,1) = 25;
+%     % max_limited_healthy_occurances = healthy_occurances;
+%     % tmp = sum(max_limited_healthy_occurances(:,1) .* max_limited_healthy_occurances(:,2));
+%     % fprintf('max allowed weighted healthy repeats: %d (really %d)\n', tmp, round(tmp * (1856 / 11380) * (65 / 35)));
+%     fprintf('\n-- -- -- -- --\n');
+%     tmp = tabulate(cancer_repeats);
+%     cancer_occurances = tmp(tmp(:,2) > 0, :);
+%     disp(cancer_occurances);
+%     tmp = sum(cancer_occurances(:,1) .* cancer_occurances(:,2));
+%     fprintf('weighted cancer repeats: %d\n', tmp);
+%     fprintf('\n\n== == == == == == == == == == == == == == == == == == == == == ==\n\n\n');
+%   end
 
-
 % -------------------------------------------------------------------------
-function saveAllFoldsResults(numberOfFolds, folds)
+function results = getKFoldResults(numberOfFolds, folds)
 % -------------------------------------------------------------------------
   all_folds_acc = [];
   all_folds_sens = [];
@@ -633,4 +625,23 @@ function saveAllFoldsResults(numberOfFolds, folds)
     results.all_folds_spec(i) = folds.(sprintf('fold_%d', i)).weighted_results.spec;
     results.all_folds_ensemble_count(i) = numel(folds.(sprintf('fold_%d', i)).ensemble_models_info);
   end
-  saveStruct2File(results, fullfile(opts.experimentDirParentPath, 'results.txt'), 0);
+
+% -------------------------------------------------------------------------
+function saveKFoldResults(numberOfFolds, folds, resultsFilePath)
+% -------------------------------------------------------------------------
+  results = getKFoldResults(numberOfFolds, folds);
+  saveStruct2File(results, resultsFilePath, 0);
+
+% -------------------------------------------------------------------------
+function printKFoldModelPerformances(numberOfFolds, folds)
+% -------------------------------------------------------------------------
+  % for i = 1:numberOfFolds
+  %   afprintf(sprintf('Fold #%d Weighted RusBoost Performance:\n', i));
+  %   disp(folds.(sprintf('fold_%d', i)).weighted_results);
+  % end
+  results = getKFoldResults(numberOfFolds, folds);
+  afprintf(sprintf(' -- -- -- -- -- -- -- -- -- OVERALL -- -- -- -- -- -- -- -- -- \n'));
+  afprintf(sprintf('acc: %3.2f, std: %3.2f\n', mean(results.all_folds_acc), std(results.all_folds_acc)));
+  afprintf(sprintf('sens: %3.2f, std: %3.2f\n', mean(results.all_folds_sens), std(results.all_folds_sens)));
+  afprintf(sprintf('spec: %3.2f, std: %3.2f\n', mean(results.all_folds_spec), std(results.all_folds_spec)));
+  afprintf(sprintf('ensemble count: %3.2f, std: %3.2f\n', mean(results.all_folds_ensemble_count), std(results.all_folds_ensemble_count)));
