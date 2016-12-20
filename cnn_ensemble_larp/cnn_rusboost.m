@@ -3,7 +3,6 @@ function fh = cnnRusboost()
   fh.getInitialImdb = @getInitialImdb;
   fh.mainCNNRusboost = @mainCNNRusboost;
   fh.kFoldCNNRusboost = @kFoldCNNRusboost;
-  % fh.printWeightedRepeats = @printWeightedRepeats;
   fh.testAllEnsembleModelsOnTestImdb = @testAllEnsembleModelsOnTestImdb;
   fh.saveKFoldResults = @saveKFoldResults;
   fh.printKFoldModelPerformances = @printKFoldModelPerformances;
@@ -121,8 +120,8 @@ function folds = kFoldCNNRusboost()
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % saveStruct2File(opts, fullfile(opts.experimentDirParentPath, 'options.txt'), 0);
   % saveStruct2File(results, fullfile(opts.experimentDirParentPath, 'results.txt'), 0);
-  saveKFoldResults(opts.numberOfFolds, folds, opts.resultsFilePath);
-  printKFoldModelPerformances(opts.numberOfFolds, folds);
+  saveKFoldResults(folds, opts.resultsFilePath);
+  printKFoldModelPerformances(folds);
 
 % -------------------------------------------------------------------------
 function [ensemble_models_info, weighted_results] = mainCNNRusboost(singleRusboostOptions)
@@ -612,13 +611,61 @@ function weighted_results = testAllEnsembleModelsOnTestImdb(ensemble_models_info
 %     fprintf('\n\n== == == == == == == == == == == == == == == == == == == == == ==\n\n\n');
 %   end
 
+% % -------------------------------------------------------------------------
+% function results = getKFoldResults(numberOfFolds, folds)
+% % -------------------------------------------------------------------------
+%   all_folds_acc = [];
+%   all_folds_sens = [];
+%   all_folds_spec = [];
+%   all_folds_ensemble_count = [];
+%   for i = 1:numberOfFolds
+%     results.all_folds_acc(i) = floor(folds.(sprintf('fold_%d', i)).weighted_results.acc * 100) / 100;
+%     results.all_folds_sens(i) = floor(folds.(sprintf('fold_%d', i)).weighted_results.sens * 100) / 100;
+%     results.all_folds_spec(i) = floor(folds.(sprintf('fold_%d', i)).weighted_results.spec * 100) / 100;
+%     results.all_folds_ensemble_count(i) = numel(folds.(sprintf('fold_%d', i)).ensemble_models_info);
+%   end
+%   results.avg_acc = mean(results.all_folds_acc);
+%   results.avg_sens = mean(results.all_folds_sens);
+%   results.avg_spec = mean(results.all_folds_spec);
+%   results.avg_ensemble_count = mean(results.all_folds_ensemble_count);
+
+%   results.std_acc = std(results.all_folds_acc);
+%   results.std_sens = std(results.all_folds_sens);
+%   results.std_spec = std(results.all_folds_spec);
+%   results.std_ensemble_count = std(results.all_folds_ensemble_count);
+
+% % -------------------------------------------------------------------------
+% function saveKFoldResults(numberOfFolds, folds, resultsFilePath)
+% % -------------------------------------------------------------------------
+%   results = getKFoldResults(numberOfFolds, folds);
+%   saveStruct2File(results, resultsFilePath, 0);
+
+% % -------------------------------------------------------------------------
+% function printKFoldModelPerformances(numberOfFolds, folds)
+% % -------------------------------------------------------------------------
+%   format shortG
+%   % for i = 1:numberOfFolds
+%   %   afprintf(sprintf('Fold #%d Weighted RusBoost Performance:\n', i));
+%   %   disp(folds.(sprintf('fold_%d', i)).weighted_results);
+%   % end
+%   results = getKFoldResults(numberOfFolds, folds);
+%   afprintf(sprintf(' -- -- -- -- -- -- -- -- -- OVERALL -- -- -- -- -- -- -- -- -- \n'));
+%   afprintf(sprintf('acc: %3.2f, std: %3.2f\n', mean(results.all_folds_acc), std(results.all_folds_acc)));
+%   afprintf(sprintf('sens: %3.2f, std: %3.2f\n', mean(results.all_folds_sens), std(results.all_folds_sens)));
+%   afprintf(sprintf('spec: %3.2f, std: %3.2f\n', mean(results.all_folds_spec), std(results.all_folds_spec)));
+%   afprintf(sprintf('ensemble count: %3.2f, std: %3.2f\n', mean(results.all_folds_ensemble_count), std(results.all_folds_ensemble_count)));
+
+
+
+
 % -------------------------------------------------------------------------
-function results = getKFoldResults(numberOfFolds, folds)
+function results = getKFoldResults(folds)
 % -------------------------------------------------------------------------
   all_folds_acc = [];
   all_folds_sens = [];
   all_folds_spec = [];
   all_folds_ensemble_count = [];
+  numberOfFolds = numel(folds);
   for i = 1:numberOfFolds
     results.all_folds_acc(i) = folds.(sprintf('fold_%d', i)).weighted_results.acc;
     results.all_folds_sens(i) = folds.(sprintf('fold_%d', i)).weighted_results.sens;
@@ -627,19 +674,20 @@ function results = getKFoldResults(numberOfFolds, folds)
   end
 
 % -------------------------------------------------------------------------
-function saveKFoldResults(numberOfFolds, folds, resultsFilePath)
+function saveKFoldResults(folds, resultsFilePath)
 % -------------------------------------------------------------------------
-  results = getKFoldResults(numberOfFolds, folds);
+  results = getKFoldResults(folds);
   saveStruct2File(results, resultsFilePath, 0);
 
 % -------------------------------------------------------------------------
-function printKFoldModelPerformances(numberOfFolds, folds)
+function printKFoldModelPerformances(folds)
 % -------------------------------------------------------------------------
-  % for i = 1:numberOfFolds
+  format shortG
+  % for i = 1:numel(folds)
   %   afprintf(sprintf('Fold #%d Weighted RusBoost Performance:\n', i));
   %   disp(folds.(sprintf('fold_%d', i)).weighted_results);
   % end
-  results = getKFoldResults(numberOfFolds, folds);
+  results = getKFoldResults(folds);
   afprintf(sprintf(' -- -- -- -- -- -- -- -- -- OVERALL -- -- -- -- -- -- -- -- -- \n'));
   afprintf(sprintf('acc: %3.2f, std: %3.2f\n', mean(results.all_folds_acc), std(results.all_folds_acc)));
   afprintf(sprintf('sens: %3.2f, std: %3.2f\n', mean(results.all_folds_sens), std(results.all_folds_sens)));
