@@ -5,6 +5,7 @@ function fh = cnnRusboost()
   fh.kFoldCNNRusboost = @kFoldCNNRusboost;
   fh.printWeightedRepeats = @printWeightedRepeats;
   fh.testAllModelsOnTestImdb = @testAllModelsOnTestImdb;
+  fh.printKFoldModelPerformances = @printKFoldModelPerformances;
 
 % -------------------------------------------------------------------------
 function folds = kFoldCNNRusboost()
@@ -623,7 +624,17 @@ function printWeightedRepeats(ensemble_models_info)
     fprintf('\n\n== == == == == == == == == == == == == == == == == == == == == ==\n\n\n');
   end
 
-
+% -------------------------------------------------------------------------
+function printKFoldModelPerformances(folds)
+% -------------------------------------------------------------------------
+  for i = 1:10
+    afprintf(sprintf('Fold #%d Weighted RusBoost Performance:\n', i));
+    disp(folds.(sprintf('fold_%d', i)).weighted_results);
+  end
+  fprintf(' -- -- -- -- -- -- -- -- -- OVERALL -- -- -- -- -- -- -- -- -- \n');
+  fprintf('acc: %3.2f, std: %3.2f\n', mean(folds.all_folds_acc), std(folds.all_folds_acc));
+  fprintf('sens: %3.2f, std: %3.2f\n', mean(folds.all_folds_sens), std(folds.all_folds_sens));
+  fprintf('spec: %3.2f, std: %3.2f\n', mean(folds.all_folds_spec), std(folds.all_folds_spec));
 
 % fh = cnn_rusboost();
 % imdb  = fh.getInitialImdb();
