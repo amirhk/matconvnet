@@ -62,7 +62,7 @@ function folds = kFoldCNNRusboost()
   all_folds_ensemble_count = [];
 
 
-  opts.singleRusboostIterationCount = 5;
+  opts.singleRusboostIterationCount = 2;
   opts.timeString = sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
   opts.experimentDirParentPath = fullfile('data_rusboost', sprintf('k-fold-rusboost-%s', opts.timeString));
   for i = 1:opts.numberOfFolds
@@ -97,12 +97,12 @@ function folds = kFoldCNNRusboost()
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   saveStruct2File(opts, fullfile(opts.experimentDirParentPath, 'options.txt'), 0);
   saveStruct2File(results, fullfile(opts.experimentDirParentPath, 'results.txt'), 0);
-  printKFoldModelPerformances(folds);
+  printKFoldModelPerformances(numberOfFolds, folds);
 
 % -------------------------------------------------------------------------
-function printKFoldModelPerformances(folds)
+function printKFoldModelPerformances(numberOfFolds, folds)
 % -------------------------------------------------------------------------
-  for i = 1:10
+  for i = 1:numberOfFolds
     afprintf(sprintf('Fold #%d Weighted RusBoost Performance:\n', i));
     disp(folds.(sprintf('fold_%d', i)).weighted_results);
   end
