@@ -80,7 +80,7 @@ function folds = kFoldCNNRusboost()
         afprintf(sprintf('\n'));
         afprintf(sprintf('[INFO] Constructing imdb for fold #%d...\n', i));
         opts.networkArch = 'lenet';
-        imdb = constructMnistUnbalancedTwoClassImdb(opts)
+        imdb = constructMnistUnbalancedTwoClassImdb(opts);
         imdbs{i} = imdb;
         afprintf(sprintf('[INFO] done!\n'));
       end
@@ -234,7 +234,7 @@ function [ensemble_models_info, weighted_results] = mainCNNRusboost(singleEnsemb
     afprintf(sprintf('[INFO] Boosting iteration #%d (attempt %d)...\n', t, count));
 
     % Resampling NEG_DATA with weights of positive example
-    afprintf(sprintf('[INFO] Resampling healthy and cancer data (ratio = 65/35)... '));
+    afprintf(sprintf('[INFO] Resampling healthy and cancer data (ratio = %3.2f)... ', opts.random_undersampling_ratio));
     [resampled_data, resampled_labels] = ...
       resampleData(data_train, labels_train, W(t, :), opts.random_undersampling_ratio);
     afprintf(sprintf('done!\n'));

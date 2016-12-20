@@ -1,7 +1,7 @@
 % --------------------------------------------------------------------
 function imdb = constructMnistUnbalancedTwoClassImdb(opts)
 % --------------------------------------------------------------------
-  fprintf('[INFO] Constructing MNIST imdb...');
+  afprintf(sprintf(('[INFO] Constructing MNIST imdb...'));
   % Preapre the imdb structure, returns image data with mean image subtracted
   files = {'train-images-idx3-ubyte', ...
            'train-labels-idx1-ubyte', ...
@@ -58,7 +58,7 @@ function imdb = constructMnistUnbalancedTwoClassImdb(opts)
   imdb.images.set = set ;
   imdb.meta.sets = {'train', 'val', 'test'} ;
   imdb.meta.classes = arrayfun(@(x)sprintf('%d',x),0:9,'uniformoutput',false) ;
-  fprintf('done!\n\n');
+  % fprintf('done!\n\n');
 
   data_ones = imdb.images.data(:,:,:, imdb.images.labels == 1);
   subsampled_data_ones_indices = randsample(size(data_ones, 4), floor(size(data_ones, 4) / 100));
@@ -82,7 +82,7 @@ function imdb = constructMnistUnbalancedTwoClassImdb(opts)
   imdb.images.set = (round(rand(1,length(two_class_labels))) * 2) + 1; % randomly assign to either set 1 or set 3
   imdb.meta.sets = {'train', 'val', 'test'} ;
   imdb.meta.classes = arrayfun(@(x)sprintf('%d',x),0:9,'uniformoutput',false) ;
-  fprintf('done!\n\n');
+  afprintf(sprintf(('done!\n\n'));
 
 
 
