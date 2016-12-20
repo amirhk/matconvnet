@@ -13,8 +13,8 @@ function folds = kFoldCNNRusboost()
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % general
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  opts.numberOfFolds = 2;
-  opts.max_number_of_models_in_each_ensemble = 2;
+  opts.numberOfFolds = 5;
+  opts.max_number_of_models_in_each_ensemble = 5;
 
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % imdb
@@ -526,12 +526,12 @@ function plotThisShit(ensemble_models_info, experimentDirPath)
   title('performance');
   grid on;
   hold on;
-  plot(1:num_models_in_ensemble, ensemble_models_validation_accuracy', 'r-');
-  plot(1:num_models_in_ensemble, ensemble_models_validation_sensitivity', 'g-');
-  plot(1:num_models_in_ensemble, ensemble_models_validation_specificity', 'b-');
-  plot(1:num_models_in_ensemble, ensemble_models_test_accuracy', 'r.--');
-  plot(1:num_models_in_ensemble, ensemble_models_test_sensitivity', 'g.--');
-  plot(1:num_models_in_ensemble, ensemble_models_test_specificity', 'b.--');
+  plot(1:num_models_in_ensemble, ensemble_models_validation_accuracy, 'r-');
+  plot(1:num_models_in_ensemble, ensemble_models_validation_sensitivity, 'g-');
+  plot(1:num_models_in_ensemble, ensemble_models_validation_specificity, 'b-');
+  plot(1:num_models_in_ensemble, ensemble_models_test_accuracy, 'r.--');
+  plot(1:num_models_in_ensemble, ensemble_models_test_sensitivity, 'g.--');
+  plot(1:num_models_in_ensemble, ensemble_models_test_specificity, 'b.--');
   leg = { ...
     'val acc', ...
     'val sens', ...
