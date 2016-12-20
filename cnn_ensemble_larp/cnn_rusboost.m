@@ -41,7 +41,7 @@ function folds = kFoldCNNRusboost()
     mkdir(opts.experimentDirParentPath);
   end
   opts.foldsFilePath = fullfile(opts.experimentDirParentPath, 'folds.mat');
-  opts.optionsFilePath = fullfile(opts.experimentDirParentPath, 'options.txt')
+  opts.optionsFilePath = fullfile(opts.experimentDirParentPath, 'options.txt');
   opts.resultsFilePath = fullfile(opts.experimentDirParentPath, 'results.txt');
 
 
