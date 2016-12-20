@@ -292,8 +292,8 @@ function [ensemble_models_info, weighted_results] = mainCNNRusboost(imdb, experi
         W(t + 1, i) = W(t, i) * beta;
       else
         if labels_train(i) == 2
-          % W(t + 1, i) = cancer_to_healthy_ratio * W(t, i);
-          W(t + 1, i) = W(t, i);
+          W(t + 1, i) = cancer_to_healthy_ratio * W(t, i);
+          % W(t + 1, i) = W(t, i);
         else
           W(t + 1, i) = W(t, i);
         end
