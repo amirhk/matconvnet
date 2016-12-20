@@ -542,7 +542,7 @@ function plotThisShit(ensemble_models_info, experimentDirPath)
   };
   set(legend(leg{:}),'color','none');
   drawnow;
-  print(1, modelFigPath, '-dpdf');
+  print(2, modelFigPath, '-dpdf');
 
 % -------------------------------------------------------------------------
 function weighted_results = testAllEnsembleModelsOnTestImdb(ensemble_models_info, imdb)
