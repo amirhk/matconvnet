@@ -5,7 +5,7 @@ function fh = cnnRusboost()
   fh.kFoldCNNRusboost = @kFoldCNNRusboost;
   fh.testAllEnsembleModelsOnTestImdb = @testAllEnsembleModelsOnTestImdb;
   fh.saveKFoldResults = @saveKFoldResults;
-  fh.printKFoldModelPerformances = @printKFoldModelPerformances;
+  fh.printKFoldResults = @printKFoldResults;
 
 % -------------------------------------------------------------------------
 function folds = kFoldCNNRusboost()
@@ -43,7 +43,6 @@ function folds = kFoldCNNRusboost()
   opts.optionsFilePath = fullfile(opts.experimentDirParentPath, 'options.txt');
   opts.resultsFilePath = fullfile(opts.experimentDirParentPath, 'results.txt');
 
-
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % 0. Save experiment setup!
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
@@ -74,18 +73,12 @@ function folds = kFoldCNNRusboost()
     opts.leaveOutIndices = folds.(sprintf('fold_%d', i)).patient_indices;
     imdb = constructProstateImdb(opts);
     imdbs{i} = imdb;
-    % folds.(sprintf('fold_%d', i)).imdb = imdb;
     afprintf(sprintf('[INFO] done!\n'));
   end
 
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % 3. train ensemble larp for each fold!
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % all_folds_acc = [];
-  % all_folds_sens = [];
-  % all_folds_spec = [];
-  % all_folds_ensemble_count = [];
-
   for i = 1:opts.numberOfFolds
     afprintf(sprintf('[INFO] Running cnn_rusboost on fold #%d...\n', i));
     singleRusboostOptions.imdb = imdbs{i};
@@ -97,31 +90,13 @@ function folds = kFoldCNNRusboost()
     ] = mainCNNRusboost(singleRusboostOptions);
     % overwrite and save results so far
     save(opts.foldsFilePath, 'folds');
-
-    % all_folds_acc(i) = folds.(sprintf('fold_%d', i)).weighted_results.acc;
-    % all_folds_sens(i) = folds.(sprintf('fold_%d', i)).weighted_results.sens;
-    % all_folds_spec(i) = folds.(sprintf('fold_%d', i)).weighted_results.spec;
-    % all_folds_ensemble_count(i) = numel(folds.(sprintf('fold_%d', i)).ensemble_models_info);
-
-    % folds.all_folds_acc = all_folds_acc;                       % overwritten every fold
-    % folds.all_folds_sens = all_folds_sens;                     % overwritten every fold
-    % folds.all_folds_spec = all_folds_spec;                     % overwritten every fold
-    % folds.all_folds_ensemble_count = all_folds_ensemble_count; % overwritten every fold
-    % save(fullfile(opts.experimentDirParentPath, 'folds.mat'), 'folds'); % overwrite and save
   end
-
-  % results.all_folds_acc = all_folds_acc;
-  % results.all_folds_sens = all_folds_sens;
-  % results.all_folds_spec = all_folds_spec;
-  % results.all_folds_ensemble_count = all_folds_ensemble_count;
 
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % 4. Save and print results
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % saveStruct2File(opts, fullfile(opts.experimentDirParentPath, 'options.txt'), 0);
-  % saveStruct2File(results, fullfile(opts.experimentDirParentPath, 'results.txt'), 0);
   saveKFoldResults(folds, opts.resultsFilePath);
-  printKFoldModelPerformances(folds);
+  printKFoldResults(folds);
 
 % -------------------------------------------------------------------------
 function [ensemble_models_info, weighted_results] = mainCNNRusboost(singleRusboostOptions)
@@ -222,6 +197,7 @@ function [ensemble_models_info, weighted_results] = mainCNNRusboost(singleRusboo
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   training_resampled_imdb = constructPartialImdb([], [], 3); % barebones; filled in below
   validation_imdb = constructPartialImdb(data_train, labels_train, 3);
+  test_imdb = constructPartialImdb(data_test, labels_test, 3);
 
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % 5. go through T iterations of RUSBoost, each of which trains a CNN over E epochs
@@ -264,14 +240,14 @@ function [ensemble_models_info, weighted_results] = mainCNNRusboost(singleRusboo
       data_train_cancer_count));
     % IMPORTANT NOTE: we randomly undersample when training a model, but then,
     % we use all of the training samples (in their order) to update weights.
-    predictions = getPredictionsFromNetOnImdb(net, validation_imdb);
+    validation_predictions = getPredictionsFromNetOnImdb(net, validation_imdb);
 
     % Computing the pseudo loss of hypothesis 'model'
     afprintf(sprintf('[INFO] Computing pseudo loss... '));
     cancer_to_healthy_ratio = 1 / (data_train_cancer_count / data_train_healthy_count);
     loss = 0;
     for i = 1:data_train_count
-      if labels_train(i) == predictions(i)
+      if labels_train(i) == validation_predictions(i)
         continue;
       else
         loss = loss + W(t, i);
@@ -317,7 +293,7 @@ function [ensemble_models_info, weighted_results] = mainCNNRusboost(singleRusboo
     % Updating weight
     afprintf(sprintf('[INFO] Updating weights... '));
     for i = 1:data_train_count
-      if labels_train(i) == predictions(i)
+      if labels_train(i) == validation_predictions(i)
         W(t + 1, i) = W(t, i) * beta;
       else
         if labels_train(i) == 2
@@ -336,35 +312,59 @@ function [ensemble_models_info, weighted_results] = mainCNNRusboost(singleRusboo
       W(t + 1, i) = W(t + 1, i) / sum_W;
     end
 
+    %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+    % 6. test on single model of ensemble
+    %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+    test_predictions = getPredictionsFromNetOnImdb(net, test_imdb);
+    [ ...
+      validation_acc, ...
+      validation_sens, ...
+      validation_spec, ...
+    ] = getAccSensSpec(labels_train, validation_predictions);
+    [ ...
+      test_acc, ...
+      test_sens, ...
+      test_spec, ...
+    ] = getAccSensSpec(labels_test, test_predictions);
+
+    %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+    % 7. save single model of ensemble
+    %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
     afprintf(sprintf('[INFO] Saving model and info... '));
-    [acc, sens, spec] = getAccSensSpec(labels_train, predictions);
     ensemble_models_info{t}.model_net = H{t};
     ensemble_models_info{t}.model_loss = L(t);
     ensemble_models_info{t}.model_weight = B(t);
-    ensemble_models_info{t}.perf_accuracy = acc;
-    ensemble_models_info{t}.perf_sensitivity = sens;
-    ensemble_models_info{t}.perf_specificity = spec;
     ensemble_models_info{t}.train_healthy_count = numel(find(resampled_labels == 1));
     ensemble_models_info{t}.train_cancer_count = numel(find(resampled_labels == 2));
     ensemble_models_info{t}.validation_healthy_count = data_train_healthy_count;
     ensemble_models_info{t}.validation_cancer_count = data_train_cancer_count;
-    ensemble_models_info{t}.validation_predictions = labels_train;
+    ensemble_models_info{t}.validation_predictions = validation_predictions;
     ensemble_models_info{t}.validation_labels = labels_train;
+    ensemble_models_info{t}.validation_accuracy = validation_acc;
+    ensemble_models_info{t}.validation_sensitivity = validation_sens;
+    ensemble_models_info{t}.validation_specificity = validation_spec;
     ensemble_models_info{t}.validation_weights_pre_update = W(t,:);
     ensemble_models_info{t}.validation_weights_post_update = W(t + 1,:);
+    ensemble_models_info{t}.test_healthy_count = data_test_healthy_count;
+    ensemble_models_info{t}.test_cancer_count = data_test_cancer_count;
+    ensemble_models_info{t}.test_predictions = test_predictions;
+    ensemble_models_info{t}.test_labels = labels_test;
+    ensemble_models_info{t}.test_accuracy = test_acc;
+    ensemble_models_info{t}.test_sensitivity = test_sens;
+    ensemble_models_info{t}.test_specificity = test_spec;
     save(opts.allModelInfosPath, 'ensemble_models_info');
     fprintf('done!\n');
     afprintf(sprintf('[INFO] Acc: %3.2f Sens: %3.2f Spec: %3.2f\n', ...
-      ensemble_models_info{t}.perf_accuracy, ...
-      ensemble_models_info{t}.perf_sensitivity, ...
-      ensemble_models_info{t}.perf_specificity));
-
+      ensemble_models_info{t}.validation_accuracy, ...
+      ensemble_models_info{t}.validation_sensitivity, ...
+      ensemble_models_info{t}.validation_specificity));
+    plotThisShit(ensemble_models_info, opts.experimentDirPath);
     % Incrementing loop counter
     t = t + 1;
   end
 
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % 6. test on test set, keeping in mind beta's between each mode
+  % 8. test on test set, keeping in mind beta's between each mode
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % The final hypothesis is calculated and tested on the test set simulteneously
   printConsoleOutputSeparator();
@@ -503,6 +503,46 @@ function imdb = getInitialImdb()
   afprintf(sprintf('done!\n'));
 
 % -------------------------------------------------------------------------
+function plotThisShit(ensemble_models_info, experimentDirPath)
+% -------------------------------------------------------------------------
+  num_models_in_ensemble = numel(ensemble_models_info);
+  ensemble_models_validation_accuracy = zeros(1, num_models_in_ensemble);
+  ensemble_models_validation_sensitivity = zeros(1, num_models_in_ensemble);
+  ensemble_models_validation_specificity = zeros(1, num_models_in_ensemble);
+  ensemble_models_test_accuracy = zeros(1, num_models_in_ensemble);
+  ensemble_models_test_sensitivity = zeros(1, num_models_in_ensemble);
+  ensemble_models_test_specificity = zeros(1, num_models_in_ensemble);
+  for i = num_models_in_ensemble
+    ensemble_models_validation_accuracy = ensemble_models_info{i}.validation_accuracy;
+    ensemble_models_validation_sensitivity = ensemble_models_info{i}.validation_sensitivity;
+    ensemble_models_validation_specificity = ensemble_models_info{i}.validation_specificity;
+    ensemble_models_test_accuracy = ensemble_models_info{i}.test_accuracy;
+    ensemble_models_test_sensitivity = ensemble_models_info{i}.test_sensitivity;
+    ensemble_models_test_specificity = ensemble_models_info{i}.test_specificity;
+  end
+  figure(2);
+  modelFigPath = fullfile(experimentDirPath, 'net-train.pdf');
+  xlabel('training epoch'); ylabel('error');
+  title('performance');
+
+  plot(1:num_models_in_ensemble, ensemble_models_validation_accuracy', 'r-');
+  plot(1:num_models_in_ensemble, ensemble_models_validation_sensitivity', 'g-');
+  plot(1:num_models_in_ensemble, ensemble_models_validation_specificity', 'b-');
+  plot(1:num_models_in_ensemble, ensemble_models_test_accuracy', 'r.--');
+  plot(1:num_models_in_ensemble, ensemble_models_test_sensitivity', 'g.--');
+  plot(1:num_models_in_ensemble, ensemble_models_test_specificity', 'b.--');
+  leg = { ...
+    'val acc', ...
+    'val sens', ...
+    'val spec', ...
+    'test acc', ...
+    'test sens', ...
+    'test spec', ...
+  };
+  drawnow;
+  print(1, modelFigPath, '-dpdf');
+
+% -------------------------------------------------------------------------
 function weighted_results = testAllEnsembleModelsOnTestImdb(ensemble_models_info, imdb)
 % -------------------------------------------------------------------------
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
@@ -583,80 +623,6 @@ function weighted_results = testAllEnsembleModelsOnTestImdb(ensemble_models_info
   weighted_results.sens = weighted_sens;
   weighted_results.spec = weighted_spec;
 
-% % -------------------------------------------------------------------------
-% function printWeightedRepeats(ensemble_models_info)
-% % -------------------------------------------------------------------------
-%   format shortG
-%   for i = 1:numel(ensemble_models_info)
-%     vw = ensemble_models_info{i}.validation_weights_post_update;
-%     vl = ensemble_models_info{i}.validation_labels;
-%     healthy_repeats = ceil(vw(vl == 1) / min(vw));
-%     cancer_repeats = ceil(vw(vl == 2) / min(vw));
-%     tmp = tabulate(healthy_repeats);
-%     healthy_occurances = tmp(tmp(:,2) > 0, :);
-%     disp(healthy_occurances);
-%     tmp = sum(healthy_occurances(:,1) .* healthy_occurances(:,2));
-%     fprintf('weighted healthy repeats: %d (really %d)\n', tmp, round(tmp * (1856 / 11380) * (65 / 35)));
-%     % tmp = healthy_occurances;
-%     % healthy_occurances(healthy_occurances(:,1) > 25,1) = 25;
-%     % max_limited_healthy_occurances = healthy_occurances;
-%     % tmp = sum(max_limited_healthy_occurances(:,1) .* max_limited_healthy_occurances(:,2));
-%     % fprintf('max allowed weighted healthy repeats: %d (really %d)\n', tmp, round(tmp * (1856 / 11380) * (65 / 35)));
-%     fprintf('\n-- -- -- -- --\n');
-%     tmp = tabulate(cancer_repeats);
-%     cancer_occurances = tmp(tmp(:,2) > 0, :);
-%     disp(cancer_occurances);
-%     tmp = sum(cancer_occurances(:,1) .* cancer_occurances(:,2));
-%     fprintf('weighted cancer repeats: %d\n', tmp);
-%     fprintf('\n\n== == == == == == == == == == == == == == == == == == == == == ==\n\n\n');
-%   end
-
-% % -------------------------------------------------------------------------
-% function results = getKFoldResults(numberOfFolds, folds)
-% % -------------------------------------------------------------------------
-%   all_folds_acc = [];
-%   all_folds_sens = [];
-%   all_folds_spec = [];
-%   all_folds_ensemble_count = [];
-%   for i = 1:numberOfFolds
-%     results.all_folds_acc(i) = floor(folds.(sprintf('fold_%d', i)).weighted_results.acc * 100) / 100;
-%     results.all_folds_sens(i) = floor(folds.(sprintf('fold_%d', i)).weighted_results.sens * 100) / 100;
-%     results.all_folds_spec(i) = floor(folds.(sprintf('fold_%d', i)).weighted_results.spec * 100) / 100;
-%     results.all_folds_ensemble_count(i) = numel(folds.(sprintf('fold_%d', i)).ensemble_models_info);
-%   end
-%   results.avg_acc = mean(results.all_folds_acc);
-%   results.avg_sens = mean(results.all_folds_sens);
-%   results.avg_spec = mean(results.all_folds_spec);
-%   results.avg_ensemble_count = mean(results.all_folds_ensemble_count);
-
-%   results.std_acc = std(results.all_folds_acc);
-%   results.std_sens = std(results.all_folds_sens);
-%   results.std_spec = std(results.all_folds_spec);
-%   results.std_ensemble_count = std(results.all_folds_ensemble_count);
-
-% % -------------------------------------------------------------------------
-% function saveKFoldResults(numberOfFolds, folds, resultsFilePath)
-% % -------------------------------------------------------------------------
-%   results = getKFoldResults(numberOfFolds, folds);
-%   saveStruct2File(results, resultsFilePath, 0);
-
-% % -------------------------------------------------------------------------
-% function printKFoldModelPerformances(numberOfFolds, folds)
-% % -------------------------------------------------------------------------
-%   format shortG
-%   % for i = 1:numberOfFolds
-%   %   afprintf(sprintf('Fold #%d Weighted RusBoost Performance:\n', i));
-%   %   disp(folds.(sprintf('fold_%d', i)).weighted_results);
-%   % end
-%   results = getKFoldResults(numberOfFolds, folds);
-%   afprintf(sprintf(' -- -- -- -- -- -- -- -- -- OVERALL -- -- -- -- -- -- -- -- -- \n'));
-%   afprintf(sprintf('acc: %3.2f, std: %3.2f\n', mean(results.all_folds_acc), std(results.all_folds_acc)));
-%   afprintf(sprintf('sens: %3.2f, std: %3.2f\n', mean(results.all_folds_sens), std(results.all_folds_sens)));
-%   afprintf(sprintf('spec: %3.2f, std: %3.2f\n', mean(results.all_folds_spec), std(results.all_folds_spec)));
-%   afprintf(sprintf('ensemble count: %3.2f, std: %3.2f\n', mean(results.all_folds_ensemble_count), std(results.all_folds_ensemble_count)));
-
-
-
 % -------------------------------------------------------------------------
 function results = getKFoldResults(folds)
 % -------------------------------------------------------------------------
@@ -688,7 +654,7 @@ function saveKFoldResults(folds, resultsFilePath)
   saveStruct2File(results, resultsFilePath, 0);
 
 % -------------------------------------------------------------------------
-function printKFoldModelPerformances(folds)
+function printKFoldResults(folds)
 % -------------------------------------------------------------------------
   format shortG
   % for i = 1:numel(folds)
