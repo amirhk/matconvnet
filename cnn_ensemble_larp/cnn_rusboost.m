@@ -124,9 +124,9 @@ function [ensemble_models_info, weighted_results] = mainCNNRusboost(singleRusboo
   %   imdb = imdb;
   %   experimentDirParentPath = experimentDirParentPath;
   % end
-  imdb = getValueFromFieldOrDefault(singleRusboostOptions, imdb, getInitialImdb());
-  experimentDirParentPath = getValueFromFieldOrDefault(singleRusboostOptions, experimentDirParentPath, 'data_rusboost');
-  iteration_count = getValueFromFieldOrDefault(singleRusboostOptions, iteration_count, 5);
+  imdb = getValueFromFieldOrDefault(singleRusboostOptions, 'imdb', getInitialImdb());
+  experimentDirParentPath = getValueFromFieldOrDefault(singleRusboostOptions, 'experimentDirParentPath', 'data_rusboost');
+  iteration_count = getValueFromFieldOrDefault(singleRusboostOptions, 'iteration_count', 5);
 
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % 1. some important parameter definition
