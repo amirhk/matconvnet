@@ -21,8 +21,8 @@ switch opts.networkArch
         % net.meta.trainOpts.learningRate = [0.01*ones(1,50) 0.005*ones(1,50) 0.001*ones(1,100) 0.0005*ones(1,100)]; % matconvnet default
         % net.meta.trainOpts.learningRate = [0.005*ones(1,40) 0.001*ones(1,50) 0.0005*ones(1,110)]; % matconvnet default
         % net.meta.trainOpts.learningRate = [0.005*ones(1,40) 0.001*ones(1,50)];
-        % net.meta.trainOpts.learningRate = [0.05*ones(1,1)];
-        net.meta.trainOpts.learningRate = [0.05*ones(1,10) 0.005*ones(1,20) 0.001*ones(1,20)];
+        net.meta.trainOpts.learningRate = [0.05*ones(1,1)];
+        % net.meta.trainOpts.learningRate = [0.05*ones(1,10) 0.005*ones(1,20) 0.001*ones(1,20)];
     end
   case 'mnistnet'
     switch opts.dataset
