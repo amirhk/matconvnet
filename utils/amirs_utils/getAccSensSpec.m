@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function [acc, sens, spec] = getAccSensSpec(labels, predictions)
+function [acc, sens, spec] = getAccSensSpec(labels, predictions, debug_flag)
 % -------------------------------------------------------------------------
   positive_class_num = 2;
   negative_class_num = 1;
@@ -10,3 +10,10 @@ function [acc, sens, spec] = getAccSensSpec(labels, predictions)
   acc = (TP + TN) / (TP + TN + FP + FN);
   sens = TP / (TP + FN);
   spec = TN / (TN + FP);
+  if debug_flag
+    afprintf( ...
+      sprintf('[INFO] Acc: %3.2f Sens: %3.2f Spec: %3.2f\n', ...
+      acc, ...
+      sens, ...
+      spec));
+  end

@@ -13,8 +13,8 @@ function folds = kFoldCNNRusboost()
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % general
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  opts.numberOfFolds = 3;
-  opts.singleRusboostIterationCount = 2;
+  opts.numberOfFolds = 2;
+  opts.max_number_of_models_in_each_ensemble = 2;
 
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % imdb
@@ -83,7 +83,7 @@ function folds = kFoldCNNRusboost()
     afprintf(sprintf('[INFO] Running cnn_rusboost on fold #%d...\n', i));
     singleRusboostOptions.imdb = imdbs{i};
     singleRusboostOptions.experimentDirParentPath = opts.experimentDirParentPath;
-    singleRusboostOptions.iteration_count = opts.singleRusboostIterationCount;
+    singleRusboostOptions.iteration_count = opts.max_number_of_models_in_each_ensemble;
     [ ...
       folds.(sprintf('fold_%d', i)).ensemble_models_info, ...
       folds.(sprintf('fold_%d', i)).weighted_results, ...
@@ -241,6 +241,11 @@ function [ensemble_models_info, weighted_results] = mainCNNRusboost(singleRusboo
     % IMPORTANT NOTE: we randomly undersample when training a model, but then,
     % we use all of the training samples (in their order) to update weights.
     validation_predictions = getPredictionsFromNetOnImdb(net, validation_imdb);
+    [ ...
+      validation_acc, ...
+      validation_sens, ...
+      validation_spec, ...
+    ] = getAccSensSpec(labels_train, validation_predictions, true);
 
     % Computing the pseudo loss of hypothesis 'model'
     afprintf(sprintf('[INFO] Computing pseudo loss... '));
@@ -315,17 +320,15 @@ function [ensemble_models_info, weighted_results] = mainCNNRusboost(singleRusboo
     %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
     % 6. test on single model of ensemble
     %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+    afprintf(sprintf('[INFO] Computing test set predictions (healthy: %d, cancer: %d)...\n', ...
+      data_test_healthy_count, ...
+      data_test_cancer_count));
     test_predictions = getPredictionsFromNetOnImdb(net, test_imdb);
-    [ ...
-      validation_acc, ...
-      validation_sens, ...
-      validation_spec, ...
-    ] = getAccSensSpec(labels_train, validation_predictions);
     [ ...
       test_acc, ...
       test_sens, ...
       test_spec, ...
-    ] = getAccSensSpec(labels_test, test_predictions);
+    ] = getAccSensSpec(labels_test, test_predictions, true);
 
     %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
     % 7. save single model of ensemble
@@ -354,10 +357,6 @@ function [ensemble_models_info, weighted_results] = mainCNNRusboost(singleRusboo
     ensemble_models_info{t}.test_specificity = test_spec;
     save(opts.allModelInfosPath, 'ensemble_models_info');
     fprintf('done!\n');
-    afprintf(sprintf('[INFO] Acc: %3.2f Sens: %3.2f Spec: %3.2f\n', ...
-      ensemble_models_info{t}.validation_accuracy, ...
-      ensemble_models_info{t}.validation_sensitivity, ...
-      ensemble_models_info{t}.validation_specificity));
     plotThisShit(ensemble_models_info, opts.experimentDirPath);
     % Incrementing loop counter
     t = t + 1;
@@ -513,18 +512,20 @@ function plotThisShit(ensemble_models_info, experimentDirPath)
   ensemble_models_test_sensitivity = zeros(1, num_models_in_ensemble);
   ensemble_models_test_specificity = zeros(1, num_models_in_ensemble);
   for i = num_models_in_ensemble
-    ensemble_models_validation_accuracy = ensemble_models_info{i}.validation_accuracy;
-    ensemble_models_validation_sensitivity = ensemble_models_info{i}.validation_sensitivity;
-    ensemble_models_validation_specificity = ensemble_models_info{i}.validation_specificity;
-    ensemble_models_test_accuracy = ensemble_models_info{i}.test_accuracy;
-    ensemble_models_test_sensitivity = ensemble_models_info{i}.test_sensitivity;
-    ensemble_models_test_specificity = ensemble_models_info{i}.test_specificity;
+    ensemble_models_validation_accuracy(i) = ensemble_models_info{i}.validation_accuracy;
+    ensemble_models_validation_sensitivity(i) = ensemble_models_info{i}.validation_sensitivity;
+    ensemble_models_validation_specificity(i) = ensemble_models_info{i}.validation_specificity;
+    ensemble_models_test_accuracy(i) = ensemble_models_info{i}.test_accuracy;
+    ensemble_models_test_sensitivity(i) = ensemble_models_info{i}.test_sensitivity;
+    ensemble_models_test_specificity(i) = ensemble_models_info{i}.test_specificity;
   end
   figure(2);
-  modelFigPath = fullfile(experimentDirPath, 'net-train.pdf');
+  % clf;
+  modelFigPath = fullfile(experimentDirPath, 'incremental-performance.pdf');
   xlabel('training epoch'); ylabel('error');
   title('performance');
-
+  grid on;
+  hold on;
   plot(1:num_models_in_ensemble, ensemble_models_validation_accuracy', 'r-');
   plot(1:num_models_in_ensemble, ensemble_models_validation_sensitivity', 'g-');
   plot(1:num_models_in_ensemble, ensemble_models_validation_specificity', 'b-');
@@ -539,12 +540,16 @@ function plotThisShit(ensemble_models_info, experimentDirPath)
     'test sens', ...
     'test spec', ...
   };
+  set(legend(leg{:}),'color','none');
   drawnow;
   print(1, modelFigPath, '-dpdf');
 
 % -------------------------------------------------------------------------
 function weighted_results = testAllEnsembleModelsOnTestImdb(ensemble_models_info, imdb)
 % -------------------------------------------------------------------------
+  fprintf('\n');
+  afprintf(sprintf('[INFO] ENSEMBLE RESULTS ON TEST SET: \n'));
+  printConsoleOutputSeparator();
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % Initial stuff
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
@@ -580,11 +585,7 @@ function weighted_results = testAllEnsembleModelsOnTestImdb(ensemble_models_info
       data_test_cancer_count));
     net = H{i};
     test_set_predictions_per_model{i} = getPredictionsFromNetOnImdb(net, test_imdb);
-    [acc, sens, spec] = getAccSensSpec(labels_test, test_set_predictions_per_model{i});
-    % afprintf(sprintf('[INFO] Acc: %3.2f Sens: %3.2f Spec: %3.2f\n', acc, sens, spec));
-    afprintf(sprintf('[INFO] Acc: %3.2f\n', acc));
-    afprintf(sprintf('[INFO] Sens: %3.2f\n', sens));
-    afprintf(sprintf('[INFO] Spec: %3.2f\n', spec));
+    [acc, sens, spec] = getAccSensSpec(labels_test, test_set_predictions_per_model{i}, true);
   end
 
   for i = 1:data_test_count
@@ -613,7 +614,7 @@ function weighted_results = testAllEnsembleModelsOnTestImdb(ensemble_models_info
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   printConsoleOutputSeparator();
   predictions_test = weighted_test_set_predictions(:, 1)';
-  [weighted_acc, weighted_sens, weighted_spec] = getAccSensSpec(labels_test, predictions_test);
+  [weighted_acc, weighted_sens, weighted_spec] = getAccSensSpec(labels_test, predictions_test, false);
   afprintf(sprintf('Model weights: '))
   disp(B);
   afprintf(sprintf('[INFO] Weighted Acc: %3.2f\n', weighted_acc));
@@ -662,7 +663,7 @@ function printKFoldResults(folds)
   %   disp(folds.(sprintf('fold_%d', i)).weighted_results);
   % end
   results = getKFoldResults(folds);
-  afprintf(sprintf(' -- -- -- -- -- -- -- -- -- OVERALL -- -- -- -- -- -- -- -- -- \n'));
+  afprintf(sprintf(' -- -- -- -- -- -- -- -- -- ALL FOLDS -- -- -- -- -- -- -- -- -- \n'));
   afprintf(sprintf('acc: %3.2f, std: %3.2f\n', mean(results.all_folds_acc), std(results.all_folds_acc)));
   afprintf(sprintf('sens: %3.2f, std: %3.2f\n', mean(results.all_folds_sens), std(results.all_folds_sens)));
   afprintf(sprintf('spec: %3.2f, std: %3.2f\n', mean(results.all_folds_spec), std(results.all_folds_spec)));
