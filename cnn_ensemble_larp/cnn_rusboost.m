@@ -469,19 +469,6 @@ function [repeated_sample_4D_matrix] = augmentSample(sample, repeat_count, augme
       end
   end
 
-% TODO: copy to central file
-% -------------------------------------------------------------------------
-function fn = getBatch()
-% -------------------------------------------------------------------------
-  fn = @(x,y) getSimpleNNBatch(x,y);
-
-% -------------------------------------------------------------------------
-function [images, labels] = getSimpleNNBatch(imdb, batch)
-% -------------------------------------------------------------------------
-  images = imdb.images.data(:,:,:,batch);
-  labels = imdb.images.labels(1,batch);
-  if rand > 0.5, images=fliplr(images); end
-
 % -------------------------------------------------------------------------
 function imdb = constructPartialImdb(data, labels, set_number)
 % -------------------------------------------------------------------------
