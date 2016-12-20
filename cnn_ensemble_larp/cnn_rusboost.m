@@ -10,8 +10,39 @@ function fh = cnnRusboost()
 % -------------------------------------------------------------------------
 function folds = kFoldCNNRusboost()
 % -------------------------------------------------------------------------
-  opts.numPatients = 104;
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % general
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   opts.numberOfFolds = 3;
+  opts.singleRusboostIterationCount = 2;
+
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % imdb
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  opts.numPatients = 104;
+  opts.leaveOutType = 'special';
+  opts.contrastNormalization = true;
+  % opts.whitenData = true;
+  opts.train_balance = false;
+  opts.train_augment_healthy = 'none';
+  opts.train_augment_cancer = 'none';
+  opts.test_balance = false;
+  opts.test_augment_healthy = 'none';
+  opts.test_augment_cancer = 'none';
+
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % paths
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  opts.dataDir = fullfile(getDevPath(), 'matconvnet/data_1/_prostate');
+  opts.timeString = sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
+  opts.experimentDirParentPath = fullfile('data_rusboost', sprintf('k-fold-rusboost-%s', opts.timeString));
+
+  saveStruct2File(opts, fullfile(opts.experimentDirParentPath, 'options.txt'), 0);
+
+
+
+
+
   afprintf(sprintf('[INFO] Running K-fold CNN Rusboost (K = %d)...\n', opts.numberOfFolds), 1);
 
   patients_per_fold = ceil(opts.numPatients / opts.numberOfFolds);
@@ -32,16 +63,6 @@ function folds = kFoldCNNRusboost()
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % 2. create a non-balanced, non-augmented imdb for each fold
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  opts.dataDir = fullfile(getDevPath(), 'matconvnet/data_1/_prostate');
-  opts.leaveOutType = 'special';
-  opts.contrastNormalization = true;
-  % opts.whitenData = true;
-  opts.train_balance = false;
-  opts.train_augment_healthy = 'none';
-  opts.train_augment_cancer = 'none';
-  opts.test_balance = false;
-  opts.test_augment_healthy = 'none';
-  opts.test_augment_cancer = 'none';
   imdbs = {}; % separate so don't have to save ~1.5 GB of imdbs!!!
   for i = 1:opts.numberOfFolds
     afprintf(sprintf('\n'));
@@ -56,15 +77,11 @@ function folds = kFoldCNNRusboost()
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % 3. train ensemble larp for each fold!
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  all_folds_acc = [];
-  all_folds_sens = [];
-  all_folds_spec = [];
-  all_folds_ensemble_count = [];
+  % all_folds_acc = [];
+  % all_folds_sens = [];
+  % all_folds_spec = [];
+  % all_folds_ensemble_count = [];
 
-
-  opts.singleRusboostIterationCount = 2;
-  opts.timeString = sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
-  opts.experimentDirParentPath = fullfile('data_rusboost', sprintf('k-fold-rusboost-%s', opts.timeString));
   for i = 1:opts.numberOfFolds
     afprintf(sprintf('[INFO] Running cnn_rusboost on fold #%d...\n', i));
     singleRusboostOptions.imdb = imdbs{i};
@@ -74,30 +91,33 @@ function folds = kFoldCNNRusboost()
       folds.(sprintf('fold_%d', i)).ensemble_models_info, ...
       folds.(sprintf('fold_%d', i)).weighted_results, ...
     ] = mainCNNRusboost(singleRusboostOptions);
-    all_folds_acc(i) = folds.(sprintf('fold_%d', i)).weighted_results.acc;
-    all_folds_sens(i) = folds.(sprintf('fold_%d', i)).weighted_results.sens;
-    all_folds_spec(i) = folds.(sprintf('fold_%d', i)).weighted_results.spec;
-    all_folds_ensemble_count(i) = numel(folds.(sprintf('fold_%d', i)).ensemble_models_info);
+    % overwrite and save results so far
+    save(fullfile(opts.experimentDirParentPath, 'folds.mat'), 'folds');
 
+    % all_folds_acc(i) = folds.(sprintf('fold_%d', i)).weighted_results.acc;
+    % all_folds_sens(i) = folds.(sprintf('fold_%d', i)).weighted_results.sens;
+    % all_folds_spec(i) = folds.(sprintf('fold_%d', i)).weighted_results.spec;
+    % all_folds_ensemble_count(i) = numel(folds.(sprintf('fold_%d', i)).ensemble_models_info);
 
-    folds.all_folds_acc = all_folds_acc;                       % overwritten every fold
-    folds.all_folds_sens = all_folds_sens;                     % overwritten every fold
-    folds.all_folds_spec = all_folds_spec;                     % overwritten every fold
-    folds.all_folds_ensemble_count = all_folds_ensemble_count; % overwritten every fold
-    save(fullfile(opts.experimentDirParentPath, 'folds.mat'), 'folds'); % overwrite and save
+    % folds.all_folds_acc = all_folds_acc;                       % overwritten every fold
+    % folds.all_folds_sens = all_folds_sens;                     % overwritten every fold
+    % folds.all_folds_spec = all_folds_spec;                     % overwritten every fold
+    % folds.all_folds_ensemble_count = all_folds_ensemble_count; % overwritten every fold
+    % save(fullfile(opts.experimentDirParentPath, 'folds.mat'), 'folds'); % overwrite and save
   end
 
-  results.all_folds_acc = all_folds_acc;
-  results.all_folds_sens = all_folds_sens;
-  results.all_folds_spec = all_folds_spec;
-  results.all_folds_ensemble_count = all_folds_ensemble_count;
+  % results.all_folds_acc = all_folds_acc;
+  % results.all_folds_sens = all_folds_sens;
+  % results.all_folds_spec = all_folds_spec;
+  % results.all_folds_ensemble_count = all_folds_ensemble_count;
 
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % 3. Save input arguments, results, and print results
+  % 3. Save and print results
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  saveStruct2File(opts, fullfile(opts.experimentDirParentPath, 'options.txt'), 0);
-  saveStruct2File(results, fullfile(opts.experimentDirParentPath, 'results.txt'), 0);
-  printKFoldModelPerformances(numberOfFolds, folds);
+  % saveStruct2File(opts, fullfile(opts.experimentDirParentPath, 'options.txt'), 0);
+  % saveStruct2File(results, fullfile(opts.experimentDirParentPath, 'results.txt'), 0);
+  saveAllFoldsResults(opts.numberOfFolds, folds);
+  printKFoldModelPerformances(opts.numberOfFolds, folds);
 
 % -------------------------------------------------------------------------
 function printKFoldModelPerformances(numberOfFolds, folds)
@@ -598,3 +618,19 @@ function printWeightedRepeats(ensemble_models_info)
     fprintf('weighted cancer repeats: %d\n', tmp);
     fprintf('\n\n== == == == == == == == == == == == == == == == == == == == == ==\n\n\n');
   end
+
+
+% -------------------------------------------------------------------------
+function saveAllFoldsResults(numberOfFolds, folds)
+% -------------------------------------------------------------------------
+  all_folds_acc = [];
+  all_folds_sens = [];
+  all_folds_spec = [];
+  all_folds_ensemble_count = [];
+  for i = 1:numberOfFolds
+    results.all_folds_acc(i) = folds.(sprintf('fold_%d', i)).weighted_results.acc;
+    results.all_folds_sens(i) = folds.(sprintf('fold_%d', i)).weighted_results.sens;
+    results.all_folds_spec(i) = folds.(sprintf('fold_%d', i)).weighted_results.spec;
+    results.all_folds_ensemble_count(i) = numel(folds.(sprintf('fold_%d', i)).ensemble_models_info);
+  end
+  saveStruct2File(results, fullfile(opts.experimentDirParentPath, 'results.txt'), 0);
