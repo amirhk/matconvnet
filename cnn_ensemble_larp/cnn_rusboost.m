@@ -15,6 +15,7 @@ function folds = kFoldCNNRusboost()
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   opts.numberOfFolds = 5;
   opts.max_number_of_models_in_each_ensemble = 5;
+  opts.dataset = 'mnist';
 
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % imdb
@@ -33,7 +34,12 @@ function folds = kFoldCNNRusboost()
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % paths
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  opts.dataDir = fullfile(getDevPath(), 'matconvnet/data_1/_prostate');
+  switch opts.dataset
+    case 'mnist'
+      opts.dataDir = fullfile(getDevPath(), 'matconvnet/data_1/_prostate');
+    case 'prostate'
+      opts.dataDir = fullfile(getDevPath(), 'matconvnet/data_1/_mnist');
+  end
   opts.timeString = sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
   opts.experimentDirParentPath = fullfile('data_rusboost', sprintf('k-fold-rusboost-%s', opts.timeString));
   if ~exist(opts.experimentDirParentPath)
@@ -67,13 +73,30 @@ function folds = kFoldCNNRusboost()
   % 2. create a non-balanced, non-augmented imdb for each fold
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   imdbs = {}; % separate so don't have to save ~1.5 GB of imdbs!!!
-  for i = 1:opts.numberOfFolds
-    afprintf(sprintf('\n'));
-    afprintf(sprintf('[INFO] Constructing imdb for fold #%d...\n', i));
-    opts.leaveOutIndices = folds.(sprintf('fold_%d', i)).patient_indices;
-    imdb = constructProstateImdb(opts);
-    imdbs{i} = imdb;
-    afprintf(sprintf('[INFO] done!\n'));
+
+  switch opts.dataset
+    case 'mnist'
+      for i = 1:opts.numberOfFolds
+        afprintf(sprintf('\n'));
+        afprintf(sprintf('[INFO] Constructing imdb for fold #%d...\n', i));
+        opts.networkArch = 'lenet';
+        imdb = constructMnistUnbalancedTwoClassImdb(opts)
+        imdbs{i} = imdb;
+        afprintf(sprintf('[INFO] done!\n'));
+      end
+      singleEnsembleOptions.dataset = 'mnist';
+      singleEnsembleOptions.networkArch = 'lenet';
+    case 'prostate'
+      for i = 1:opts.numberOfFolds
+        afprintf(sprintf('\n'));
+        afprintf(sprintf('[INFO] Constructing imdb for fold #%d...\n', i));
+        opts.leaveOutIndices = folds.(sprintf('fold_%d', i)).patient_indices;
+        imdb = constructProstateImdb(opts);
+        imdbs{i} = imdb;
+        afprintf(sprintf('[INFO] done!\n'));
+      end
+      singleEnsembleOptions.dataset = 'prostate';
+      singleEnsembleOptions.networkArch = 'prostatenet';
   end
 
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
@@ -81,13 +104,13 @@ function folds = kFoldCNNRusboost()
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   for i = 1:opts.numberOfFolds
     afprintf(sprintf('[INFO] Running cnn_rusboost on fold #%d...\n', i));
-    singleRusboostOptions.imdb = imdbs{i};
-    singleRusboostOptions.experimentDirParentPath = opts.experimentDirParentPath;
-    singleRusboostOptions.iteration_count = opts.max_number_of_models_in_each_ensemble;
+    singleEnsembleOptions.imdb = imdbs{i};
+    singleEnsembleOptions.experimentDirParentPath = opts.experimentDirParentPath;
+    singleEnsembleOptions.iteration_count = opts.max_number_of_models_in_each_ensemble;
     [ ...
       folds.(sprintf('fold_%d', i)).ensemble_models_info, ...
       folds.(sprintf('fold_%d', i)).weighted_results, ...
-    ] = mainCNNRusboost(singleRusboostOptions);
+    ] = mainCNNRusboost(singleEnsembleOptions);
     % overwrite and save results so far
     save(opts.foldsFilePath, 'folds');
   end
@@ -99,7 +122,7 @@ function folds = kFoldCNNRusboost()
   printKFoldResults(folds);
 
 % -------------------------------------------------------------------------
-function [ensemble_models_info, weighted_results] = mainCNNRusboost(singleRusboostOptions)
+function [ensemble_models_info, weighted_results] = mainCNNRusboost(singleEnsembleOptions)
 % -------------------------------------------------------------------------
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % 0. take as input a pre-processed IMDB (augment cancer in training set, that's it!), say
@@ -115,17 +138,19 @@ function [ensemble_models_info, weighted_results] = mainCNNRusboost(singleRusboo
   %   imdb = imdb;
   %   experimentDirParentPath = experimentDirParentPath;
   % end
-  imdb = getValueFromFieldOrDefault(singleRusboostOptions, 'imdb', getInitialImdb());
-  experimentDirParentPath = getValueFromFieldOrDefault(singleRusboostOptions, 'experimentDirParentPath', 'data_rusboost');
-  iteration_count = getValueFromFieldOrDefault(singleRusboostOptions, 'iteration_count', 5);
+  imdb = getValueFromFieldOrDefault(singleEnsembleOptions, 'imdb', getInitialImdb());
+  experimentDirParentPath = getValueFromFieldOrDefault(singleEnsembleOptions, 'experimentDirParentPath', 'data_rusboost');
+  iteration_count = getValueFromFieldOrDefault(singleEnsembleOptions, 'iteration_count', 5);
+  dataset = getValueFromFieldOrDefault(singleEnsembleOptions, 'dataset', 'prostate');
+  networkArch = getValueFromFieldOrDefault(singleEnsembleOptions, 'networkArch', 'prostatenet');
 
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % 1. some important parameter definition
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
   opts.iteration_count = iteration_count; % number of boosting iterations
-  opts.dataset = 'prostate';
-  opts.networkArch = 'prostatenet';
+  opts.dataset = dataset;
+  opts.networkArch = networkArch;
   opts.backpropDepth = 4;
   opts.weightInitSource = 'gen';
   opts.weightInitSequence = {'compRand', 'compRand', 'compRand'};
