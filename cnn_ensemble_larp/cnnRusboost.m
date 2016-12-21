@@ -261,7 +261,7 @@ function [ensemble_models_info, weighted_results] = mainCNNRusboost(single_ensem
 
     % Computing the pseudo loss of hypothesis 'model'
     afprintf(sprintf('[INFO] Computing pseudo loss... '));
-    cancer_to_healthy_ratio = 1 / (data_train_cancer_count / data_train_healthy_count);
+    healthy_to_cancer_ratio = data_train_healthy_count / data_train_cancer_count;
     loss = 0;
     for i = 1:data_train_count
       if labels_train(i) == validation_predictions(i)
@@ -314,7 +314,7 @@ function [ensemble_models_info, weighted_results] = mainCNNRusboost(single_ensem
         W(t + 1, i) = W(t, i) * beta;
       else
         if labels_train(i) == 2
-          W(t + 1, i) = min(cancer_to_healthy_ratio, 10) * W(t, i);
+          W(t + 1, i) = min(healthy_to_cancer_ratio, 5) * W(t, i);
           % W(t + 1, i) = W(t, i);
         else
           W(t + 1, i) = W(t, i);
