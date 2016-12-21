@@ -6,30 +6,30 @@ function main_cnn_amir(varargin)
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
   % datasetList = {'cifar', 'stl-10', 'coil-100'}; % {'mnist', 'cifar', 'stl-10', 'coil-100'}
   % datasetList = {'cifar', 'coil-100', 'mnist', 'stl-10'};
-  datasetList = {'prostate'};
+  datasetList = {'mnist'};
 
   % networkArch = 'mnistnet';
   % % backpropDepthList = [8, 6, 4];
   % backpropDepthList = [4];
 
-  networkArch = 'prostatenet';
-  % backpropDepthList = [13, 10, 7, 4];
-  % backpropDepthList = [13, 4];
-  backpropDepthList = [4];
-  % leaveOutType = 'sample';
+  % networkArch = 'prostatenet';
+  % % backpropDepthList = [13, 10, 7, 4];
+  % % backpropDepthList = [13, 4];
+  % backpropDepthList = [4];
+  % % leaveOutType = 'sample';
   % leaveOutIndices = 1:1:266;
   leaveOutType = 'patient';
   leaveOutIndices = 1:1:104;
   % leaveOutIndices = 1:1:1;
 
 
-  % networkArch = 'lenet';
+  networkArch = 'lenet';
   % backpropDepthList = [13, 10, 7, 4]; % no dropout
   % backpropDepthList = [14, 10, 7, 4]; % 1 x dropout after 1st layer
   % backpropDepthList = [14, 11, 8, 4]; % 1 x dropout after 3rd layer
   % backpropDepthList = [14, 11, 8, 5]; % 1 x dropout in FC
   % backpropDepthList = [15, 11, 8, 4]; % 2 x dropout after 1st and 3rd layers
-  % backpropDepthList = [4];
+  backpropDepthList = [4];
 
   % networkArch = 'lenet';
   % backpropDepthList = [13, 10, 7, 4];

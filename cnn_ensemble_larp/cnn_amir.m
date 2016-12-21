@@ -112,7 +112,8 @@ function [net, info] = cnn_amir(varargin)
       case 'coil-100'
         imdb = constructCOIL100Imdb(opts);
       case 'mnist'
-        imdb = constructMnistImdb(opts);
+        % imdb = constructMnistImdb(opts);
+        imdb = constructMnistUnbalancedTwoClassImdb(opts);
       case 'stl-10'
         imdb = constructSTL10Imdb(opts);
     end

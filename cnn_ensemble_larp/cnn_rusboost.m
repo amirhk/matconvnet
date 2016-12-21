@@ -658,20 +658,33 @@ function results = getKFoldResults(folds)
   all_folds_ensemble_count = [];
   numberOfFolds = numel(fields(folds));
   for i = 1:numberOfFolds
+    for j = 1:numel(folds.(sprintf('fold_%d', i)).ensemble_models_info)
+      % results.(sprintf('fold_%d', i)).weight(j) = ...
+      %   folds.(sprintf('fold_%d', i)).ensemble_models_info{j}.model_weight; % weight is normalized a bunch of times after each iter...
+      results.(sprintf('fold_%d', i)).acc(j) = ...
+        folds.(sprintf('fold_%d', i)).ensemble_models_info{j}.test_accuracy;
+      results.(sprintf('fold_%d', i)).sens(j) = ...
+        folds.(sprintf('fold_%d', i)).ensemble_models_info{j}.test_sensitivity;
+      results.(sprintf('fold_%d', i)).spec(j) = ...
+        folds.(sprintf('fold_%d', i)).ensemble_models_info{j}.test_specificity;
+    end
+  end
+
+  for i = 1:numberOfFolds
     results.all_folds_acc(i) = folds.(sprintf('fold_%d', i)).weighted_results.acc;
     results.all_folds_sens(i) = folds.(sprintf('fold_%d', i)).weighted_results.sens;
     results.all_folds_spec(i) = folds.(sprintf('fold_%d', i)).weighted_results.spec;
     results.all_folds_ensemble_count(i) = numel(folds.(sprintf('fold_%d', i)).ensemble_models_info);
   end
-  results.avg_acc = mean(results.all_folds_acc);
-  results.avg_sens = mean(results.all_folds_sens);
-  results.avg_spec = mean(results.all_folds_spec);
-  results.avg_ensemble_count = mean(results.all_folds_ensemble_count);
+  results.kfold_acc_avg = mean(results.all_folds_acc);
+  results.kfold_sens_avg = mean(results.all_folds_sens);
+  results.kfold_spec_avg = mean(results.all_folds_spec);
+  results.kfold_ensemble_count_avg = mean(results.all_folds_ensemble_count);
 
-  results.std_acc = std(results.all_folds_acc);
-  results.std_sens = std(results.all_folds_sens);
-  results.std_spec = std(results.all_folds_spec);
-  results.std_ensemble_count = std(results.all_folds_ensemble_count);
+  results.kfold_acc_std = std(results.all_folds_acc);
+  results.kfold_sens_std = std(results.all_folds_sens);
+  results.kfold_spec_std = std(results.all_folds_spec);
+  results.kfold_ensemble_count_std = std(results.all_folds_ensemble_count);
 
 % -------------------------------------------------------------------------
 function saveKFoldResults(folds, resultsFilePath)
