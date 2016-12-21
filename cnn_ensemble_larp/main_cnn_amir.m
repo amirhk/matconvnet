@@ -122,17 +122,6 @@ function main_cnn_amir(varargin)
                 opts.leaveOutIndex = leaveOutIndex;
                 opts.debugFlag = debugFlag;
                 cnn_amir(opts);
-                % cnn_amir( ...
-                %   'dataset', char(dataset), ...
-                %   'networkArch', networkArch, ...
-                %   'backpropDepth', backpropDepth, ...
-                %   'weightDecay', weightDecay, ...
-                %   'weightInitSequence', weightInitSequence{1}, ...
-                %   'weightInitSource', weightInitSource, ...
-                %   'bottleneckDivideBy', bottleneckDivideBy, ...
-                %   'leaveOutType', leaveOutType, ...
-                %   'leaveOutIndex', leaveOutIndex, ...
-                %   'debugFlag', debugFlag);
               end
             end
           end
@@ -140,35 +129,3 @@ function main_cnn_amir(varargin)
       end
     end
   end
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

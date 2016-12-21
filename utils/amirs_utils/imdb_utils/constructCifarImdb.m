@@ -1,7 +1,7 @@
 % -------------------------------------------------------------------------
 function imdb = constructCifarImdb(opts)
 % -------------------------------------------------------------------------
-  fprintf('[INFO] Constructing CIFAR imdb (portion = %%%d)...\n\n', opts.imdb.imdbPortion * 100);
+  afprintf(sprintf('[INFO] Constructing CIFAR imdb (portion = %%%d)...\n\n', opts.imdb.imdbPortion * 100));
   % Prepare the imdb structure, returns image data with mean image subtracted
   unpackPath = fullfile(opts.imdb.dataDir, 'cifar-10-batches-mat');
   files = [arrayfun(@(n) sprintf('data_batch_%d.mat', n), 1:5, 'UniformOutput', false) ...
@@ -11,7 +11,7 @@ function imdb = constructCifarImdb(opts)
 
   if any(cellfun(@(fn) ~exist(fn, 'file'), files))
     url = 'http://www.cs.toronto.edu/~kriz/cifar-10-matlab.tar.gz';
-    fprintf('downloading %s\n', url);
+    afprintf(sprintf('downloading %s\n', url));
     untar(url, opts.imdb.dataDir);
   end
 
@@ -39,24 +39,24 @@ function imdb = constructCifarImdb(opts)
   labels = single(cat(2, output_labels, labels(50001:60000))); % amend with test data
   set = [ones(1, 50000 * opts.imdb.imdbPortion) 3 * ones(1, 10000)]; % all of the test portion
   number_of_train_and_test_images = size(labels, 2);
-  fprintf('[INFO] number_of_train_and_test_images in portion: %d.\n', number_of_train_and_test_images);
+  afprintf(sprintf('[INFO] number_of_train_and_test_images in portion: %d.\n', number_of_train_and_test_images));
 
   % normalize by image mean and std as suggested in `An Analysis of
   % Single-Layer Networks in Unsupervised Feature Learning` Adam
   % Coates, Honglak Lee, Andrew Y. Ng
 
   if opts.imdb.contrastNormalization
-    fprintf('[INFO] contrast-normalizing data... ');
+    afprintf(sprintf('[INFO] contrast-normalizing data... '));
     z = reshape(data,[],number_of_train_and_test_images);
     z = bsxfun(@minus, z, mean(z,1));
     n = std(z,0,1);
     z = bsxfun(@times, z, mean(n) ./ max(n, 40));
     data = reshape(z, 32, 32, 3, []);
-    fprintf('done.\n');
+    afprintf(sprintf('done.\n'));
   end
 
   if opts.imdb.whitenData
-    fprintf('[INFO] whitening data... ');
+    afprintf(sprintf('[INFO] whitening data... '));
     z = reshape(data,[],number_of_train_and_test_images);
     W = z(:,set == 1)*z(:,set == 1)'/number_of_train_and_test_images;
     [V,D] = eig(W);
@@ -65,7 +65,7 @@ function imdb = constructCifarImdb(opts)
     en = sqrt(mean(d2));
     z = V*diag(en./max(sqrt(d2), 10))*V'*z;
     data = reshape(z, 32, 32, 3, []);
-    fprintf('done.\n');
+    afprintf(sprintf('done.\n'));
   end
 
   clNames = load(fullfile(unpackPath, 'batches.meta.mat'));
@@ -75,7 +75,7 @@ function imdb = constructCifarImdb(opts)
   imdb.images.set = set;
   imdb.meta.sets = {'train', 'val', 'test'};
   imdb.meta.classes = clNames.label_names;
-  fprintf('[INFO] Finished constructing CIFAR imdb (portion = %%%d)!\n', opts.imdb.imdbPortion * 100);
+  afprintf(sprintf('[INFO] Finished constructing CIFAR imdb (portion = %%%d)!\n', opts.imdb.imdbPortion * 100));
 
 % -------------------------------------------------------------------------
 function [data, labels] = choosePortionOfImdb(data, labels, portion)
@@ -90,19 +90,19 @@ function [data, labels] = choosePortionOfImdb(data, labels, portion)
   output_labels = {};
   for i = 1:number_of_classes
     label_indices{i} = (labels == i);
-    fprintf('\t[INFO] found %d images with label %d...\n', size(label_indices{i}, 2), i);
+    afprintf(sprintf('\t[INFO] found %d images with label %d...\n', size(label_indices{i}, 2), i));
   end
-  fprintf('\n');
+  afprintf(sprintf('\n'));
 
   tic;
   for i = 1:number_of_classes
-    fprintf('\t[INFO] extracting images for class %d...', i);
+    afprintf(sprintf('\t[INFO] extracting images for class %d...', i));
     output_data{i} = data(:,:,:,label_indices{i});
     output_labels{i} = labels(label_indices{i});
-    fprintf('done! \t');
+    afprintf(sprintf('done! \t'));
     toc;
   end
-  fprintf('\n');
+  afprintf(sprintf('\n'));
 
   for i = 1:number_of_classes
     portioned_output_data{i} = output_data{i}(:,:,:,1:number_of_images_per_class);

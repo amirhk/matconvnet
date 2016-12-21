@@ -1,7 +1,7 @@
 % -------------------------------------------------------------------------
 function imdb = constructCOIL100Imdb(opts)
 % -------------------------------------------------------------------------
-  fprintf('[INFO] Constructing STL-10 imdb...\n');
+  afprintf(sprintf('[INFO] Constructing STL-10 imdb...\n'));
 
   numOfObjects = 100; % numOfClasses
   numOfAngles = 72;
@@ -22,7 +22,7 @@ function imdb = constructCOIL100Imdb(opts)
   end
 
   if ~exist(trainFile) || ~exist(testFile)
-    fprintf('\t[INFO] no `images.mat` file found; generating a new one from image files...\n');
+    afprintf(sprintf('\t[INFO] no `images.mat` file found; generating a new one from image files...\n'));
     images = zeros(numOfImages, imageSizeY * imageSizeX * imageSizeZ); % [100 * 72, 49152]
     for objectNum = 1:1:100
       for angleNum = 0:5:355
@@ -32,45 +32,45 @@ function imdb = constructCOIL100Imdb(opts)
         images((objectNum - 1) * numOfAngles + (angleNum + 5) / 5, :) = image;
       end
       if ~mod(objectNum, 5)
-        fprintf('\t\t[INFO] finished processing %d files.\n', objectNum);
+        afprintf(sprintf('\t\t[INFO] finished processing %d files.\n', objectNum));
       end
     end
-    fprintf('\tdone\n');
+    afprintf(sprintf('\tdone\n'));
 
     meta_train.data = images(train_images_indices,:);
     meta_train.labels = labels(train_images_indices);
     meta_test.data = images(test_images_indices,:);
     meta_test.labels = labels(test_images_indices);
 
-    fprintf('\t[INFO] Saving train meta data (large file ~25MB)...');
+    afprintf(sprintf('\t[INFO] Saving train meta data (large file ~25MB)...'));
     save(fullfile(opts.imdb.dataDir, 'train.mat'), 'meta_train');
-    fprintf('done\n');
-    fprintf('\t[INFO] Saving test meta data (large file ~25MB)...');
+    afprintf(sprintf('done\n'));
+    afprintf(sprintf('\t[INFO] Saving test meta data (large file ~25MB)...'));
     save(fullfile(opts.imdb.dataDir, 'test.mat'), 'meta_test');
-    fprintf('done\n');
+    afprintf(sprintf('done\n'));
   else
-    fprintf('\t[INFO] Found pre-existing train and test meta files. Loading... ');
+    afprintf(sprintf('\t[INFO] Found pre-existing train and test meta files. Loading... '));
     meta_train = load(trainFile);
     meta_train = meta_train.meta_train;
     meta_test = load(testFile);
     meta_test = meta_test.meta_test;
-    fprintf('done.\n');
+    afprintf(sprintf('done.\n'));
   end
 
   % disp(meta_train);
   data_train = meta_train.data;
   labels_train = meta_train.labels;
-  fprintf('\t[INFO] Processing and resizing `train` images... ');
+  afprintf(sprintf('\t[INFO] Processing and resizing `train` images... '));
   data_train = imresize(reshape(data_train', imageSizeY,imageSizeX,imageSizeZ,[]), [32,32]);
-  fprintf('done.\n');
+  afprintf(sprintf('done.\n'));
   labels_train = single(labels_train);
   set_train = 1 * ones(1, numOfImages / 2);
 
   data_test = meta_test.data;
   labels_test = meta_test.labels;
-  fprintf('\t[INFO] Processing and resizing `test` images... ');
+  afprintf(sprintf('\t[INFO] Processing and resizing `test` images... '));
   data_test = imresize(reshape(data_test', imageSizeY,imageSizeX,imageSizeZ,[]), [32,32]);
-  fprintf('done.\n');
+  afprintf(sprintf('done.\n'));
   labels_test = single(labels_test);
   set_test = 3 * ones(1, numOfImages / 2);
 
@@ -90,4 +90,4 @@ function imdb = constructCOIL100Imdb(opts)
   % imdb.meta.classes = ... i just made 100 classes myself, 1 per object (that
   % has 72 angles)... so we don't really have names for these classes. Note, we
   % can most definitely come up with fewer classes, say 'cup', 'car', 'fruit'...
-  fprintf('done!\n\n');
+  afprintf(sprintf('done!\n\n'));

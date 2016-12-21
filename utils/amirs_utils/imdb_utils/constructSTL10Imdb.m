@@ -7,7 +7,7 @@
 % -------------------------------------------------------------------------
 function imdb = constructSTL10Imdb(opts)
 % -------------------------------------------------------------------------
-  fprintf('[INFO] Constructing STL-10 imdb...');
+  afprintf(sprintf('[INFO] Constructing STL-10 imdb...'));
 
   train_file = load(fullfile(opts.imdb.dataDir, 'train.mat'));
   test_file = load(fullfile(opts.imdb.dataDir, 'test.mat'));
@@ -35,4 +35,4 @@ function imdb = constructSTL10Imdb(opts)
   imdb.images.set = set;
   imdb.meta.sets = {'train', 'val', 'test'};
   imdb.meta.classes = train_file.class_names; % = test_file.class_names
-  fprintf('done!\n\n');
+  afprintf(sprintf('done!\n\n'));

@@ -15,7 +15,7 @@ function folds = kFoldCNNRusboost()
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   opts.numberOfFolds = 5;
   opts.max_number_of_models_in_each_ensemble = 5;
-  opts.dataset = 'mnist';
+  opts.dataset = 'mnist-two-class-unbalanced';
 
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % imdb
@@ -34,12 +34,13 @@ function folds = kFoldCNNRusboost()
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % paths
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  switch opts.dataset
-    case 'mnist'
-      opts.dataDir = fullfile(getDevPath(), 'matconvnet/data_1/_prostate');
-    case 'prostate'
-      opts.dataDir = fullfile(getDevPath(), 'matconvnet/data_1/_mnist');
-  end
+  % switch opts.dataset
+  %   case 'mnist-two-class-unbalanced'
+  %     opts.dataDir = fullfile(getDevPath(), 'matconvnet/data_1/_prostate');
+  %   case 'prostate'
+  %     opts.dataDir = fullfile(getDevPath(), 'matconvnet/data_1/_mnist');
+  % end
+  opts.dataDir = fullfile(getDevPath(), 'data', 'source', sprintf('%s', opts.dataset));
   opts.timeString = sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
   opts.experimentDirParentPath = fullfile('data_rusboost', sprintf('k-fold-rusboost-%s', opts.timeString));
   if ~exist(opts.experimentDirParentPath)
@@ -75,16 +76,16 @@ function folds = kFoldCNNRusboost()
   imdbs = {}; % separate so don't have to save ~1.5 GB of imdbs!!!
 
   switch opts.dataset
-    case 'mnist'
+    case 'mnist-two-class-unbalanced'
       for i = 1:opts.numberOfFolds
         afprintf(sprintf('\n'));
         afprintf(sprintf('[INFO] Constructing imdb for fold #%d...\n', i));
         opts.networkArch = 'lenet';
-        imdb = constructMnistUnbalancedTwoClassImdb(opts);
+        imdb = constructMnistUnbalancedTwoClassImdb(opts.dataDir, opts.networkArch);
         imdbs{i} = imdb;
         afprintf(sprintf('[INFO] done!\n'));
       end
-      singleEnsembleOptions.dataset = 'mnist';
+      singleEnsembleOptions.dataset = 'mnist-two-class-unbalanced';
       singleEnsembleOptions.networkArch = 'lenet';
     case 'prostate'
       for i = 1:opts.numberOfFolds
@@ -251,21 +252,28 @@ function [ensemble_models_info, weighted_results] = mainCNNRusboost(singleEnsemb
     afprintf(sprintf('[INFO] Training model (healthy: %d, cancer: %d)...\n', ...
       numel(find(resampled_labels == 1)), ...
       numel(find(resampled_labels == 2))));
-    [net, info] = cnn_amir( ...
-      'imdb', training_resampled_imdb, ...
-      'dataset', opts.dataset, ...
-      'networkArch', opts.networkArch, ...
-      'backpropDepth', opts.backpropDepth, ...
-      'weightInitSource', opts.weightInitSource, ...
-      'weightInitSequence', opts.weightInitSequence, ...
-      'debugFlag', false);
+    train_opts.dataset = opts.dataset;
+    train_opts.networkArch = opts.networkArch;
+    train_opts.backpropDepth = opts.backpropDepth;
+    train_opts.weightInitSource = opts.weightInitSource;
+    train_opts.weightInitSequence = opts.weightInitSequence;
+    train_opts.debugFlag = false;
+    % [net, info] = cnn_amir( ...
+    %   'imdb', training_resampled_imdb, ...
+    %   'dataset', opts.dataset, ...
+    %   'networkArch', opts.networkArch, ...
+    %   'backpropDepth', opts.backpropDepth, ...
+    %   'weightInitSource', opts.weightInitSource, ...
+    %   'weightInitSequence', opts.weightInitSequence, ...
+    %   'debugFlag', false);
+    [net, info] = cnn_amir(train_opts);
 
     afprintf(sprintf('[INFO] Computing validation set predictions (healthy: %d, cancer: %d)...\n', ...
       data_train_healthy_count, ...
       data_train_cancer_count));
     % IMPORTANT NOTE: we randomly undersample when training a model, but then,
     % we use all of the training samples (in their order) to update weights.
-    validation_predictions = getPredictionsFromNetOnImdb(net, validation_imdb);
+    validation_predictions = getPredictionsFromNetOnImdb(net, validation_imdb, 1);
     [ ...
       validation_acc, ...
       validation_sens, ...
@@ -348,7 +356,7 @@ function [ensemble_models_info, weighted_results] = mainCNNRusboost(singleEnsemb
     afprintf(sprintf('[INFO] Computing test set predictions (healthy: %d, cancer: %d)...\n', ...
       data_test_healthy_count, ...
       data_test_cancer_count));
-    test_predictions = getPredictionsFromNetOnImdb(net, test_imdb);
+    test_predictions = getPredictionsFromNetOnImdb(net, test_imdb, 3);
     [ ...
       test_acc, ...
       test_sens, ...
@@ -609,7 +617,7 @@ function weighted_results = testAllEnsembleModelsOnTestImdb(ensemble_models_info
       data_test_healthy_count, ...
       data_test_cancer_count));
     net = H{i};
-    test_set_predictions_per_model{i} = getPredictionsFromNetOnImdb(net, test_imdb);
+    test_set_predictions_per_model{i} = getPredictionsFromNetOnImdb(net, test_imdb, 3);
     [acc, sens, spec] = getAccSensSpec(labels_test, test_set_predictions_per_model{i}, true);
   end
 

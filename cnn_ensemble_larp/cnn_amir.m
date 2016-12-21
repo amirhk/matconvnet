@@ -75,7 +75,7 @@ function [net, info] = cnn_amir(inputs_opts)
   end
 
   % -------------------------------------------------------------------------
-  %                                                               Get Network
+  %                                                               get network
   % -------------------------------------------------------------------------
   output_opts = cnn_amir_init(opts);
   opts.net = mergeStructs(opts.net, output_opts.net);
@@ -83,7 +83,7 @@ function [net, info] = cnn_amir(inputs_opts)
   opts.train.weightInitSequence = printWeightInitSequence(opts.net.weightInitSequence); % TODO really needed?
 
   % -------------------------------------------------------------------------
-  %                                                                  Get IMDB
+  %                                                                  get imdb
   % -------------------------------------------------------------------------
   if numel(fields(opts.imdb.imdb)) % meaning an imdb was passed in as input
     imdb = opts.imdb.imdb;
@@ -101,7 +101,7 @@ function [net, info] = cnn_amir(inputs_opts)
         case 'mnist'
           imdb = constructMnistImdb(opts);
         case 'mnist-two-class-unbalanced'
-          imdb = constructMnistUnbalancedTwoClassImdb(opts);
+          imdb = constructMnistUnbalancedTwoClassImdb(opts.imdb.dataDir, opts.general.networkArch);
         case 'stl-10'
           imdb = constructSTL10Imdb(opts);
       end
@@ -123,7 +123,7 @@ function [net, info] = cnn_amir(inputs_opts)
   saveStruct2File(opts_copy, opts.paths.optionsPath, 0);
 
   % -------------------------------------------------------------------------
-  %                                                                     Train
+  %                                                                     train
   % -------------------------------------------------------------------------
   [net, info] = cnn_train(opts.net.net, opts.imdb.imdb, getBatch(), ...
     opts.train, ...
@@ -132,7 +132,7 @@ function [net, info] = cnn_amir(inputs_opts)
     'val', find(opts.imdb.imdb.images.set == 3));
 
   % -------------------------------------------------------------------------
-  %                                             Delete All But Last Net Files
+  %                                             delete all but last net files
   % -------------------------------------------------------------------------
   for epoch = 1:opts.train.numEpochs - 1
     fileName = sprintf('net-epoch-%d.mat', epoch);
@@ -140,7 +140,7 @@ function [net, info] = cnn_amir(inputs_opts)
   end
 
   % -------------------------------------------------------------------------
-  %                                        Accuracy, Sensitivity, Specificity
+  %                                        accuracy, sensitivity, specificity
   % -------------------------------------------------------------------------
   % TODO: should net & imdb even be part of the opts file?? no!
   results = {};
@@ -186,17 +186,6 @@ function processor_string = getProcessorStringFromProcessorList(processor_list)
   else
     processor_string = 'CPU';
   end
-
-% -------------------------------------------------------------------------
-function saveNetworkInfo(net, opts)
-% -------------------------------------------------------------------------
-  if opts.debugFlag; fprintf('\n[INFO] Saving network info in readme... '); end;
-  struct2File( ...
-    net.meta.trainOpts, ...
-    fullfile(opts.expDir, 'readme.txt'), ...
-    'delimiter', ...
-    '\n\n');
-  if opts.debugFlag; fprintf('done!\n'); end;
 
 % -------------------------------------------------------------------------
 function fn = getBatch()
