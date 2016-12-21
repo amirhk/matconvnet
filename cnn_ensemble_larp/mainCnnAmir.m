@@ -120,6 +120,7 @@ function main_cnn_amir(varargin)
               opts.leave_out_type = leave_out_type;
               opts.leave_out_index = leave_out_index;
               opts.debug_flag = debug_flag;
+              opts.regen = true;
               cnnAmir(opts);
             end
           end
