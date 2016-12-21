@@ -237,6 +237,7 @@ function [ensemble_models_info, weighted_results] = mainCNNRusboost(single_ensem
     afprintf(sprintf('[INFO] Training model (healthy: %d, cancer: %d)...\n', ...
       numel(find(resampled_labels == 1)), ...
       numel(find(resampled_labels == 2))));
+    train_opts.imdb = training_resampled_imdb;
     train_opts.dataset = opts.dataset;
     train_opts.network_arch = opts.network_arch;
     train_opts.backprop_depth = opts.backprop_depth;
