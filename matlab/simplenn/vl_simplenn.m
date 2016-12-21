@@ -153,7 +153,7 @@ opts.disableDropout = false ;
 opts.freezeDropout = false ;
 opts.accumulate = false ;
 opts.cudnn = true ;
-opts.backPropDepth = +inf ;
+opts.backpropDepth = +inf ;
 
 opts = vl_argparse(opts, varargin);
 
@@ -272,7 +272,7 @@ end
 
 if doder
   res(n+1).dzdx = dzdy ;
-  for i=n:-1:max(1, n-opts.backPropDepth+1)
+  for i=n:-1:max(1, n-opts.backpropDepth+1)
     l = net.layers{i} ;
     res(i).backwardTime = tic ;
     switch l.type

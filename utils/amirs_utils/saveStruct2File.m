@@ -31,7 +31,6 @@ function saveStruct2File(input_struct, filePath, recursion_depth)
           end
           fprintf(fileID, '\n');
         end
-
       case 'struct'
         for j = 1:recursion_depth
           fprintf(fileID, '\t');

@@ -1,0 +1,8 @@
+train:
+	acc: 1.00
+	sens: 0.00
+	spec: 1.00
+test:
+	acc: 1.00
+	sens: 0.00
+	spec: 1.00

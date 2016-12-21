@@ -22,7 +22,7 @@ function [net, info] = cnn_train(net, imdb, getBatch, varargin)
   opts.debugFlag = true;
   opts.weightInitSequence = {'compRand', 'compRand', 'compRand', 'compRand', 'compRand'};
   opts.weightInitSource = 'gen'; % {'load' | 'gen'}
-  opts.backPropDepth = +inf;
+  opts.backpropDepth = +inf;
   opts.batchSize = 256;
   opts.numSubBatches = 1;
   opts.train = [];
@@ -31,7 +31,7 @@ function [net, info] = cnn_train(net, imdb, getBatch, varargin)
   opts.gpus = []; % which GPU devices to use (none, one, or more)
   opts.learningRate = 0.001;
   opts.continue = true;
-  opts.expDir = fullfile('data','exp');
+  opts.experimentDir = fullfile('data','exp');
   opts.conserveMemory = false;
   opts.sync = false;
   opts.prefetch = false;
@@ -44,7 +44,7 @@ function [net, info] = cnn_train(net, imdb, getBatch, varargin)
   opts.memoryMapFile = fullfile(tempdir, 'matconvnet.bin');
   opts = vl_argparse(opts, varargin);
 
-   if ~exist(opts.expDir, 'dir'), mkdir(opts.expDir); end
+   if ~exist(opts.experimentDir, 'dir'), mkdir(opts.experimentDir); end
   if isempty(opts.train), opts.train = find(imdb.images.set==1); end
   if isempty(opts.val), opts.val = find(imdb.images.set==2); end
   if isnan(opts.train), opts.train = []; end
@@ -105,7 +105,6 @@ function [net, info] = cnn_train(net, imdb, getBatch, varargin)
         if isempty(opts.errorLabels), opts.errorLabels = {'top1e', 'top5e'}; end
       case 'multiclass-prostate'
         opts.errorFunction = @error_multiclass_prostate;
-        % if isempty(opts.errorLabels), opts.errorLabels = {'top1e', 'specificity', 'sensitivity'}; end
         if isempty(opts.errorLabels), opts.errorLabels = {'top1e'}; end
       case 'binary'
         opts.errorFunction = @error_binary;
@@ -134,8 +133,8 @@ function [net, info] = cnn_train(net, imdb, getBatch, varargin)
       learningRate = opts.learningRate(min(epoch, numel(opts.learningRate)));
 
       % fast-forward to last checkpoint
-      modelPath = @(ep) fullfile(opts.expDir, sprintf('net-epoch-%d.mat', ep));
-      modelFigPath = fullfile(opts.expDir, 'net-train.pdf');
+      modelPath = @(ep) fullfile(opts.experimentDir, sprintf('net-epoch-%d.mat', ep));
+      modelFigPath = fullfile(opts.experimentDir, 'net-train.pdf');
       if opts.continue
         if exist(modelPath(epoch),'file')
           if epoch == opts.numEpochs
@@ -175,15 +174,6 @@ function [net, info] = cnn_train(net, imdb, getBatch, varargin)
         info.(f).speed(epoch) = n / stats.(f)(1) * max(1, numGpus);
         info.(f).objective(epoch) = stats.(f)(2) / n;
         info.(f).error(:,epoch) = stats.(f)(3 : 3 + numel(opts.errorLabels) - 1) / n;
-        % added below by amir
-        info.(f).stats.TP = stats.(f)(end-5);
-        info.(f).stats.TN = stats.(f)(end-4);
-        info.(f).stats.FP = stats.(f)(end-3);
-        info.(f).stats.FN = stats.(f)(end-2);
-        info.(f).stats.sensitivity = stats.(f)(end-1);
-        info.(f).stats.specificity = stats.(f)(end-0);
-        info.(f).sensitivity(:, epoch) = info.(f).stats.sensitivity;
-        info.(f).specificity(:, epoch) = info.(f).stats.specificity;
       end
       if ~evaluateMode, save(modelPath(epoch), 'net', 'info'); end
 
@@ -209,18 +199,6 @@ function [net, info] = cnn_train(net, imdb, getBatch, varargin)
         end
         plot(1:epoch, info.val.error', '.--');
         leg = horzcat(leg, strcat('val ', opts.errorLabels));
-
-        % sensitivity
-        % plot(1:epoch, info.train.sensitivity', 'b-', 'linewidth', 1);
-        % leg = horzcat(leg, 'train sensitivity');
-        plot(1:epoch, info.val.sensitivity', 'b--', 'linewidth', 1);
-        leg = horzcat(leg, 'test sensitivity');
-        % specificity
-        % plot(1:epoch, info.train.specificity', 'g-', 'linewidth', 1);
-        % leg = horzcat(leg, 'train specificity');
-        plot(1:epoch, info.val.specificity', 'g--', 'linewidth', 1);
-        leg = horzcat(leg, 'test specificity');
-
         set(legend(leg{:}),'color','none');
         grid on;
         xlabel('training epoch'); ylabel('error');
@@ -274,14 +252,6 @@ function err = error_multiclass(opts, labels, res)
   err(1,1) = sum(sum(sum(mass .* error(:,:,1,:))));
   err(2,1) = sum(sum(sum(mass .* min(error(:,:,1:5,:),[],3))));
 
-  % specificity & sensitivity
-  tmp_labels = squeeze(labels(:,:,1,:));
-  tmp_predictions = squeeze(predictions(:,:,1,:));
-  err(end + 1,1) = sum((tmp_labels == tmp_predictions) .* (tmp_predictions == 2)); % TP
-  err(end + 1,1) = sum((tmp_labels == tmp_predictions) .* (tmp_predictions == 1)); % TN
-  err(end + 1,1) = sum((tmp_labels ~= tmp_predictions) .* (tmp_predictions == 2)); % FP
-  err(end + 1,1) = sum((tmp_labels ~= tmp_predictions) .* (tmp_predictions == 1)); % FN
-
 % -------------------------------------------------------------------------
 function err = error_multiclass_prostate(opts, labels, res)
 % -------------------------------------------------------------------------
@@ -303,14 +273,6 @@ function err = error_multiclass_prostate(opts, labels, res)
 
   error = ~bsxfun(@eq, predictions, labels);
   err(1,1) = sum(sum(sum(mass .* error(:,:,1,:)))); % top1
-
-  % specificity & sensitivity
-  tmp_labels = squeeze(labels(:,:,1,:));
-  tmp_predictions = squeeze(predictions(:,:,1,:));
-  err(end + 1,1) = sum((tmp_labels == tmp_predictions) .* (tmp_predictions == 2)); % TP
-  err(end + 1,1) = sum((tmp_labels == tmp_predictions) .* (tmp_predictions == 1)); % TN
-  err(end + 1,1) = sum((tmp_labels ~= tmp_predictions) .* (tmp_predictions == 2)); % FP
-  err(end + 1,1) = sum((tmp_labels ~= tmp_predictions) .* (tmp_predictions == 1)); % FN
 
 % -------------------------------------------------------------------------
 function err = error_binaryclass(opts, labels, res)
@@ -389,7 +351,7 @@ function  [net_cpu,stats,prof] = process_epoch(opts, getBatch, epoch, subset, le
                         'accumulate', s ~= 1, ...
                         'disableDropout', ~training, ...
                         'conserveMemory', opts.conserveMemory, ...
-                        'backPropDepth', opts.backPropDepth, ...
+                        'backpropDepth', opts.backpropDepth, ...
                         'sync', opts.sync, ...
                         'cudnn', opts.cudnn);
 
@@ -438,22 +400,6 @@ function  [net_cpu,stats,prof] = process_epoch(opts, getBatch, epoch, subset, le
     if opts.plotDiagnostics && numGpus <= 1
       figure(2); vl_simplenn_diagnose(net,res); drawnow;
     end
-  end
-  TP = 0; %stats(end-3);
-  TN = 0; %stats(end-2);
-  FP = 0; %stats(end-1);
-  FN = 0; %stats(end-0);
-  stats(end+1) = 0; %TP / (TP + FN);
-  stats(end+1) = 0; %TN / (TN + FP);
-  if opts.debugFlag
-    fprintf('\n --- --- --- --- --- --- --- --- --- --- --- --- --- \n\n');
-    fprintf('[INFO] TP: %d\n', TP);
-    fprintf('[INFO] TN: %d\n', TN);
-    fprintf('[INFO] FP: %d\n', FP);
-    fprintf('[INFO] FN: %d\n', FN);
-    fprintf('[INFO] Sensitivity: %6.5f\n', stats(end-1));
-    fprintf('[INFO] Specificity: %6.5f\n', stats(end));
-    fprintf('\n --- --- --- --- --- --- --- --- --- --- --- --- --- \n\n');
   end
 
   if nargout > 2
@@ -613,7 +559,7 @@ function [all_predictions, all_labels] = evaluate_one_epoch_of_trained_network(o
                         'accumulate', s ~= 1, ...
                         'disableDropout', ~training, ...
                         'conserveMemory', opts.conserveMemory, ...
-                        'backPropDepth', opts.backPropDepth, ...
+                        'backpropDepth', opts.backpropDepth, ...
                         'sync', opts.sync, ...
                         'cudnn', opts.cudnn);
 

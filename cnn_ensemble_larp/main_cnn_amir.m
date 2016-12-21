@@ -6,7 +6,7 @@ function main_cnn_amir(varargin)
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
   % datasetList = {'cifar', 'stl-10', 'coil-100'}; % {'mnist', 'cifar', 'stl-10', 'coil-100'}
   % datasetList = {'cifar', 'coil-100', 'mnist', 'stl-10'};
-  datasetList = {'mnist'};
+  datasetList = {'mnist-two-class-unbalanced'};
 
   % networkArch = 'mnistnet';
   % % backpropDepthList = [8, 6, 4];
@@ -19,8 +19,8 @@ function main_cnn_amir(varargin)
   % % leaveOutType = 'sample';
   % leaveOutIndices = 1:1:266;
   leaveOutType = 'patient';
-  leaveOutIndices = 1:1:104;
-  % leaveOutIndices = 1:1:1;
+  % leaveOutIndices = 1:1:104;
+  leaveOutIndices = 1:1:1;
 
 
   networkArch = 'lenet';
@@ -111,17 +111,28 @@ function main_cnn_amir(varargin)
           for weightDecay = weightDecayList
             for backpropDepth = backpropDepthList
               for leaveOutIndex = leaveOutIndices
-                cnn_amir( ...
-                  'networkArch', networkArch, ...
-                  'dataset', char(dataset), ...
-                  'backpropDepth', backpropDepth, ...
-                  'weightDecay', weightDecay, ...
-                  'weightInitSequence', weightInitSequence{1}, ...
-                  'weightInitSource', weightInitSource, ...
-                  'bottleneckDivideBy', bottleneckDivideBy, ...
-                  'leaveOutType', leaveOutType, ...
-                  'leaveOutIndex', leaveOutIndex, ...
-                  'debugFlag', debugFlag);
+                opts.dataset = char(dataset);
+                opts.networkArch = networkArch;
+                opts.backpropDepth = backpropDepth;
+                opts.weightDecay = weightDecay;
+                opts.weightInitSequence = weightInitSequence{1};
+                opts.weightInitSource = weightInitSource;
+                opts.bottleneckDivideBy = bottleneckDivideBy;
+                opts.leaveOutType = leaveOutType;
+                opts.leaveOutIndex = leaveOutIndex;
+                opts.debugFlag = debugFlag;
+                cnn_amir(opts);
+                % cnn_amir( ...
+                %   'dataset', char(dataset), ...
+                %   'networkArch', networkArch, ...
+                %   'backpropDepth', backpropDepth, ...
+                %   'weightDecay', weightDecay, ...
+                %   'weightInitSequence', weightInitSequence{1}, ...
+                %   'weightInitSource', weightInitSource, ...
+                %   'bottleneckDivideBy', bottleneckDivideBy, ...
+                %   'leaveOutType', leaveOutType, ...
+                %   'leaveOutIndex', leaveOutIndex, ...
+                %   'debugFlag', debugFlag);
               end
             end
           end
@@ -129,3 +140,35 @@ function main_cnn_amir(varargin)
       end
     end
   end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -9,8 +9,8 @@ function imdb = constructSTL10Imdb(opts)
 % -------------------------------------------------------------------------
   fprintf('[INFO] Constructing STL-10 imdb...');
 
-  train_file = load(fullfile(opts.dataDir, 'train.mat'));
-  test_file = load(fullfile(opts.dataDir, 'test.mat'));
+  train_file = load(fullfile(opts.imdb.dataDir, 'train.mat'));
+  test_file = load(fullfile(opts.imdb.dataDir, 'test.mat'));
 
   data_train = imresize(reshape(im2double(train_file.X'), 96,96,3,[]), [32,32]);
   labels_train = single(train_file.y');

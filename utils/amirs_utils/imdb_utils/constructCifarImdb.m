@@ -1,9 +1,9 @@
 % -------------------------------------------------------------------------
 function imdb = constructCifarImdb(opts)
 % -------------------------------------------------------------------------
-  fprintf('[INFO] Constructing CIFAR imdb (portion = %%%d)...\n\n', opts.imdbPortion * 100);
+  fprintf('[INFO] Constructing CIFAR imdb (portion = %%%d)...\n\n', opts.imdb.imdbPortion * 100);
   % Prepare the imdb structure, returns image data with mean image subtracted
-  unpackPath = fullfile(opts.dataDir, 'cifar-10-batches-mat');
+  unpackPath = fullfile(opts.imdb.dataDir, 'cifar-10-batches-mat');
   files = [arrayfun(@(n) sprintf('data_batch_%d.mat', n), 1:5, 'UniformOutput', false) ...
     {'test_batch.mat'}];
   files = cellfun(@(fn) fullfile(unpackPath, fn), files, 'UniformOutput', false);
@@ -12,7 +12,7 @@ function imdb = constructCifarImdb(opts)
   if any(cellfun(@(fn) ~exist(fn, 'file'), files))
     url = 'http://www.cs.toronto.edu/~kriz/cifar-10-matlab.tar.gz';
     fprintf('downloading %s\n', url);
-    untar(url, opts.dataDir);
+    untar(url, opts.imdb.dataDir);
   end
 
   data = cell(1, numel(files));
@@ -34,10 +34,10 @@ function imdb = constructCifarImdb(opts)
   dataMean = mean(data(:,:,:,set == 1), 4);
   data = bsxfun(@minus, data, dataMean);
 
-  [output_data, output_labels] = choosePortionOfImdb(data(:,:,:,1:50000), labels(1:50000), opts.imdbPortion);
+  [output_data, output_labels] = choosePortionOfImdb(data(:,:,:,1:50000), labels(1:50000), opts.imdb.imdbPortion);
   data = single(cat(4, output_data, data(:,:,:,50001:60000))); % amend with test data
   labels = single(cat(2, output_labels, labels(50001:60000))); % amend with test data
-  set = [ones(1, 50000 * opts.imdbPortion) 3 * ones(1, 10000)]; % all of the test portion
+  set = [ones(1, 50000 * opts.imdb.imdbPortion) 3 * ones(1, 10000)]; % all of the test portion
   number_of_train_and_test_images = size(labels, 2);
   fprintf('[INFO] number_of_train_and_test_images in portion: %d.\n', number_of_train_and_test_images);
 
@@ -45,7 +45,7 @@ function imdb = constructCifarImdb(opts)
   % Single-Layer Networks in Unsupervised Feature Learning` Adam
   % Coates, Honglak Lee, Andrew Y. Ng
 
-  if opts.contrastNormalization
+  if opts.imdb.contrastNormalization
     fprintf('[INFO] contrast-normalizing data... ');
     z = reshape(data,[],number_of_train_and_test_images);
     z = bsxfun(@minus, z, mean(z,1));
@@ -55,7 +55,7 @@ function imdb = constructCifarImdb(opts)
     fprintf('done.\n');
   end
 
-  if opts.whitenData
+  if opts.imdb.whitenData
     fprintf('[INFO] whitening data... ');
     z = reshape(data,[],number_of_train_and_test_images);
     W = z(:,set == 1)*z(:,set == 1)'/number_of_train_and_test_images;
@@ -75,7 +75,7 @@ function imdb = constructCifarImdb(opts)
   imdb.images.set = set;
   imdb.meta.sets = {'train', 'val', 'test'};
   imdb.meta.classes = clNames.label_names;
-  fprintf('[INFO] Finished constructing CIFAR imdb (portion = %%%d)!\n', opts.imdbPortion * 100);
+  fprintf('[INFO] Finished constructing CIFAR imdb (portion = %%%d)!\n', opts.imdb.imdbPortion * 100);
 
 % -------------------------------------------------------------------------
 function [data, labels] = choosePortionOfImdb(data, labels, portion)

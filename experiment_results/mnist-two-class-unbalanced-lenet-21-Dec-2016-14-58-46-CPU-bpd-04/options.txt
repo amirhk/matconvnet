@@ -1,0 +1,33 @@
+general:
+	dataset: mnist-two-class-unbalanced
+	networkArch: lenet
+	debugFlag: 1
+net:
+	net: < too large to print net >
+	weightInitSource: gen
+imdb:
+	imdb: < too large to print imdb >
+	dataDir: /Users/a6karimi/dev/data/source/_mnist-two-class-unbalanced
+	whitenData: 1
+	contrastNormalization: 1
+	regen: 0
+train:
+	gpus: 
+	backpropDepth: 4.00
+	batchSize: 100.00
+	errorFunction: multiclass
+	learningRate: 0.05
+	numEpochs: 1.00
+	weightDecay: 0.00
+	weightInitSequence: compRand, compRand, compRand,
+other:
+	backpropDepthString: bpd-04
+	timeString: 21-Dec-2016-14-58-46
+	processorString: CPU
+paths:
+	experimentParentDir: /Users/a6karimi/dev/matconvnet/experiment_results
+	experimentDir: /Users/a6karimi/dev/matconvnet/experiment_results/mnist-two-class-unbalanced-lenet-21-Dec-2016-14-58-46-CPU-bpd-04
+	imdbDir: /Users/a6karimi/dev/data/imdb/mnist-two-class-unbalanced-lenet
+	imdbPath: /Users/a6karimi/dev/data/imdb/mnist-two-class-unbalanced-lenet/imdb.mat
+	optionsPath: /Users/a6karimi/dev/matconvnet/experiment_results/mnist-two-class-unbalanced-lenet-21-Dec-2016-14-58-46-CPU-bpd-04/options.txt
+	resultsPath: /Users/a6karimi/dev/matconvnet/experiment_results/mnist-two-class-unbalanced-lenet-21-Dec-2016-14-58-46-CPU-bpd-04/results.txt

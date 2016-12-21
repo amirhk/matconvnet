@@ -10,8 +10,8 @@ function imdb = constructCOIL100Imdb(opts)
   imageSizeX = 128;
   imageSizeZ = 3;
 
-  trainFile = fullfile(opts.dataDir, 'train.mat');
-  testFile = fullfile(opts.dataDir, 'test.mat');
+  trainFile = fullfile(opts.imdb.dataDir, 'train.mat');
+  testFile = fullfile(opts.imdb.dataDir, 'test.mat');
 
   train_images_indices = 1:2:numOfImages; % every other angle of the image
   test_images_indices = 2:2:numOfImages; % every other angle of the image
@@ -27,7 +27,7 @@ function imdb = constructCOIL100Imdb(opts)
     for objectNum = 1:1:100
       for angleNum = 0:5:355
         imageName = sprintf('obj%d__%d.png', objectNum, angleNum);
-        image = imread(fullfile(opts.dataDir, imageName));
+        image = imread(fullfile(opts.imdb.dataDir, imageName));
         image = reshape(image, 1, []); % [1, 49152]
         images((objectNum - 1) * numOfAngles + (angleNum + 5) / 5, :) = image;
       end
@@ -43,10 +43,10 @@ function imdb = constructCOIL100Imdb(opts)
     meta_test.labels = labels(test_images_indices);
 
     fprintf('\t[INFO] Saving train meta data (large file ~25MB)...');
-    save(fullfile(opts.dataDir, 'train.mat'), 'meta_train');
+    save(fullfile(opts.imdb.dataDir, 'train.mat'), 'meta_train');
     fprintf('done\n');
     fprintf('\t[INFO] Saving test meta data (large file ~25MB)...');
-    save(fullfile(opts.dataDir, 'test.mat'), 'meta_test');
+    save(fullfile(opts.imdb.dataDir, 'test.mat'), 'meta_test');
     fprintf('done\n');
   else
     fprintf('\t[INFO] Found pre-existing train and test meta files. Loading... ');

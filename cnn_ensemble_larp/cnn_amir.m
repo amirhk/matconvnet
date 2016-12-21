@@ -1,176 +1,191 @@
-function [net, info] = cnn_amir(varargin)
+function [net, info] = cnn_amir(inputs_opts)
   run(fullfile(fileparts(mfilename('fullpath')), ...
     '..', 'matlab', 'vl_setupnn.m'));
 
-  fileName = mfilename; % 'cnn_amir'
-  fullFilePath = mfilename('fullpath'); % '/Users/a6karimi/dev/matconvnet/cnn_amir_1/cnn_amir'
-  parentFolderPath = fullFilePath(1:end-length(fileName)-1);
-  folderNumber = str2num(parentFolderPath(end:end));
+  % -------------------------------------------------------------------------
+  %                                                              opts.general
+  % -------------------------------------------------------------------------
+  opts.general.dataset = getValueFromFieldOrDefault(inputs_opts, 'dataset', 'cifar');
+  opts.general.networkArch = getValueFromFieldOrDefault(inputs_opts, 'networkArch', 'lenet');
+  opts.general.debugFlag = getValueFromFieldOrDefault(inputs_opts, 'debugFlag', true);
 
-  % Setup -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
-  opts.imdb = struct();
-  opts.train = struct();
-  opts.imdbOptions = {};
-  opts.leaveOutType = 'sample';
-  opts.leaveOutIndex = 1;
-  opts.folderNumber = 2; % TODO: change!!!!
-  opts.networkArch = 'alexnet';
-  opts.dataset = 'cifar';
-  opts.regenDatabase = 0;
-  opts.backpropDepth = 20;
-  opts.weightDecay = 0.0001;
-  opts.weightInitSequence = {'1D', 'compRand', '1D', '2D-shiftflip', '1D'};
-  opts.weightInitSource = 'load';
-  opts.bottleneckDivideBy = 1;
-  opts.debugFlag = true;
-  [opts, varargin] = vl_argparse(opts, varargin);
-  if opts.debugFlag
-    fprintf('\n-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --\n\n');
-    fprintf('[INFO] networkArch:\t %s\n', opts.networkArch);
-    fprintf('[INFO] dataset:\t\t %s\n', opts.dataset);
-    fprintf('[INFO] backpropDepth:\t %d\n', opts.backpropDepth);
-    fprintf('[INFO] weightDecay:\t %6.5f\n', opts.weightDecay);
-    fprintf('[INFO] weightInitSequence:\t %s\n', printWeightInitSequence(opts.weightInitSequence));
-    fprintf('[INFO] weightInitSource: %s\n', opts.weightInitSource);
-    fprintf('[INFO] bottleneckDivideBy: %d\n', opts.bottleneckDivideBy);
-    fprintf('\n');
-  end
+  % -------------------------------------------------------------------------
+  %                                                                  opts.net
+  % -------------------------------------------------------------------------
+  opts.net.net = getValueFromFieldOrDefault(inputs_opts, 'network', struct()); % may optionally pass in the network
+  opts.net.weightInitSource = getValueFromFieldOrDefault(inputs_opts, 'weightInitSource', 'gen');
+  opts.net.weightInitSequence = getValueFromFieldOrDefault(opts, 'weightInitSequence', {'compRand', 'compRand', 'compRand'});
 
-  % Processor -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  [opts.train.gpus, opts.processorString] = getProcessor(opts);
-  [opts, varargin] = vl_argparse(opts, varargin);
+  % -------------------------------------------------------------------------
+  %                                                                 opts.imdb
+  % -------------------------------------------------------------------------
+  opts.imdb.imdb = getValueFromFieldOrDefault(inputs_opts, 'imdb', struct()); % may optionally pass in the imdb
+  opts.imdb.dataDir = fullfile(getDevPath(), 'data', 'source', sprintf('%s', opts.general.dataset));
+  opts.imdb.whitenData = getValueFromFieldOrDefault(inputs_opts, 'whitenData', true);
+  opts.imdb.contrastNormalization = getValueFromFieldOrDefault(inputs_opts, 'contrastNormalization', true);
+  opts.imdb.regen = getValueFromFieldOrDefault(inputs_opts, 'regen', false);
+  opts.imdb.portion = getValueFromFieldOrDefault(inputs_opts, 'portion', 1.0);
 
-  % Paths -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -
-  opts.timeString = sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
-  opts.backpropDepthString = sprintf('bpd-%02d', opts.backpropDepth);
-  opts.dataFolderString = sprintf('data_%d', opts.folderNumber);
-  opts.dataDir = fullfile(vl_rootnn, opts.dataFolderString, sprintf('_%s', opts.dataset));
-  opts.imdbDir = fullfile(vl_rootnn, opts.dataFolderString, sprintf( ...
-    '%s-%s', ...
-    opts.dataset, ...
-    opts.networkArch));
-  opts.imdbPath = fullfile(opts.imdbDir, 'imdb.mat');
-  %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %%
-  %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %%
-  opts.imdbBalancedDir = fullfile(vl_rootnn, opts.dataFolderString, sprintf( ...
-    'balanced-%s-%s', ...
-    opts.dataset, ...
-    opts.networkArch));
-  opts.imdbBalancedPath = fullfile(opts.imdbBalancedDir, 'imdb.mat');
-  %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %%
-  %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %%
-  if ~exist(opts.imdbDir)
-    mkdir(opts.imdbDir);
-  else
-    % if folder exists, there may be an imdb inside there (that corresponds to
-    % a different portion of CIFAR). just delete the imdb and remake to be safe.
-    if opts.regenDatabase
-      delete(fullfile(opts.imdbDir, 'imdb.mat'));
-    end
-  end
-  opts.expDir = fullfile(vl_rootnn, opts.dataFolderString, sprintf( ...
+  % -------------------------------------------------------------------------
+  %                                                                opts.train
+  % -------------------------------------------------------------------------
+  opts.train.gpus = getValueFromFieldOrDefault(inputs_opts, 'gpus', getDefaultProcessor());
+  opts.train.backpropDepth = getValueFromFieldOrDefault(inputs_opts, 'backpropDepth', 4);
+  opts.train.batchSize = getValueFromFieldOrDefault(inputs_opts, 'batchSize', 100);
+  opts.train.errorFunction = getErrorFunctionForDataset(opts.general.dataset);
+  opts.train.learningRate = getValueFromFieldOrDefault(inputs_opts, 'learningRate', [0.05*ones(1,10) 0.005*ones(1,20) 0.001*ones(1,20)]);
+  opts.train.numEpochs = getValueFromFieldOrDefault(inputs_opts, 'numEpochs', numel(opts.train.learningRate));
+  opts.train.weightDecay = getValueFromFieldOrDefault(inputs_opts, 'weightDecay', 0.0001);
+
+  % -------------------------------------------------------------------------
+  %                                                                opts.other
+  % -------------------------------------------------------------------------
+  opts.other.backpropDepthString = sprintf('bpd-%02d', opts.train.backpropDepth);
+  opts.other.timeString = sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
+  opts.other.processorString = getProcessorStringFromProcessorList(opts.train.gpus);
+
+  % -------------------------------------------------------------------------
+  %                                                                opts.paths
+  % -------------------------------------------------------------------------
+  opts.paths.experimentParentDir = getValueFromFieldOrDefault( ...
+    opts, ...
+    'experimentParentDir', ...
+    fullfile(vl_rootnn, 'experiment_results'));
+  opts.paths.experimentDir = fullfile(opts.paths.experimentParentDir, sprintf( ...
     '%s-%s-%s-%s-%s', ...
-    opts.dataset, ...
-    opts.networkArch, ...
-    opts.timeString, ...
-    opts.processorString, ...
-    opts.backpropDepthString));
-  [opts, varargin] = vl_argparse(opts, varargin);
-  if ~exist(opts.expDir)
-    mkdir(opts.expDir);
+    opts.general.dataset, ...
+    opts.general.networkArch, ...
+    opts.other.timeString, ...
+    opts.other.processorString, ...
+    opts.other.backpropDepthString));
+  opts.paths.imdbDir = fullfile(getDevPath(), 'data', 'imdb', sprintf( ...
+    '%s-%s', ...
+    opts.general.dataset, ...
+    opts.general.networkArch));
+  opts.paths.imdbPath = fullfile(opts.paths.imdbDir, 'imdb.mat');
+  opts.paths.optionsPath = fullfile(opts.paths.experimentDir, 'options.txt');
+  opts.paths.resultsPath = fullfile(opts.paths.experimentDir, 'results.txt');
+
+  % create dirs if not exist
+  if ~exist(opts.paths.experimentDir)
+    mkdir(opts.paths.experimentDir);
+  end
+  if ~exist(opts.paths.imdbDir)
+    mkdir(opts.paths.imdbDir);
   end
 
-  % IMDB -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  opts.whitenData = true;
-  opts.contrastNormalization = true;
-  [opts, varargin] = vl_argparse(opts, varargin);
+  % -------------------------------------------------------------------------
+  %                                                               Get Network
+  % -------------------------------------------------------------------------
+  output_opts = cnn_amir_init(opts);
+  opts.net = mergeStructs(opts.net, output_opts.net);
+  opts.train = mergeStructs(opts.train, output_opts.train);
+  opts.train.weightInitSequence = printWeightInitSequence(opts.net.weightInitSequence); % TODO really needed?
 
   % -------------------------------------------------------------------------
-  %                                                    Prepare model and data
+  %                                                                  Get IMDB
   % -------------------------------------------------------------------------
-  net = cnn_amir_init( ...
-    'networkArch', opts.networkArch, ...
-    'dataset', opts.dataset, ...
-    'backpropDepth', opts.backpropDepth, ...
-    'weightDecay', opts.weightDecay, ...
-    'weightInitSequence', opts.weightInitSequence, ...
-    'weightInitSource', opts.weightInitSource, ...
-    'bottleneckDivideBy', opts.bottleneckDivideBy);
-  saveNetworkInfo(net, opts);
-
-  % TODO: make this better amir!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-  if numel(varargin) == 2 && strcmp(varargin{1}, 'imdb')
-    imdb = varargin{2};
-  elseif exist(opts.imdbPath, 'file')
-    imdb = load(opts.imdbPath);
+  if numel(fields(opts.imdb.imdb)) % meaning an imdb was passed in as input
+    imdb = opts.imdb.imdb;
   else
-    switch opts.dataset
-      case 'prostate'
-        imdb = constructProstateImdb(opts);
-      case 'cifar'
-        imdb = constructCifarImdb(opts);
-      case 'coil-100'
-        imdb = constructCOIL100Imdb(opts);
-      case 'mnist'
-        % imdb = constructMnistImdb(opts);
-        imdb = constructMnistUnbalancedTwoClassImdb(opts);
-      case 'stl-10'
-        imdb = constructSTL10Imdb(opts);
+    if ~opts.imdb.regen && exist(opts.paths.imdbPath, 'file') % if already created, and we're not asking for regen
+      imdb = load(opts.paths.imdbPath);
+    else % else just construct the imdb
+      switch opts.general.dataset
+        case 'prostate'
+          imdb = constructProstateImdb(opts);
+        case 'cifar'
+          imdb = constructCifarImdb(opts);
+        case 'coil-100'
+          imdb = constructCOIL100Imdb(opts);
+        case 'mnist'
+          imdb = constructMnistImdb(opts);
+        case 'mnist-two-class-unbalanced'
+          imdb = constructMnistUnbalancedTwoClassImdb(opts);
+        case 'stl-10'
+          imdb = constructSTL10Imdb(opts);
+      end
+      if opts.general.debugFlag; afprintf(sprintf('[INFO] saving new imdb... ')); end;
+      save(opts.paths.imdbPath, '-struct', 'imdb');
+      if opts.general.debugFlag; afprintf(sprintf('done.\n\n')); end;
     end
-    if opts.debugFlag; fprintf('[INFO] saving new imdb... '); end;
-    save(opts.imdbPath, '-struct', 'imdb');
-    if opts.debugFlag; fprintf('done.\n\n'); end;
   end
+  opts.imdb.imdb = imdb;
 
-  if strcmp(opts.dataset, 'prostate')
-    opts.errorFunction = 'multiclass-prostate';
-  else
-    opts.errorFunction = 'multiclass';
-  end
-
-  % net.meta.classes.name = imdb.meta.classes(:)';
+  % -------------------------------------------------------------------------
+  %                                   save options (don't save imdb or net!!)
+  % -------------------------------------------------------------------------
+  opts_copy = opts;
+  % opts_copy.net = rmfield(opts_copy.net, 'net');
+  opts_copy.net.net = '< too large to print net >';
+  % opts_copy.imdb = rmfield(opts_copy.imdb, 'imdb');
+  opts_copy.imdb.imdb = '< too large to print imdb >';
+  saveStruct2File(opts_copy, opts.paths.optionsPath, 0);
 
   % -------------------------------------------------------------------------
   %                                                                     Train
   % -------------------------------------------------------------------------
-  [net, info] = cnn_train(net, imdb, getBatch(), ...
-    'expDir', opts.expDir, ...
-    'errorFunction', opts.errorFunction, ...
-    'debugFlag', opts.debugFlag, ...
-    net.meta.trainOpts, ...
+  [net, info] = cnn_train(opts.net.net, opts.imdb.imdb, getBatch(), ...
     opts.train, ...
-    'val', find(imdb.images.set == 3));
-
-  saveFinalSensitivitySpecificityInfo(info, opts.expDir);
+    'experimentDir', opts.paths.experimentDir, ...
+    'debugFlag', opts.general.debugFlag, ...
+    'val', find(opts.imdb.imdb.images.set == 3));
 
   % -------------------------------------------------------------------------
   %                                             Delete All But Last Net Files
   % -------------------------------------------------------------------------
-  for epoch = 1:net.meta.trainOpts.numEpochs - 1
+  for epoch = 1:opts.train.numEpochs - 1
     fileName = sprintf('net-epoch-%d.mat', epoch);
-    delete(fullfile(opts.expDir, fileName));
+    delete(fullfile(opts.paths.experimentDir, fileName));
+  end
+
+  % -------------------------------------------------------------------------
+  %                                        Accuracy, Sensitivity, Specificity
+  % -------------------------------------------------------------------------
+  % TODO: should net & imdb even be part of the opts file?? no!
+  results = {};
+  predictions_train = getPredictionsFromNetOnImdb(net, imdb, 1);
+  predictions_test = getPredictionsFromNetOnImdb(net, imdb, 3);
+  labels_train = imdb.images.labels(imdb.images.set == 1);
+  labels_test = imdb.images.labels(imdb.images.set == 3);
+  [ ...
+    results.train.acc, ...
+    results.train.sens, ...
+    results.train.spec, ...
+  ] = getAccSensSpec(labels_train, predictions_train, true);
+  [ ...
+    results.test.acc, ...
+    results.test.sens, ...
+    results.test.spec, ...
+  ] = getAccSensSpec(labels_test, predictions_test, true);
+  saveStruct2File(results, opts.paths.resultsPath, 0);
+
+% -------------------------------------------------------------------------
+function error_function = getErrorFunctionForDataset(dataset)
+% -------------------------------------------------------------------------
+  if strcmp(dataset, 'prostate')
+    error_function = 'multiclass-prostate';
+  else
+    error_function = 'multiclass';
   end
 
 % -------------------------------------------------------------------------
-function [processorList, processorString] = getProcessor(opts)
+function processor = getDefaultProcessor()
 % -------------------------------------------------------------------------
-  if ~isfield(opts.train, 'gpus')
-    if ispc
-      % freeGPUIndex = getFreeGPUIndex();
-      % freeGPUIndex = 1;
-      freeGPUIndex = opts.folderNumber;
-      if freeGPUIndex ~= -1
-        processorList = [freeGPUIndex];
-        processorString = sprintf('GPU%d', freeGPUIndex);
-      else
-        processorString = 'CPU';
-        processorList = [];
-      end
-    else
-      processorString = 'CPU';
-      processorList = [];
-    end
-  end;
+  if ispc
+    processor = [1]; % GPU at index 1
+  else
+    processor = [];
+  end
+
+% -------------------------------------------------------------------------
+function processor_string = getProcessorStringFromProcessorList(processor_list)
+% -------------------------------------------------------------------------
+  if numel(processor_list)
+    processor_string = sprintf('GPU-%d', processor_list(1));
+  else
+    processor_string = 'CPU';
+  end
 
 % -------------------------------------------------------------------------
 function saveNetworkInfo(net, opts)
@@ -182,32 +197,6 @@ function saveNetworkInfo(net, opts)
     'delimiter', ...
     '\n\n');
   if opts.debugFlag; fprintf('done!\n'); end;
-
-
-% -------------------------------------------------------------------------
-function saveFinalSensitivitySpecificityInfo(info, expDir)
-% -------------------------------------------------------------------------
-  fileID = fopen(fullfile(expDir, 'sensitivity_specificity.txt'), 'w');
-  fprintf(fileID, '-- -- -- -- -- -- FINAL TRAINING VALUES -- -- -- -- -- --\n');
-  fprintf(fileID, '\t[INFO] Accuracy: %6.5f\n', 1 - info.train.error(end));
-  fprintf(fileID, '\t[INFO] TP: %d\n', info.train.stats.TP);
-  fprintf(fileID, '\t[INFO] TN: %d\n', info.train.stats.TN);
-  fprintf(fileID, '\t[INFO] FP: %d\n', info.train.stats.FP);
-  fprintf(fileID, '\t[INFO] FN: %d\n', info.train.stats.FN);
-  fprintf(fileID, '\t[INFO] Sensitivity: %6.5f\n', info.train.stats.sensitivity);
-  fprintf(fileID, '\t[INFO] Specificity: %6.5f\n', info.train.stats.specificity);
-  fprintf(fileID, '\t\n\n');
-  fprintf(fileID, '-- -- -- -- -- -- FINAL TESTING VALUES -- -- -- -- -- --\n');
-  fprintf(fileID, '\t[INFO] Accuracy: %6.5f\n', 1 - info.val.error(end));
-  fprintf(fileID, '\t[INFO] TP: %d\n', info.val.stats.TP);
-  fprintf(fileID, '\t[INFO] TN: %d\n', info.val.stats.TN);
-  fprintf(fileID, '\t[INFO] FP: %d\n', info.val.stats.FP);
-  fprintf(fileID, '\t[INFO] FN: %d\n', info.val.stats.FN);
-  fprintf(fileID, '\t[INFO] Sensitivity: %6.5f\n', info.val.stats.sensitivity);
-  fprintf(fileID, '\t[INFO] Specificity: %6.5f\n', info.val.stats.specificity);
-  fprintf(fileID, '\t\n\n');
-  fclose(fileID);
-
 
 % -------------------------------------------------------------------------
 function fn = getBatch()
