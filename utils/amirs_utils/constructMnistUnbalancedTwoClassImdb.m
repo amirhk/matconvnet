@@ -1,7 +1,7 @@
 % --------------------------------------------------------------------
 function imdb = constructMnistUnbalancedTwoClassImdb(opts)
 % --------------------------------------------------------------------
-  afprintf(sprintf(('[INFO] Constructing MNIST imdb...'));
+  afprintf(sprintf('[INFO] Constructing MNIST imdb...'));
   % Preapre the imdb structure, returns image data with mean image subtracted
   files = {'train-images-idx3-ubyte', ...
            'train-labels-idx1-ubyte', ...
