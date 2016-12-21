@@ -19,32 +19,32 @@ function [net, info] = cnn_train(net, imdb, getBatch, varargin)
   % This file is part of the VLFeat library and is made available under
   % the terms of the BSD license (see the COPYING file).
 
-  opts.debugFlag = true;
-  opts.weightInitSequence = {'compRand', 'compRand', 'compRand', 'compRand', 'compRand'};
-  opts.weightInitSource = 'gen'; % {'load' | 'gen'}
-  opts.backpropDepth = +inf;
-  opts.batchSize = 256;
+  opts.debug_flag = true;
+  opts.weight_init_source = 'gen'; % {'load' | 'gen'}
+  opts.weight_init_sequence = {'compRand', 'compRand', 'compRand', 'compRand', 'compRand'};
+  opts.backprop_depth = +inf;
+  opts.batch_size = 256;
   opts.numSubBatches = 1;
   opts.train = [];
   opts.val = [];
-  opts.numEpochs = 300;
+  opts.num_epochs = 300;
   opts.gpus = []; % which GPU devices to use (none, one, or more)
-  opts.learningRate = 0.001;
+  opts.learning_rate = 0.001;
   opts.continue = true;
-  opts.experimentDir = fullfile('data','exp');
+  opts.experiment_dir = fullfile('data','exp');
   opts.conserveMemory = false;
   opts.sync = false;
   opts.prefetch = false;
   opts.cudnn = true;
-  opts.weightDecay = 0.0005;
+  opts.weight_decay = 0.0005;
   opts.momentum = 0.9;
-  opts.errorFunction = 'multiclass';
+  opts.error_function = 'multiclass';
   opts.errorLabels = {};
   opts.plotDiagnostics = false;
   opts.memoryMapFile = fullfile(tempdir, 'matconvnet.bin');
   opts = vl_argparse(opts, varargin);
 
-   if ~exist(opts.experimentDir, 'dir'), mkdir(opts.experimentDir); end
+   if ~exist(opts.experiment_dir, 'dir'), mkdir(opts.experiment_dir); end
   if isempty(opts.train), opts.train = find(imdb.images.set==1); end
   if isempty(opts.val), opts.val = find(imdb.images.set==2); end
   if isnan(opts.train), opts.train = []; end
@@ -62,22 +62,22 @@ function [net, info] = cnn_train(net, imdb, getBatch, varargin)
         for j=1:J
           net.layers{i}.momentum{j} = zeros(size(net.layers{i}.weights{j}), 'single');
         end
-        if ~isfield(net.layers{i}, 'learningRate')
-          net.layers{i}.learningRate = ones(1, J, 'single');
+        if ~isfield(net.layers{i}, 'learning_rate')
+          net.layers{i}.learning_rate = ones(1, J, 'single');
         end
-        if ~isfield(net.layers{i}, 'weightDecay')
-          net.layers{i}.weightDecay = ones(1, J, 'single');
+        if ~isfield(net.layers{i}, 'weight_decay')
+          net.layers{i}.weight_decay = ones(1, J, 'single');
         end
       end
       % Legacy code: will be removed
       if isfield(net.layers{i}, 'filters')
         net.layers{i}.momentum{1} = zeros(size(net.layers{i}.filters), 'single');
         net.layers{i}.momentum{2} = zeros(size(net.layers{i}.biases), 'single');
-        if ~isfield(net.layers{i}, 'learningRate')
-          net.layers{i}.learningRate = ones(1, 2, 'single');
+        if ~isfield(net.layers{i}, 'learning_rate')
+          net.layers{i}.learning_rate = ones(1, 2, 'single');
         end
-        if ~isfield(net.layers{i}, 'weightDecay')
-          net.layers{i}.weightDecay = single([1 0]);
+        if ~isfield(net.layers{i}, 'weight_decay')
+          net.layers{i}.weight_decay = single([1 0]);
         end
       end
     end
@@ -96,21 +96,21 @@ function [net, info] = cnn_train(net, imdb, getBatch, varargin)
   if exist(opts.memoryMapFile), delete(opts.memoryMapFile); end
 
   % setup error calculation function
-  if isstr(opts.errorFunction)
-    switch opts.errorFunction
+  if isstr(opts.error_function)
+    switch opts.error_function
       case 'none'
-        opts.errorFunction = @error_none;
+        opts.error_function = @error_none;
       case 'multiclass'
-        opts.errorFunction = @error_multiclass;
+        opts.error_function = @error_multiclass;
         if isempty(opts.errorLabels), opts.errorLabels = {'top1e', 'top5e'}; end
       case 'multiclass-prostate'
-        opts.errorFunction = @error_multiclass_prostate;
+        opts.error_function = @error_multiclass_prostate;
         if isempty(opts.errorLabels), opts.errorLabels = {'top1e'}; end
       case 'binary'
-        opts.errorFunction = @error_binary;
+        opts.error_function = @error_binary;
         if isempty(opts.errorLabels), opts.errorLabels = {'bine'}; end
       otherwise
-        error('Uknown error function ''%s''', opts.errorFunction);
+        error('Uknown error function ''%s''', opts.error_function);
     end
   end
 
@@ -119,31 +119,31 @@ function [net, info] = cnn_train(net, imdb, getBatch, varargin)
   % -------------------------------------------------------------------------
 
   if ~evaluateMode
-    if ~opts.debugFlag
+    if ~opts.debug_flag
       afprintf(sprintf('[INFO] processing epoch #'));
     end
-    for epoch=1:opts.numEpochs
-      if ~opts.debugFlag
+    for epoch=1:opts.num_epochs
+      if ~opts.debug_flag
         for j = 0:log10(epoch - 1)
           fprintf('\b'); % delete previous counter display
         end
         fprintf('%d', epoch);
       end
 
-      learningRate = opts.learningRate(min(epoch, numel(opts.learningRate)));
+      learning_rate = opts.learning_rate(min(epoch, numel(opts.learning_rate)));
 
       % fast-forward to last checkpoint
-      modelPath = @(ep) fullfile(opts.experimentDir, sprintf('net-epoch-%d.mat', ep));
-      modelFigPath = fullfile(opts.experimentDir, 'net-train.pdf');
+      modelPath = @(ep) fullfile(opts.experiment_dir, sprintf('net-epoch-%d.mat', ep));
+      modelFigPath = fullfile(opts.experiment_dir, 'net-train.pdf');
       if opts.continue
         if exist(modelPath(epoch),'file')
-          if epoch == opts.numEpochs
+          if epoch == opts.num_epochs
             load(modelPath(epoch), 'net', 'info');
           end
           continue;
         end
         if epoch > 1
-          if opts.debugFlag
+          if opts.debug_flag
             fprintf('resuming by loading epoch %d\n', epoch-1);
           end
           load(modelPath(epoch-1), 'net', 'info');
@@ -154,11 +154,11 @@ function [net, info] = cnn_train(net, imdb, getBatch, varargin)
       train = opts.train(randperm(numel(opts.train))); % shuffle
       val = opts.val;
       if numGpus <= 1
-        [net,stats.train] = process_epoch(opts, getBatch, epoch, train, learningRate, imdb, net);
+        [net,stats.train] = process_epoch(opts, getBatch, epoch, train, learning_rate, imdb, net);
         [~,stats.val] = process_epoch(opts, getBatch, epoch, val, 0, imdb, net);
       else
         spmd(numGpus)
-          [net_, stats_train_] = process_epoch(opts, getBatch, epoch, train, learningRate, imdb, net);
+          [net_, stats_train_] = process_epoch(opts, getBatch, epoch, train, learning_rate, imdb, net);
           [~, stats_val_] = process_epoch(opts, getBatch, epoch, val, 0, imdb, net_);
         end
         net = net_{1};
@@ -178,7 +178,7 @@ function [net, info] = cnn_train(net, imdb, getBatch, varargin)
       if ~evaluateMode, save(modelPath(epoch), 'net', 'info'); end
 
       figure(1); clf;
-      hasError = isa(opts.errorFunction, 'function_handle');
+      hasError = isa(opts.error_function, 'function_handle');
       subplot(1,1+hasError,1);
       if ~evaluateMode
         semilogy(1:epoch, info.train.objective, '.-', 'linewidth', 2);
@@ -207,7 +207,7 @@ function [net, info] = cnn_train(net, imdb, getBatch, varargin)
       drawnow;
       print(1, modelFigPath, '-dpdf');
     end
-    if ~opts.debugFlag
+    if ~opts.debug_flag
       fprintf('\n');
     end
   else
@@ -287,7 +287,7 @@ function err = error_none(opts, labels, res)
   err = zeros(0,1);
 
 % -------------------------------------------------------------------------
-function  [net_cpu,stats,prof] = process_epoch(opts, getBatch, epoch, subset, learningRate, imdb, net_cpu)
+function  [net_cpu,stats,prof] = process_epoch(opts, getBatch, epoch, subset, learning_rate, imdb, net_cpu)
 % -------------------------------------------------------------------------
   % move CNN to GPU as needed
   numGpus = numel(opts.gpus);
@@ -299,7 +299,7 @@ function  [net_cpu,stats,prof] = process_epoch(opts, getBatch, epoch, subset, le
   end
 
   % validation mode if learning rate is zero
-  training = learningRate > 0;
+  training = learning_rate > 0;
   if training, mode = 'training'; else, mode = 'validation'; end
   if nargout > 2, mpiprofile on; end
 
@@ -313,26 +313,26 @@ function  [net_cpu,stats,prof] = process_epoch(opts, getBatch, epoch, subset, le
   mmap = [];
   stats = [];
 
-  for t=1:opts.batchSize:numel(subset)
-    if opts.debugFlag
+  for t=1:opts.batch_size:numel(subset)
+    if opts.debug_flag
       fprintf('%s: epoch %02d: batch %3d/%3d: ', mode, epoch, ...
-              fix(t/opts.batchSize)+1, ceil(numel(subset)/opts.batchSize));
+              fix(t/opts.batch_size)+1, ceil(numel(subset)/opts.batch_size));
     end
-    batchSize = min(opts.batchSize, numel(subset) - t + 1);
+    batch_size = min(opts.batch_size, numel(subset) - t + 1);
     batchTime = tic;
     numDone = 0;
     error = [];
     for s=1:opts.numSubBatches
       % get this image batch and prefetch the next
       batchStart = t + (labindex-1) + (s-1) * numlabs;
-      batchEnd = min(t+opts.batchSize-1, numel(subset));
+      batchEnd = min(t+opts.batch_size-1, numel(subset));
       batch = subset(batchStart : opts.numSubBatches * numlabs : batchEnd);
       [im, labels] = getBatch(imdb, batch);
 
       if opts.prefetch
         if s==opts.numSubBatches
-          batchStart = t + (labindex-1) + opts.batchSize;
-          batchEnd = min(t+2*opts.batchSize-1, numel(subset));
+          batchStart = t + (labindex-1) + opts.batch_size;
+          batchEnd = min(t+2*opts.batch_size-1, numel(subset));
         else
           batchStart = batchStart + numlabs;
         end
@@ -351,7 +351,7 @@ function  [net_cpu,stats,prof] = process_epoch(opts, getBatch, epoch, subset, le
                         'accumulate', s ~= 1, ...
                         'disableDropout', ~training, ...
                         'conserveMemory', opts.conserveMemory, ...
-                        'backpropDepth', opts.backpropDepth, ...
+                        'backprop_depth', opts.backprop_depth, ...
                         'sync', opts.sync, ...
                         'cudnn', opts.cudnn);
 
@@ -360,7 +360,7 @@ function  [net_cpu,stats,prof] = process_epoch(opts, getBatch, epoch, subset, le
         error, ...
         [ ...
           sum(double(gather(res(end).x))); ...
-          reshape(opts.errorFunction(opts, labels, res),[],1); ...
+          reshape(opts.error_function(opts, labels, res),[],1); ...
         ] ...
       ], 2);
       numDone = numDone + numel(batch);
@@ -369,30 +369,30 @@ function  [net_cpu,stats,prof] = process_epoch(opts, getBatch, epoch, subset, le
     % gather and accumulate gradients across labs
     if training
       if numGpus <= 1
-        [net,res] = accumulate_gradients(opts, learningRate, batchSize, net, res);
+        [net,res] = accumulate_gradients(opts, learning_rate, batch_size, net, res);
       else
         if isempty(mmap)
           mmap = map_gradients(opts.memoryMapFile, net, res, numGpus);
         end
         write_gradients(mmap, net, res);
         labBarrier();
-        [net,res] = accumulate_gradients(opts, learningRate, batchSize, net, res, mmap);
+        [net,res] = accumulate_gradients(opts, learning_rate, batch_size, net, res, mmap);
       end
     end
 
     % print learning statistics
     batchTime = toc(batchTime);
     stats = sum([stats,[batchTime; error]],2); % works even when stats=[]
-    speed = batchSize/batchTime;
+    speed = batch_size/batchTime;
 
-    if opts.debugFlag
+    if opts.debug_flag
       fprintf(' %.2f s (%.1f data/s)', batchTime, speed);
-      n = (t + batchSize - 1) / max(1,numlabs);
+      n = (t + batch_size - 1) / max(1,numlabs);
       fprintf(' obj:%.3g', stats(2)/n);
       for i=1:numel(opts.errorLabels)
         fprintf(' %s:%.3g', opts.errorLabels{i}, stats(i+2)/n);
       end
-      fprintf(' [%d/%d]', numDone, batchSize);
+      fprintf(' [%d/%d]', numDone, batch_size);
       fprintf('\n');
     end
 
@@ -414,12 +414,12 @@ function  [net_cpu,stats,prof] = process_epoch(opts, getBatch, epoch, subset, le
   end
 
 % -------------------------------------------------------------------------
-function [net,res] = accumulate_gradients(opts, lr, batchSize, net, res, mmap)
+function [net,res] = accumulate_gradients(opts, lr, batch_size, net, res, mmap)
 % -------------------------------------------------------------------------
   for l=numel(net.layers):-1:1
     for j=1:min(numel(res(l).dzdw),1)
-      thisDecay = opts.weightDecay * net.layers{l}.weightDecay(j);
-      thisLR = lr * net.layers{l}.learningRate(j);
+      thisDecay = opts.weight_decay * net.layers{l}.weight_decay(j);
+      thisLR = lr * net.layers{l}.learning_rate(j);
 
       % accumualte from multiple labs (GPUs) if needed
       if nargin >= 6
@@ -435,7 +435,7 @@ function [net,res] = accumulate_gradients(opts, lr, batchSize, net, res, mmap)
         net.layers{l}.momentum{j} = ...
           opts.momentum * net.layers{l}.momentum{j} ...
           - thisDecay * net.layers{l}.weights{j} ...
-          - (1 / batchSize) * res(l).dzdw{j};
+          - (1 / batch_size) * res(l).dzdw{j};
   %       net.layers{l}.weights{j} = (net.layers{l}.weights{j} + thisLR * net.layers{l}.momentum{j}).*net.layers{l}.sparseMaps; % I changed this line
         net.layers{l}.weights{j} = (net.layers{l}.weights{j} + thisLR * net.layers{l}.momentum{j}); % I changed this line
       else
@@ -444,13 +444,13 @@ function [net,res] = accumulate_gradients(opts, lr, batchSize, net, res, mmap)
           net.layers{l}.momentum{j} = ...
             opts.momentum * net.layers{l}.momentum{j} ...
             - thisDecay * net.layers{l}.filters ...
-            - (1 / batchSize) * res(l).dzdw{j};
+            - (1 / batch_size) * res(l).dzdw{j};
           net.layers{l}.filters = net.layers{l}.filters + thisLR * net.layers{l}.momentum{j};
         else
           net.layers{l}.momentum{j} = ...
             opts.momentum * net.layers{l}.momentum{j} ...
             - thisDecay * net.layers{l}.biases ...
-            - (1 / batchSize) * res(l).dzdw{j};
+            - (1 / batch_size) * res(l).dzdw{j};
           net.layers{l}.biases = net.layers{l}.biases + thisLR * net.layers{l}.momentum{j};
         end
       end
@@ -489,7 +489,7 @@ function write_gradients(mmap, net, res)
   end
 
 % -------------------------------------------------------------------------
-function [all_predictions, all_labels] = evaluate_one_epoch_of_trained_network(opts, getBatch, epoch, subset, learningRate, imdb, net_cpu)
+function [all_predictions, all_labels] = evaluate_one_epoch_of_trained_network(opts, getBatch, epoch, subset, learning_rate, imdb, net_cpu)
 % -------------------------------------------------------------------------
   % move CNN to GPU as needed
   numGpus = numel(opts.gpus);
@@ -501,7 +501,7 @@ function [all_predictions, all_labels] = evaluate_one_epoch_of_trained_network(o
   end
 
   % validation mode if learning rate is zero
-  training = learningRate > 0;
+  training = learning_rate > 0;
   if training, mode = 'training'; else, mode = 'validation'; end
   if nargout > 2, mpiprofile on; end
 
@@ -516,16 +516,16 @@ function [all_predictions, all_labels] = evaluate_one_epoch_of_trained_network(o
   all_predictions = [];
   all_labels = [];
 
-  if ~opts.debugFlag
+  if ~opts.debug_flag
     afprintf(sprintf('[INFO] processed     %d samples', 0), 1);
   end
 
-  for t=1:opts.batchSize:numel(subset)
-    if opts.debugFlag
+  for t=1:opts.batch_size:numel(subset)
+    if opts.debug_flag
       fprintf('%s: epoch %02d: batch %3d/%3d: ', mode, epoch, ...
-              fix(t/opts.batchSize)+1, ceil(numel(subset)/opts.batchSize));
+              fix(t/opts.batch_size)+1, ceil(numel(subset)/opts.batch_size));
     end
-    batchSize = min(opts.batchSize, numel(subset) - t + 1);
+    batch_size = min(opts.batch_size, numel(subset) - t + 1);
     batchTime = tic;
     numDone = 0;
     error = [];
@@ -533,14 +533,14 @@ function [all_predictions, all_labels] = evaluate_one_epoch_of_trained_network(o
     for s=1:opts.numSubBatches
       % get this image batch and prefetch the next
       batchStart = t + (labindex-1) + (s-1) * numlabs;
-      batchEnd = min(t+opts.batchSize-1, numel(subset));
+      batchEnd = min(t+opts.batch_size-1, numel(subset));
       batch = subset(batchStart : opts.numSubBatches * numlabs : batchEnd);
       [im, labels] = getBatch(imdb, batch);
 
       if opts.prefetch
         if s==opts.numSubBatches
-          batchStart = t + (labindex-1) + opts.batchSize;
-          batchEnd = min(t+2*opts.batchSize-1, numel(subset));
+          batchStart = t + (labindex-1) + opts.batch_size;
+          batchEnd = min(t+2*opts.batch_size-1, numel(subset));
         else
           batchStart = batchStart + numlabs;
         end
@@ -559,7 +559,7 @@ function [all_predictions, all_labels] = evaluate_one_epoch_of_trained_network(o
                         'accumulate', s ~= 1, ...
                         'disableDropout', ~training, ...
                         'conserveMemory', opts.conserveMemory, ...
-                        'backpropDepth', opts.backpropDepth, ...
+                        'backprop_depth', opts.backprop_depth, ...
                         'sync', opts.sync, ...
                         'cudnn', opts.cudnn);
 
@@ -578,7 +578,7 @@ function [all_predictions, all_labels] = evaluate_one_epoch_of_trained_network(o
       numDone = numDone + numel(batch);
     end
 
-    if ~opts.debugFlag
+    if ~opts.debug_flag
       for j = 0:log10(batchEnd - 1) + 8 % + 8 because of ' samples'
         fprintf('\b'); % delete previous counter display
       end

@@ -9,8 +9,8 @@ function imdb = constructSTL10Imdb(opts)
 % -------------------------------------------------------------------------
   afprintf(sprintf('[INFO] Constructing STL-10 imdb...'));
 
-  train_file = load(fullfile(opts.imdb.dataDir, 'train.mat'));
-  test_file = load(fullfile(opts.imdb.dataDir, 'test.mat'));
+    train_file = load(fullfile(opts.imdb.data_dir, 'train.mat'));
+    test_file = load(fullfile(opts.imdb.data_dir, 'test.mat'));
 
   data_train = imresize(reshape(im2double(train_file.X'), 96,96,3,[]), [32,32]);
   labels_train = single(train_file.y');
@@ -25,8 +25,8 @@ function imdb = constructSTL10Imdb(opts)
   set = cat(2, set_train, set_test);
 
   % remove mean in any case
-  dataMean = mean(data(:,:,:,set == 1), 4);
-  data = bsxfun(@minus, data, dataMean);
+  data_mean = mean(data(:,:,:,set == 1), 4);
+  data = bsxfun(@minus, data, data_mean);
 
   % STL-10 does NOT require contrast normalization or whitening
 

@@ -3,36 +3,36 @@ function imdb = constructCOIL100Imdb(opts)
 % -------------------------------------------------------------------------
   afprintf(sprintf('[INFO] Constructing STL-10 imdb...\n'));
 
-  numOfObjects = 100; % numOfClasses
-  numOfAngles = 72;
-  numOfImages = numOfObjects * numOfAngles;
-  imageSizeY = 128;
-  imageSizeX = 128;
-  imageSizeZ = 3;
+  num_of_objects = 100; % numOfClasses
+  num_of_angles = 72;
+  num_of_images = num_of_objects * num_of_angles;
+  image_size_y = 128;
+  image_size_x = 128;
+  image_size_z = 3;
 
-  trainFile = fullfile(opts.imdb.dataDir, 'train.mat');
-  testFile = fullfile(opts.imdb.dataDir, 'test.mat');
+  train_file = fullfile(opts.imdb.data_dir, 'train.mat');
+  test_file = fullfile(opts.imdb.data_dir, 'test.mat');
 
-  train_images_indices = 1:2:numOfImages; % every other angle of the image
-  test_images_indices = 2:2:numOfImages; % every other angle of the image
+  train_images_indices = 1:2:num_of_images; % every other angle of the image
+  test_images_indices = 2:2:num_of_images; % every other angle of the image
 
-  labels = zeros(1, numOfImages);
-  for i = 1:numOfObjects
-    labels((i-1) * numOfAngles + 1:i * numOfAngles) = i;
+  labels = zeros(1, num_of_images);
+  for i = 1:num_of_objects
+    labels((i-1) * num_of_angles + 1:i * num_of_angles) = i;
   end
 
-  if ~exist(trainFile) || ~exist(testFile)
+  if ~exist(train_file) || ~exist(test_file)
     afprintf(sprintf('\t[INFO] no `images.mat` file found; generating a new one from image files...\n'));
-    images = zeros(numOfImages, imageSizeY * imageSizeX * imageSizeZ); % [100 * 72, 49152]
-    for objectNum = 1:1:100
-      for angleNum = 0:5:355
-        imageName = sprintf('obj%d__%d.png', objectNum, angleNum);
-        image = imread(fullfile(opts.imdb.dataDir, imageName));
+    images = zeros(num_of_images, image_size_y * image_size_x * image_size_z); % [100 * 72, 49152]
+    for object_num = 1:1:100
+      for angle_num = 0:5:355
+        image_name = sprintf('obj%d__%d.png', object_num, angle_num);
+        image = imread(fullfile(opts.imdb.data_dir, image_name));
         image = reshape(image, 1, []); % [1, 49152]
-        images((objectNum - 1) * numOfAngles + (angleNum + 5) / 5, :) = image;
+        images((object_num - 1) * num_of_angles + (angle_num + 5) / 5, :) = image;
       end
-      if ~mod(objectNum, 5)
-        afprintf(sprintf('\t\t[INFO] finished processing %d files.\n', objectNum));
+      if ~mod(object_num, 5)
+        afprintf(sprintf('\t\t[INFO] finished processing %d files.\n', object_num));
       end
     end
     afprintf(sprintf('\tdone\n'));
@@ -43,16 +43,16 @@ function imdb = constructCOIL100Imdb(opts)
     meta_test.labels = labels(test_images_indices);
 
     afprintf(sprintf('\t[INFO] Saving train meta data (large file ~25MB)...'));
-    save(fullfile(opts.imdb.dataDir, 'train.mat'), 'meta_train');
+    save(fullfile(opts.imdb.data_dir, 'train.mat'), 'meta_train');
     afprintf(sprintf('done\n'));
     afprintf(sprintf('\t[INFO] Saving test meta data (large file ~25MB)...'));
-    save(fullfile(opts.imdb.dataDir, 'test.mat'), 'meta_test');
+    save(fullfile(opts.imdb.data_dir, 'test.mat'), 'meta_test');
     afprintf(sprintf('done\n'));
   else
     afprintf(sprintf('\t[INFO] Found pre-existing train and test meta files. Loading... '));
-    meta_train = load(trainFile);
+    meta_train = load(train_file);
     meta_train = meta_train.meta_train;
-    meta_test = load(testFile);
+    meta_test = load(test_file);
     meta_test = meta_test.meta_test;
     afprintf(sprintf('done.\n'));
   end
@@ -61,18 +61,18 @@ function imdb = constructCOIL100Imdb(opts)
   data_train = meta_train.data;
   labels_train = meta_train.labels;
   afprintf(sprintf('\t[INFO] Processing and resizing `train` images... '));
-  data_train = imresize(reshape(data_train', imageSizeY,imageSizeX,imageSizeZ,[]), [32,32]);
+  data_train = imresize(reshape(data_train', image_size_y,image_size_x,image_size_z,[]), [32,32]);
   afprintf(sprintf('done.\n'));
   labels_train = single(labels_train);
-  set_train = 1 * ones(1, numOfImages / 2);
+  set_train = 1 * ones(1, num_of_images / 2);
 
   data_test = meta_test.data;
   labels_test = meta_test.labels;
   afprintf(sprintf('\t[INFO] Processing and resizing `test` images... '));
-  data_test = imresize(reshape(data_test', imageSizeY,imageSizeX,imageSizeZ,[]), [32,32]);
+  data_test = imresize(reshape(data_test', image_size_y,image_size_x,image_size_z,[]), [32,32]);
   afprintf(sprintf('done.\n'));
   labels_test = single(labels_test);
-  set_test = 3 * ones(1, numOfImages / 2);
+  set_test = 3 * ones(1, num_of_images / 2);
 
   data = single(cat(4, data_train, data_test));
   % data = cat(4, data_train, data_test);

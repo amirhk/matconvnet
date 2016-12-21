@@ -4,49 +4,49 @@ function main_cnn_amir(varargin)
 % -- ==                        NETWORK ARCH                               -- ==
 % -- ==                                                                   -- ==
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
-  % datasetList = {'cifar', 'stl-10', 'coil-100'}; % {'mnist', 'cifar', 'stl-10', 'coil-100'}
-  % datasetList = {'cifar', 'coil-100', 'mnist', 'stl-10'};
-  datasetList = {'mnist-two-class-unbalanced'};
+  % dataset_list = {'cifar', 'stl-10', 'coil-100'}; % {'mnist', 'cifar', 'stl-10', 'coil-100'}
+  % dataset_list = {'cifar', 'coil-100', 'mnist', 'stl-10'};
+  dataset_list = {'mnist-two-class-unbalanced'};
 
-  % networkArch = 'mnistnet';
-  % % backpropDepthList = [8, 6, 4];
-  % backpropDepthList = [4];
+  % network_arch = 'mnistnet';
+  % % backprop_depth_list = [8, 6, 4];
+  % backprop_depth_list = [4];
 
-  % networkArch = 'prostatenet';
-  % % backpropDepthList = [13, 10, 7, 4];
-  % % backpropDepthList = [13, 4];
-  % backpropDepthList = [4];
-  % % leaveOutType = 'sample';
-  % leaveOutIndices = 1:1:266;
-  leaveOutType = 'patient';
-  % leaveOutIndices = 1:1:104;
-  leaveOutIndices = 1:1:1;
+  % network_arch = 'prostatenet';
+  % % backprop_depth_list = [13, 10, 7, 4];
+  % % backprop_depth_list = [13, 4];
+  % backprop_depth_list = [4];
+  % % leave_out_type = 'sample';
+  % leave_out_indices = 1:1:266;
+  leave_out_type = 'patient';
+  % leave_out_indices = 1:1:104;
+  leave_out_indices = 1:1:1;
 
 
-  networkArch = 'lenet';
-  % backpropDepthList = [13, 10, 7, 4]; % no dropout
-  % backpropDepthList = [14, 10, 7, 4]; % 1 x dropout after 1st layer
-  % backpropDepthList = [14, 11, 8, 4]; % 1 x dropout after 3rd layer
-  % backpropDepthList = [14, 11, 8, 5]; % 1 x dropout in FC
-  % backpropDepthList = [15, 11, 8, 4]; % 2 x dropout after 1st and 3rd layers
-  backpropDepthList = [4];
+  network_arch = 'lenet';
+  % backprop_depth_list = [13, 10, 7, 4]; % no dropout
+  % backprop_depth_list = [14, 10, 7, 4]; % 1 x dropout after 1st layer
+  % backprop_depth_list = [14, 11, 8, 4]; % 1 x dropout after 3rd layer
+  % backprop_depth_list = [14, 11, 8, 5]; % 1 x dropout in FC
+  % backprop_depth_list = [15, 11, 8, 4]; % 2 x dropout after 1st and 3rd layers
+  backprop_depth_list = [4];
 
-  % networkArch = 'lenet';
-  % backpropDepthList = [13, 10, 7, 4];
-  % backpropDepthList = [4];
+  % network_arch = 'lenet';
+  % backprop_depth_list = [13, 10, 7, 4];
+  % backprop_depth_list = [4];
 
-  % networkArch = 'alexnet';
-  % % backpropDepthList = [20, 18, 15, 12, 10, 7];
-  % backpropDepthList = [20];
+  % network_arch = 'alexnet';
+  % % backprop_depth_list = [20, 18, 15, 12, 10, 7];
+  % backprop_depth_list = [20];
 
-  % networkArch = 'alexnet-bnorm';
-  % % backpropDepthList = [20, 18, 15, 12, 10, 7];
-  % backpropDepthList = [22];
+  % network_arch = 'alexnet-bnorm';
+  % % backprop_depth_list = [20, 18, 15, 12, 10, 7];
+  % backprop_depth_list = [22];
 
-  % networkArch = 'alexnet-bottleneck';
-  % backpropDepthList = [21];
-  % bottleneckDivideByList = [1,2,4,8,16,32];
-  bottleneckDivideByList = [1];
+  % network_arch = 'alexnet-bottleneck';
+  % backprop_depth_list = [21];
+  % bottleneck_divide_by_list = [1,2,4,8,16,32];
+  bottleneck_divide_by_list = [1];
 
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 % -- ==                                                                   -- ==
@@ -54,12 +54,12 @@ function main_cnn_amir(varargin)
 % -- ==                                                                   -- ==
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 
-  weightInitSource = 'gen';  % {'load' | 'gen'}
-  weightInitSequenceList = {{'compRand', 'compRand', 'compRand'}};
+  weight_init_source = 'gen';  % {'load' | 'gen'}
+  weight_init_sequence_list = {{'compRand', 'compRand', 'compRand'}};
 
-  % weightInitSource = 'load';  % {'load' | 'gen'}
-  % % weightInitSequenceList = {{'compRand', 'layerwise-1D-from-cifar', 'layerwise-1D-from-cifar'}};
-  % weightInitSequenceList = { ...
+  % weight_init_source = 'load';  % {'load' | 'gen'}
+  % % weight_init_sequence_list = {{'compRand', 'layerwise-1D-from-cifar', 'layerwise-1D-from-cifar'}};
+  % weight_init_sequence_list = { ...
   %   ... % {'1-clustered-layerwise-1D-from-cifar', '1-clustered-layerwise-1D-from-cifar', '1-clustered-layerwise-1D-from-cifar'}, ...
   %   ... % {'1-clustered-layerwise-1D-from-coil-100', '1-clustered-layerwise-1D-from-coil-100', '1-clustered-layerwise-1D-from-coil-100'}, ...
   %   ... % {'1-clustered-layerwise-1D-from-mnist', '1-clustered-layerwise-1D-from-mnist', '1-clustered-layerwise-1D-from-mnist'}, ...
@@ -91,38 +91,36 @@ function main_cnn_amir(varargin)
   %   ... % {'layerwise-1D-from-stl-10', 'layerwise-1D-from-stl-10', 'layerwise-1D-from-stl-10'}, ...
   % };
 
-  % imdbPortionList = [0.1, 0.25, 0.5, 1.0];
-  imdbPortionList = [1.0];
+  % imdb_portion_list = [0.1, 0.25, 0.5, 1.0];
+  imdb_portion_list = [1.0];
 
-  % weightDecayList = [0.1, 0.01, 0.001, 0.0001, 0]; % Works: {0.001, 0.0001, 0} Doesn't Work: {0.1, 0.01}
-  weightDecayList = [0.0001];
+  % weight_decay_list = [0.1, 0.01, 0.001, 0.0001, 0]; % Works: {0.001, 0.0001, 0} Doesn't Work: {0.1, 0.01}
+  weight_decay_list = [0.0001];
 
-  debugFlag = true;
+  debug_flag = true;
 
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 % -- ==                                                                   -- ==
 % -- ==                           MAIN LOOP                               -- ==
 % -- ==                                                                   -- ==
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
-  for dataset = datasetList
-    for weightInitSequence = weightInitSequenceList
-      for bottleneckDivideBy = bottleneckDivideByList
-        for imdbPortion = imdbPortionList
-          for weightDecay = weightDecayList
-            for backpropDepth = backpropDepthList
-              for leaveOutIndex = leaveOutIndices
-                opts.dataset = char(dataset);
-                opts.networkArch = networkArch;
-                opts.backpropDepth = backpropDepth;
-                opts.weightDecay = weightDecay;
-                opts.weightInitSequence = weightInitSequence{1};
-                opts.weightInitSource = weightInitSource;
-                opts.bottleneckDivideBy = bottleneckDivideBy;
-                opts.leaveOutType = leaveOutType;
-                opts.leaveOutIndex = leaveOutIndex;
-                opts.debugFlag = debugFlag;
-                cnn_amir(opts);
-              end
+  for dataset = dataset_list
+    for weight_init_sequence = weight_init_sequence_list
+      for bottleneck_divide_by = bottleneck_divide_by_list
+        for weight_decay = weight_decay_list
+          for backprop_depth = backprop_depth_list
+            for leave_out_index = leave_out_indices
+              opts.dataset = char(dataset);
+              opts.network_arch = network_arch;
+              opts.backprop_depth = backprop_depth;
+              opts.weight_decay = weight_decay;
+              opts.weight_init_sequence = weight_init_sequence{1};
+              opts.weight_init_source = weight_init_source;
+              opts.bottleneck_divide_by = bottleneck_divide_by;
+              opts.leave_out_type = leave_out_type;
+              opts.leave_out_index = leave_out_index;
+              opts.debug_flag = debug_flag;
+              cnnAmir(opts);
             end
           end
         end

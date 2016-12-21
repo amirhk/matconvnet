@@ -4,6 +4,7 @@
 mex/*
 mex
 data*
+experiment_results*
 *.o
 *.pyc
 *~

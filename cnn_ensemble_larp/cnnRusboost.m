@@ -10,19 +10,19 @@ function fh = cnnRusboost()
 % -------------------------------------------------------------------------
 function folds = kFoldCNNRusboost()
 % -------------------------------------------------------------------------
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % general
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  opts.numberOfFolds = 5;
+  % -------------------------------------------------------------------------
+  %                                                                   general
+  % -------------------------------------------------------------------------
+  opts.number_of_folds = 5;
   opts.max_number_of_models_in_each_ensemble = 5;
   opts.dataset = 'mnist-two-class-unbalanced';
 
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % imdb
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  opts.numPatients = 104;
-  opts.leaveOutType = 'special';
-  opts.contrastNormalization = true;
+  % -------------------------------------------------------------------------
+  %                                                                      imdb
+  % -------------------------------------------------------------------------
+  opts.num_patients = 104;
+  opts.leave_out_type = 'special';
+  opts.contrast_normalization = true;
   % opts.whitenData = true;
   opts.train_balance = false;
   opts.train_augment_healthy = 'none';
@@ -31,99 +31,93 @@ function folds = kFoldCNNRusboost()
   opts.test_augment_healthy = 'none';
   opts.test_augment_cancer = 'none';
 
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % paths
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % switch opts.dataset
-  %   case 'mnist-two-class-unbalanced'
-  %     opts.dataDir = fullfile(getDevPath(), 'matconvnet/data_1/_prostate');
-  %   case 'prostate'
-  %     opts.dataDir = fullfile(getDevPath(), 'matconvnet/data_1/_mnist');
-  % end
-  opts.dataDir = fullfile(getDevPath(), 'data', 'source', sprintf('%s', opts.dataset));
-  opts.timeString = sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
-  opts.experimentDirParentPath = fullfile('data_rusboost', sprintf('k-fold-rusboost-%s', opts.timeString));
-  if ~exist(opts.experimentDirParentPath)
-    mkdir(opts.experimentDirParentPath);
+  % -------------------------------------------------------------------------
+  %                                                                     paths
+  % -------------------------------------------------------------------------
+  opts.data_dir = fullfile(getDevPath(), 'data', 'source', sprintf('%s', opts.dataset));
+  opts.time_string = sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
+  opts.experiment_dir_parent_path = fullfile('experiment_results', sprintf('k-fold-rusboost-%s', opts.time_string));
+  if ~exist(opts.experiment_dir_parent_path)
+    mkdir(opts.experiment_dir_parent_path);
   end
-  opts.foldsFilePath = fullfile(opts.experimentDirParentPath, 'folds.mat');
-  opts.optionsFilePath = fullfile(opts.experimentDirParentPath, 'options.txt');
-  opts.resultsFilePath = fullfile(opts.experimentDirParentPath, 'results.txt');
+  opts.folds_file_path = fullfile(opts.experiment_dir_parent_path, 'folds.mat');
+  opts.options_file_path = fullfile(opts.experiment_dir_parent_path, 'options.txt');
+  opts.results_file_path = fullfile(opts.experiment_dir_parent_path, 'results.txt');
 
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % 0. Save experiment setup!
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  saveStruct2File(opts, opts.optionsFilePath, 0);
-  afprintf(sprintf('[INFO] Running K-fold CNN Rusboost (K = %d)...\n', opts.numberOfFolds), 1);
+  % -------------------------------------------------------------------------
+  %                                                    save experiment setup!
+  % -------------------------------------------------------------------------
+  saveStruct2File(opts, opts.options_file_path, 0);
+  afprintf(sprintf('[INFO] Running K-fold CNN Rusboost (K = %d)...\n', opts.number_of_folds), 1);
 
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % 1. randomly divide off patients into K folds
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % -------------------------------------------------------------------------
+  %                                 randomly divide off patients into K folds
+  % -------------------------------------------------------------------------
   folds = {};
-  patients_per_fold = ceil(opts.numPatients / opts.numberOfFolds);
+  patients_per_fold = ceil(opts.num_patients / opts.number_of_folds);
   random_patient_indices = randperm(104);
   afprintf(sprintf('\n'));
-  afprintf(sprintf('[INFO] Randomly dividing patients into K folds...\n'));
-  for i = 1:opts.numberOfFolds
+  afprintf(sprintf('[INFO] Randomly dividing patients into K = %d folds...\n', opts.number_of_folds));
+  for i = 1:opts.number_of_folds
     start_index = 1 + (i - 1) * patients_per_fold;
     end_index = min(104, i * patients_per_fold);
     folds.(sprintf('fold_%d', i)).patient_indices = random_patient_indices(start_index : end_index);
   end
 
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % 2. create a non-balanced, non-augmented imdb for each fold
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % -------------------------------------------------------------------------
+  %                   create a non-balanced, non-augmented imdb for each fold
+  % -------------------------------------------------------------------------
   imdbs = {}; % separate so don't have to save ~1.5 GB of imdbs!!!
 
   switch opts.dataset
     case 'mnist-two-class-unbalanced'
-      for i = 1:opts.numberOfFolds
+      for i = 1:opts.number_of_folds
         afprintf(sprintf('\n'));
         afprintf(sprintf('[INFO] Constructing imdb for fold #%d...\n', i));
-        opts.networkArch = 'lenet';
-        imdb = constructMnistUnbalancedTwoClassImdb(opts.dataDir, opts.networkArch);
+        opts.network_arch = 'lenet';
+        imdb = constructMnistUnbalancedTwoClassImdb(opts.data_dir, opts.network_arch);
         imdbs{i} = imdb;
         afprintf(sprintf('[INFO] done!\n'));
       end
-      singleEnsembleOptions.dataset = 'mnist-two-class-unbalanced';
-      singleEnsembleOptions.networkArch = 'lenet';
+      single_ensemble_options.dataset = 'mnist-two-class-unbalanced';
+      single_ensemble_options.network_arch = 'lenet';
     case 'prostate'
-      for i = 1:opts.numberOfFolds
+      for i = 1:opts.number_of_folds
         afprintf(sprintf('\n'));
         afprintf(sprintf('[INFO] Constructing imdb for fold #%d...\n', i));
-        opts.leaveOutIndices = folds.(sprintf('fold_%d', i)).patient_indices;
+        opts.leave_out_indices = folds.(sprintf('fold_%d', i)).patient_indices;
         imdb = constructProstateImdb(opts);
         imdbs{i} = imdb;
         afprintf(sprintf('[INFO] done!\n'));
       end
-      singleEnsembleOptions.dataset = 'prostate';
-      singleEnsembleOptions.networkArch = 'prostatenet';
+      single_ensemble_options.dataset = 'prostate';
+      single_ensemble_options.network_arch = 'prostatenet';
   end
 
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % 3. train ensemble larp for each fold!
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  for i = 1:opts.numberOfFolds
+  % -------------------------------------------------------------------------
+  %                                        train ensemble larp for each fold!
+  % -------------------------------------------------------------------------
+  for i = 1:opts.number_of_folds
     afprintf(sprintf('[INFO] Running cnn_rusboost on fold #%d...\n', i));
-    singleEnsembleOptions.imdb = imdbs{i};
-    singleEnsembleOptions.experimentDirParentPath = opts.experimentDirParentPath;
-    singleEnsembleOptions.iteration_count = opts.max_number_of_models_in_each_ensemble;
+    single_ensemble_options.imdb = imdbs{i};
+    single_ensemble_options.experiment_dir_parent_path = opts.experiment_dir_parent_path;
+    single_ensemble_options.iteration_count = opts.max_number_of_models_in_each_ensemble;
     [ ...
       folds.(sprintf('fold_%d', i)).ensemble_models_info, ...
       folds.(sprintf('fold_%d', i)).weighted_results, ...
-    ] = mainCNNRusboost(singleEnsembleOptions);
+    ] = mainCNNRusboost(single_ensemble_options);
     % overwrite and save results so far
-    save(opts.foldsFilePath, 'folds');
+    save(opts.folds_file_path, 'folds');
   end
 
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % 4. Save and print results
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  saveKFoldResults(folds, opts.resultsFilePath);
+  % -------------------------------------------------------------------------
+  %                                                    save and print results
+  % -------------------------------------------------------------------------
+  saveKFoldResults(folds, opts.results_file_path);
   printKFoldResults(folds);
 
 % -------------------------------------------------------------------------
-function [ensemble_models_info, weighted_results] = mainCNNRusboost(singleEnsembleOptions)
+function [ensemble_models_info, weighted_results] = mainCNNRusboost(single_ensemble_options)
 % -------------------------------------------------------------------------
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % 0. take as input a pre-processed IMDB (augment cancer in training set, that's it!), say
@@ -131,19 +125,11 @@ function [ensemble_models_info, weighted_results] = mainCNNRusboost(singleEnsemb
   %   test: 10 patients, ~1000 health, ~20 cancer
   % TODO: this can be extended to be say 10-fold ensemble larp, then average the folds
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % if nargin == 0
-  %   imdb = getInitialImdb();
-  %   experimentDirParentPath = 'data_rusboost';
-  % else
-  %   % TODO: only input currently designed for is imdb (for k-fold)!
-  %   imdb = imdb;
-  %   experimentDirParentPath = experimentDirParentPath;
-  % end
-  imdb = getValueFromFieldOrDefault(singleEnsembleOptions, 'imdb', getInitialImdb());
-  experimentDirParentPath = getValueFromFieldOrDefault(singleEnsembleOptions, 'experimentDirParentPath', 'data_rusboost');
-  iteration_count = getValueFromFieldOrDefault(singleEnsembleOptions, 'iteration_count', 5);
-  dataset = getValueFromFieldOrDefault(singleEnsembleOptions, 'dataset', 'prostate');
-  networkArch = getValueFromFieldOrDefault(singleEnsembleOptions, 'networkArch', 'prostatenet');
+  imdb = getValueFromFieldOrDefault(single_ensemble_options, 'imdb', getInitialImdb());
+  experiment_dir_parent_path = getValueFromFieldOrDefault(single_ensemble_options, 'experiment_dir_parent_path', 'data_rusboost');
+  iteration_count = getValueFromFieldOrDefault(single_ensemble_options, 'iteration_count', 5);
+  dataset = getValueFromFieldOrDefault(single_ensemble_options, 'dataset', 'prostate');
+  network_arch = getValueFromFieldOrDefault(single_ensemble_options, 'network_arch', 'prostatenet');
 
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % 1. some important parameter definition
@@ -151,20 +137,19 @@ function [ensemble_models_info, weighted_results] = mainCNNRusboost(singleEnsemb
 
   opts.iteration_count = iteration_count; % number of boosting iterations
   opts.dataset = dataset;
-  opts.networkArch = networkArch;
-  opts.backpropDepth = 4;
-  opts.weightInitSource = 'gen';
-  opts.weightInitSequence = {'compRand', 'compRand', 'compRand'};
-  % opts.random_undersampling_ratio = (65/35);
+  opts.network_arch = network_arch;
+  opts.backprop_depth = 4;
+  opts.weight_init_source = 'gen';
+  opts.weight_init_sequence = {'compRand', 'compRand', 'compRand'};
   opts.random_undersampling_ratio = (50/50);
 
-  opts.timeString = sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
-  opts.experimentDirPath = fullfile( ...
-    experimentDirParentPath, ...
-    sprintf('rusboost-%s-%s-%s', opts.dataset, opts.networkArch, opts.timeString));
-  opts.allModelInfosPath = fullfile(opts.experimentDirPath, 'ensemble_models_info.mat');
-  if ~exist(opts.experimentDirPath)
-    mkdir(opts.experimentDirPath);
+  opts.time_string = sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
+  opts.experiment_dir_path = fullfile( ...
+    experiment_dir_parent_path, ...
+    sprintf('rusboost-%s-%s-%s', opts.dataset, opts.network_arch, opts.time_string));
+  opts.all_model_infos_path = fullfile(opts.experiment_dir_path, 'ensemble_models_info.mat');
+  if ~exist(opts.experiment_dir_path)
+    mkdir(opts.experiment_dir_path);
   end
 
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
@@ -253,27 +238,20 @@ function [ensemble_models_info, weighted_results] = mainCNNRusboost(singleEnsemb
       numel(find(resampled_labels == 1)), ...
       numel(find(resampled_labels == 2))));
     train_opts.dataset = opts.dataset;
-    train_opts.networkArch = opts.networkArch;
-    train_opts.backpropDepth = opts.backpropDepth;
-    train_opts.weightInitSource = opts.weightInitSource;
-    train_opts.weightInitSequence = opts.weightInitSequence;
-    train_opts.debugFlag = false;
-    % [net, info] = cnn_amir( ...
-    %   'imdb', training_resampled_imdb, ...
-    %   'dataset', opts.dataset, ...
-    %   'networkArch', opts.networkArch, ...
-    %   'backpropDepth', opts.backpropDepth, ...
-    %   'weightInitSource', opts.weightInitSource, ...
-    %   'weightInitSequence', opts.weightInitSequence, ...
-    %   'debugFlag', false);
-    [net, info] = cnn_amir(train_opts);
+    train_opts.network_arch = opts.network_arch;
+    train_opts.backprop_depth = opts.backprop_depth;
+    train_opts.weight_init_source = opts.weight_init_source;
+    train_opts.weight_init_sequence = opts.weight_init_sequence;
+    train_opts.debug_flag = false;
+    train_opts.experiment_parent_dir = opts.experiment_dir_path;
+    [net, info] = cnnAmir(train_opts);
 
+    % IMPORTANT NOTE: we randomly undersample when training a model, but then,
+    % we use all of the training samples (in their order) to update weights.
     afprintf(sprintf('[INFO] Computing validation set predictions (healthy: %d, cancer: %d)...\n', ...
       data_train_healthy_count, ...
       data_train_cancer_count));
-    % IMPORTANT NOTE: we randomly undersample when training a model, but then,
-    % we use all of the training samples (in their order) to update weights.
-    validation_predictions = getPredictionsFromNetOnImdb(net, validation_imdb, 1);
+    validation_predictions = getPredictionsFromNetOnImdb(net, validation_imdb, 3);
     [ ...
       validation_acc, ...
       validation_sens, ...
@@ -388,9 +366,9 @@ function [ensemble_models_info, weighted_results] = mainCNNRusboost(singleEnsemb
     ensemble_models_info{t}.test_accuracy = test_acc;
     ensemble_models_info{t}.test_sensitivity = test_sens;
     ensemble_models_info{t}.test_specificity = test_spec;
-    save(opts.allModelInfosPath, 'ensemble_models_info');
+    save(opts.all_model_infos_path, 'ensemble_models_info');
     fprintf('done!\n');
-    plotThisShit(ensemble_models_info, opts.experimentDirPath);
+    plotThisShit(ensemble_models_info, opts.experiment_dir_path);
     % Incrementing loop counter
     t = t + 1;
   end
@@ -535,7 +513,7 @@ function imdb = getInitialImdb()
   afprintf(sprintf('done!\n'));
 
 % -------------------------------------------------------------------------
-function plotThisShit(ensemble_models_info, experimentDirPath)
+function plotThisShit(ensemble_models_info, experiment_dir_path)
 % -------------------------------------------------------------------------
   num_models_in_ensemble = numel(ensemble_models_info);
   ensemble_models_validation_accuracy = zeros(1, num_models_in_ensemble);
@@ -554,7 +532,7 @@ function plotThisShit(ensemble_models_info, experimentDirPath)
   end
   figure(2);
   % clf;
-  modelFigPath = fullfile(experimentDirPath, 'incremental-performance.pdf');
+  model_fig_path = fullfile(experiment_dir_path, 'incremental-performance.pdf');
   xlabel('training epoch'); ylabel('error');
   title('performance');
   grid on;
@@ -575,9 +553,8 @@ function plotThisShit(ensemble_models_info, experimentDirPath)
   };
   set(legend(leg{:}),'color','none');
   drawnow;
-  print(2, modelFigPath, '-dpdf');
-
-% -------------------------------------------------------------------------
+  print(2, model_fig_path, '-dpdf');
+%_p-------------------------------------------------------------------------
 function weighted_results = testAllEnsembleModelsOnTestImdb(ensemble_models_info, imdb)
 % -------------------------------------------------------------------------
   fprintf('\n');
@@ -664,8 +641,8 @@ function results = getKFoldResults(folds)
   all_folds_sens = [];
   all_folds_spec = [];
   all_folds_ensemble_count = [];
-  numberOfFolds = numel(fields(folds));
-  for i = 1:numberOfFolds
+  number_of_folds = numel(fields(folds));
+  for i = 1:number_of_folds
     for j = 1:numel(folds.(sprintf('fold_%d', i)).ensemble_models_info)
       % results.(sprintf('fold_%d', i)).weight(j) = ...
       %   folds.(sprintf('fold_%d', i)).ensemble_models_info{j}.model_weight; % weight is normalized a bunch of times after each iter...
@@ -678,7 +655,7 @@ function results = getKFoldResults(folds)
     end
   end
 
-  for i = 1:numberOfFolds
+  for i = 1:number_of_folds
     results.all_folds_acc(i) = folds.(sprintf('fold_%d', i)).weighted_results.acc;
     results.all_folds_sens(i) = folds.(sprintf('fold_%d', i)).weighted_results.sens;
     results.all_folds_spec(i) = folds.(sprintf('fold_%d', i)).weighted_results.spec;
@@ -695,12 +672,11 @@ function results = getKFoldResults(folds)
   results.kfold_ensemble_count_std = std(results.all_folds_ensemble_count);
 
 % -------------------------------------------------------------------------
-function saveKFoldResults(folds, resultsFilePath)
+function saveKFoldResults(folds, results_file_path)
 % -------------------------------------------------------------------------
   results = getKFoldResults(folds);
-  saveStruct2File(results, resultsFilePath, 0);
-
-% -------------------------------------------------------------------------
+  saveStruct2File(results, results_file_path, 0);
+% _p------------------------------------------------------------------------
 function printKFoldResults(folds)
 % -------------------------------------------------------------------------
   format shortG

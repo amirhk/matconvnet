@@ -3,7 +3,7 @@ function imdb = constructProstateImdb(opts)
 % -------------------------------------------------------------------------
   afprintf(sprintf('[INFO] Constructing / loading Prostate imdb.\n'));
   all_patient_indices = 1:1:104;
-  switch opts.leaveOutType
+  switch opts.leave_out_type
     case 'special'
       train_patient_indices = setdiff(all_patient_indices, opts.leaveOutIndices);
       test_patient_indices  = opts.leaveOutIndices;
@@ -25,11 +25,11 @@ function imdb = constructProstateImdb(opts)
         test_augment_healthy, ...
         test_augment_cancer);
     case 'patient'
-      train_patient_indices = all_patient_indices(all_patient_indices ~= opts.leaveOutIndex);
+      train_patient_indices = all_patient_indices(all_patient_indices ~= opts.leave_out_index);
       train_balance = true;
       train_augment_healthy = 'none';
       train_augment_cancer = 'none';
-      test_patient_indices = opts.leaveOutIndex;
+      test_patient_indices = opts.leave_out_index;
       test_balance = true;
       test_augment_healthy = 'rotate-flip';
       test_augment_cancer = 'rotate-flip';
@@ -47,12 +47,12 @@ function imdb = constructProstateImdb(opts)
     case 'sample'
       % 1. check for the existence of a consistent / saved (!) balanaced,
       %    non-augmented imdb (both train and test)
-      if ~exist(opts.imdbBalancedDir)
-        mkdir(opts.imdbBalancedDir);
+      if ~exist(opts.imdb_balanced_dir)
+        mkdir(opts.imdb_balanced_dir);
       end
-      if exist(opts.imdbBalancedPath, 'file')
+      if exist(opts.imdb_balanced_path, 'file')
         afprintf(sprintf('[INFO] Loading Prostate imdb...\n'));
-        imdb = load(opts.imdbBalancedPath);
+        imdb = load(opts.imdb_balanced_path);
       else
         afprintf(sprintf('[INFO] No saved Prostate imdb found, creating new one...\n'));
         % 1.5. if not saved, create it
@@ -74,14 +74,14 @@ function imdb = constructProstateImdb(opts)
           test_balance, ...
           test_augment_healthy, ...
           test_augment_cancer);
-        save(opts.imdbBalancedPath, '-struct', 'imdb');
+        save(opts.imdb_balanced_path, '-struct', 'imdb');
       end;
       % 2. then from the imdb, choose indices from there for train and test set.
-      imdb.images.set(opts.leaveOutIndex) = 3;
+      imdb.images.set(opts.leave_out_index) = 3;
       % A) find all tumors / non-tumors (other class of index i)
         % B) choose one at random
         % C) assign it as part of the test set as well
-      switch imdb.images.labels(opts.leaveOutIndex)
+      switch imdb.images.labels(opts.leave_out_index)
         case 1
           other_class_index = 2;
         case 2
@@ -147,20 +147,20 @@ function imdb = constructProstateImdbHelper( ...
     set = set_train;
   end
 
-  totalNumberOfSamples = size(data,4);
-  assert(totalNumberOfSamples == length(labels));
-  assert(totalNumberOfSamples == length(set));
+  total_number_of_samples = size(data,4);
+  assert(total_number_of_samples == length(labels));
+  assert(total_number_of_samples == length(set));
 
   % remove mean in any case
   data = single(data);
-  dataMean = mean(data(:,:,:,set == 1), 4);
-  data = bsxfun(@minus, data, dataMean);
+  data_mean = mean(data(:,:,:,set == 1), 4);
+  data = bsxfun(@minus, data, data_mean);
 
   afprintf(sprintf('== == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == ==\n\n'));
 
-  if opts.contrastNormalization
+  if opts.contrast_normalization
     afprintf(sprintf('[INFO] contrast-normalizing data... '));
-    z = reshape(data,[],totalNumberOfSamples);
+    z = reshape(data,[],total_number_of_samples);
     z = bsxfun(@minus, z, mean(z,1));
     n = std(z,0,1);
     z = bsxfun(@times, z, mean(n) ./ max(n, 40));
@@ -168,22 +168,22 @@ function imdb = constructProstateImdbHelper( ...
     afprintf(sprintf('done.\n'));
   end
 
-  % if opts.whitenData
+  % if opts.whiten_data
   %   afprintf(sprintf('[INFO] whitening data... '));
-  %   z = reshape(data,[],totalNumberOfSamples);
-  %   W = z(:,set == 1)*z(:,set == 1)'/totalNumberOfSamples;
+  %   z = reshape(data,[],total_number_of_samples);
+  %   W = z(:,set == 1)*z(:,set == 1)'/total_number_of_samples;
   %   [V,D] = eig(W);
   %   % the scale is selected to approximately preserve the norm of W
   %   d2 = diag(D);
   %   en = sqrt(mean(d2));
   %   z = V*diag(en./max(sqrt(d2), 10))*V'*z;
-  %   data = reshape(z, 32, 32, numberOfModalities, []);
+  %   data = reshape(z, 32, 32, number_of_modalities, []);
   %   afprintf(sprintf('done.\n'));
   % end
 
   afprintf(sprintf('== == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == ==\n\n'));
 
-  afprintf(sprintf('[INFO] total number of samples: %d\n', totalNumberOfSamples));
+  afprintf(sprintf('[INFO] total number of samples: %d\n', total_number_of_samples));
   afprintf(sprintf('[INFO] number of `train` data - healthy: %d\n', size(data_train(:,:,:,labels_train == 1),4)));
   afprintf(sprintf('[INFO] number of `train` data - cancer: %d\n', size(data_train(:,:,:,labels_train == 2),4)));
   afprintf(sprintf('[INFO] number of `test` data - healthy: %d\n', size(data_test(:,:,:,labels_test == 1),4)));
@@ -417,10 +417,10 @@ function [new_data] = augmentDataHelper(data_class, data, augment_type)
 function imdb = testProstateImdbConstructor()
 % --------------------------------------------------------------------
   opts.dataDir = '/Users/a6karimi/dev/matconvnet/data_1/_prostate';
-  opts.imdbBalancedDir = '/Users/a6karimi/dev/matconvnet/data_1/balanced-prostate-prostatenet';
-  opts.imdbBalancedPath = '/Users/a6karimi/dev/matconvnet/data_1/balanced-prostate-prostatenet/imdb.mat';
-  opts.leaveOutType = 'none';
-  opts.leaveOutIndex = 1;
-  opts.contrastNormalization = true;
-  opts.whitenData = true;
+  opts.imdb_balanced_dir = '/Users/a6karimi/dev/matconvnet/data_1/balanced-prostate-prostatenet';
+  opts.imdb_balanced_path = '/Users/a6karimi/dev/matconvnet/data_1/balanced-prostate-prostatenet/imdb.mat';
+  opts.leave_out_type = 'none';
+  opts.leave_out_index = 1;
+  opts.contrast_normalization = true;
+  opts.whiten_data = true;
   imdb = constructProstateImdb(opts);

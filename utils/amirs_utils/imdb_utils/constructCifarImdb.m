@@ -1,18 +1,18 @@
 % -------------------------------------------------------------------------
 function imdb = constructCifarImdb(opts)
 % -------------------------------------------------------------------------
-  afprintf(sprintf('[INFO] Constructing CIFAR imdb (portion = %%%d)...\n\n', opts.imdb.imdbPortion * 100));
+  afprintf(sprintf('[INFO] Constructing CIFAR imdb (portion = %%%d)...\n\n', opts.imdb.imdb_portion * 100));
   % Prepare the imdb structure, returns image data with mean image subtracted
-  unpackPath = fullfile(opts.imdb.dataDir, 'cifar-10-batches-mat');
+  unpack_path = fullfile(opts.imdb.data_dir, 'cifar-10-batches-mat');
   files = [arrayfun(@(n) sprintf('data_batch_%d.mat', n), 1:5, 'UniformOutput', false) ...
     {'test_batch.mat'}];
-  files = cellfun(@(fn) fullfile(unpackPath, fn), files, 'UniformOutput', false);
+  files = cellfun(@(fn) fullfile(unpack_path, fn), files, 'UniformOutput', false);
   file_set = uint8([ones(1, 5), 3]);
 
   if any(cellfun(@(fn) ~exist(fn, 'file'), files))
     url = 'http://www.cs.toronto.edu/~kriz/cifar-10-matlab.tar.gz';
     afprintf(sprintf('downloading %s\n', url));
-    untar(url, opts.imdb.dataDir);
+    untar(url, opts.imdb.data_dir);
   end
 
   data = cell(1, numel(files));
@@ -31,13 +31,13 @@ function imdb = constructCifarImdb(opts)
   set = cat(2, sets{:});
 
   % remove mean in any case
-  dataMean = mean(data(:,:,:,set == 1), 4);
-  data = bsxfun(@minus, data, dataMean);
+  data_mean = mean(data(:,:,:,set == 1), 4);
+  data = bsxfun(@minus, data, data_mean);
 
-  [output_data, output_labels] = choosePortionOfImdb(data(:,:,:,1:50000), labels(1:50000), opts.imdb.imdbPortion);
+  [output_data, output_labels] = choosePortionOfImdb(data(:,:,:,1:50000), labels(1:50000), opts.imdb.imdb_portion);
   data = single(cat(4, output_data, data(:,:,:,50001:60000))); % amend with test data
   labels = single(cat(2, output_labels, labels(50001:60000))); % amend with test data
-  set = [ones(1, 50000 * opts.imdb.imdbPortion) 3 * ones(1, 10000)]; % all of the test portion
+  set = [ones(1, 50000 * opts.imdb.imdb_portion) 3 * ones(1, 10000)]; % all of the test portion
   number_of_train_and_test_images = size(labels, 2);
   afprintf(sprintf('[INFO] number_of_train_and_test_images in portion: %d.\n', number_of_train_and_test_images));
 
@@ -55,7 +55,7 @@ function imdb = constructCifarImdb(opts)
     afprintf(sprintf('done.\n'));
   end
 
-  if opts.imdb.whitenData
+  if opts.imdb.whiten_data
     afprintf(sprintf('[INFO] whitening data... '));
     z = reshape(data,[],number_of_train_and_test_images);
     W = z(:,set == 1)*z(:,set == 1)'/number_of_train_and_test_images;
@@ -68,14 +68,14 @@ function imdb = constructCifarImdb(opts)
     afprintf(sprintf('done.\n'));
   end
 
-  clNames = load(fullfile(unpackPath, 'batches.meta.mat'));
+  clNames = load(fullfile(unpack_path, 'batches.meta.mat'));
 
   imdb.images.data = data;
   imdb.images.labels = labels;
   imdb.images.set = set;
   imdb.meta.sets = {'train', 'val', 'test'};
   imdb.meta.classes = clNames.label_names;
-  afprintf(sprintf('[INFO] Finished constructing CIFAR imdb (portion = %%%d)!\n', opts.imdb.imdbPortion * 100));
+  afprintf(sprintf('[INFO] Finished constructing CIFAR imdb (portion = %%%d)!\n', opts.imdb.imdb_portion * 100));
 
 % -------------------------------------------------------------------------
 function [data, labels] = choosePortionOfImdb(data, labels, portion)
