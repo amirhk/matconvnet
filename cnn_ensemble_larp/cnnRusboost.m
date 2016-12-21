@@ -13,7 +13,7 @@ function folds = kFoldCNNRusboost()
   % -------------------------------------------------------------------------
   %                                                                   general
   % -------------------------------------------------------------------------
-  opts.number_of_folds = 3;
+  opts.number_of_folds = 1;
   opts.max_number_of_models_in_each_ensemble = 5;
   opts.dataset = 'mnist-two-class-unbalanced';
 
@@ -314,7 +314,7 @@ function [ensemble_models_info, weighted_results] = mainCNNRusboost(single_ensem
         W(t + 1, i) = W(t, i) * beta;
       else
         if labels_train(i) == 2
-          W(t + 1, i) = cancer_to_healthy_ratio * W(t, i);
+          W(t + 1, i) = min(cancer_to_healthy_ratio, 10) * W(t, i);
           % W(t + 1, i) = W(t, i);
         else
           W(t + 1, i) = W(t, i);

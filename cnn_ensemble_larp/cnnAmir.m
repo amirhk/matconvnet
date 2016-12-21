@@ -177,7 +177,6 @@ function processor = getDefaultProcessor()
   else
     processor = [];
   end
-  % processor = [];
 
 % -------------------------------------------------------------------------
 function processor_string = getProcessorStringFromProcessorList(processor_list)
