@@ -15,7 +15,7 @@ function imdb = constructMnistUnbalancedTwoClassImdb(opts)
   for i=1:4
     if ~exist(fullfile(opts.imdb.dataDir, files{i}), 'file')
       url = sprintf('http://yann.lecun.com/exdb/mnist/%s.gz',files{i}) ;
-      fprintf('downloading %s\n', url) ;
+      afprintf(sprintf('downloading %s\n', url));
       gunzip(url, opts.imdb.dataDir) ;
     end
   end

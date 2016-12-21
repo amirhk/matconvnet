@@ -1,7 +1,7 @@
 % --------------------------------------------------------------------
 function imdb = constructMnistImdb(opts)
 % --------------------------------------------------------------------
-  fprintf('[INFO] Constructing MNIST imdb...');
+  afprintf(sprintf('[INFO] Constructing MNIST imdb...\n'));
   % Preapre the imdb structure, returns image data with mean image subtracted
   files = {'train-images-idx3-ubyte', ...
            'train-labels-idx1-ubyte', ...
@@ -58,4 +58,4 @@ function imdb = constructMnistImdb(opts)
   imdb.images.set = set;
   imdb.meta.sets = {'train', 'val', 'test'};
   imdb.meta.classes = arrayfun(@(x)sprintf('%d',x),0:9,'uniformoutput',false);
-  fprintf('done!\n\n');
+  afprintf(sprintf('done!\n\n'));
