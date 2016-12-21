@@ -13,7 +13,7 @@ function folds = kFoldCNNRusboost()
   % -------------------------------------------------------------------------
   %                                                                   general
   % -------------------------------------------------------------------------
-  opts.number_of_folds = 5;
+  opts.number_of_folds = 3;
   opts.max_number_of_models_in_each_ensemble = 5;
   opts.dataset = 'mnist-two-class-unbalanced';
 

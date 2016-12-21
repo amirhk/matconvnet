@@ -61,7 +61,7 @@ function imdb = constructMnistUnbalancedTwoClassImdb(data_dir, network_arch)
   % fprintf('done!\n\n');
 
   data_ones = imdb.images.data(:,:,:, imdb.images.labels == 1);
-  subsampled_data_ones_indices = randsample(size(data_ones, 4), floor(size(data_ones, 4) / 500));
+  subsampled_data_ones_indices = randsample(size(data_ones, 4), floor(size(data_ones, 4) / 200));
   subsampled_data_ones = data_ones(:,:,:, subsampled_data_ones_indices);
   data_nines = imdb.images.data(:,:,:, imdb.images.labels == 9);
 
