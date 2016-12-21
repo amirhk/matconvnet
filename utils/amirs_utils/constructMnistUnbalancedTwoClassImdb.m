@@ -82,7 +82,7 @@ function imdb = constructMnistUnbalancedTwoClassImdb(opts)
   imdb.images.set = (round(rand(1,length(two_class_labels))) * 2) + 1; % randomly assign to either set 1 or set 3
   imdb.meta.sets = {'train', 'val', 'test'} ;
   imdb.meta.classes = arrayfun(@(x)sprintf('%d',x),0:9,'uniformoutput',false) ;
-  afprintf(sprintf(('done!\n\n'));
+  afprintf(sprintf('done!\n\n'));
 
 
 
