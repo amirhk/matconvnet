@@ -534,7 +534,7 @@ function plotThisShit(ensemble_models_info, experiment_dir_path)
     ensemble_models_test_specificity(i) = ensemble_models_info{i}.test_specificity;
   end
   figure(2);
-  % clf;
+  clf;
   model_fig_path = fullfile(experiment_dir_path, 'incremental-performance.pdf');
   xlabel('training epoch'); ylabel('error');
   title('performance');
