@@ -25,11 +25,11 @@ function folds = kFoldCNNRusboost()
   opts.contrast_normalization = true;
   % opts.whitenData = true;
   opts.train_balance = false;
-  opts.train_augment_healthy = 'none';
-  opts.train_augment_cancer = 'none';
+  opts.train_augment_negative = 'none';
+  opts.train_augment_positive = 'none';
   opts.test_balance = false;
-  opts.test_augment_healthy = 'none';
-  opts.test_augment_cancer = 'none';
+  opts.test_augment_negative = 'none';
+  opts.test_augment_positive = 'none';
 
   % -------------------------------------------------------------------------
   %                                                                     paths
@@ -110,21 +110,21 @@ function folds = kFoldCNNRusboost()
     ] = mainCNNRusboost(single_ensemble_options);
     % overwrite and save results so far
     save(opts.folds_file_path, 'folds');
+    saveKFoldResults(folds, opts.results_file_path);
   end
 
   % -------------------------------------------------------------------------
   %                                                    save and print results
   % -------------------------------------------------------------------------
-  saveKFoldResults(folds, opts.results_file_path);
   printKFoldResults(folds);
 
 % -------------------------------------------------------------------------
 function [ensemble_models_info, weighted_results] = mainCNNRusboost(single_ensemble_options)
 % -------------------------------------------------------------------------
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % 0. take as input a pre-processed IMDB (augment cancer in training set, that's it!), say
+  % 0. take as input a pre-processed IMDB (augment positive in training set, that's it!), say
   %   train: 94 patients
-  %   test: 10 patients, ~1000 health, ~20 cancer
+  %   test: 10 patients, ~1000 health, ~20 positive
   % TODO: this can be extended to be say 10-fold ensemble larp, then average the folds
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   imdb = getValueFromFieldOrDefault(single_ensemble_options, 'imdb', getInitialImdb());
@@ -159,28 +159,28 @@ function [ensemble_models_info, weighted_results] = mainCNNRusboost(single_ensem
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   data_train = imdb.images.data(:,:,:,imdb.images.set == 1);
   labels_train = imdb.images.labels(imdb.images.set == 1);
-  data_train_healthy = data_train(:,:,:,labels_train == 1);
-  data_train_cancer = data_train(:,:,:,labels_train == 2);
+  data_train_negative = data_train(:,:,:,labels_train == 1);
+  data_train_positive = data_train(:,:,:,labels_train == 2);
   data_train_count = size(data_train, 4);
-  data_train_healthy_count = size(data_train_healthy, 4);
-  data_train_cancer_count = size(data_train_cancer, 4);
+  data_train_negative_count = size(data_train_negative, 4);
+  data_train_positive_count = size(data_train_positive, 4);
 
   data_test = imdb.images.data(:,:,:,imdb.images.set == 3);
   labels_test = imdb.images.labels(imdb.images.set == 3);
-  data_test_healthy = data_test(:,:,:,labels_test == 1);
-  data_test_cancer = data_test(:,:,:,labels_test == 2);
+  data_test_negative = data_test(:,:,:,labels_test == 1);
+  data_test_positive = data_test(:,:,:,labels_test == 2);
   data_test_count = size(data_test, 4);
-  data_test_healthy_count = size(data_test_healthy, 4);
-  data_test_cancer_count = size(data_test_cancer, 4);
+  data_test_negative_count = size(data_test_negative, 4);
+  data_test_positive_count = size(data_test_positive, 4);
 
-  afprintf(sprintf('[INFO] TRAINING SET: total: %d, healthy: %d, cancer: %d\n', ...
+  afprintf(sprintf('[INFO] TRAINING SET: total: %d, negative: %d, positive: %d\n', ...
     data_train_count, ...
-    data_train_healthy_count, ...
-    data_train_cancer_count));
-  afprintf(sprintf('[INFO] TESTING SET: total: %d, healthy: %d, cancer: %d\n', ...
+    data_train_negative_count, ...
+    data_train_positive_count));
+  afprintf(sprintf('[INFO] TESTING SET: total: %d, negative: %d, positive: %d\n', ...
     data_test_count, ...
-    data_test_healthy_count, ...
-    data_test_cancer_count));
+    data_test_negative_count, ...
+    data_test_positive_count));
 
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % 3. initialize training sample weights
@@ -221,7 +221,7 @@ function [ensemble_models_info, weighted_results] = mainCNNRusboost(single_ensem
     afprintf(sprintf('[INFO] Boosting iteration #%d (attempt %d)...\n', t, count));
 
     % Resampling NEG_DATA with weights of positive example
-    afprintf(sprintf('[INFO] Resampling healthy and cancer data (ratio = %3.6f)... ', opts.random_undersampling_ratio));
+    afprintf(sprintf('[INFO] Resampling negative and positive data (ratio = %3.6f)... ', opts.random_undersampling_ratio));
     [resampled_data, resampled_labels] = ...
       resampleData(data_train, labels_train, W(t, :), opts.random_undersampling_ratio);
     afprintf(sprintf('done!\n'));
@@ -235,7 +235,7 @@ function [ensemble_models_info, weighted_results] = mainCNNRusboost(single_ensem
     training_resampled_imdb.images.labels = cat(2,training_resampled_imdb.images.labels, resampled_labels(end));
     training_resampled_imdb.images.set = cat(1, training_resampled_imdb.images.set, 3);
 
-    afprintf(sprintf('[INFO] Training model (healthy: %d, cancer: %d)...\n', ...
+    afprintf(sprintf('[INFO] Training model (negative: %d, positive: %d)...\n', ...
       numel(find(resampled_labels == 1)), ...
       numel(find(resampled_labels == 2))));
     train_opts.imdb = training_resampled_imdb;
@@ -251,9 +251,9 @@ function [ensemble_models_info, weighted_results] = mainCNNRusboost(single_ensem
 
     % IMPORTANT NOTE: we randomly undersample when training a model, but then,
     % we use all of the training samples (in their order) to update weights.
-    afprintf(sprintf('[INFO] Computing validation set predictions (healthy: %d, cancer: %d)...\n', ...
-      data_train_healthy_count, ...
-      data_train_cancer_count));
+    afprintf(sprintf('[INFO] Computing validation set predictions (negative: %d, positive: %d)...\n', ...
+      data_train_negative_count, ...
+      data_train_positive_count));
     validation_predictions = getPredictionsFromNetOnImdb(net, validation_imdb, 3);
     [ ...
       validation_acc, ...
@@ -263,7 +263,7 @@ function [ensemble_models_info, weighted_results] = mainCNNRusboost(single_ensem
 
     % Computing the pseudo loss of hypothesis 'model'
     afprintf(sprintf('[INFO] Computing pseudo loss... '));
-    healthy_to_cancer_ratio = data_train_healthy_count / data_train_cancer_count;
+    negative_to_positive_ratio = data_train_negative_count / data_train_positive_count;
     loss = 0;
     for i = 1:data_train_count
       if labels_train(i) == validation_predictions(i)
@@ -316,7 +316,7 @@ function [ensemble_models_info, weighted_results] = mainCNNRusboost(single_ensem
         W(t + 1, i) = W(t, i) * beta;
       else
         if labels_train(i) == 2
-          W(t + 1, i) = min(healthy_to_cancer_ratio, 5) * W(t, i);
+          W(t + 1, i) = min(negative_to_positive_ratio, 5) * W(t, i);
           % W(t + 1, i) = W(t, i);
         else
           W(t + 1, i) = W(t, i);
@@ -334,9 +334,9 @@ function [ensemble_models_info, weighted_results] = mainCNNRusboost(single_ensem
     %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
     % 6. test on single model of ensemble
     %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-    afprintf(sprintf('[INFO] Computing test set predictions (healthy: %d, cancer: %d)...\n', ...
-      data_test_healthy_count, ...
-      data_test_cancer_count));
+    afprintf(sprintf('[INFO] Computing test set predictions (negative: %d, positive: %d)...\n', ...
+      data_test_negative_count, ...
+      data_test_positive_count));
     test_predictions = getPredictionsFromNetOnImdb(net, test_imdb, 3);
     [ ...
       test_acc, ...
@@ -351,10 +351,10 @@ function [ensemble_models_info, weighted_results] = mainCNNRusboost(single_ensem
     ensemble_models_info{t}.model_net = H{t};
     ensemble_models_info{t}.model_loss = L(t);
     ensemble_models_info{t}.model_weight = B(t);
-    ensemble_models_info{t}.train_healthy_count = numel(find(resampled_labels == 1));
-    ensemble_models_info{t}.train_cancer_count = numel(find(resampled_labels == 2));
-    ensemble_models_info{t}.validation_healthy_count = data_train_healthy_count;
-    ensemble_models_info{t}.validation_cancer_count = data_train_cancer_count;
+    ensemble_models_info{t}.train_negative_count = numel(find(resampled_labels == 1));
+    ensemble_models_info{t}.train_positive_count = numel(find(resampled_labels == 2));
+    ensemble_models_info{t}.validation_negative_count = data_train_negative_count;
+    ensemble_models_info{t}.validation_positive_count = data_train_positive_count;
     ensemble_models_info{t}.validation_predictions = validation_predictions;
     ensemble_models_info{t}.validation_labels = labels_train;
     ensemble_models_info{t}.validation_accuracy = validation_acc;
@@ -362,8 +362,8 @@ function [ensemble_models_info, weighted_results] = mainCNNRusboost(single_ensem
     ensemble_models_info{t}.validation_specificity = validation_spec;
     ensemble_models_info{t}.validation_weights_pre_update = W(t,:);
     ensemble_models_info{t}.validation_weights_post_update = W(t + 1,:);
-    ensemble_models_info{t}.test_healthy_count = data_test_healthy_count;
-    ensemble_models_info{t}.test_cancer_count = data_test_cancer_count;
+    ensemble_models_info{t}.test_negative_count = data_test_negative_count;
+    ensemble_models_info{t}.test_positive_count = data_test_positive_count;
     ensemble_models_info{t}.test_predictions = test_predictions;
     ensemble_models_info{t}.test_labels = labels_test;
     ensemble_models_info{t}.test_accuracy = test_acc;
@@ -391,58 +391,58 @@ function [resampled_data, resampled_labels] = resampleData(data, labels, weights
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % Initial stuff
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  data_healthy = data(:,:,:,labels == 1);
-  data_cancer = data(:,:,:,labels == 2);
+  data_negative = data(:,:,:,labels == 1);
+  data_positive = data(:,:,:,labels == 2);
   data_count = size(data, 4);
-  data_healthy_count = size(data_healthy, 4);
-  data_cancer_count = size(data_cancer, 4);
-  data_healthy_indices = find(labels == 1);
-  data_cancer_indices = find(labels == 2);
+  data_negative_count = size(data_negative, 4);
+  data_positive_count = size(data_positive, 4);
+  data_negative_indices = find(labels == 1);
+  data_positive_indices = find(labels == 2);
 
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % Random Under-sampling (RUS): Healthy Data
+  % Random Under-sampling (RUS): Negative Data
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  downsampled_data_healthy_count = round(data_cancer_count * ratio);
-  downsampled_data_healthy_indices = randsample(data_healthy_indices, downsampled_data_healthy_count, false);
-  downsampled_data_healthy = data(:,:,:, downsampled_data_healthy_indices);
+  downsampled_data_negative_count = round(data_positive_count * ratio);
+  downsampled_data_negative_indices = randsample(data_negative_indices, downsampled_data_negative_count, false);
+  downsampled_data_negative = data(:,:,:, downsampled_data_negative_indices);
 
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % Weighted Upsampling (more weight -> more repeat): Healthy & Cancer Data
+  % Weighted Upsampling (more weight -> more repeat): Negative & Positive Data
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  max_repeat_healthy = 25;
-  max_repeat_cancer = 200;
+  max_repeat_negative = 25;
+  max_repeat_positive = 200;
   normalized_weights = weights / min(weights);
   repeat_counts = ceil(normalized_weights);
-  for j = data_healthy_indices
-    if repeat_counts(j) > max_repeat_healthy
-      repeat_counts(j) = max_repeat_healthy;
+  for j = data_negative_indices
+    if repeat_counts(j) > max_repeat_negative
+      repeat_counts(j) = max_repeat_negative;
     end
   end
-  for j = data_cancer_indices
-    if repeat_counts(j) > max_repeat_cancer
-      repeat_counts(j) = max_repeat_cancer;
+  for j = data_positive_indices
+    if repeat_counts(j) > max_repeat_positive
+      repeat_counts(j) = max_repeat_positive;
     end
   end
 
-  healthy_repeat_counts = repeat_counts(downsampled_data_healthy_indices);
-  cancer_repeat_counts = repeat_counts(data_cancer_indices);
+  negative_repeat_counts = repeat_counts(downsampled_data_negative_indices);
+  positive_repeat_counts = repeat_counts(data_positive_indices);
 
-  upsampled_data_healthy = upsample(downsampled_data_healthy, healthy_repeat_counts);
-  upsampled_data_cancer = upsample(data_cancer, cancer_repeat_counts);
+  upsampled_data_negative = upsample(downsampled_data_negative, negative_repeat_counts);
+  upsampled_data_positive = upsample(data_positive, positive_repeat_counts);
 
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % Putting it all together
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  resampled_data_healthy_count = size(upsampled_data_healthy, 4);
-  resampled_data_cancer_count = size(upsampled_data_cancer, 4);
-  resampled_data_all = cat(4, upsampled_data_healthy, upsampled_data_cancer);
+  resampled_data_negative_count = size(upsampled_data_negative, 4);
+  resampled_data_positive_count = size(upsampled_data_positive, 4);
+  resampled_data_all = cat(4, upsampled_data_negative, upsampled_data_positive);
   resampled_labels_all = cat( ...
     2, ...
-    1 * ones(1, resampled_data_healthy_count), ...
-    2 * ones(1, resampled_data_cancer_count));
+    1 * ones(1, resampled_data_negative_count), ...
+    2 * ones(1, resampled_data_positive_count));
 
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % Shuffle this to mixup order of healthy and cancer in imdb so we don't
+  % Shuffle this to mixup order of negative and positive in imdb so we don't
   % have the CNN overtrain in 1 particular direction. Only shuffling for
   % training; later weights are calculated and updated for all training data.
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
@@ -569,11 +569,11 @@ function weighted_results = testAllEnsembleModelsOnTestImdb(ensemble_models_info
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   data_test = imdb.images.data(:,:,:,imdb.images.set == 3);
   labels_test = imdb.images.labels(imdb.images.set == 3);
-  data_test_healthy = data_test(:,:,:,labels_test == 1);
-  data_test_cancer = data_test(:,:,:,labels_test == 2);
+  data_test_negative = data_test(:,:,:,labels_test == 1);
+  data_test_positive = data_test(:,:,:,labels_test == 2);
   data_test_count = size(data_test, 4);
-  data_test_healthy_count = size(data_test_healthy, 4);
-  data_test_cancer_count = size(data_test_cancer, 4);
+  data_test_negative_count = size(data_test_negative, 4);
+  data_test_positive_count = size(data_test_positive, 4);
 
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % Construct IMDB
@@ -593,10 +593,10 @@ function weighted_results = testAllEnsembleModelsOnTestImdb(ensemble_models_info
   test_set_predictions_per_model = {};
   for i = 1:size(H, 2) % looping through all trained networks
     afprintf(sprintf('\n'));
-    afprintf(sprintf('[INFO] Computing test set predictions for model #%d (healthy: %d, cancer: %d)...\n', ...
+    afprintf(sprintf('[INFO] Computing test set predictions for model #%d (negative: %d, positive: %d)...\n', ...
       i, ...
-      data_test_healthy_count, ...
-      data_test_cancer_count));
+      data_test_negative_count, ...
+      data_test_positive_count));
     net = H{i};
     test_set_predictions_per_model{i} = getPredictionsFromNetOnImdb(net, test_imdb, 3);
     [acc, sens, spec] = getAccSensSpec(labels_test, test_set_predictions_per_model{i}, true);
@@ -605,21 +605,21 @@ function weighted_results = testAllEnsembleModelsOnTestImdb(ensemble_models_info
   for i = 1:data_test_count
     % Calculating the total weight of the class labels from all the models
     % produced during boosting
-    wt_healthy = 0; % class 1
-    wt_cancer = 0; % class 2
+    wt_negative = 0; % class 1
+    wt_positive = 0; % class 2
     for j = 1:size(H, 2) % looping through all trained networks
        p = test_set_predictions_per_model{j}(i);
-       if p == 2 % if is cancer
-           wt_cancer = wt_cancer + B(j);
+       if p == 2 % if is positive
+           wt_positive = wt_positive + B(j);
        else
-           wt_healthy = wt_healthy + B(j);
+           wt_negative = wt_negative + B(j);
        end
     end
 
-    if (wt_cancer > wt_healthy)
-        weighted_test_set_predictions(i,:) = [2 wt_cancer];
+    if (wt_positive > wt_negative)
+        weighted_test_set_predictions(i,:) = [2 wt_positive];
     else
-        weighted_test_set_predictions(i,:) = [1 wt_healthy];
+        weighted_test_set_predictions(i,:) = [1 wt_negative];
     end
   end
 
@@ -650,11 +650,17 @@ function results = getKFoldResults(folds)
     for j = 1:numel(folds.(sprintf('fold_%d', i)).ensemble_models_info)
       % results.(sprintf('fold_%d', i)).weight(j) = ...
       %   folds.(sprintf('fold_%d', i)).ensemble_models_info{j}.model_weight; % weight is normalized a bunch of times after each iter...
-      results.(sprintf('fold_%d', i)).acc(j) = ...
+      results.(sprintf('fold_%d', i)).validation_acc(j) = ...
+        folds.(sprintf('fold_%d', i)).ensemble_models_info{j}.validation_accuracy;
+      results.(sprintf('fold_%d', i)).validation_sens(j) = ...
+        folds.(sprintf('fold_%d', i)).ensemble_models_info{j}.validation_sensitivity;
+      results.(sprintf('fold_%d', i)).validation_spec(j) = ...
+        folds.(sprintf('fold_%d', i)).ensemble_models_info{j}.validation_specificity;
+      results.(sprintf('fold_%d', i)).test_acc(j) = ...
         folds.(sprintf('fold_%d', i)).ensemble_models_info{j}.test_accuracy;
-      results.(sprintf('fold_%d', i)).sens(j) = ...
+      results.(sprintf('fold_%d', i)).test_sens(j) = ...
         folds.(sprintf('fold_%d', i)).ensemble_models_info{j}.test_sensitivity;
-      results.(sprintf('fold_%d', i)).spec(j) = ...
+      results.(sprintf('fold_%d', i)).test_spec(j) = ...
         folds.(sprintf('fold_%d', i)).ensemble_models_info{j}.test_specificity;
     end
     results.(sprintf('fold_%d', i)).weighted_acc = ...
@@ -666,9 +672,9 @@ function results = getKFoldResults(folds)
   end
 
   for i = 1:number_of_folds
-    all_folds_acc(i) = folds.(sprintf('fold_%d', i)).weighted_results.acc;
-    all_folds_sens(i) = folds.(sprintf('fold_%d', i)).weighted_results.sens;
-    all_folds_spec(i) = folds.(sprintf('fold_%d', i)).weighted_results.spec;
+    all_folds_acc(i) = folds.(sprintf('fold_%d', i)).weighted_results.test_acc;
+    all_folds_sens(i) = folds.(sprintf('fold_%d', i)).weighted_results.test_sens;
+    all_folds_spec(i) = folds.(sprintf('fold_%d', i)).weighted_results.test_spec;
     all_folds_ensemble_count(i) = numel(folds.(sprintf('fold_%d', i)).ensemble_models_info);
   end
   results.kfold_acc_avg = mean(all_folds_acc);

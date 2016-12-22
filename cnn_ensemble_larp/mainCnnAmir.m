@@ -117,8 +117,8 @@ function main_cnn_amir(varargin)
               opts.network_arch = network_arch;
               opts.backprop_depth = backprop_depth;
               opts.weight_decay = weight_decay;
-              opts.weight_init_sequence = weight_init_sequence{1};
               opts.weight_init_source = weight_init_source;
+              opts.weight_init_sequence = weight_init_sequence{1};
               opts.bottleneck_divide_by = bottleneck_divide_by;
               opts.leave_out_type = leave_out_type;
               opts.leave_out_index = leave_out_index;

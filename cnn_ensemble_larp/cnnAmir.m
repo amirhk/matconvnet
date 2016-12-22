@@ -1,4 +1,4 @@
-function [net, info] = cnn_amir(inputs_opts)
+function [net, results] = cnn_amir(inputs_opts)
   run(fullfile(fileparts(mfilename('fullpath')), ...
     '..', 'matlab', 'vl_setupnn.m'));
 
@@ -184,8 +184,8 @@ function [net, info] = cnn_amir(inputs_opts)
   % -------------------------------------------------------------------------
   % TODO: should net & imdb even be part of the opts file?? no!
   [ST,~] = dbstack();
+  results = {};
   if strcmp(ST(2).file, 'mainCnnAmir.m')
-    results = {};
     predictions_train = getPredictionsFromNetOnImdb(net, imdb, 1);
     predictions_test = getPredictionsFromNetOnImdb(net, imdb, 3);
     labels_train = imdb.images.labels(imdb.images.set == 1);
@@ -202,6 +202,7 @@ function [net, info] = cnn_amir(inputs_opts)
     ] = getAccSensSpec(labels_test, predictions_test, true);
     saveStruct2File(results, opts.paths.results_path, 0);
   end
+  results.info = info;
 
 % -------------------------------------------------------------------------
 function error_function = getErrorFunctionForDataset(dataset)
