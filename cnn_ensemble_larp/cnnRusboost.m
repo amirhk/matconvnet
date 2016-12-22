@@ -245,8 +245,8 @@ function [ensemble_models_info, weighted_results] = mainCNNRusboost(single_ensem
     train_opts.weight_init_sequence = opts.weight_init_sequence;
     train_opts.debug_flag = false;
     train_opts.experiment_parent_dir = opts.experiment_dir_path;
-    train_opts.gpus = [2];
-    train_opts.backprop_depth = 13;
+    train_opts.gpus = [1];
+    train_opts.backprop_depth = 4;
     [net, info] = cnnAmir(train_opts);
 
     % IMPORTANT NOTE: we randomly undersample when training a model, but then,
@@ -383,6 +383,7 @@ function [ensemble_models_info, weighted_results] = mainCNNRusboost(single_ensem
   printConsoleOutputSeparator();
   weighted_results = testAllEnsembleModelsOnTestImdb(ensemble_models_info, imdb);
   printConsoleOutputSeparator();
+  fclose('all');
 
 % -------------------------------------------------------------------------
 function [resampled_data, resampled_labels] = resampleData(data, labels, weights, ratio)
