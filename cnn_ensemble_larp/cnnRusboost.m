@@ -686,6 +686,7 @@ function saveKFoldResults(folds, results_file_path)
 % -------------------------------------------------------------------------
   results = getKFoldResults(folds);
   saveStruct2File(results, results_file_path, 0);
+
 % _p------------------------------------------------------------------------
 function printKFoldResults(folds)
 % -------------------------------------------------------------------------
