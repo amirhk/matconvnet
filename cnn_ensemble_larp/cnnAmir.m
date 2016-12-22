@@ -143,6 +143,7 @@ function [net, info] = cnn_amir(inputs_opts)
   %                                        accuracy, sensitivity, specificity
   % -------------------------------------------------------------------------
   % TODO: should net & imdb even be part of the opts file?? no!
+  [ST,~] = dbstack();
   if strcmp(ST(2).file, 'mainCnnAmir.m')
     results = {};
     predictions_train = getPredictionsFromNetOnImdb(net, imdb, 1);
