@@ -75,7 +75,9 @@ function folds = kFoldCNNRusboost()
         afprintf(sprintf('\n'));
         afprintf(sprintf('[INFO] Constructing imdb for fold #%d...\n', i));
         opts.network_arch = 'lenet';
-        imdb = constructMnistUnbalancedTwoClassImdb(opts.data_dir, opts.network_arch);
+        % imdb = constructMnistUnbalancedTwoClassImdb(opts.data_dir, opts.network_arch);
+        tmp = load(fullfile(getDevPath(), 'data', 'saved-two-class-mnist.mat'));
+        imdb = tmp.imdb;
         imdbs{i} = imdb;
         afprintf(sprintf('[INFO] done!\n'));
       end
