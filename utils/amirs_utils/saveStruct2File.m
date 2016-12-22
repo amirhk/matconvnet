@@ -23,11 +23,11 @@ function saveStruct2File(input_struct, filePath, recursion_depth)
           fprintf(fileID, '\t');
         end
         if numel(value) == 1
-          fprintf(fileID, '%s: %3.2f\n', fields{i}, value);
+          fprintf(fileID, '%s: %.6f\n', fields{i}, value);
         else
           fprintf(fileID, '%s: ', fields{i});
           for k = 1:numel(value)
-            fprintf(fileID, '%3.2f  ',value(k));
+            fprintf(fileID, '%.6f  ',value(k));
           end
           fprintf(fileID, '\n');
         end
