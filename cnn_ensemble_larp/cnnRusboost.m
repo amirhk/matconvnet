@@ -222,7 +222,7 @@ function [ensemble_models_info, weighted_results] = mainCNNRusboost(single_ensem
     afprintf(sprintf('[INFO] Boosting iteration #%d (attempt %d)...\n', t, count));
 
     % Resampling NEG_DATA with weights of positive example
-    afprintf(sprintf('[INFO] Resampling healthy and cancer data (ratio = %3.2f)... ', opts.random_undersampling_ratio));
+    afprintf(sprintf('[INFO] Resampling healthy and cancer data (ratio = %3.6f)... ', opts.random_undersampling_ratio));
     [resampled_data, resampled_labels] = ...
       resampleData(data_train, labels_train, W(t, :), opts.random_undersampling_ratio);
     afprintf(sprintf('done!\n'));
@@ -630,9 +630,9 @@ function weighted_results = testAllEnsembleModelsOnTestImdb(ensemble_models_info
   [weighted_acc, weighted_sens, weighted_spec] = getAccSensSpec(labels_test, predictions_test, false);
   afprintf(sprintf('Model weights: '))
   disp(B);
-  afprintf(sprintf('[INFO] Weighted Acc: %3.2f\n', weighted_acc));
-  afprintf(sprintf('[INFO] Weighted Sens: %3.2f\n', weighted_sens));
-  afprintf(sprintf('[INFO] Weighted Spec: %3.2f\n', weighted_spec));
+  afprintf(sprintf('[INFO] Weighted Acc: %3.6f\n', weighted_acc));
+  afprintf(sprintf('[INFO] Weighted Sens: %3.6f\n', weighted_sens));
+  afprintf(sprintf('[INFO] Weighted Spec: %3.6f\n', weighted_spec));
   weighted_results.acc = weighted_acc;
   weighted_results.sens = weighted_sens;
   weighted_results.spec = weighted_spec;
@@ -696,7 +696,7 @@ function printKFoldResults(folds)
   results = getKFoldResults(folds);
   afprintf(sprintf(' -- -- -- -- -- -- -- -- -- ALL FOLDS -- -- -- -- -- -- -- -- -- \n'));
   afprintf(sprintf(' -- -- -- -- -- -- -- -- -- TODO AMIR! -- -- -- -- -- -- -- -- -- \n'));
-  % afprintf(sprintf('acc: %3.2f, std: %3.2f\n', mean(results.all_folds_acc), std(results.all_folds_acc)));
-  % afprintf(sprintf('sens: %3.2f, std: %3.2f\n', mean(results.all_folds_sens), std(results.all_folds_sens)));
-  % afprintf(sprintf('spec: %3.2f, std: %3.2f\n', mean(results.all_folds_spec), std(results.all_folds_spec)));
-  % afprintf(sprintf('ensemble count: %3.2f, std: %3.2f\n', mean(results.all_folds_ensemble_count), std(results.all_folds_ensemble_count)));
+  % afprintf(sprintf('acc: %3.6f, std: %3.6f\n', mean(results.all_folds_acc), std(results.all_folds_acc)));
+  % afprintf(sprintf('sens: %3.6f, std: %3.6f\n', mean(results.all_folds_sens), std(results.all_folds_sens)));
+  % afprintf(sprintf('spec: %3.6f, std: %3.6f\n', mean(results.all_folds_spec), std(results.all_folds_spec)));
+  % afprintf(sprintf('ensemble count: %3.6f, std: %3.6f\n', mean(results.all_folds_ensemble_count), std(results.all_folds_ensemble_count)));
