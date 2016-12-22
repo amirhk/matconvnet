@@ -241,7 +241,6 @@ function [ensemble_models_info, weighted_results] = mainCNNRusboost(single_ensem
     train_opts.imdb = training_resampled_imdb;
     train_opts.dataset = opts.dataset;
     train_opts.network_arch = opts.network_arch;
-    train_opts.backprop_depth = opts.backprop_depth;
     train_opts.weight_init_source = opts.weight_init_source;
     train_opts.weight_init_sequence = opts.weight_init_sequence;
     train_opts.debug_flag = false;
