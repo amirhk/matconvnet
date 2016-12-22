@@ -13,8 +13,8 @@ function folds = kFoldCNNRusboost()
   % -------------------------------------------------------------------------
   %                                                                   general
   % -------------------------------------------------------------------------
-  opts.number_of_folds = 1;
-  opts.max_number_of_models_in_each_ensemble = 5;
+  opts.number_of_folds = 5;
+  opts.max_number_of_models_in_each_ensemble = 10;
   opts.dataset = 'mnist-two-class-unbalanced';
 
   % -------------------------------------------------------------------------
@@ -140,7 +140,7 @@ function [ensemble_models_info, weighted_results] = mainCNNRusboost(single_ensem
   opts.iteration_count = iteration_count; % number of boosting iterations
   opts.dataset = dataset;
   opts.network_arch = network_arch;
-  opts.backprop_depth = 13;
+  opts.backprop_depth = 4;
   opts.weight_init_source = 'gen';
   opts.weight_init_sequence = {'compRand', 'compRand', 'compRand'};
   opts.random_undersampling_ratio = (50/50);
@@ -656,23 +656,29 @@ function results = getKFoldResults(folds)
       results.(sprintf('fold_%d', i)).spec(j) = ...
         folds.(sprintf('fold_%d', i)).ensemble_models_info{j}.test_specificity;
     end
+    results.(sprintf('fold_%d', i)).ensemble_acc = ...
+      folds.(sprintf('fold_%d', i)).weighted_results.acc;
+    results.(sprintf('fold_%d', i)).ensemble_sens = ...
+      folds.(sprintf('fold_%d', i)).weighted_results.sens;
+    results.(sprintf('fold_%d', i)).ensemble_spec = ...
+      folds.(sprintf('fold_%d', i)).weighted_results.spec;
   end
 
   for i = 1:number_of_folds
-    results.all_folds_acc(i) = folds.(sprintf('fold_%d', i)).weighted_results.acc;
-    results.all_folds_sens(i) = folds.(sprintf('fold_%d', i)).weighted_results.sens;
-    results.all_folds_spec(i) = folds.(sprintf('fold_%d', i)).weighted_results.spec;
-    results.all_folds_ensemble_count(i) = numel(folds.(sprintf('fold_%d', i)).ensemble_models_info);
+    all_folds_acc(i) = folds.(sprintf('fold_%d', i)).weighted_results.acc;
+    all_folds_sens(i) = folds.(sprintf('fold_%d', i)).weighted_results.sens;
+    all_folds_spec(i) = folds.(sprintf('fold_%d', i)).weighted_results.spec;
+    all_folds_ensemble_count(i) = numel(folds.(sprintf('fold_%d', i)).ensemble_models_info);
   end
-  results.kfold_acc_avg = mean(results.all_folds_acc);
-  results.kfold_sens_avg = mean(results.all_folds_sens);
-  results.kfold_spec_avg = mean(results.all_folds_spec);
-  results.kfold_ensemble_count_avg = mean(results.all_folds_ensemble_count);
+  results.kfold_acc_avg = mean(all_folds_acc);
+  results.kfold_sens_avg = mean(all_folds_sens);
+  results.kfold_spec_avg = mean(all_folds_spec);
+  results.kfold_ensemble_count_avg = mean(all_folds_ensemble_count);
 
-  results.kfold_acc_std = std(results.all_folds_acc);
-  results.kfold_sens_std = std(results.all_folds_sens);
-  results.kfold_spec_std = std(results.all_folds_spec);
-  results.kfold_ensemble_count_std = std(results.all_folds_ensemble_count);
+  results.kfold_acc_std = std(all_folds_acc);
+  results.kfold_sens_std = std(all_folds_sens);
+  results.kfold_spec_std = std(all_folds_spec);
+  results.kfold_ensemble_count_std = std(all_folds_ensemble_count);
 
 % -------------------------------------------------------------------------
 function saveKFoldResults(folds, results_file_path)
@@ -689,7 +695,8 @@ function printKFoldResults(folds)
   % end
   results = getKFoldResults(folds);
   afprintf(sprintf(' -- -- -- -- -- -- -- -- -- ALL FOLDS -- -- -- -- -- -- -- -- -- \n'));
-  afprintf(sprintf('acc: %3.2f, std: %3.2f\n', mean(results.all_folds_acc), std(results.all_folds_acc)));
-  afprintf(sprintf('sens: %3.2f, std: %3.2f\n', mean(results.all_folds_sens), std(results.all_folds_sens)));
-  afprintf(sprintf('spec: %3.2f, std: %3.2f\n', mean(results.all_folds_spec), std(results.all_folds_spec)));
-  afprintf(sprintf('ensemble count: %3.2f, std: %3.2f\n', mean(results.all_folds_ensemble_count), std(results.all_folds_ensemble_count)));
+  afprintf(sprintf(' -- -- -- -- -- -- -- -- -- TODO AMIR! -- -- -- -- -- -- -- -- -- \n'));
+  % afprintf(sprintf('acc: %3.2f, std: %3.2f\n', mean(results.all_folds_acc), std(results.all_folds_acc)));
+  % afprintf(sprintf('sens: %3.2f, std: %3.2f\n', mean(results.all_folds_sens), std(results.all_folds_sens)));
+  % afprintf(sprintf('spec: %3.2f, std: %3.2f\n', mean(results.all_folds_spec), std(results.all_folds_spec)));
+  % afprintf(sprintf('ensemble count: %3.2f, std: %3.2f\n', mean(results.all_folds_ensemble_count), std(results.all_folds_ensemble_count)));
