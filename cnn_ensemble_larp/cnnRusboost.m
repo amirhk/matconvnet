@@ -21,7 +21,7 @@ function folds = kFoldCNNRusboost()
       opts.general.network_arch = 'prostatenet';
   end
   opts.general.number_of_folds = 1;
-  opts.general.iteration_count_limit = 10;
+  opts.general.iteration_count_limit = 3;
 
   % -------------------------------------------------------------------------
   %                                                                  opts.imdb
@@ -144,16 +144,28 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(ensemble_options)
   %                                                              opts.general
   % -------------------------------------------------------------------------
   imdb = getValueFromFieldOrDefault(ensemble_options, 'imdb', struct());
-  opts.general.dataset = getValueFromFieldOrDefault(ensemble_options, 'dataset', 'prostate');
-  opts.general.network_arch = getValueFromFieldOrDefault(ensemble_options, 'network_arch', 'prostatenet');
-  opts.general.iteration_count = getValueFromFieldOrDefault(ensemble_options, 'iteration_count', 5);
+  opts.general.dataset = getValueFromFieldOrDefault( ...
+    ensemble_options, ...
+    'dataset', ...
+    'prostate');
+  opts.general.network_arch = getValueFromFieldOrDefault( ...
+    ensemble_options, ...
+    'network_arch', ...
+    'prostatenet');
+  opts.general.iteration_count = getValueFromFieldOrDefault( ...
+    ensemble_options, ...
+    'iteration_count', ...
+    5);
   opts.general.random_undersampling_ratio = (50/50);
 
   % -------------------------------------------------------------------------
   %                                                                opts.paths
   % -------------------------------------------------------------------------
   opts.paths.time_string = sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
-  opts.paths.experiment_parent_dir = getValueFromFieldOrDefault(ensemble_options, 'experiment_parent_dir', fullfile(vl_rootnn, 'experiment_results'));
+  opts.paths.experiment_parent_dir = getValueFromFieldOrDefault( ...
+    ensemble_options, ...
+    'experiment_parent_dir', ...
+    fullfile(vl_rootnn, 'experiment_results'));
   opts.paths.experiment_dir = fullfile(opts.paths.experiment_parent_dir, sprintf( ...
     'rusboost-%s-%s-%s', ...
     opts.general.dataset, ...
@@ -162,9 +174,9 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(ensemble_options)
   if ~exist(opts.paths.experiment_dir)
     mkdir(opts.paths.experiment_dir);
   end
-  opts.paths.ensemble_models_file_path = fullfile(opts.paths.experiment_dir, 'ensemble_models.mat');
   opts.paths.options_file_path = fullfile(opts.paths.experiment_dir, 'options.txt');
   opts.paths.results_file_path = fullfile(opts.paths.experiment_dir, 'results.txt');
+  opts.paths.ensemble_models_file_path = fullfile(opts.paths.experiment_dir, 'ensemble_models.mat');
 
   % -------------------------------------------------------------------------
   %                                                   opts.single_cnn_options
@@ -243,6 +255,7 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(ensemble_options)
 
     % Resampling NEG_DATA with weights of positive example
     afprintf(sprintf('[INFO] Resampling negative and positive data (ratio = %3.6f)... ', opts.general.random_undersampling_ratio));
+
     [resampled_data, resampled_labels] = ...
       resampleData(data_train, labels_train, W(t, :), opts.general.random_undersampling_ratio);
     afprintf(sprintf('done!\n'));
@@ -255,7 +268,7 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(ensemble_options)
       numel(find(resampled_labels == 1)), ...
       numel(find(resampled_labels == 2))));
     opts.single_cnn_options.imdb = training_resampled_imdb;
-    [net, info] = cnnAmir(opts.single_cnn_options);
+    [net, ~] = cnnAmir(opts.single_cnn_options);
 
     % IMPORTANT NOTE: we randomly undersample when training a model, but then,
     % we use all of the training samples (in their order) to update weights.
@@ -282,9 +295,9 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(ensemble_options)
     end
     fprintf('Loss: %6.5f\n', loss);
 
-    % If count exceeds a pre-defined threshold (5 in the current
-    % implementation), the loop is broken and rolled back to the state
-    % where loss > 0.5 was not encountered.
+    % If count exceeds a pre-defined threshold (5 in the current implementation)
+    % the loop is broken and rolled back to the state where loss > 0.5 was not
+    % encountered.
     if count > 5
       L = L(1:t-1);
       H = H(1:t-1);
@@ -294,11 +307,10 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(ensemble_options)
       break;
     end
 
-    % If the loss is greater than 1/2, it means that an inverted
-    % hypothesis would perform better. In such cases, do not take that
-    % hypothesis into consideration and repeat the same iteration. 'count'
-    % keeps counts of the number of times the same boosting iteration have
-    % been repeated
+    % If the loss is greater than 1/2, it means that an inverted hypothesis
+    % would perform better. In such cases, do not take that hypothesis into
+    % consideration and repeat the same iteration. 'count' keeps counts of
+    % the number of times the same boosting iteration have been repeated
     if loss > 0.5
       count = count + 1;
       continue;
@@ -324,8 +336,8 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(ensemble_options)
         W(t + 1, i) = W(t, i) * beta;
       else
         if labels_train(i) == 2
-          W(t + 1, i) = min(negative_to_positive_ratio, 5) * W(t, i);
-          % W(t + 1, i) = W(t, i);
+          % W(t + 1, i) = min(negative_to_positive_ratio, 5) * W(t, i);
+          W(t + 1, i) = W(t, i);
         else
           W(t + 1, i) = W(t, i);
         end
@@ -391,9 +403,6 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(ensemble_options)
   printConsoleOutputSeparator();
   weighted_results = testAllEnsembleModelsOnTestImdb(ensemble_models, imdb);
   printConsoleOutputSeparator();
-
-
-
 
 % -------------------------------------------------------------------------
 function [ ...
@@ -467,9 +476,19 @@ function [resampled_data, resampled_labels] = resampleData(data, labels, weights
   % -------------------------------------------------------------------------
   % Random Under-sampling (RUS): Negative Data
   % -------------------------------------------------------------------------
+  weights_negative_indices = weights(1, data_negative_indices);
   downsampled_data_negative_count = round(data_positive_count * ratio);
-  downsampled_data_negative_indices = randsample(data_negative_indices, downsampled_data_negative_count, false);
+  % just random sampling.... horrendously wrong
+  % downsampled_data_negative_indices = randsample(data_negative_indices, downsampled_data_negative_count, false);
+  % TODO: the line below is weighted sampling w/ replacement; the most accurate
+  % way is to weighted randsample w/o replacement
+  downsampled_data_negative_indices = randsample( ...
+    data_negative_indices, ...
+    downsampled_data_negative_count, ...
+    true, ...
+    weights_negative_indices);
   downsampled_data_negative = data(:,:,:, downsampled_data_negative_indices);
+
 
   % -------------------------------------------------------------------------
   % Weighted Upsampling (more weight -> more repeat): Negative & Positive Data
@@ -591,7 +610,7 @@ function plotThisShit(ensemble_models, experiment_dir)
   ensemble_models_test_accuracy = zeros(1, num_models_in_ensemble);
   ensemble_models_test_sensitivity = zeros(1, num_models_in_ensemble);
   ensemble_models_test_specificity = zeros(1, num_models_in_ensemble);
-  for i = num_models_in_ensemble
+  for i = 1:num_models_in_ensemble
     ensemble_models_validation_accuracy(i) = ensemble_models{i}.validation_accuracy;
     ensemble_models_validation_sensitivity(i) = ensemble_models{i}.validation_sensitivity;
     ensemble_models_validation_specificity(i) = ensemble_models{i}.validation_specificity;
@@ -606,12 +625,12 @@ function plotThisShit(ensemble_models, experiment_dir)
   title('performance');
   grid on;
   hold on;
-  plot(1:num_models_in_ensemble, ensemble_models_validation_accuracy, 'r-');
-  plot(1:num_models_in_ensemble, ensemble_models_validation_sensitivity, 'g-');
-  plot(1:num_models_in_ensemble, ensemble_models_validation_specificity, 'b-');
-  plot(1:num_models_in_ensemble, ensemble_models_test_accuracy, 'r.--');
-  plot(1:num_models_in_ensemble, ensemble_models_test_sensitivity, 'g.--');
-  plot(1:num_models_in_ensemble, ensemble_models_test_specificity, 'b.--');
+  plot(1:num_models_in_ensemble, ensemble_models_validation_accuracy, 'r.-', 'linewidth', 2);
+  plot(1:num_models_in_ensemble, ensemble_models_validation_sensitivity, 'g.-', 'linewidth', 2);
+  plot(1:num_models_in_ensemble, ensemble_models_validation_specificity, 'b.-', 'linewidth', 2);
+  plot(1:num_models_in_ensemble, ensemble_models_test_accuracy, 'r.--', 'linewidth', 2);
+  plot(1:num_models_in_ensemble, ensemble_models_test_sensitivity, 'g.--', 'linewidth', 2);
+  plot(1:num_models_in_ensemble, ensemble_models_test_specificity, 'b.--', 'linewidth', 2);
   leg = { ...
     'val acc', ...
     'val sens', ...
@@ -699,9 +718,9 @@ function weighted_results = testAllEnsembleModelsOnTestImdb(ensemble_models, imd
   afprintf(sprintf('[INFO] Weighted Acc: %3.6f\n', weighted_acc));
   afprintf(sprintf('[INFO] Weighted Sens: %3.6f\n', weighted_sens));
   afprintf(sprintf('[INFO] Weighted Spec: %3.6f\n', weighted_spec));
-  weighted_results.acc = weighted_acc;
-  weighted_results.sens = weighted_sens;
-  weighted_results.spec = weighted_spec;
+  weighted_results.test_acc = weighted_acc;
+  weighted_results.test_sens = weighted_sens;
+  weighted_results.test_spec = weighted_spec;
 
 % -------------------------------------------------------------------------
 function results = getKFoldResults(folds)
@@ -729,11 +748,11 @@ function results = getKFoldResults(folds)
         folds.(sprintf('fold_%d', i)).ensemble_models{j}.test_specificity;
     end
     results.(sprintf('fold_%d', i)).weighted_acc = ...
-      folds.(sprintf('fold_%d', i)).weighted_results.acc;
+      folds.(sprintf('fold_%d', i)).weighted_results.test_acc;
     results.(sprintf('fold_%d', i)).weighted_sens = ...
-      folds.(sprintf('fold_%d', i)).weighted_results.sens;
+      folds.(sprintf('fold_%d', i)).weighted_results.test_sens;
     results.(sprintf('fold_%d', i)).weighted_spec = ...
-      folds.(sprintf('fold_%d', i)).weighted_results.spec;
+      folds.(sprintf('fold_%d', i)).weighted_results.test_spec;
   end
 
   for i = 1:number_of_folds
