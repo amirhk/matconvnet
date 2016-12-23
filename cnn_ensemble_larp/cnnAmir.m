@@ -122,22 +122,22 @@ function [net, results] = cnn_amir(inputs_opts)
   opts_copy.imdb.imdb = '< too large to print imdb >';
   saveStruct2File(opts_copy, opts.paths.options_file_path, 0);
 
-  % -------------------------------------------------------------------------
-  %               TESTING (REMOVE): testing balanced imdb into single network
-  % -------------------------------------------------------------------------
-  data_train = imdb.images.data(:,:,:,imdb.images.set == 1);
-  labels_train = imdb.images.labels(imdb.images.set == 1);
-  data_test = imdb.images.data(:,:,:,imdb.images.set == 3);
-  labels_test = imdb.images.labels(imdb.images.set == 3);
+  % % -------------------------------------------------------------------------
+  % %               TESTING (REMOVE): testing balanced imdb into single network
+  % % -------------------------------------------------------------------------
+  % data_train = imdb.images.data(:,:,:,imdb.images.set == 1);
+  % labels_train = imdb.images.labels(imdb.images.set == 1);
+  % data_test = imdb.images.data(:,:,:,imdb.images.set == 3);
+  % labels_test = imdb.images.labels(imdb.images.set == 3);
 
-  [resampled_data_train, resampled_labels_train] = balanceTrainingData(data_train, labels_train, 50 / 50);
-  imdb.images.data = single(cat(4, resampled_data_train, data_test));
-  imdb.images.labels = single(cat(2, resampled_labels_train, labels_test));
-  imdb.images.set = cat(2, 1 * ones(1, length(resampled_labels_train)), 3 * ones(1, length(labels_test)));
+  % [resampled_data_train, resampled_labels_train] = balanceTrainingData(data_train, labels_train, 50 / 50);
+  % imdb.images.data = single(cat(4, resampled_data_train, data_test));
+  % imdb.images.labels = single(cat(2, resampled_labels_train, labels_test));
+  % imdb.images.set = cat(2, 1 * ones(1, length(resampled_labels_train)), 3 * ones(1, length(labels_test)));
 
-  fh_imdb_utils = imdbUtils;
-  [~] = fh_imdb_utils.getImdbInfo(imdb, true);
-  opts.imdb.imdb = imdb;
+  % fh_imdb_utils = imdbUtils;
+  % [~] = fh_imdb_utils.getImdbInfo(imdb, true);
+  % opts.imdb.imdb = imdb;
 
   % -------------------------------------------------------------------------
   %                                                                     train
