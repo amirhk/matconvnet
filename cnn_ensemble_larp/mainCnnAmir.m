@@ -111,8 +111,9 @@ function main_cnn_amir(varargin)
         for weight_decay = weight_decay_list
           for backprop_depth = backprop_depth_list
             for leave_out_index = leave_out_indices
-              tmp = load(fullfile(getDevPath(), 'data', 'saved-two-class-mnist.mat'));
+              tmp = load(fullfile(getDevPath(), 'data', 'saved-two-class-mnist-pos9-neg4.mat'));
               opts.imdb = tmp.imdb;
+              opts.balance_train = true;
               opts.dataset = char(dataset);
               opts.network_arch = network_arch;
               opts.backprop_depth = backprop_depth;

@@ -25,6 +25,7 @@ function [net, results] = cnn_amir(inputs_opts)
   opts.imdb.contrast_normalization = getValueFromFieldOrDefault(inputs_opts, 'contrast_normalization', true);
   opts.imdb.regen = getValueFromFieldOrDefault(inputs_opts, 'regen', false);
   opts.imdb.portion = getValueFromFieldOrDefault(inputs_opts, 'portion', 1.0);
+  opts.imdb.balance_train = getValueFromFieldOrDefault(inputs_opts, 'balance_train', false);
 
   % -------------------------------------------------------------------------
   %                                                                opts.train
@@ -125,19 +126,21 @@ function [net, results] = cnn_amir(inputs_opts)
   % % -------------------------------------------------------------------------
   % %               TESTING (REMOVE): testing balanced imdb into single network
   % % -------------------------------------------------------------------------
-  % data_train = imdb.images.data(:,:,:,imdb.images.set == 1);
-  % labels_train = imdb.images.labels(imdb.images.set == 1);
-  % data_test = imdb.images.data(:,:,:,imdb.images.set == 3);
-  % labels_test = imdb.images.labels(imdb.images.set == 3);
+  if opts.imdb.balance_train
+    data_train = imdb.images.data(:,:,:,imdb.images.set == 1);
+    labels_train = imdb.images.labels(imdb.images.set == 1);
+    data_test = imdb.images.data(:,:,:,imdb.images.set == 3);
+    labels_test = imdb.images.labels(imdb.images.set == 3);
 
-  % [resampled_data_train, resampled_labels_train] = balanceTrainingData(data_train, labels_train, 50 / 50);
-  % imdb.images.data = single(cat(4, resampled_data_train, data_test));
-  % imdb.images.labels = single(cat(2, resampled_labels_train, labels_test));
-  % imdb.images.set = cat(2, 1 * ones(1, length(resampled_labels_train)), 3 * ones(1, length(labels_test)));
+    [resampled_data_train, resampled_labels_train] = balanceTrainingData(data_train, labels_train, 50 / 50);
+    imdb.images.data = single(cat(4, resampled_data_train, data_test));
+    imdb.images.labels = single(cat(2, resampled_labels_train, labels_test));
+    imdb.images.set = cat(2, 1 * ones(1, length(resampled_labels_train)), 3 * ones(1, length(labels_test)));
 
-  % fh_imdb_utils = imdbUtils;
-  % [~] = fh_imdb_utils.getImdbInfo(imdb, true);
-  % opts.imdb.imdb = imdb;
+    fh_imdb_utils = imdbTwoClassUtils;
+    [~] = fh_imdb_utils.getImdbInfo(imdb, true);
+    opts.imdb.imdb = imdb;
+  end
 
   % -------------------------------------------------------------------------
   %                                                                     train
@@ -162,7 +165,7 @@ function [net, results] = cnn_amir(inputs_opts)
   % TODO: should net & imdb even be part of the opts file?? no!
   [ST,~] = dbstack();
   results = {};
-  if strcmp(ST(2).file, 'mainCnnAmir.m')
+  if strcmp(ST(2).file, 'mainCnnAmir.m') || strcmp(ST(2).file, 'testSingleNetwork.m')
     predictions_train = getPredictionsFromNetOnImdb(net, imdb, 1);
     labels_train = imdb.images.labels(imdb.images.set == 1);
     [ ...

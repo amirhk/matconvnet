@@ -1,14 +1,14 @@
 % --------------------------------------------------------------------
-function imdb = constructMnistUnbalancedTwoClassImdb(network_arch)
+function imdb = constructMnistUnbalancedTwoClassImdb(network_arch, negative_class_number, positive_class_number)
 % --------------------------------------------------------------------
   afprintf(sprintf('[INFO] Constructing unbalanced MNIST imdb...\n'));
   opts.imdb.data_dir = fullfile(getDevPath(), 'data', 'source', 'mnist');
   opts.general.network_arch = network_arch;
   imdb = constructMnistImdb(opts);
 
-  fh_imdb_utils = imdbUtils;
-  negative_class_number = 9;
-  positive_class_number = 1;
+  fh_imdb_utils = imdbTwoClassUtils;
+  % negative_class_number = 9;
+  % positive_class_number = 1;
 
   % indices
   train_negative_indices = bsxfun(@and, imdb.images.labels == negative_class_number, imdb.images.set == 1);

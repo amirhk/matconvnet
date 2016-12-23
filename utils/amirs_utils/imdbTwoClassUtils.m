@@ -1,4 +1,4 @@
-function fh = imdbUtils()
+function fh = imdbTwoClassUtils()
   % assign function handles so we can call these local functions from elsewhere
   fh.getImdbInfo = @getImdbInfo;
   fh.resampleData = @resampleData;
@@ -20,7 +20,6 @@ function [ ...
   data_test_negative_count, ...
   labels_test] = getImdbInfo(imdb, print_info)
 % -------------------------------------------------------------------------
-
   % indices
   train_indices = imdb.images.set == 1;
   train_positive_indices = bsxfun(@and, imdb.images.labels == 2, imdb.images.set == 1);
@@ -191,3 +190,10 @@ function imdb = constructPartialImdb(data, labels, set_number)
   imdb.images.labels = labels;
   imdb.images.set = set_number * ones(length(labels), 1);
   imdb.meta.sets = {'train', 'val', 'test'};
+
+% -------------------------------------------------------------------------
+function imdb = balanceImdb(imdb, set, balance_type)
+  % set = {'train', 'test'}
+  % balance_type = {'downsample', 'upsample / augment'}
+% -------------------------------------------------------------------------
+ % TODO

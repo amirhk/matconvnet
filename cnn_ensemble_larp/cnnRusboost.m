@@ -83,7 +83,7 @@ function folds = kFoldCNNRusboost()
           case 'gen'
             imdb = constructMnistUnbalancedTwoClassImdb(opts.general.network_arch);
           case 'load'
-            tmp = load(fullfile(getDevPath(), 'data', 'saved-two-class-mnist.mat'));
+            tmp = load(fullfile(getDevPath(), 'data', 'saved-two-class-mnist-pos9-neg4.mat'));
             imdb = tmp.imdb;
         end
         imdbs{i} = imdb;
@@ -184,7 +184,7 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(ensemble_options)
   % opts.single_cnn_options.gpus = ifNotMacSetGpu(1);
   % opts.single_cnn_options.backprop_depth = 4;
   opts.single_cnn_options.gpus = ifNotMacSetGpu(2);
-  opts.single_cnn_options.backprop_depth = 13;
+  opts.single_cnn_options.backprop_depth = 4;
   opts.single_cnn_options.debug_flag = false;
 
   % -------------------------------------------------------------------------
@@ -196,7 +196,7 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(ensemble_options)
   %                     2. process the imdb to separate positive and negative
   %                               samples (to be randomly-undersampled later)
   % -------------------------------------------------------------------------
-  fh_imdb_utils = imdbUtils;
+  fh_imdb_utils = imdbTwoClassUtils;
   [ ...
     data_train, ...
     data_train_positive, ...
@@ -282,7 +282,9 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(ensemble_options)
       validation_spec, ...
     ] = getAccSensSpec(labels_train, validation_predictions, true);
 
-    % Computing the pseudo loss of hypothesis 'model'
+    % -------------------------------------------------------------------------
+    %                        6. Computing the pseudo loss of hypothesis 'model'
+    % -------------------------------------------------------------------------
     afprintf(sprintf('[INFO] Computing pseudo loss... '));
     negative_to_positive_ratio = data_train_negative_count / data_train_positive_count;
     loss = 0;
@@ -334,7 +336,9 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(ensemble_options)
     %     break;
     % end
 
-    % Updating weight
+    % -------------------------------------------------------------------------
+    %                                                        7. Updating weight
+    % -------------------------------------------------------------------------
     afprintf(sprintf('[INFO] Updating weights... '));
     for i = 1:data_train_count
       if labels_train(i) == validation_predictions(i)
@@ -357,7 +361,7 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(ensemble_options)
     end
 
     % -------------------------------------------------------------------------
-    %                                       6. test on single model of ensemble
+    %                                       8. test on single model of ensemble
     % -------------------------------------------------------------------------
     afprintf(sprintf('[INFO] Computing test set predictions (negative: %d, positive: %d)...\n', ...
       data_test_negative_count, ...
@@ -370,7 +374,7 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(ensemble_options)
     ] = getAccSensSpec(labels_test, test_predictions, true);
 
     % -------------------------------------------------------------------------
-    %                                          7. save single model of ensemble
+    %                                          9. save single model of ensemble
     % -------------------------------------------------------------------------
     afprintf(sprintf('[INFO] Saving model and info... '));
     ensemble_models{t}.model_net = H{t};
@@ -396,7 +400,7 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(ensemble_options)
     ensemble_models{t}.test_specificity = test_spec;
     save(opts.paths.ensemble_models_file_path, 'ensemble_models');
     fprintf('done!\n');
-    plotThisShit(ensemble_models, opts.paths.experiment_dir);
+    plotEnsemblePerformance(ensemble_models, opts.paths.experiment_dir);
     % Incrementing loop counter
     t = t + 1;
   end
@@ -410,7 +414,7 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(ensemble_options)
   printConsoleOutputSeparator();
 
 % -------------------------------------------------------------------------
-function plotThisShit(ensemble_models, experiment_dir)
+function plotEnsemblePerformance(ensemble_models, experiment_dir)
 % -------------------------------------------------------------------------
   num_models_in_ensemble = numel(ensemble_models);
   ensemble_models_validation_accuracy = zeros(1, num_models_in_ensemble);
@@ -474,7 +478,7 @@ function weighted_results = testAllEnsembleModelsOnTestImdb(ensemble_models, imd
   % -------------------------------------------------------------------------
   % Construct IMDB
   % -------------------------------------------------------------------------
-  fh_imdb_utils = imdbUtils;
+  fh_imdb_utils = imdbTwoClassUtils;
   test_imdb = fh_imdb_utils.constructPartialImdb(data_test, labels_test, 3);
 
   H = {};
@@ -588,6 +592,8 @@ function results = getKFoldResults(folds)
 function saveKFoldResults(folds, results_file_path)
 % -------------------------------------------------------------------------
   results = getKFoldResults(folds);
+  % don't amend file, but overwrite...
+  delete results_file_path;
   saveStruct2File(results, results_file_path, 0);
 
 % _p------------------------------------------------------------------------
