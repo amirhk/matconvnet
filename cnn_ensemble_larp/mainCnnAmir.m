@@ -30,7 +30,7 @@ function main_cnn_amir(varargin)
   % backprop_depth_list = [14, 11, 8, 5]; % 1 x dropout in FC
   % backprop_depth_list = [15, 11, 8, 4]; % 2 x dropout after 1st and 3rd layers
   % backprop_depth_list = [13];
-  backprop_depth_list = [4];
+  backprop_depth_list = [13];
 
   % network_arch = 'lenet';
   % backprop_depth_list = [13, 10, 7, 4];
