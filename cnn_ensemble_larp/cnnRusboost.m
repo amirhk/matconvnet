@@ -19,7 +19,7 @@ function folds = kFoldCNNRusboost()
     case 'prostate'
       opts.general.network_arch = 'prostatenet';
   end
-  opts.general.number_of_folds = 10;
+  opts.general.number_of_folds = 1;
   opts.general.iteration_count_limit = 10;
 
   % -------------------------------------------------------------------------
