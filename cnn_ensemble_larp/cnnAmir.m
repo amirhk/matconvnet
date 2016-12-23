@@ -114,8 +114,10 @@ function [net, results] = cnn_amir(inputs_opts)
 
   % testing balanced imdb into single network
   if opts.imdb.balance_train
+    afprintf(sprintf('[INFO] balancing imdb... '));
     fh_imdb_utils = imdbTwoClassUtils;
     imdb = fh_imdb_utils.balanceImdb(imdb, 'train', 'downsample');
+    afprintf(sprintf('[INFO] done!'));
   end
 
   opts.imdb.imdb = imdb;
