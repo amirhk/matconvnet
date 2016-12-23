@@ -1,11 +1,11 @@
-function [all_tests_net, all_tests_results] = testSingleNetwork()
+function [all_tests_net, all_tests_results] = testSingleNetwork(balance_train, backprop_depth)
   all_tests_net = {};
   all_tests_results = {};
   test_repeat_count = 10;
   opts.general.dataset = 'mnist-two-class-unbalanced';
   opts.general.network_arch = 'lenet';
-  opts.imdb.balance_train = true;
-  opts.imdb.backprop_depth = 4;
+  opts.imdb.balance_train = balance_train;
+  opts.imdb.backprop_depth = backprop_depth;
   opts.paths.time_string = sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
   opts.paths.experiment_dir = fullfile(vl_rootnn, 'experiment_results', sprintf( ...
     'test-single-network-%s-%s-%s', ...
