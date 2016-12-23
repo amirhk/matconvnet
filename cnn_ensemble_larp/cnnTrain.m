@@ -54,6 +54,7 @@ function [net, info] = cnn_train(net, imdb, getBatch, varargin)
   % -------------------------------------------------------------------------
 
   evaluateMode = isempty(opts.train);
+  trainingMode = isempty(opts.val);
 
   if ~evaluateMode
     for i=1:numel(net.layers)
@@ -167,9 +168,14 @@ function [net, info] = cnn_train(net, imdb, getBatch, varargin)
       end
 
       % save
-      if evaluateMode, sets = {'val'}; else sets = {'train', 'val'}; end
+      if evaluateMode
+        sets = {'val'};
+      elseif trainingMode
+        sets = {'train'};
+      else
+        sets = {'train', 'val'};
+      end
       for f = sets
-        keyboard
         f = char(f);
         n = numel(eval(f));
         info.(f).speed(epoch) = n / stats.(f)(1) * max(1, numGpus);
@@ -185,7 +191,9 @@ function [net, info] = cnn_train(net, imdb, getBatch, varargin)
         semilogy(1:epoch, info.train.objective, '.-', 'linewidth', 2);
         hold on;
       end
-      semilogy(1:epoch, info.val.objective, '.--');
+      if ~trainingMode
+        semilogy(1:epoch, info.val.objective, '.--');
+      end
       xlabel('training epoch'); ylabel('energy');
       grid on;
       h=legend(sets);
@@ -198,8 +206,10 @@ function [net, info] = cnn_train(net, imdb, getBatch, varargin)
           hold on;
           leg = horzcat(leg, strcat('train ', opts.errorLabels));
         end
-        plot(1:epoch, info.val.error', '.--');
-        leg = horzcat(leg, strcat('val ', opts.errorLabels));
+        if ~trainingMode
+          plot(1:epoch, info.val.error', '.--');
+          leg = horzcat(leg, strcat('val ', opts.errorLabels));
+        end
         set(legend(leg{:}),'color','none');
         grid on;
         xlabel('training epoch'); ylabel('error');

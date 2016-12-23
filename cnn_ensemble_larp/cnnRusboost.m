@@ -163,8 +163,8 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(ensemble_options)
     mkdir(opts.paths.experiment_dir);
   end
   opts.paths.ensemble_models_file_path = fullfile(opts.paths.experiment_dir, 'ensemble_models.mat');
-  opts.paths.options_file_path = fullfile(opts.paths.experiment_dir, 'folds.mat');
-  opts.paths.results_file_path = fullfile(opts.paths.experiment_dir, 'options.txt');
+  opts.paths.options_file_path = fullfile(opts.paths.experiment_dir, 'options.txt');
+  opts.paths.results_file_path = fullfile(opts.paths.experiment_dir, 'results.txt');
 
   % -------------------------------------------------------------------------
   %                                                   opts.single_cnn_options
@@ -187,30 +187,23 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(ensemble_options)
   %                     2. process the imdb to separate positive and negative
   %                               samples (to be randomly-undersampled later)
   % -------------------------------------------------------------------------
-  data_train = imdb.images.data(:,:,:,imdb.images.set == 1);
-  labels_train = imdb.images.labels(imdb.images.set == 1);
-  data_train_negative = data_train(:,:,:,labels_train == 1);
-  data_train_positive = data_train(:,:,:,labels_train == 2);
-  data_train_count = size(data_train, 4);
-  data_train_negative_count = size(data_train_negative, 4);
-  data_train_positive_count = size(data_train_positive, 4);
 
-  data_test = imdb.images.data(:,:,:,imdb.images.set == 3);
-  labels_test = imdb.images.labels(imdb.images.set == 3);
-  data_test_negative = data_test(:,:,:,labels_test == 1);
-  data_test_positive = data_test(:,:,:,labels_test == 2);
-  data_test_count = size(data_test, 4);
-  data_test_negative_count = size(data_test_negative, 4);
-  data_test_positive_count = size(data_test_positive, 4);
-
-  afprintf(sprintf('[INFO] TRAINING SET: total: %d, negative: %d, positive: %d\n', ...
+  [ ...
+    data_train, ...
+    data_train_positive, ...
+    data_train_negative, ...
     data_train_count, ...
+    data_train_positive_count, ...
     data_train_negative_count, ...
-    data_train_positive_count));
-  afprintf(sprintf('[INFO] TESTING SET: total: %d, negative: %d, positive: %d\n', ...
+    labels_train, ...
+    data_test, ...
+    data_test_positive, ...
+    data_test_negative, ...
     data_test_count, ...
+    data_test_positive_count, ...
     data_test_negative_count, ...
-    data_test_positive_count));
+    labels_test, ...
+  ] = getImdbInfo(imdb, 1);
 
   % -------------------------------------------------------------------------
   %                                     3. initialize training sample weights
@@ -218,10 +211,7 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(ensemble_options)
   % W stores the weights of the instances in each row for every iteration of
   % boosting. Weights for all the instances are initialized by 1/m for the
   % first iteration.
-  W = zeros(1, data_train_count);
-  for i = 1 : data_train_count
-    W(1, i) = 1 / data_train_count;
-  end
+  W = 1 / data_train_count * ones(1, data_train_count);
 
   % L stores pseudo loss values, H stores hypothesis, B stores (1/beta)
   % values that is used as the weight of the % hypothesis while forming the
@@ -260,11 +250,6 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(ensemble_options)
     training_resampled_imdb.images.data = single(resampled_data);
     training_resampled_imdb.images.labels = single(resampled_labels);
     training_resampled_imdb.images.set = 1 * ones(length(resampled_labels), 1);
-
-    % Weird. Need at least 1 test sample for cnn_train to work. TODO: this is because of TP stuff in cnn_train
-    training_resampled_imdb.images.data = cat(4, training_resampled_imdb.images.data, resampled_data(:,:,:, end));
-    training_resampled_imdb.images.labels = cat(2,training_resampled_imdb.images.labels, resampled_labels(end));
-    training_resampled_imdb.images.set = cat(1, training_resampled_imdb.images.set, 3);
 
     afprintf(sprintf('[INFO] Training model (negative: %d, positive: %d)...\n', ...
       numel(find(resampled_labels == 1)), ...
@@ -406,6 +391,64 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(ensemble_options)
   printConsoleOutputSeparator();
   weighted_results = testAllEnsembleModelsOnTestImdb(ensemble_models, imdb);
   printConsoleOutputSeparator();
+
+
+
+
+% -------------------------------------------------------------------------
+function [ ...
+  data_train, ...
+  data_train_positive, ...
+  data_train_negative, ...
+  data_train_count, ...
+  data_train_positive_count, ...
+  data_train_negative_count, ...
+  labels_train, ...
+  data_test, ...
+  data_test_positive, ...
+  data_test_negative, ...
+  data_test_count, ...
+  data_test_positive_count, ...
+  data_test_negative_count, ...
+  labels_test] = getImdbInfo(imdb, print_info)
+% -------------------------------------------------------------------------
+
+  % indices
+  train_indices = imdb.images.set == 1;
+  train_positive_indices = bsxfun(@and, imdb.images.labels == 2, imdb.images.set == 1);
+  train_negative_indices = bsxfun(@and, imdb.images.labels == 1, imdb.images.set == 1);
+  test_indices = imdb.images.set == 3;
+  test_positive_indices = bsxfun(@and, imdb.images.labels == 2, imdb.images.set == 3);
+  test_negative_indices = bsxfun(@and, imdb.images.labels == 1, imdb.images.set == 3);
+
+  % train set
+  data_train = imdb.images.data(:,:,:,train_indices);
+  data_train_positive = imdb.images.data(:,:,:,train_positive_indices);
+  data_train_negative = imdb.images.data(:,:,:,train_negative_indices);
+  data_train_count = size(data_train, 4);
+  data_train_positive_count = size(data_train_positive, 4);
+  data_train_negative_count = size(data_train_negative, 4);
+  labels_train = imdb.images.labels(train_indices);
+
+  % test set
+  data_test = imdb.images.data(:,:,:,test_indices);
+  data_test_positive = imdb.images.data(:,:,:,test_positive_indices);
+  data_test_negative = imdb.images.data(:,:,:,test_negative_indices);
+  data_test_count = size(data_test, 4);
+  data_test_positive_count = size(data_test_positive, 4);
+  data_test_negative_count = size(data_test_negative, 4);
+  labels_test = imdb.images.labels(test_indices);
+
+  if print_info
+    afprintf(sprintf('[INFO] TRAINING SET: total: %d, positive: %d, negative: %d\n', ...
+      data_train_count, ...
+      data_train_negative_count, ...
+      data_train_positive_count));
+    afprintf(sprintf('[INFO] TESTING SET: total: %d, positive: %d, negative: %d\n', ...
+      data_test_count, ...
+      data_test_negative_count, ...
+      data_test_positive_count));
+  end
 
 % -------------------------------------------------------------------------
 function [resampled_data, resampled_labels] = resampleData(data, labels, weights, ratio)
