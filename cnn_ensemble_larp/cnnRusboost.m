@@ -289,10 +289,10 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(ensemble_options)
         continue;
       else
         if labels_train(i) == 2
-          W(t + 1, i) = min(negative_to_positive_ratio, 10) * W(t, i);
-          % W(t + 1, i) = W(t, i);
+          loss = loss + min(negative_to_positive_ratio, 5) * W(t, i);
+          % loss = loss + W(t, i);
         else
-          W(t + 1, i) = W(t, i);
+          loss = loss + W(t, i);
         end
       end
     end
