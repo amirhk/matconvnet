@@ -1,4 +1,4 @@
-function [all_tests_net, all_tests_results] = testSingleNetwork(balance_train, backprop_depth)
+function [all_tests_net, all_tests_results] = testSingleNetwork(balance_train, backprop_depth, gpu)
   all_tests_net = {};
   all_tests_results = {};
   test_repeat_count = 10;
@@ -31,7 +31,7 @@ function [all_tests_net, all_tests_results] = testSingleNetwork(balance_train, b
   single_test_options.weight_init_sequence = {'compRand', 'compRand', 'compRand'};
   single_test_options.debug_flag = false;
   single_test_options.regen = true;
-  single_test_options.gpus = ifNotMacSetGpu(1);
+  single_test_options.gpus = ifNotMacSetGpu(gpu);
 
   for i = 1:test_repeat_count
     fprintf('\n');
