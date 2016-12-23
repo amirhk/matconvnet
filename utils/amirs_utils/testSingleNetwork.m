@@ -1,7 +1,7 @@
 function [all_tests_net, all_tests_results] = testSingleNetwork()
   all_tests_net = {};
   all_tests_results = {};
-  test_repeat_count = 3;
+  test_repeat_count = 10;
   opts.general.dataset = 'mnist-two-class-unbalanced';
   opts.general.network_arch = 'lenet';
   opts.imdb.balance_train = true;
