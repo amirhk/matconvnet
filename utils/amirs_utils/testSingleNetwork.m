@@ -21,7 +21,8 @@ function [all_tests_net, all_tests_results] = testSingleNetwork(balance_train, b
 
   single_test_options.dataset = opts.general.dataset;
   single_test_options.network_arch = opts.general.network_arch;
-  tmp = load(fullfile(getDevPath(), 'data', 'saved-two-class-mnist-pos9-neg4.mat'));
+  % tmp = load(fullfile(getDevPath(), 'data', 'saved-two-class-mnist-pos9-neg4.mat'));
+  tmp = load(fullfile(getDevPath(), 'data', 'saved-two-class-mnist-pos1-neg9.mat'));
   single_test_options.imdb = tmp.imdb;
   single_test_options.experiment_parent_dir = opts.paths.experiment_dir;
   single_test_options.balance_train = opts.imdb.balance_train;
