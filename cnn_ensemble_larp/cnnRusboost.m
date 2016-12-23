@@ -288,7 +288,12 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(ensemble_options)
       if labels_train(i) == validation_predictions(i)
         continue;
       else
-        loss = loss + W(t, i);
+        if labels_train(i) == 2
+          W(t + 1, i) = min(negative_to_positive_ratio, 10) * W(t, i);
+          % W(t + 1, i) = W(t, i);
+        else
+          W(t + 1, i) = W(t, i);
+        end
       end
     end
     fprintf('Loss: %6.5f\n', loss);
