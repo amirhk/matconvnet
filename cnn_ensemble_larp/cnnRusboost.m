@@ -20,7 +20,7 @@ function folds = kFoldCNNRusboost()
       opts.general.network_arch = 'prostatenet';
   end
   opts.general.number_of_folds = 1;
-  opts.general.iteration_count_limit = 10;
+  opts.general.iteration_count_limit = 3;
 
   % -------------------------------------------------------------------------
   %                                                                  opts.imdb
