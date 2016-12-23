@@ -169,6 +169,7 @@ function [net, info] = cnn_train(net, imdb, getBatch, varargin)
       % save
       if evaluateMode, sets = {'val'}; else sets = {'train', 'val'}; end
       for f = sets
+        keyboard
         f = char(f);
         n = numel(eval(f));
         info.(f).speed(epoch) = n / stats.(f)(1) * max(1, numGpus);

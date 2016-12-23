@@ -11,152 +11,182 @@ function fh = cnnRusboost()
 function folds = kFoldCNNRusboost()
 % -------------------------------------------------------------------------
   % -------------------------------------------------------------------------
-  %                                                                   general
+  %                                                               opts.general
   % -------------------------------------------------------------------------
-  opts.number_of_folds = 5;
-  opts.max_number_of_models_in_each_ensemble = 10;
-  opts.dataset = 'mnist-two-class-unbalanced';
-
-  % -------------------------------------------------------------------------
-  %                                                                      imdb
-  % -------------------------------------------------------------------------
-  opts.num_patients = 104;
-  opts.leave_out_type = 'special';
-  opts.contrast_normalization = true;
-  % opts.whitenData = true;
-  opts.train_balance = false;
-  opts.train_augment_negative = 'none';
-  opts.train_augment_positive = 'none';
-  opts.test_balance = false;
-  opts.test_augment_negative = 'none';
-  opts.test_augment_positive = 'none';
-
-  % -------------------------------------------------------------------------
-  %                                                                     paths
-  % -------------------------------------------------------------------------
-  opts.data_dir = fullfile(getDevPath(), 'data', 'source', sprintf('%s', opts.dataset));
-  opts.time_string = sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
-  opts.experiment_dir_parent_path = fullfile('experiment_results', sprintf('k-fold-rusboost-%s', opts.time_string));
-  if ~exist(opts.experiment_dir_parent_path)
-    mkdir(opts.experiment_dir_parent_path);
+  opts.general.dataset = 'mnist-two-class-unbalanced';
+  switch opts.general.dataset
+    case 'mnist-two-class-unbalanced'
+      opts.general.network_arch = 'lenet';
+    case 'prostate'
+      opts.general.network_arch = 'prostatenet';
   end
-  opts.folds_file_path = fullfile(opts.experiment_dir_parent_path, 'folds.mat');
-  opts.options_file_path = fullfile(opts.experiment_dir_parent_path, 'options.txt');
-  opts.results_file_path = fullfile(opts.experiment_dir_parent_path, 'results.txt');
+  opts.general.number_of_folds = 1;
+  opts.general.iteration_count_limit = 10;
+
+  % -------------------------------------------------------------------------
+  %                                                                  opts.imdb
+  % -------------------------------------------------------------------------
+  switch opts.general.dataset
+    case 'mnist-two-class-unbalanced'
+      opts.imdb.source = 'load'; % {'gen', 'load'}
+    case 'prostate'
+      opts.imdb.num_patients = 104;
+      opts.imdb.leave_out_type = 'special';
+      opts.imdb.contrast_normalization = true;
+      % opts.imdb.whitenData = true;
+      opts.imdb.train_balance = false;
+      opts.imdb.train_augment_negative = 'none';
+      opts.imdb.train_augment_positive = 'none';
+      opts.imdb.test_balance = false;
+      opts.imdb.test_augment_negative = 'none';
+      opts.imdb.test_augment_positive = 'none';
+  end
+
+  % -------------------------------------------------------------------------
+  %                                                                opts.paths
+  % -------------------------------------------------------------------------
+  opts.paths.data_dir = ...
+    fullfile(getDevPath(), 'data', 'source', sprintf('%s', opts.general.dataset));
+  opts.paths.time_string = ...
+    sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
+  opts.paths.experiment_dir = ...
+    fullfile( ...
+      'experiment_results', ...
+      sprintf('k-fold-rusboost-%s', opts.paths.time_string));
+  if ~exist(opts.paths.experiment_dir)
+    mkdir(opts.paths.experiment_dir);
+  end
+  opts.paths.folds_file_path = fullfile(opts.paths.experiment_dir, 'folds.mat');
+  opts.paths.options_file_path = fullfile(opts.paths.experiment_dir, 'options.txt');
+  opts.paths.results_file_path = fullfile(opts.paths.experiment_dir, 'results.txt');
 
   % -------------------------------------------------------------------------
   %                                                    save experiment setup!
   % -------------------------------------------------------------------------
-  saveStruct2File(opts, opts.options_file_path, 0);
-  afprintf(sprintf('[INFO] Running K-fold CNN Rusboost (K = %d)...\n', opts.number_of_folds), 1);
+  saveStruct2File(opts, opts.paths.options_file_path, 0);
 
   % -------------------------------------------------------------------------
-  %                                 randomly divide off patients into K folds
+  %                                                                     start
   % -------------------------------------------------------------------------
-  folds = {};
-  patients_per_fold = ceil(opts.num_patients / opts.number_of_folds);
-  random_patient_indices = randperm(104);
-  afprintf(sprintf('\n'));
-  afprintf(sprintf('[INFO] Randomly dividing patients into K = %d folds...\n', opts.number_of_folds));
-  for i = 1:opts.number_of_folds
-    start_index = 1 + (i - 1) * patients_per_fold;
-    end_index = min(104, i * patients_per_fold);
-    folds.(sprintf('fold_%d', i)).patient_indices = random_patient_indices(start_index : end_index);
-  end
+  afprintf(sprintf( ...
+    '[INFO] Running K-fold CNN Rusboost (K = %d)...\n', ...
+    opts.general.number_of_folds), 1);
 
   % -------------------------------------------------------------------------
-  %                   create a non-balanced, non-augmented imdb for each fold
+  %                                             create the imdb for each fold
   % -------------------------------------------------------------------------
   imdbs = {}; % separate so don't have to save ~1.5 GB of imdbs!!!
 
-  switch opts.dataset
+  switch opts.general.dataset
     case 'mnist-two-class-unbalanced'
-      for i = 1:opts.number_of_folds
+      for i = 1:opts.general.number_of_folds
         afprintf(sprintf('\n'));
-        afprintf(sprintf('[INFO] Constructing imdb for fold #%d...\n', i));
-        opts.network_arch = 'lenet';
-        % imdb = constructMnistUnbalancedTwoClassImdb(opts.data_dir, opts.network_arch);
-        tmp = load(fullfile(getDevPath(), 'data', 'saved-two-class-mnist.mat'));
-        imdb = tmp.imdb;
+        afprintf(sprintf('[INFO] Constructing / loading imdb for fold #%d...\n', i));
+        switch opts.imdb.source
+          case 'gen'
+            imdb = constructMnistUnbalancedTwoClassImdb( ...
+              opts.paths.data_dir, ...
+              opts.general.network_arch);
+          case 'load'
+            tmp = load(fullfile(getDevPath(), 'data', 'saved-two-class-mnist.mat'));
+            imdb = tmp.imdb;
+        end
         imdbs{i} = imdb;
         afprintf(sprintf('[INFO] done!\n'));
       end
-      single_ensemble_options.dataset = 'mnist-two-class-unbalanced';
-      single_ensemble_options.network_arch = 'lenet';
     case 'prostate'
-      for i = 1:opts.number_of_folds
+      patients_per_fold = ceil(opts.imdb.num_patients / opts.general.number_of_folds);
+      random_patient_indices = randperm(104);
+      for i = 1:opts.general.number_of_folds
         afprintf(sprintf('\n'));
+        afprintf(sprintf('[INFO] Randomly dividing for fold #%d...\n', i));
+        start_index = 1 + (i - 1) * patients_per_fold;
+        end_index = min(104, i * patients_per_fold);
+        folds.(sprintf('fold_%d', i)).patient_indices = ...
+          random_patient_indices(start_index : end_index);
+        afprintf(sprintf('[INFO] done!\n'));
         afprintf(sprintf('[INFO] Constructing imdb for fold #%d...\n', i));
-        opts.leave_out_indices = folds.(sprintf('fold_%d', i)).patient_indices;
-        imdb = constructProstateImdb(opts);
+        opts.imdb.leave_out_indices = folds.(sprintf('fold_%d', i)).patient_indices;
+        imdb = constructProstateImdb(opts.imdb);
         imdbs{i} = imdb;
         afprintf(sprintf('[INFO] done!\n'));
       end
-      single_ensemble_options.dataset = 'prostate';
-      single_ensemble_options.network_arch = 'prostatenet';
   end
 
   % -------------------------------------------------------------------------
   %                                        train ensemble larp for each fold!
   % -------------------------------------------------------------------------
-  for i = 1:opts.number_of_folds
+  single_ensemble_options.dataset = opts.general.dataset;
+  single_ensemble_options.network_arch = opts.general.network_arch;
+  single_ensemble_options.iteration_count = opts.general.iteration_count_limit;
+  single_ensemble_options.experiment_parent_dir = opts.paths.experiment_dir;
+  for i = 1:opts.general.number_of_folds
     afprintf(sprintf('[INFO] Running cnn_rusboost on fold #%d...\n', i));
     single_ensemble_options.imdb = imdbs{i};
-    single_ensemble_options.experiment_dir_parent_path = opts.experiment_dir_parent_path;
-    single_ensemble_options.iteration_count = opts.max_number_of_models_in_each_ensemble;
     [ ...
-      folds.(sprintf('fold_%d', i)).ensemble_models_info, ...
+      folds.(sprintf('fold_%d', i)).ensemble_models, ...
       folds.(sprintf('fold_%d', i)).weighted_results, ...
     ] = mainCNNRusboost(single_ensemble_options);
     % overwrite and save results so far
-    save(opts.folds_file_path, 'folds');
-    saveKFoldResults(folds, opts.results_file_path);
+    save(opts.paths.folds_file_path, 'folds');
+    saveKFoldResults(folds, opts.paths.results_file_path);
   end
 
   % -------------------------------------------------------------------------
-  %                                                    save and print results
+  %                                                             print results
   % -------------------------------------------------------------------------
   printKFoldResults(folds);
 
 % -------------------------------------------------------------------------
-function [ensemble_models_info, weighted_results] = mainCNNRusboost(single_ensemble_options)
+function [ensemble_models, weighted_results] = mainCNNRusboost(ensemble_options)
 % -------------------------------------------------------------------------
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % 0. take as input a pre-processed IMDB (augment positive in training set, that's it!), say
-  %   train: 94 patients
-  %   test: 10 patients, ~1000 health, ~20 positive
-  % TODO: this can be extended to be say 10-fold ensemble larp, then average the folds
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  imdb = getValueFromFieldOrDefault(single_ensemble_options, 'imdb', getInitialImdb());
-  experiment_dir_parent_path = getValueFromFieldOrDefault(single_ensemble_options, 'experiment_dir_parent_path', 'data_rusboost');
-  iteration_count = getValueFromFieldOrDefault(single_ensemble_options, 'iteration_count', 5);
-  dataset = getValueFromFieldOrDefault(single_ensemble_options, 'dataset', 'prostate');
-  network_arch = getValueFromFieldOrDefault(single_ensemble_options, 'network_arch', 'prostatenet');
+  % -------------------------------------------------------------------------
+  %                                                              opts.general
+  % -------------------------------------------------------------------------
+  imdb = getValueFromFieldOrDefault(ensemble_options, 'imdb', struct());
+  opts.general.dataset = getValueFromFieldOrDefault(ensemble_options, 'dataset', 'prostate');
+  opts.general.network_arch = getValueFromFieldOrDefault(ensemble_options, 'network_arch', 'prostatenet');
+  opts.general.iteration_count = getValueFromFieldOrDefault(ensemble_options, 'iteration_count', 5);
+  opts.general.random_undersampling_ratio = (50/50);
 
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % 1. some important parameter definition
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
-  opts.iteration_count = iteration_count; % number of boosting iterations
-  opts.dataset = dataset;
-  opts.network_arch = network_arch;
-  opts.weight_init_source = 'gen';
-  opts.weight_init_sequence = {'compRand', 'compRand', 'compRand'};
-  opts.random_undersampling_ratio = (50/50);
-
-  opts.time_string = sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
-  opts.experiment_dir_path = fullfile( ...
-    experiment_dir_parent_path, ...
-    sprintf('rusboost-%s-%s-%s', opts.dataset, opts.network_arch, opts.time_string));
-  opts.all_model_infos_path = fullfile(opts.experiment_dir_path, 'ensemble_models_info.mat');
-  if ~exist(opts.experiment_dir_path)
-    mkdir(opts.experiment_dir_path);
+  % -------------------------------------------------------------------------
+  %                                                                opts.paths
+  % -------------------------------------------------------------------------
+  opts.paths.time_string = sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
+  opts.paths.experiment_parent_dir = getValueFromFieldOrDefault(ensemble_options, 'experiment_parent_dir', fullfile(vl_rootnn, 'experiment_results'));
+  opts.paths.experiment_dir = fullfile(opts.paths.experiment_parent_dir, sprintf( ...
+    'rusboost-%s-%s-%s', ...
+    opts.general.dataset, ...
+    opts.general.network_arch, ...
+    opts.paths.time_string));
+  if ~exist(opts.paths.experiment_dir)
+    mkdir(opts.paths.experiment_dir);
   end
+  opts.paths.ensemble_models_file_path = fullfile(opts.paths.experiment_dir, 'ensemble_models.mat');
+  opts.paths.options_file_path = fullfile(opts.paths.experiment_dir, 'folds.mat');
+  opts.paths.results_file_path = fullfile(opts.paths.experiment_dir, 'options.txt');
 
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % 2. process the imdb to separate positive and negative samples (to be
-  % randomly-undersampled later)
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % -------------------------------------------------------------------------
+  %                                                   opts.single_cnn_options
+  % -------------------------------------------------------------------------
+  opts.single_cnn_options.dataset = opts.general.dataset;
+  opts.single_cnn_options.network_arch = opts.general.network_arch;
+  opts.single_cnn_options.experiment_parent_dir = opts.paths.experiment_dir;
+  opts.single_cnn_options.weight_init_source = 'gen';
+  opts.single_cnn_options.weight_init_sequence = {'compRand', 'compRand', 'compRand'};
+  opts.single_cnn_options.gpus = ifNotMacSetGpu(2);
+  opts.single_cnn_options.backprop_depth = 13;
+  opts.single_cnn_options.debug_flag = false;
+
+  % -------------------------------------------------------------------------
+  %                                                    save experiment setup!
+  % -------------------------------------------------------------------------
+  saveStruct2File(opts, opts.paths.options_file_path, 0);
+
+  % -------------------------------------------------------------------------
+  %                     2. process the imdb to separate positive and negative
+  %                               samples (to be randomly-undersampled later)
+  % -------------------------------------------------------------------------
   data_train = imdb.images.data(:,:,:,imdb.images.set == 1);
   labels_train = imdb.images.labels(imdb.images.set == 1);
   data_train_negative = data_train(:,:,:,labels_train == 1);
@@ -182,9 +212,9 @@ function [ensemble_models_info, weighted_results] = mainCNNRusboost(single_ensem
     data_test_negative_count, ...
     data_test_positive_count));
 
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % 3. initialize training sample weights
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % -------------------------------------------------------------------------
+  %                                     3. initialize training sample weights
+  % -------------------------------------------------------------------------
   % W stores the weights of the instances in each row for every iteration of
   % boosting. Weights for all the instances are initialized by 1/m for the
   % first iteration.
@@ -204,26 +234,27 @@ function [ensemble_models_info, weighted_results] = mainCNNRusboost(single_ensem
   t = 1; % loop counter
   count = 1; % number of times the same boosting iteration have been repeated
 
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % 4. create training (barebones) and validation imdbs
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % -------------------------------------------------------------------------
+  %                       4. create training (barebones) and validation imdbs
+  % -------------------------------------------------------------------------
   training_resampled_imdb = constructPartialImdb([], [], 3); % barebones; filled in below
   validation_imdb = constructPartialImdb(data_train, labels_train, 3);
   test_imdb = constructPartialImdb(data_test, labels_test, 3);
 
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % 5. go through T iterations of RUSBoost, each of which trains a CNN over E epochs
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % -------------------------------------------------------------------------
+  %                              5. go through T iterations of RUSBoost, each
+  %                                              training a CNN over E epochs
+  % -------------------------------------------------------------------------
   printConsoleOutputSeparator();
-  ensemble_models_info = {};
-  while t <= opts.iteration_count
+  ensemble_models = {};
+  while t <= opts.general.iteration_count
     afprintf(sprintf('\n'));
     afprintf(sprintf('[INFO] Boosting iteration #%d (attempt %d)...\n', t, count));
 
     % Resampling NEG_DATA with weights of positive example
-    afprintf(sprintf('[INFO] Resampling negative and positive data (ratio = %3.6f)... ', opts.random_undersampling_ratio));
+    afprintf(sprintf('[INFO] Resampling negative and positive data (ratio = %3.6f)... ', opts.general.random_undersampling_ratio));
     [resampled_data, resampled_labels] = ...
-      resampleData(data_train, labels_train, W(t, :), opts.random_undersampling_ratio);
+      resampleData(data_train, labels_train, W(t, :), opts.general.random_undersampling_ratio);
     afprintf(sprintf('done!\n'));
 
     training_resampled_imdb.images.data = single(resampled_data);
@@ -238,16 +269,8 @@ function [ensemble_models_info, weighted_results] = mainCNNRusboost(single_ensem
     afprintf(sprintf('[INFO] Training model (negative: %d, positive: %d)...\n', ...
       numel(find(resampled_labels == 1)), ...
       numel(find(resampled_labels == 2))));
-    train_opts.imdb = training_resampled_imdb;
-    train_opts.dataset = opts.dataset;
-    train_opts.network_arch = opts.network_arch;
-    train_opts.weight_init_source = opts.weight_init_source;
-    train_opts.weight_init_sequence = opts.weight_init_sequence;
-    train_opts.debug_flag = false;
-    train_opts.experiment_parent_dir = opts.experiment_dir_path;
-    train_opts.gpus = [2];
-    train_opts.backprop_depth = 13;
-    [net, info] = cnnAmir(train_opts);
+    opts.single_cnn_options.imdb = training_resampled_imdb;
+    [net, info] = cnnAmir(opts.single_cnn_options);
 
     % IMPORTANT NOTE: we randomly undersample when training a model, but then,
     % we use all of the training samples (in their order) to update weights.
@@ -305,7 +328,7 @@ function [ensemble_models_info, weighted_results] = mainCNNRusboost(single_ensem
 
     % % At the final iteration there is no need to update the weights any
     % % further
-    % if t == opts.iteration_count
+    % if t == opts.general.iteration_count
     %     break;
     % end
 
@@ -331,9 +354,9 @@ function [ensemble_models_info, weighted_results] = mainCNNRusboost(single_ensem
       W(t + 1, i) = W(t + 1, i) / sum_W;
     end
 
-    %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-    % 6. test on single model of ensemble
-    %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+    % -------------------------------------------------------------------------
+    %                                       6. test on single model of ensemble
+    % -------------------------------------------------------------------------
     afprintf(sprintf('[INFO] Computing test set predictions (negative: %d, positive: %d)...\n', ...
       data_test_negative_count, ...
       data_test_positive_count));
@@ -344,53 +367,52 @@ function [ensemble_models_info, weighted_results] = mainCNNRusboost(single_ensem
       test_spec, ...
     ] = getAccSensSpec(labels_test, test_predictions, true);
 
-    %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-    % 7. save single model of ensemble
-    %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+    % -------------------------------------------------------------------------
+    %                                          7. save single model of ensemble
+    % -------------------------------------------------------------------------
     afprintf(sprintf('[INFO] Saving model and info... '));
-    ensemble_models_info{t}.model_net = H{t};
-    ensemble_models_info{t}.model_loss = L(t);
-    ensemble_models_info{t}.model_weight = B(t);
-    ensemble_models_info{t}.train_negative_count = numel(find(resampled_labels == 1));
-    ensemble_models_info{t}.train_positive_count = numel(find(resampled_labels == 2));
-    ensemble_models_info{t}.validation_negative_count = data_train_negative_count;
-    ensemble_models_info{t}.validation_positive_count = data_train_positive_count;
-    ensemble_models_info{t}.validation_predictions = validation_predictions;
-    ensemble_models_info{t}.validation_labels = labels_train;
-    ensemble_models_info{t}.validation_accuracy = validation_acc;
-    ensemble_models_info{t}.validation_sensitivity = validation_sens;
-    ensemble_models_info{t}.validation_specificity = validation_spec;
-    ensemble_models_info{t}.validation_weights_pre_update = W(t,:);
-    ensemble_models_info{t}.validation_weights_post_update = W(t + 1,:);
-    ensemble_models_info{t}.test_negative_count = data_test_negative_count;
-    ensemble_models_info{t}.test_positive_count = data_test_positive_count;
-    ensemble_models_info{t}.test_predictions = test_predictions;
-    ensemble_models_info{t}.test_labels = labels_test;
-    ensemble_models_info{t}.test_accuracy = test_acc;
-    ensemble_models_info{t}.test_sensitivity = test_sens;
-    ensemble_models_info{t}.test_specificity = test_spec;
-    save(opts.all_model_infos_path, 'ensemble_models_info');
+    ensemble_models{t}.model_net = H{t};
+    ensemble_models{t}.model_loss = L(t);
+    ensemble_models{t}.model_weight = B(t);
+    ensemble_models{t}.train_negative_count = numel(find(resampled_labels == 1));
+    ensemble_models{t}.train_positive_count = numel(find(resampled_labels == 2));
+    ensemble_models{t}.validation_negative_count = data_train_negative_count;
+    ensemble_models{t}.validation_positive_count = data_train_positive_count;
+    ensemble_models{t}.validation_predictions = validation_predictions;
+    ensemble_models{t}.validation_labels = labels_train;
+    ensemble_models{t}.validation_accuracy = validation_acc;
+    ensemble_models{t}.validation_sensitivity = validation_sens;
+    ensemble_models{t}.validation_specificity = validation_spec;
+    ensemble_models{t}.validation_weights_pre_update = W(t,:);
+    ensemble_models{t}.validation_weights_post_update = W(t + 1,:);
+    ensemble_models{t}.test_negative_count = data_test_negative_count;
+    ensemble_models{t}.test_positive_count = data_test_positive_count;
+    ensemble_models{t}.test_predictions = test_predictions;
+    ensemble_models{t}.test_labels = labels_test;
+    ensemble_models{t}.test_accuracy = test_acc;
+    ensemble_models{t}.test_sensitivity = test_sens;
+    ensemble_models{t}.test_specificity = test_spec;
+    save(opts.paths.ensemble_models_file_path, 'ensemble_models');
     fprintf('done!\n');
-    plotThisShit(ensemble_models_info, opts.experiment_dir_path);
+    plotThisShit(ensemble_models, opts.paths.experiment_dir);
     % Incrementing loop counter
     t = t + 1;
   end
 
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % -------------------------------------------------------------------------
   % 8. test on test set, keeping in mind beta's between each mode
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % -------------------------------------------------------------------------
   % The final hypothesis is calculated and tested on the test set simulteneously
   printConsoleOutputSeparator();
-  weighted_results = testAllEnsembleModelsOnTestImdb(ensemble_models_info, imdb);
+  weighted_results = testAllEnsembleModelsOnTestImdb(ensemble_models, imdb);
   printConsoleOutputSeparator();
-  fclose('all');
 
 % -------------------------------------------------------------------------
 function [resampled_data, resampled_labels] = resampleData(data, labels, weights, ratio)
 % -------------------------------------------------------------------------
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % -------------------------------------------------------------------------
   % Initial stuff
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % -------------------------------------------------------------------------
   data_negative = data(:,:,:,labels == 1);
   data_positive = data(:,:,:,labels == 2);
   data_count = size(data, 4);
@@ -399,16 +421,16 @@ function [resampled_data, resampled_labels] = resampleData(data, labels, weights
   data_negative_indices = find(labels == 1);
   data_positive_indices = find(labels == 2);
 
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % -------------------------------------------------------------------------
   % Random Under-sampling (RUS): Negative Data
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % -------------------------------------------------------------------------
   downsampled_data_negative_count = round(data_positive_count * ratio);
   downsampled_data_negative_indices = randsample(data_negative_indices, downsampled_data_negative_count, false);
   downsampled_data_negative = data(:,:,:, downsampled_data_negative_indices);
 
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % -------------------------------------------------------------------------
   % Weighted Upsampling (more weight -> more repeat): Negative & Positive Data
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % -------------------------------------------------------------------------
   max_repeat_negative = 25;
   max_repeat_positive = 200;
   normalized_weights = weights / min(weights);
@@ -430,9 +452,9 @@ function [resampled_data, resampled_labels] = resampleData(data, labels, weights
   upsampled_data_negative = upsample(downsampled_data_negative, negative_repeat_counts);
   upsampled_data_positive = upsample(data_positive, positive_repeat_counts);
 
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % -------------------------------------------------------------------------
   % Putting it all together
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % -------------------------------------------------------------------------
   resampled_data_negative_count = size(upsampled_data_negative, 4);
   resampled_data_positive_count = size(upsampled_data_positive, 4);
   resampled_data_all = cat(4, upsampled_data_negative, upsampled_data_positive);
@@ -441,11 +463,11 @@ function [resampled_data, resampled_labels] = resampleData(data, labels, weights
     1 * ones(1, resampled_data_negative_count), ...
     2 * ones(1, resampled_data_positive_count));
 
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % -------------------------------------------------------------------------
   % Shuffle this to mixup order of negative and positive in imdb so we don't
   % have the CNN overtrain in 1 particular direction. Only shuffling for
   % training; later weights are calculated and updated for all training data.
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % -------------------------------------------------------------------------
   ix = randperm(size(resampled_data_all, 4));
   resampled_data = resampled_data_all(:,:,:,ix);
   resampled_labels = resampled_labels_all(ix);
@@ -507,19 +529,19 @@ function imdb = constructPartialImdb(data, labels, set_number)
   imdb.images.set = set_number * ones(length(labels), 1);
   imdb.meta.sets = {'train', 'val', 'test'};
 
-% -------------------------------------------------------------------------
-function imdb = getInitialImdb()
-% -------------------------------------------------------------------------
-  afprintf(sprintf('[INFO] Loading saved imdb... '));
-  imdbPath = fullfile(getDevPath(), '/matconvnet/data_1/_prostate/_saved_prostate_imdb.mat');
-  imdb = load(imdbPath);
-  imdb = imdb.imdb;
-  afprintf(sprintf('done!\n'));
+% % -------------------------------------------------------------------------
+% function imdb = getInitialImdb()
+% % -------------------------------------------------------------------------
+%   afprintf(sprintf('[INFO] Loading saved imdb... '));
+%   imdbPath = fullfile(getDevPath(), '/matconvnet/data_1/_prostate/_saved_prostate_imdb.mat');
+%   imdb = load(imdbPath);
+%   imdb = imdb.imdb;
+%   afprintf(sprintf('done!\n'));
 
 % -------------------------------------------------------------------------
-function plotThisShit(ensemble_models_info, experiment_dir_path)
+function plotThisShit(ensemble_models, experiment_dir)
 % -------------------------------------------------------------------------
-  num_models_in_ensemble = numel(ensemble_models_info);
+  num_models_in_ensemble = numel(ensemble_models);
   ensemble_models_validation_accuracy = zeros(1, num_models_in_ensemble);
   ensemble_models_validation_sensitivity = zeros(1, num_models_in_ensemble);
   ensemble_models_validation_specificity = zeros(1, num_models_in_ensemble);
@@ -527,16 +549,16 @@ function plotThisShit(ensemble_models_info, experiment_dir_path)
   ensemble_models_test_sensitivity = zeros(1, num_models_in_ensemble);
   ensemble_models_test_specificity = zeros(1, num_models_in_ensemble);
   for i = num_models_in_ensemble
-    ensemble_models_validation_accuracy(i) = ensemble_models_info{i}.validation_accuracy;
-    ensemble_models_validation_sensitivity(i) = ensemble_models_info{i}.validation_sensitivity;
-    ensemble_models_validation_specificity(i) = ensemble_models_info{i}.validation_specificity;
-    ensemble_models_test_accuracy(i) = ensemble_models_info{i}.test_accuracy;
-    ensemble_models_test_sensitivity(i) = ensemble_models_info{i}.test_sensitivity;
-    ensemble_models_test_specificity(i) = ensemble_models_info{i}.test_specificity;
+    ensemble_models_validation_accuracy(i) = ensemble_models{i}.validation_accuracy;
+    ensemble_models_validation_sensitivity(i) = ensemble_models{i}.validation_sensitivity;
+    ensemble_models_validation_specificity(i) = ensemble_models{i}.validation_specificity;
+    ensemble_models_test_accuracy(i) = ensemble_models{i}.test_accuracy;
+    ensemble_models_test_sensitivity(i) = ensemble_models{i}.test_sensitivity;
+    ensemble_models_test_specificity(i) = ensemble_models{i}.test_specificity;
   end
   figure(2);
   clf;
-  model_fig_path = fullfile(experiment_dir_path, 'incremental-performance.pdf');
+  model_fig_path = fullfile(experiment_dir, 'incremental-performance.pdf');
   xlabel('training epoch'); ylabel('error');
   title('performance');
   grid on;
@@ -559,14 +581,14 @@ function plotThisShit(ensemble_models_info, experiment_dir_path)
   drawnow;
   print(2, model_fig_path, '-dpdf');
 %_p-------------------------------------------------------------------------
-function weighted_results = testAllEnsembleModelsOnTestImdb(ensemble_models_info, imdb)
+function weighted_results = testAllEnsembleModelsOnTestImdb(ensemble_models, imdb)
 % -------------------------------------------------------------------------
   fprintf('\n');
   afprintf(sprintf('[INFO] ENSEMBLE RESULTS ON TEST SET: \n'));
   printConsoleOutputSeparator();
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % -------------------------------------------------------------------------
   % Initial stuff
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % -------------------------------------------------------------------------
   data_test = imdb.images.data(:,:,:,imdb.images.set == 3);
   labels_test = imdb.images.labels(imdb.images.set == 3);
   data_test_negative = data_test(:,:,:,labels_test == 1);
@@ -575,16 +597,16 @@ function weighted_results = testAllEnsembleModelsOnTestImdb(ensemble_models_info
   data_test_negative_count = size(data_test_negative, 4);
   data_test_positive_count = size(data_test_positive, 4);
 
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % -------------------------------------------------------------------------
   % Construct IMDB
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % -------------------------------------------------------------------------
   test_imdb = constructPartialImdb(data_test, labels_test, 3);
 
   H = {};
-  B = zeros(1, numel(ensemble_models_info));
+  B = zeros(1, numel(ensemble_models));
   for i = 1:numel(B)
-    H{i} = ensemble_models_info{i}.model_net;
-    B(i) = ensemble_models_info{i}.model_weight;
+    H{i} = ensemble_models{i}.model_net;
+    B(i) = ensemble_models{i}.model_weight;
   end
   assert(numel(H) == numel(B))
   B = B / sum(B);
@@ -623,9 +645,9 @@ function weighted_results = testAllEnsembleModelsOnTestImdb(ensemble_models_info
     end
   end
 
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % -------------------------------------------------------------------------
   % 7. done, go treat yourself to something sugary!
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % -------------------------------------------------------------------------
   printConsoleOutputSeparator();
   predictions_test = weighted_test_set_predictions(:, 1)';
   [weighted_acc, weighted_sens, weighted_spec] = getAccSensSpec(labels_test, predictions_test, false);
@@ -647,21 +669,21 @@ function results = getKFoldResults(folds)
   all_folds_ensemble_count = [];
   number_of_folds = numel(fields(folds));
   for i = 1:number_of_folds
-    for j = 1:numel(folds.(sprintf('fold_%d', i)).ensemble_models_info)
+    for j = 1:numel(folds.(sprintf('fold_%d', i)).ensemble_models)
       % results.(sprintf('fold_%d', i)).weight(j) = ...
-      %   folds.(sprintf('fold_%d', i)).ensemble_models_info{j}.model_weight; % weight is normalized a bunch of times after each iter...
+      %   folds.(sprintf('fold_%d', i)).ensemble_models{j}.model_weight; % weight is normalized a bunch of times after each iter...
       results.(sprintf('fold_%d', i)).validation_acc(j) = ...
-        folds.(sprintf('fold_%d', i)).ensemble_models_info{j}.validation_accuracy;
+        folds.(sprintf('fold_%d', i)).ensemble_models{j}.validation_accuracy;
       results.(sprintf('fold_%d', i)).validation_sens(j) = ...
-        folds.(sprintf('fold_%d', i)).ensemble_models_info{j}.validation_sensitivity;
+        folds.(sprintf('fold_%d', i)).ensemble_models{j}.validation_sensitivity;
       results.(sprintf('fold_%d', i)).validation_spec(j) = ...
-        folds.(sprintf('fold_%d', i)).ensemble_models_info{j}.validation_specificity;
+        folds.(sprintf('fold_%d', i)).ensemble_models{j}.validation_specificity;
       results.(sprintf('fold_%d', i)).test_acc(j) = ...
-        folds.(sprintf('fold_%d', i)).ensemble_models_info{j}.test_accuracy;
+        folds.(sprintf('fold_%d', i)).ensemble_models{j}.test_accuracy;
       results.(sprintf('fold_%d', i)).test_sens(j) = ...
-        folds.(sprintf('fold_%d', i)).ensemble_models_info{j}.test_sensitivity;
+        folds.(sprintf('fold_%d', i)).ensemble_models{j}.test_sensitivity;
       results.(sprintf('fold_%d', i)).test_spec(j) = ...
-        folds.(sprintf('fold_%d', i)).ensemble_models_info{j}.test_specificity;
+        folds.(sprintf('fold_%d', i)).ensemble_models{j}.test_specificity;
     end
     results.(sprintf('fold_%d', i)).weighted_acc = ...
       folds.(sprintf('fold_%d', i)).weighted_results.acc;
@@ -675,7 +697,7 @@ function results = getKFoldResults(folds)
     all_folds_acc(i) = folds.(sprintf('fold_%d', i)).weighted_results.test_acc;
     all_folds_sens(i) = folds.(sprintf('fold_%d', i)).weighted_results.test_sens;
     all_folds_spec(i) = folds.(sprintf('fold_%d', i)).weighted_results.test_spec;
-    all_folds_ensemble_count(i) = numel(folds.(sprintf('fold_%d', i)).ensemble_models_info);
+    all_folds_ensemble_count(i) = numel(folds.(sprintf('fold_%d', i)).ensemble_models);
   end
   results.kfold_acc_avg = mean(all_folds_acc);
   results.kfold_sens_avg = mean(all_folds_sens);

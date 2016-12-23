@@ -124,7 +124,7 @@ function main_cnn_amir(varargin)
               opts.leave_out_index = leave_out_index;
               opts.debug_flag = debug_flag;
               opts.regen = true;
-              opts.gpus = [1];
+              opts.gpus = ifNotMacSetGpu(1);
               cnnAmir(opts);
             end
           end

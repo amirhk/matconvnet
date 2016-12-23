@@ -27,7 +27,7 @@ function saveStruct2File(input_struct, filePath, recursion_depth)
         else
           fprintf(fileID, '%s: ', fields{i});
           for k = 1:numel(value)
-            fprintf(fileID, '%.6f  ',value(k));
+            fprintf(fileID, '%.6f  ', value(k));
           end
           fprintf(fileID, '\n');
         end
@@ -36,7 +36,21 @@ function saveStruct2File(input_struct, filePath, recursion_depth)
           fprintf(fileID, '\t');
         end
         fprintf(fileID, '%s:\n', fields{i});
-        saveStruct2File(value, filePath, recursion_depth + 1)
-        continue
+        saveStruct2File(value, filePath, recursion_depth + 1);
+      case 'cell'
+        for j = 1:recursion_depth
+          fprintf(fileID, '\t');
+        end
+        fprintf(fileID, '%s:\n', fields{i});
+        % assuming the cell contains either all strings, or all doubles
+        for x = value
+          switch class(x)
+            case 'char'
+              fprintf(fileID, '%s  ', x);
+            case 'double'
+              fprintf(fileID, '%.6f  ', x);
+          end
+        end
     end
   end
+  fclose(fileID);

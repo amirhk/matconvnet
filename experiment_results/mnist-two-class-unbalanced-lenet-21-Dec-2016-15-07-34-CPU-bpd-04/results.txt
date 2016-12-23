@@ -1,8 +1,0 @@
-train:
-	acc: 0.96
-	sens: 0.90
-	spec: 0.99
-test:
-	acc: 0.95
-	sens: 0.87
-	spec: 0.99
