@@ -122,45 +122,22 @@ function [net, results] = cnn_amir(inputs_opts)
   opts_copy.imdb.imdb = '< too large to print imdb >';
   saveStruct2File(opts_copy, opts.paths.options_file_path, 0);
 
-  % % -------------------------------------------------------------------------
-  % %               TESTING (REMOVE): testing balanced imdb into single network
-  % % -------------------------------------------------------------------------
-  % data_train = imdb.images.data(:,:,:,imdb.images.set == 1);
-  % labels_train = imdb.images.labels(imdb.images.set == 1);
-  % data_test = imdb.images.data(:,:,:,imdb.images.set == 3);
-  % labels_test = imdb.images.labels(imdb.images.set == 3);
+  % -------------------------------------------------------------------------
+  %               TESTING (REMOVE): testing balanced imdb into single network
+  % -------------------------------------------------------------------------
+  data_train = imdb.images.data(:,:,:,imdb.images.set == 1);
+  labels_train = imdb.images.labels(imdb.images.set == 1);
+  data_test = imdb.images.data(:,:,:,imdb.images.set == 3);
+  labels_test = imdb.images.labels(imdb.images.set == 3);
 
+  [resampled_data_train, resampled_labels_train] = balanceTrainingData(data_train, labels_train, 50 / 50);
+  imdb.images.data = single(cat(4, resampled_data_train, data_test));
+  imdb.images.labels = single(cat(2, resampled_labels_train, labels_test));
+  imdb.images.set = cat(2, 1 * ones(1, length(resampled_labels_train)), 3 * ones(1, length(labels_test)));
 
-  % [resampled_data_train, resampled_labels_train] = balanceTrainingData(data_train, labels_train, 50 / 50);
-  % imdb.images.data = single(cat(4, resampled_data_train, data_test));
-  % imdb.images.labels = single(cat(2, resampled_labels_train, labels_test));
-  % % keyboard
-  % imdb.images.set = cat(2, 1 * ones(1, length(resampled_labels_train)), 3 * ones(1, length(labels_test)));
-
-  % data_train = imdb.images.data(:,:,:,imdb.images.set == 1);
-  % labels_train = imdb.images.labels(imdb.images.set == 1);
-  % data_train_healthy = data_train(:,:,:,labels_train == 1);
-  % data_train_cancer = data_train(:,:,:,labels_train == 2);
-  % data_train_count = size(data_train, 4);
-  % data_train_healthy_count = size(data_train_healthy, 4);
-  % data_train_cancer_count = size(data_train_cancer, 4);
-
-  % data_test = imdb.images.data(:,:,:,imdb.images.set == 3);
-  % labels_test = imdb.images.labels(imdb.images.set == 3);
-  % data_test_healthy = data_test(:,:,:,labels_test == 1);
-  % data_test_cancer = data_test(:,:,:,labels_test == 2);
-  % data_test_count = size(data_test, 4);
-  % data_test_healthy_count = size(data_test_healthy, 4);
-  % data_test_cancer_count = size(data_test_cancer, 4);
-
-  % afprintf(sprintf('[INFO] TRAINING SET: total: %d, healthy: %d, cancer: %d\n', ...
-  %   data_train_count, ...
-  %   data_train_healthy_count, ...
-  %   data_train_cancer_count));
-  % afprintf(sprintf('[INFO] TESTING SET: total: %d, healthy: %d, cancer: %d\n', ...
-  %   data_test_count, ...
-  %   data_test_healthy_count, ...
-  %   data_test_cancer_count));
+  fh_imdb_utils = imdbUtils;
+  [~] = fh_imdb_utils.getImdbInfo(imdb, true);
+  opts.imdb.imdb = imdb;
 
   % -------------------------------------------------------------------------
   %                                                                     train

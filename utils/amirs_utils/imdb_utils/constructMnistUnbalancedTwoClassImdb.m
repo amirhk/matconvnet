@@ -45,9 +45,9 @@ function imdb = constructMnistUnbalancedTwoClassImdb(network_arch)
   labels_test = cat(2, labels_test_positive, labels_test_negative);
 
   % put it all together
-  imdb.images.data = cat(4, data_train, data_test);
-  imdb.images.labels = cat(2, labels_train, labels_test);
-  imdb.images.set = cat(2, 1 * ones(1, size(labels_train, 2)), 3 * ones(1, size(labels_test, 2)));
+  imdb.images.data = single(cat(4, data_train, data_test));
+  imdb.images.labels = single(cat(2, labels_train, labels_test));
+  imdb.images.set = single(cat(2, 1 * ones(1, size(labels_train, 2)), 3 * ones(1, size(labels_test, 2))));
   % imdb.images.set = (round(rand(1,length(labels_train))) * 2) + 1; % randomly assign to either set 1 or set 3
   imdb.meta.sets = {'train', 'val', 'test'} ;
   imdb.meta.classes = arrayfun(@(x)sprintf('%d',x),0:9,'uniformoutput',false) ;
