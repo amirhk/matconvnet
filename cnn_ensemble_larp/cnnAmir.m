@@ -111,6 +111,13 @@ function [net, results] = cnn_amir(inputs_opts)
       if opts.general.debug_flag; afprintf(sprintf('done.\n\n')); end;
     end
   end
+
+  % testing balanced imdb into single network
+  if opts.imdb.balance_train
+    fh_imdb_utils = imdbTwoClassUtils;
+    imdb = fh_imdb_utils.balanceImdb(imdb, 'train', 'downsample');
+  end
+
   opts.imdb.imdb = imdb;
 
   % -------------------------------------------------------------------------
@@ -123,24 +130,6 @@ function [net, results] = cnn_amir(inputs_opts)
   opts_copy.imdb.imdb = '< too large to print imdb >';
   saveStruct2File(opts_copy, opts.paths.options_file_path, 0);
 
-  % % -------------------------------------------------------------------------
-  % %               TESTING (REMOVE): testing balanced imdb into single network
-  % % -------------------------------------------------------------------------
-  if opts.imdb.balance_train
-    data_train = imdb.images.data(:,:,:,imdb.images.set == 1);
-    labels_train = imdb.images.labels(imdb.images.set == 1);
-    data_test = imdb.images.data(:,:,:,imdb.images.set == 3);
-    labels_test = imdb.images.labels(imdb.images.set == 3);
-
-    [resampled_data_train, resampled_labels_train] = balanceTrainingData(data_train, labels_train, 50 / 50);
-    imdb.images.data = single(cat(4, resampled_data_train, data_test));
-    imdb.images.labels = single(cat(2, resampled_labels_train, labels_test));
-    imdb.images.set = cat(2, 1 * ones(1, length(resampled_labels_train)), 3 * ones(1, length(labels_test)));
-
-    fh_imdb_utils = imdbTwoClassUtils;
-    [~] = fh_imdb_utils.getImdbInfo(imdb, true);
-    opts.imdb.imdb = imdb;
-  end
 
   % -------------------------------------------------------------------------
   %                                                                     train
@@ -222,68 +211,3 @@ function [images, labels] = getSimpleNNBatch(imdb, batch)
   images = imdb.images.data(:,:,:,batch);
   labels = imdb.images.labels(1,batch);
   if rand > 0.5, images=fliplr(images); end
-
-% -------------------------------------------------------------------------
-function [resampled_data, resampled_labels] = balanceTrainingData(data, labels, ratio)
-% -------------------------------------------------------------------------
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % Initial stuff
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  data_healthy = data(:,:,:,labels == 1);
-  data_cancer = data(:,:,:,labels == 2);
-  data_count = size(data, 4);
-  data_healthy_count = size(data_healthy, 4);
-  data_cancer_count = size(data_cancer, 4);
-  data_healthy_indices = find(labels == 1);
-  data_cancer_indices = find(labels == 2);
-
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % Random Under-sampling (RUS): Healthy Data
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  downsampled_data_healthy_count = round(data_cancer_count * ratio);
-  downsampled_data_healthy_indices = randsample(data_healthy_indices, downsampled_data_healthy_count, false);
-  downsampled_data_healthy = data(:,:,:, downsampled_data_healthy_indices);
-
-  % %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % % Weighted Upsampling (more weight -> more repeat): Healthy & Cancer Data
-  % %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % max_repeat_healthy = 25;
-  % max_repeat_cancer = 200;
-  % normalized_weights = weights / min(weights);
-  % repeat_counts = ceil(normalized_weights);
-  % for j = data_healthy_indices
-  %   if repeat_counts(j) > max_repeat_healthy
-  %     repeat_counts(j) = max_repeat_healthy;
-  %   end
-  % end
-  % for j = data_cancer_indices
-  %   if repeat_counts(j) > max_repeat_cancer
-  %     repeat_counts(j) = max_repeat_cancer;
-  %   end
-  % end
-
-  % healthy_repeat_counts = repeat_counts(downsampled_data_healthy_indices);
-  % cancer_repeat_counts = repeat_counts(data_cancer_indices);
-
-  % upsampled_data_healthy = upsample(downsampled_data_healthy, healthy_repeat_counts);
-  % upsampled_data_cancer = upsample(data_cancer, cancer_repeat_counts);
-
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % Putting it all together
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  resampled_data_healthy_count = size(downsampled_data_healthy, 4);
-  resampled_data_cancer_count = size(data_cancer, 4);
-  resampled_data_all = cat(4, downsampled_data_healthy, data_cancer);
-  resampled_labels_all = cat( ...
-    2, ...
-    1 * ones(1, resampled_data_healthy_count), ...
-    2 * ones(1, resampled_data_cancer_count));
-
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % Shuffle this to mixup order of healthy and cancer in imdb so we don't
-  % have the CNN overtrain in 1 particular direction. Only shuffling for
-  % training; later weights are calculated and updated for all training data.
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  ix = randperm(size(resampled_data_all, 4));
-  resampled_data = resampled_data_all(:,:,:,ix);
-  resampled_labels = resampled_labels_all(ix);
