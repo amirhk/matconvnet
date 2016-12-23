@@ -19,7 +19,7 @@ function folds = kFoldCNNRusboost()
     case 'prostate'
       opts.general.network_arch = 'prostatenet';
   end
-  opts.general.number_of_folds = 1;
+  opts.general.number_of_folds = 10;
   opts.general.iteration_count_limit = 10;
 
   % -------------------------------------------------------------------------
@@ -289,8 +289,8 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(ensemble_options)
         continue;
       else
         if labels_train(i) == 2
-          loss = loss + min(negative_to_positive_ratio, 5) * W(t, i);
-          % loss = loss + W(t, i);
+          % loss = loss + min(negative_to_positive_ratio, 5) * W(t, i);
+          loss = loss + W(t, i);
         else
           loss = loss + W(t, i);
         end
