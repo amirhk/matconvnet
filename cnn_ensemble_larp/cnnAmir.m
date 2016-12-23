@@ -117,7 +117,7 @@ function [net, results] = cnn_amir(inputs_opts)
     afprintf(sprintf('[INFO] balancing imdb... '));
     fh_imdb_utils = imdbTwoClassUtils;
     imdb = fh_imdb_utils.balanceImdb(imdb, 'train', 'downsample');
-    afprintf(sprintf('[INFO] done!'));
+    afprintf(sprintf('[INFO] done!\n'));
   end
 
   opts.imdb.imdb = imdb;
