@@ -181,10 +181,10 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(ensemble_options)
   opts.single_cnn_options.experiment_parent_dir = opts.paths.experiment_dir;
   opts.single_cnn_options.weight_init_source = 'gen';
   opts.single_cnn_options.weight_init_sequence = {'compRand', 'compRand', 'compRand'};
-  % opts.single_cnn_options.gpus = ifNotMacSetGpu(1);
-  % opts.single_cnn_options.backprop_depth = 4;
-  opts.single_cnn_options.gpus = ifNotMacSetGpu(2);
-  opts.single_cnn_options.backprop_depth = 13;
+  opts.single_cnn_options.gpus = ifNotMacSetGpu(1);
+  opts.single_cnn_options.backprop_depth = 4;
+  % opts.single_cnn_options.gpus = ifNotMacSetGpu(2);
+  % opts.single_cnn_options.backprop_depth = 13;
   opts.single_cnn_options.debug_flag = false;
 
   % -------------------------------------------------------------------------
@@ -197,6 +197,9 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(ensemble_options)
   %                               samples (to be randomly-undersampled later)
   % -------------------------------------------------------------------------
   fh_imdb_utils = imdbTwoClassUtils;
+  afprintf(sprintf('[INFO] balancing imdb... '));
+  imdb = fh_imdb_utils.balanceImdb(imdb, 'train', 'downsample');
+  afprintf(sprintf('[INFO] done!\n'));
   [ ...
     data, ...
     data_train, ...
