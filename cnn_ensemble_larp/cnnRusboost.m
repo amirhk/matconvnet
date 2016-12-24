@@ -181,10 +181,10 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(ensemble_options)
   opts.single_cnn_options.experiment_parent_dir = opts.paths.experiment_dir;
   opts.single_cnn_options.weight_init_source = 'gen';
   opts.single_cnn_options.weight_init_sequence = {'compRand', 'compRand', 'compRand'};
-  % opts.single_cnn_options.gpus = ifNotMacSetGpu(1);
-  % opts.single_cnn_options.backprop_depth = 4;
-  opts.single_cnn_options.gpus = ifNotMacSetGpu(2);
-  opts.single_cnn_options.backprop_depth = 13;
+  opts.single_cnn_options.gpus = ifNotMacSetGpu(1);
+  opts.single_cnn_options.backprop_depth = 4;
+  % opts.single_cnn_options.gpus = ifNotMacSetGpu(2);
+  % opts.single_cnn_options.backprop_depth = 13;
   opts.single_cnn_options.debug_flag = false;
 
   % -------------------------------------------------------------------------
@@ -355,8 +355,8 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(ensemble_options)
         W(t + 1, i) = W(t, i) * beta;
       else
         if labels_train(i) == 2
-          W(t + 1, i) = min(negative_to_positive_ratio, 2) * W(t, i);
-          % W(t + 1, i) = W(t, i);
+          % W(t + 1, i) = min(negative_to_positive_ratio, 2) * W(t, i);
+          W(t + 1, i) = W(t, i);
         else
           W(t + 1, i) = W(t, i);
         end
