@@ -48,6 +48,7 @@ function folds = kFoldCNNRusboost()
     sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
   opts.paths.experiment_dir = ...
     fullfile( ...
+      vl_rootnn, ...
       'experiment_results', ...
       sprintf('k-fold-rusboost-%s', opts.paths.time_string));
   if ~exist(opts.paths.experiment_dir)
@@ -604,7 +605,7 @@ function saveKFoldResults(folds, results_file_path)
 % -------------------------------------------------------------------------
   results = getKFoldResults(folds);
   % don't amend file, but overwrite...
-  delete results_file_path;
+  delete(results_file_path);
   saveStruct2File(results, results_file_path, 0);
 
 % _p------------------------------------------------------------------------
