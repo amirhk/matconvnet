@@ -5,8 +5,12 @@ function results = testForest(dataset)
   switch opts.general.dataset
     case 'mnist-two-class-unbalanced'
       opts.general.network_arch = 'lenet';
-      % imdb = constructMnistUnbalancedTwoClassImdb(opts.general.network_arch, 1, 9);
-      imdb = constructMnistUnbalancedTwoClassImdb(opts.general.network_arch, 9, 4);
+      % imdb = constructMnistTwoClassUnbalancedImdb(opts.general.network_arch, 1, 9);
+      imdb = constructMnistTwoClassUnbalancedImdb(opts.general.network_arch, 9, 4);
+    case 'mnist-two-class-unbalanced'
+      opts.general.network_arch = 'lenet';
+      % imdb = constructMnistTwoClassUnbalancedImdb(opts.general.network_arch, 1, 9);
+      imdb = constructMnistTwoClassUnbalancedImdb(opts.general.network_arch, 9, 4);
     case 'prostate'
       % TODO: fixup and test
       % opts.general.network_arch = 'prostatenet';
@@ -37,8 +41,6 @@ function results = testForest(dataset)
   opts.train.num_features = 3072;
   opts.train.num_trees = 1000;
   opts.train.boosting_method = 'AdaBoostM1'; % {'AdaBoostM1', 'RUSBoost'}
-  % opts.imdb.balance_train = balance_train;
-  % opts.imdb.backprop_depth = backprop_depth;
   opts.paths.time_string = sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
   opts.paths.experiment_dir = fullfile(vl_rootnn, 'experiment_results', sprintf( ...
     'test-forest-%s-%s-%s', ...

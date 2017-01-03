@@ -1,7 +1,7 @@
 % -------------------------------------------------------------------------
 function imdb = constructCifarImdb(opts)
 % -------------------------------------------------------------------------
-  afprintf(sprintf('[INFO] Constructing CIFAR imdb (portion = %%%d)...\n\n', opts.imdb.imdb_portion * 100));
+  afprintf(sprintf('[INFO] Constructing CIFAR imdb (portion = %d)...\n\n', opts.imdb.imdb_portion * 100));
   % Prepare the imdb structure, returns image data with mean image subtracted
   unpack_path = fullfile(opts.imdb.data_dir, 'cifar-10-batches-mat');
   files = [arrayfun(@(n) sprintf('data_batch_%d.mat', n), 1:5, 'UniformOutput', false) ...

@@ -82,7 +82,7 @@ function folds = kFoldCNNRusboost()
         afprintf(sprintf('[INFO] Constructing / loading imdb for fold #%d...\n', i));
         switch opts.imdb.source
           case 'gen'
-            imdb = constructMnistUnbalancedTwoClassImdb(opts.general.network_arch);
+            imdb = constructMnistTwoClassUnbalancedImdb(opts.general.network_arch);
           case 'load'
             % tmp = load(fullfile(getDevPath(), 'data', 'saved-two-class-mnist-pos9-neg4.mat'));
             tmp = load(fullfile(getDevPath(), 'data', 'saved-two-class-mnist-pos1-neg9.mat'));
