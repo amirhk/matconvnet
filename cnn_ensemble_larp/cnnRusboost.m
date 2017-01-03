@@ -122,7 +122,7 @@ function folds = kFoldCNNRusboost()
   single_ensemble_options.network_arch = opts.general.network_arch;
   single_ensemble_options.iteration_count = opts.general.iteration_count_limit;
   single_ensemble_options.experiment_parent_dir = opts.paths.experiment_dir;
-  single_ensemble_options.balance_train = true;
+  single_ensemble_options.balance_train = false;
   single_ensemble_options.symmetric_weight_updates = false;
   for i = 1:opts.general.number_of_folds
     afprintf(sprintf('[INFO] Running cnn_rusboost on fold #%d...\n', i));
@@ -202,7 +202,7 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(single_ensemble_o
   opts.single_cnn_options.experiment_parent_dir = opts.paths.experiment_dir;
   opts.single_cnn_options.weight_init_source = 'gen';
   opts.single_cnn_options.weight_init_sequence = {'compRand', 'compRand', 'compRand'};
-  opts.single_cnn_options.gpus = ifNotMacSetGpu(2);
+  opts.single_cnn_options.gpus = ifNotMacSetGpu(1);
   opts.single_cnn_options.backprop_depth = 4;
   % opts.single_cnn_options.gpus = ifNotMacSetGpu(2);
   % opts.single_cnn_options.backprop_depth = 13;
@@ -569,7 +569,7 @@ function weighted_results = testAllEnsembleModelsOnTestImdb(ensemble_models, imd
   printConsoleOutputSeparator();
   predictions_test = weighted_test_set_predictions(:, 1)';
   [weighted_acc, weighted_sens, weighted_spec] = getAccSensSpec(labels_test, predictions_test, false);
-  afprintf(sprintf('Model weights: '))
+  afprintf(sprintf('Model weights:\n'))
   disp(B);
   afprintf(sprintf('[INFO] Weighted Acc: %3.6f\n', weighted_acc));
   afprintf(sprintf('[INFO] Weighted Sens: %3.6f\n', weighted_sens));
