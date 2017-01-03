@@ -123,7 +123,7 @@ function folds = kFoldCNNRusboost()
   single_ensemble_options.iteration_count = opts.general.iteration_count_limit;
   single_ensemble_options.experiment_parent_dir = opts.paths.experiment_dir;
   single_ensemble_options.balance_train = true;
-  single_ensemble_options.symmetric_weight_updates = true;
+  single_ensemble_options.symmetric_weight_updates = false;
   for i = 1:opts.general.number_of_folds
     afprintf(sprintf('[INFO] Running cnn_rusboost on fold #%d...\n', i));
     single_ensemble_options.imdb = imdbs{i};
@@ -202,7 +202,7 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(single_ensemble_o
   opts.single_cnn_options.experiment_parent_dir = opts.paths.experiment_dir;
   opts.single_cnn_options.weight_init_source = 'gen';
   opts.single_cnn_options.weight_init_sequence = {'compRand', 'compRand', 'compRand'};
-  opts.single_cnn_options.gpus = ifNotMacSetGpu(1);
+  opts.single_cnn_options.gpus = ifNotMacSetGpu(2);
   opts.single_cnn_options.backprop_depth = 4;
   % opts.single_cnn_options.gpus = ifNotMacSetGpu(2);
   % opts.single_cnn_options.backprop_depth = 13;
