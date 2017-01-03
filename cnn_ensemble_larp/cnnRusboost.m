@@ -7,19 +7,19 @@ function fh = cnnRusboost()
   fh.printKFoldResults = @printKFoldResults;
 
 % -------------------------------------------------------------------------
-function folds = kFoldCNNRusboost()
+function folds = kFoldCNNRusboost(opts)
 % -------------------------------------------------------------------------
   % -------------------------------------------------------------------------
   %                                                               opts.general
   % -------------------------------------------------------------------------
-  opts.general.dataset = 'mnist-two-class';
+  opts.general.dataset = getValueFromFieldOrDefault(opts, 'dataset', 'mnist-two-class');
   switch opts.general.dataset
     case 'prostate'
       opts.general.network_arch = 'prostatenet';
     otherwise % unbalanced mnist, unbalanced cifar, ...
       opts.general.network_arch = 'lenet';
   end
-  opts.general.number_of_folds = 2;
+  opts.general.number_of_folds = 10;
   opts.general.iteration_count_limit = 10;
 
   % -------------------------------------------------------------------------
@@ -38,7 +38,7 @@ function folds = kFoldCNNRusboost()
       opts.imdb.test_augment_positive = 'none';
       opts.imdb.test_augment_negative = 'none';
     otherwise
-      opts.imdb.posneg_balance = 'unbalanced';
+      opts.imdb.posneg_balance = getValueFromFieldOrDefault(opts, 'posneg_balance', 'unbalanced');
   end
 
   % -------------------------------------------------------------------------
@@ -109,6 +109,8 @@ function folds = kFoldCNNRusboost()
   single_ensemble_options.network_arch = opts.general.network_arch;
   single_ensemble_options.iteration_count = opts.general.iteration_count_limit;
   single_ensemble_options.experiment_parent_dir = opts.paths.experiment_dir;
+  single_ensemble_options.gpus = ifNotMacSetGpu(getValueFromFieldOrDefault(opts, 'gpus', 1));
+  single_ensemble_options.backprop_depth = getValueFromFieldOrDefault(opts, 'backprop_depth', 4);
   single_ensemble_options.symmetric_weight_updates = false;
   for i = 1:opts.general.number_of_folds
     afprintf(sprintf('[INFO] Running cnn_rusboost on fold #%d...\n', i));
@@ -184,10 +186,8 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(single_ensemble_o
   opts.single_cnn_options.experiment_parent_dir = opts.paths.experiment_dir;
   opts.single_cnn_options.weight_init_source = 'gen';
   opts.single_cnn_options.weight_init_sequence = {'compRand', 'compRand', 'compRand'};
-  opts.single_cnn_options.gpus = ifNotMacSetGpu(1);
-  opts.single_cnn_options.backprop_depth = 4;
-  % opts.single_cnn_options.gpus = ifNotMacSetGpu(2);
-  % opts.single_cnn_options.backprop_depth = 13;
+  opts.single_cnn_options.gpus = ifNotMacSetGpu(getValueFromFieldOrDefault(opts, 'gpus', 1));
+  opts.single_cnn_options.backprop_depth = getValueFromFieldOrDefault(single_ensemble_options, 'backprop_depth', 4);
   opts.single_cnn_options.debug_flag = false;
 
   % -------------------------------------------------------------------------

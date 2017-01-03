@@ -1,4 +1,4 @@
-function results = testForest(dataset, posneg_balance)
+function results = testForest(dataset, posneg_balance, boosting_method)
 
   opts.general.dataset = dataset;
   opts.imdb.posneg_balance = posneg_balance;
@@ -27,7 +27,7 @@ function results = testForest(dataset, posneg_balance)
   opts.train.num_examples = length(labels);
   opts.train.num_features = 3072;
   opts.train.num_trees = 1000;
-  opts.train.boosting_method = 'AdaBoostM1'; % {'AdaBoostM1', 'RUSBoost'}
+  opts.train.boosting_method = boosting_method; % {'AdaBoostM1', 'RUSBoost'}
   opts.paths.time_string = sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
   opts.paths.experiment_dir = fullfile(vl_rootnn, 'experiment_results', sprintf( ...
     'test-forest-%s-%s-%s', ...
