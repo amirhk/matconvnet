@@ -253,7 +253,7 @@ function imdb = balanceImdb(imdb, set_name, balance_type)
   % -------------------------------------------------------------------------
   %                                                                      beef
   % -------------------------------------------------------------------------
-  afprintf(sprintf('[INFO] balancing `%s` set in imdb (balance type: `%s`)...\n', set_name, balance_type));
+  afprintf(sprintf('[INFO] Balancing `%s` set in imdb (balance type: `%s`)...\n', set_name, balance_type));
   switch balance_type
     case 'downsample'
       switch set_name
@@ -323,7 +323,7 @@ function imdb = balanceImdb(imdb, set_name, balance_type)
   imdb.images.set = single(new_set);
   afprintf(sprintf('[INFO] Final imdb info...\n'));
   [~] = getImdbInfo(imdb, true);
-  afprintf(sprintf('done!\n\n'));
+  afprintf(sprintf('done!\n'));
 
 % -------------------------------------------------------------------------
 function imdb = constructTwoClassUnbalancedImdb(imdb, positive_class_number, negative_class_number, unbalance_inverse_ratio)

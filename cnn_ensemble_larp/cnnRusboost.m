@@ -16,10 +16,10 @@ function folds = kFoldCNNRusboost()
   switch opts.general.dataset
     case 'prostate'
       opts.general.network_arch = 'prostatenet';
-    otherwise
+    otherwise % unbalanced mnist, unbalanced cifar, ...
       opts.general.network_arch = 'lenet';
   end
-  opts.general.number_of_folds = 10;
+  opts.general.number_of_folds = 5;
   opts.general.iteration_count_limit = 10;
 
   % -------------------------------------------------------------------------
@@ -99,14 +99,7 @@ function folds = kFoldCNNRusboost()
         afprintf(sprintf('[INFO] Constructing / loading imdb for fold #%d...\n', i));
         switch opts.imdb.source
           case 'gen'
-            switch opts.general.dataset
-              case 'mnist-two-class-unbalanced'
-                % TODO: have to pass in which class is +ve and -ve
-                imdb = constructMnistTwoClassUnbalancedImdb(opts.general.network_arch, 1, 9);
-              case 'cifar-two-class-unbalanced'
-                % TODO: have to pass in which class is +ve and -ve
-                imdb = constructCifarTwoClassUnbalancedImdb(1, 9);
-            end
+            % TODO: have to pass in which class is +ve and -ve
           case 'load'
             switch opts.general.dataset
               case 'mnist-two-class-unbalanced'
@@ -129,6 +122,8 @@ function folds = kFoldCNNRusboost()
   single_ensemble_options.network_arch = opts.general.network_arch;
   single_ensemble_options.iteration_count = opts.general.iteration_count_limit;
   single_ensemble_options.experiment_parent_dir = opts.paths.experiment_dir;
+  single_ensemble_options.balance_train = true;
+  single_ensemble_options.symmetric_weight_updates = true;
   for i = 1:opts.general.number_of_folds
     afprintf(sprintf('[INFO] Running cnn_rusboost on fold #%d...\n', i));
     single_ensemble_options.imdb = imdbs{i};
@@ -147,32 +142,31 @@ function folds = kFoldCNNRusboost()
   printKFoldResults(folds);
 
 % -------------------------------------------------------------------------
-function [ensemble_models, weighted_results] = mainCNNRusboost(ensemble_options)
+function [ensemble_models, weighted_results] = mainCNNRusboost(single_ensemble_options)
 % -------------------------------------------------------------------------
   % -------------------------------------------------------------------------
   %                                                              opts.general
   % -------------------------------------------------------------------------
-  imdb = getValueFromFieldOrDefault(ensemble_options, 'imdb', struct());
+  imdb = getValueFromFieldOrDefault(single_ensemble_options, 'imdb', struct());
   opts.general.dataset = getValueFromFieldOrDefault( ...
-    ensemble_options, ...
+    single_ensemble_options, ...
     'dataset', ...
     'prostate');
   opts.general.network_arch = getValueFromFieldOrDefault( ...
-    ensemble_options, ...
+    single_ensemble_options, ...
     'network_arch', ...
     'prostatenet');
   opts.general.iteration_count = getValueFromFieldOrDefault( ...
-    ensemble_options, ...
+    single_ensemble_options, ...
     'iteration_count', ...
     5);
-  opts.general.random_undersampling_ratio = (50/50);
 
   % -------------------------------------------------------------------------
   %                                                                opts.paths
   % -------------------------------------------------------------------------
   opts.paths.time_string = sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
   opts.paths.experiment_parent_dir = getValueFromFieldOrDefault( ...
-    ensemble_options, ...
+    single_ensemble_options, ...
     'experiment_parent_dir', ...
     fullfile(vl_rootnn, 'experiment_results'));
   opts.paths.experiment_dir = fullfile(opts.paths.experiment_parent_dir, sprintf( ...
@@ -188,6 +182,19 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(ensemble_options)
   opts.paths.ensemble_models_file_path = fullfile(opts.paths.experiment_dir, 'ensemble_models.mat');
 
   % -------------------------------------------------------------------------
+  %                                                     opts.ensemble_options
+  % -------------------------------------------------------------------------
+  opts.ensemble_options.balance_train = getValueFromFieldOrDefault( ...
+    single_ensemble_options, ...
+    'balance_train', ...
+    false);
+  opts.ensemble_options.symmetric_weight_updates = getValueFromFieldOrDefault( ...
+    single_ensemble_options, ...
+    'symmetric_weight_updates', ...
+    false);
+  opts.ensemble_options.random_undersampling_ratio = (50/50);
+
+  % -------------------------------------------------------------------------
   %                                                   opts.single_cnn_options
   % -------------------------------------------------------------------------
   opts.single_cnn_options.dataset = opts.general.dataset;
@@ -195,10 +202,10 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(ensemble_options)
   opts.single_cnn_options.experiment_parent_dir = opts.paths.experiment_dir;
   opts.single_cnn_options.weight_init_source = 'gen';
   opts.single_cnn_options.weight_init_sequence = {'compRand', 'compRand', 'compRand'};
-  % opts.single_cnn_options.gpus = ifNotMacSetGpu(1);
-  % opts.single_cnn_options.backprop_depth = 4;
-  opts.single_cnn_options.gpus = ifNotMacSetGpu(2);
-  opts.single_cnn_options.backprop_depth = 13;
+  opts.single_cnn_options.gpus = ifNotMacSetGpu(1);
+  opts.single_cnn_options.backprop_depth = 4;
+  % opts.single_cnn_options.gpus = ifNotMacSetGpu(2);
+  % opts.single_cnn_options.backprop_depth = 13;
   opts.single_cnn_options.debug_flag = false;
 
   % -------------------------------------------------------------------------
@@ -211,9 +218,11 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(ensemble_options)
   %                               samples (to be randomly-undersampled later)
   % -------------------------------------------------------------------------
   fh_imdb_utils = imdbTwoClassUtils;
-  afprintf(sprintf('[INFO] Balancing imdb... '));
-  imdb = fh_imdb_utils.balanceImdb(imdb, 'train', 'downsample');
-  afprintf(sprintf('[INFO] done!\n'));
+  if opts.ensemble_options.balance_train
+    afprintf(sprintf('[INFO] Balancing imdb...\n'));
+    imdb = fh_imdb_utils.balanceImdb(imdb, 'train', 'downsample');
+    afprintf(sprintf('[INFO] done!\n'));
+  end
   [ ...
     data, ...
     data_train, ...
@@ -275,13 +284,15 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(ensemble_options)
     afprintf(sprintf('[INFO] Boosting iteration #%d (attempt %d)...\n', t, count));
 
     % Resampling NEG_DATA with weights of positive example
-    afprintf(sprintf('[INFO] Resampling positive and negative data (ratio = %3.6f)... ', opts.general.random_undersampling_ratio));
+    afprintf(sprintf(...
+      '[INFO] Resampling positive and negative data (ratio = %3.6f)... ', ...
+      opts.ensemble_options.random_undersampling_ratio));
 
     [resampled_data, resampled_labels] = fh_imdb_utils.resampleData( ...
       data_train, ...
       labels_train, ...
       W(t, :), ...
-      opts.general.random_undersampling_ratio);
+      opts.ensemble_options.random_undersampling_ratio);
     afprintf(sprintf('done!\n'));
 
     training_resampled_imdb.images.data = single(resampled_data);
@@ -296,7 +307,8 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(ensemble_options)
 
     % IMPORTANT NOTE: we randomly undersample when training a model, but then,
     % we use all of the training samples (in their order) to update weights.
-    afprintf(sprintf('[INFO] Computing validation set predictions (positive: %d, negative: %d)...\n', ...
+    afprintf(sprintf( ...
+      '[INFO] Computing validation set predictions (positive: %d, negative: %d)...\n', ...
       data_train_positive_count, ...
       data_train_negative_count));
     validation_predictions = getPredictionsFromNetOnImdb(net, validation_imdb, 3);
@@ -369,8 +381,11 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(ensemble_options)
         W(t + 1, i) = W(t, i) * beta;
       else
         if labels_train(i) == 2
-          % W(t + 1, i) = min(negative_to_positive_ratio, 2) * W(t, i);
-          W(t + 1, i) = W(t, i);
+          if opts.ensemble_options.symmetric_weight_updates
+            W(t + 1, i) = W(t, i);
+          else
+            W(t + 1, i) = min(negative_to_positive_ratio, 2) * W(t, i);
+          end
         else
           W(t + 1, i) = W(t, i);
         end
