@@ -19,7 +19,7 @@ function folds = kFoldCNNRusboost()
     otherwise % unbalanced mnist, unbalanced cifar, ...
       opts.general.network_arch = 'lenet';
   end
-  opts.general.number_of_folds = 5;
+  opts.general.number_of_folds = 2;
   opts.general.iteration_count_limit = 10;
 
   % -------------------------------------------------------------------------

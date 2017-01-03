@@ -30,6 +30,10 @@ function [ ...
   data_test_negative_count, ...
   labels_test] = getImdbInfo(imdb, print_info)
 % -------------------------------------------------------------------------
+  % enforce row vector before doing bsxfun
+  imdb.images.labels = reshape(imdb.images.labels, 1, prod(size(imdb.images.labels)));
+  imdb.images.set = reshape(imdb.images.set, 1, prod(size(imdb.images.set)));
+
   % indices (WARNING: these are indices in imdb.images.data, not in data_train or data_test)
   data = imdb.images.data;
   data_train_indices = imdb.images.set == 1;
@@ -328,6 +332,10 @@ function imdb = balanceImdb(imdb, set_name, balance_type)
 % -------------------------------------------------------------------------
 function imdb = constructTwoClassUnbalancedImdb(imdb, positive_class_number, negative_class_number, unbalance_inverse_ratio)
 % -------------------------------------------------------------------------
+  % enforce row vector before doing bsxfun
+  imdb.images.labels = reshape(imdb.images.labels, 1, prod(size(imdb.images.labels)));
+  imdb.images.set = reshape(imdb.images.set, 1, prod(size(imdb.images.set)));
+
   % indices
   train_positive_indices = bsxfun(@and, imdb.images.labels == positive_class_number, imdb.images.set == 1);
   train_negative_indices = bsxfun(@and, imdb.images.labels == negative_class_number, imdb.images.set == 1);

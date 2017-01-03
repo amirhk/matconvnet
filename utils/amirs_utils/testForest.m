@@ -70,6 +70,7 @@ function results = testForest(dataset)
   all_tests_results = {};
   test_repeat_count = 10;
   for i = 1: test_repeat_count
+    printConsoleOutputSeparator();
     afprintf(sprintf('\nTest #%d\n', i));
     t = templateTree('MinLeafSize',5);
     tic

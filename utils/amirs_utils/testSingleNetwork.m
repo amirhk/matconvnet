@@ -1,7 +1,7 @@
 function [all_tests_net, all_tests_results] = testSingleNetwork(balance_train, backprop_depth, gpu)
   all_tests_net = {};
   all_tests_results = {};
-  test_repeat_count = 10;
+  test_repeat_count = 5;
   opts.general.dataset = 'mnist-two-class-unbalanced';
   opts.general.network_arch = 'lenet';
   opts.imdb.balance_train = balance_train;
@@ -21,7 +21,8 @@ function [all_tests_net, all_tests_results] = testSingleNetwork(balance_train, b
 
   single_test_options.dataset = opts.general.dataset;
   single_test_options.network_arch = opts.general.network_arch;
-  tmp = load(fullfile(getDevPath(), 'data', 'saved-two-class-mnist-pos9-neg4.mat'));
+  % tmp = load(fullfile(getDevPath(), 'data', 'saved-two-class-mnist-pos9-neg4.mat'));
+  tmp = load(fullfile(getDevPath(), 'data', 'saved-two-class-mnist-pos9-neg4-balanced-train.mat'));
   % tmp = load(fullfile(getDevPath(), 'data', 'saved-two-class-mnist-pos1-neg9.mat'));
   single_test_options.imdb = tmp.imdb;
   single_test_options.experiment_parent_dir = opts.paths.experiment_dir;
@@ -35,6 +36,7 @@ function [all_tests_net, all_tests_results] = testSingleNetwork(balance_train, b
   single_test_options.gpus = ifNotMacSetGpu(gpu);
 
   for i = 1:test_repeat_count
+    printConsoleOutputSeparator();
     afprintf(sprintf('\nTest #%d\n', i));
     [all_tests_net{i}, all_tests_results{i}] = cnnAmir(single_test_options);
     results.test_acc(i) = all_tests_results{i}.test.acc;
