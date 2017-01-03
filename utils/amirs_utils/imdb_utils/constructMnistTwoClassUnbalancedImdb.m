@@ -7,7 +7,7 @@ function imdb = constructMnistTwoClassUnbalancedImdb(network_arch, positive_clas
   imdb = constructMnistImdb(opts);
 
   fh_imdb_utils = imdbTwoClassUtils;
-  imdb = fh_imdb_utils.constructTwoClassUnbalancedImdb(imdb, positive_class_number, negative_class_number, 200);
+  imdb = fh_imdb_utils.constructTwoClassUnbalancedImdb(imdb, positive_class_number, negative_class_number, 1);
   afprintf(sprintf('done!\n\n'));
 
   printConsoleOutputSeparator();

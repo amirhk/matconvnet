@@ -25,7 +25,6 @@ function [net, results] = cnn_amir(inputs_opts)
   opts.imdb.contrast_normalization = getValueFromFieldOrDefault(inputs_opts, 'contrast_normalization', true);
   opts.imdb.regen = getValueFromFieldOrDefault(inputs_opts, 'regen', false);
   opts.imdb.portion = getValueFromFieldOrDefault(inputs_opts, 'portion', 1.0);
-  opts.imdb.balance_train = getValueFromFieldOrDefault(inputs_opts, 'balance_train', false);
 
   % -------------------------------------------------------------------------
   %                                                                opts.train
@@ -97,16 +96,20 @@ function [net, results] = cnn_amir(inputs_opts)
           imdb = constructProstateImdb(opts);
         case 'cifar'
           imdb = constructCifarImdb(opts);
-        case 'cifar-two-class-unbalanced'
-          % TODO: have to pass in which class is +ve and -ve
-          imdb = constructCifarTwoClassUnbalancedImdb(opts.imdb.data_dir, opts.general.network_arch);
+        % case 'cifar-two-class-unbalanced'
+        %   % TODO: unbalanced imdbs should always be generated separately and consistent across all tests
+        %   % TODO: have to pass in which class is +ve and -ve
+        %   % TODO: should specifiy whether 'balanced-low' or 'balanced-high'...
+        %   imdb = constructCifarTwoClassUnbalancedImdb(opts.imdb.data_dir, opts.general.network_arch);
         case 'coil-100'
           imdb = constructCOIL100Imdb(opts);
         case 'mnist'
           imdb = constructMnistImdb(opts);
-        case 'mnist-two-class-unbalanced'
-          % TODO: have to pass in which class is +ve and -ve
-          imdb = constructMnistTwoClassUnbalancedImdb(opts.imdb.data_dir, opts.general.network_arch);
+        % case 'mnist-two-class-unbalanced'
+        %   % TODO: unbalanced imdbs should always be generated separately and consistent across all tests
+        %   % TODO: have to pass in which class is +ve and -ve
+        %   % TODO: should specifiy whether 'balanced-low' or 'balanced-high'...
+        %   imdb = constructMnistTwoClassUnbalancedImdb(opts.imdb.data_dir, opts.general.network_arch);
         case 'stl-10'
           imdb = constructSTL10Imdb(opts);
       end
@@ -114,14 +117,6 @@ function [net, results] = cnn_amir(inputs_opts)
       save(opts.paths.imdb_path, '-struct', 'imdb');
       if opts.general.debug_flag; afprintf(sprintf('done.\n\n')); end;
     end
-  end
-
-  % testing balanced imdb into single network
-  if opts.imdb.balance_train
-    afprintf(sprintf('[INFO] Balancing imdb...\n'));
-    fh_imdb_utils = imdbTwoClassUtils;
-    imdb = fh_imdb_utils.balanceImdb(imdb, 'train', 'downsample');
-    afprintf(sprintf('done!\n'));
   end
 
   opts.imdb.imdb = imdb;

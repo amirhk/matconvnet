@@ -1,16 +1,10 @@
-function results = testForest(dataset)
+function results = testForest(dataset, posneg_balance)
 
   opts.general.dataset = dataset;
-  afprintf(sprintf('[INFO] Constructing imdb...\n'));
+  opts.imdb.posneg_balance = posneg_balance;
+
+  afprintf(sprintf('[INFO] Constructing (???) / loading imdb...\n'));
   switch opts.general.dataset
-    case 'mnist-two-class-unbalanced'
-      opts.general.network_arch = 'lenet';
-      % imdb = constructMnistTwoClassUnbalancedImdb(opts.general.network_arch, 1, 9);
-      imdb = constructMnistTwoClassUnbalancedImdb(opts.general.network_arch, 9, 4);
-    case 'cifar-two-class-unbalanced'
-      opts.general.network_arch = 'lenet';
-      % imdb = constructMnistTwoClassUnbalancedImdb(opts.general.network_arch, 1, 9);
-      imdb = constructCifarTwoClassUnbalancedImdb(9, 4);
     case 'prostate'
       % TODO: fixup and test
       % opts.general.network_arch = 'prostatenet';
@@ -23,17 +17,10 @@ function results = testForest(dataset)
       % tmp_opts.leaveOutIndices = randomPatientIndices(1:num_test_patients);
       % tmp_opts.contrastNormalization = true;
       % tmp_opts.whitenData = true;
-      % imdb = constructProstateImdb(tmp_opts);
+    otherwise
+      imdb = loadSavedImdb(dataset, posneg_balance);
   end
   afprintf(sprintf('done!\n'));
-
-  opts.imdb.balance_train = false;
-  if opts.imdb.balance_train
-    afprintf(sprintf('[INFO] Balancing imdb...\n'));
-    fh_imdb_utils = imdbTwoClassUtils;
-    imdb = fh_imdb_utils.balanceImdb(imdb, 'train', 'downsample');
-    afprintf(sprintf('done!\n'));
-  end
 
   images = reshape(imdb.images.data, 3072, [])';
   labels = imdb.images.labels;

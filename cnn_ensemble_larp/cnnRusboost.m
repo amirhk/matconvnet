@@ -38,7 +38,7 @@ function folds = kFoldCNNRusboost()
       opts.imdb.test_augment_positive = 'none';
       opts.imdb.test_augment_negative = 'none';
     otherwise
-      opts.imdb.source = 'load'; % {'gen', 'load'}
+      opts.imdb.posneg_balance = 'unbalanced';
   end
 
   % -------------------------------------------------------------------------
@@ -97,20 +97,7 @@ function folds = kFoldCNNRusboost()
       for i = 1:opts.general.number_of_folds
         afprintf(sprintf('\n'));
         afprintf(sprintf('[INFO] Constructing / loading imdb for fold #%d...\n', i));
-        switch opts.imdb.source
-          case 'gen'
-            % TODO: have to pass in which class is +ve and -ve
-          case 'load'
-            switch opts.general.dataset
-              case 'mnist-two-class-unbalanced'
-                % tmp = load(fullfile(getDevPath(), 'data', 'saved-two-class-mnist-pos9-neg4.mat'));
-                tmp = load(fullfile(getDevPath(), 'data', 'saved-two-class-mnist-pos1-neg9.mat'));
-              case 'cifar-two-class-unbalanced'
-                % TODO: nothing saved!
-            end
-            imdb = tmp.imdb;
-        end
-        imdbs{i} = imdb;
+        imdbs{i} = loadSavedImdb(opts.general.dataset, opts.imdb.posneg_balance);
         afprintf(sprintf('[INFO] done!\n'));
       end
   end
@@ -122,7 +109,6 @@ function folds = kFoldCNNRusboost()
   single_ensemble_options.network_arch = opts.general.network_arch;
   single_ensemble_options.iteration_count = opts.general.iteration_count_limit;
   single_ensemble_options.experiment_parent_dir = opts.paths.experiment_dir;
-  single_ensemble_options.balance_train = false;
   single_ensemble_options.symmetric_weight_updates = false;
   for i = 1:opts.general.number_of_folds
     afprintf(sprintf('[INFO] Running cnn_rusboost on fold #%d...\n', i));
@@ -184,10 +170,6 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(single_ensemble_o
   % -------------------------------------------------------------------------
   %                                                     opts.ensemble_options
   % -------------------------------------------------------------------------
-  opts.ensemble_options.balance_train = getValueFromFieldOrDefault( ...
-    single_ensemble_options, ...
-    'balance_train', ...
-    false);
   opts.ensemble_options.symmetric_weight_updates = getValueFromFieldOrDefault( ...
     single_ensemble_options, ...
     'symmetric_weight_updates', ...
@@ -218,11 +200,6 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(single_ensemble_o
   %                               samples (to be randomly-undersampled later)
   % -------------------------------------------------------------------------
   fh_imdb_utils = imdbTwoClassUtils;
-  if opts.ensemble_options.balance_train
-    afprintf(sprintf('[INFO] Balancing imdb...\n'));
-    imdb = fh_imdb_utils.balanceImdb(imdb, 'train', 'downsample');
-    afprintf(sprintf('[INFO] done!\n'));
-  end
   [ ...
     data, ...
     data_train, ...

@@ -100,6 +100,8 @@ function main_cnn_amir(varargin)
 
   debug_flag = true;
 
+  % posneg_balance = 'balanced-low';
+
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
 % -- ==                                                                   -- ==
 % -- ==                           MAIN LOOP                               -- ==
@@ -111,9 +113,7 @@ function main_cnn_amir(varargin)
         for weight_decay = weight_decay_list
           for backprop_depth = backprop_depth_list
             for leave_out_index = leave_out_indices
-              tmp = load(fullfile(getDevPath(), 'data', 'saved-two-class-mnist-pos9-neg4.mat'));
-              opts.imdb = tmp.imdb;
-              opts.balance_train = true;
+              opts.imdb = loadSavedImdb(dataset, posneg_balance);
               opts.dataset = char(dataset);
               opts.network_arch = network_arch;
               opts.backprop_depth = backprop_depth;
