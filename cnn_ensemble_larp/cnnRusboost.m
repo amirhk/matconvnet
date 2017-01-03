@@ -14,10 +14,10 @@ function folds = kFoldCNNRusboost()
   % -------------------------------------------------------------------------
   opts.general.dataset = 'mnist-two-class-unbalanced';
   switch opts.general.dataset
-    case 'mnist-two-class-unbalanced'
-      opts.general.network_arch = 'lenet';
     case 'prostate'
       opts.general.network_arch = 'prostatenet';
+    otherwise
+      opts.general.network_arch = 'lenet';
   end
   opts.general.number_of_folds = 10;
   opts.general.iteration_count_limit = 10;
@@ -26,19 +26,19 @@ function folds = kFoldCNNRusboost()
   %                                                                  opts.imdb
   % -------------------------------------------------------------------------
   switch opts.general.dataset
-    case 'mnist-two-class-unbalanced'
-      opts.imdb.source = 'load'; % {'gen', 'load'}
     case 'prostate'
       opts.imdb.num_patients = 104;
       opts.imdb.leave_out_type = 'special';
       opts.imdb.contrast_normalization = true;
       % opts.imdb.whitenData = true;
       opts.imdb.train_balance = false;
-      opts.imdb.train_augment_negative = 'none';
       opts.imdb.train_augment_positive = 'none';
+      opts.imdb.train_augment_negative = 'none';
       opts.imdb.test_balance = false;
-      opts.imdb.test_augment_negative = 'none';
       opts.imdb.test_augment_positive = 'none';
+      opts.imdb.test_augment_negative = 'none';
+    otherwise
+      opts.imdb.source = 'load'; % {'gen', 'load'}
   end
 
   % -------------------------------------------------------------------------
@@ -76,21 +76,6 @@ function folds = kFoldCNNRusboost()
   imdbs = {}; % separate so don't have to save ~1.5 GB of imdbs!!!
 
   switch opts.general.dataset
-    case 'mnist-two-class-unbalanced'
-      for i = 1:opts.general.number_of_folds
-        afprintf(sprintf('\n'));
-        afprintf(sprintf('[INFO] Constructing / loading imdb for fold #%d...\n', i));
-        switch opts.imdb.source
-          case 'gen'
-            imdb = constructMnistTwoClassUnbalancedImdb(opts.general.network_arch);
-          case 'load'
-            % tmp = load(fullfile(getDevPath(), 'data', 'saved-two-class-mnist-pos9-neg4.mat'));
-            tmp = load(fullfile(getDevPath(), 'data', 'saved-two-class-mnist-pos1-neg9.mat'));
-            imdb = tmp.imdb;
-        end
-        imdbs{i} = imdb;
-        afprintf(sprintf('[INFO] done!\n'));
-      end
     case 'prostate'
       patients_per_fold = ceil(opts.imdb.num_patients / opts.general.number_of_folds);
       random_patient_indices = randperm(104);
@@ -105,6 +90,33 @@ function folds = kFoldCNNRusboost()
         afprintf(sprintf('[INFO] Constructing imdb for fold #%d...\n', i));
         opts.imdb.leave_out_indices = folds.(sprintf('fold_%d', i)).patient_indices;
         imdb = constructProstateImdb(opts.imdb);
+        imdbs{i} = imdb;
+        afprintf(sprintf('[INFO] done!\n'));
+      end
+    otherwise
+      for i = 1:opts.general.number_of_folds
+        afprintf(sprintf('\n'));
+        afprintf(sprintf('[INFO] Constructing / loading imdb for fold #%d...\n', i));
+        switch opts.imdb.source
+          case 'gen'
+            switch opts.general.dataset
+              case 'mnist-two-class-unbalanced'
+                % TODO: have to pass in which class is +ve and -ve
+                imdb = constructMnistTwoClassUnbalancedImdb(opts.general.network_arch, 1, 9);
+              case 'cifar-two-class-unbalanced'
+                % TODO: have to pass in which class is +ve and -ve
+                imdb = constructCifarTwoClassUnbalancedImdb(1, 9);
+            end
+          case 'load'
+            switch opts.general.dataset
+              case 'mnist-two-class-unbalanced'
+                % tmp = load(fullfile(getDevPath(), 'data', 'saved-two-class-mnist-pos9-neg4.mat'));
+                tmp = load(fullfile(getDevPath(), 'data', 'saved-two-class-mnist-pos1-neg9.mat'));
+              case 'cifar-two-class-unbalanced'
+                % TODO: nothing saved!
+            end
+            imdb = tmp.imdb;
+        end
         imdbs{i} = imdb;
         afprintf(sprintf('[INFO] done!\n'));
       end
@@ -263,7 +275,7 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(ensemble_options)
     afprintf(sprintf('[INFO] Boosting iteration #%d (attempt %d)...\n', t, count));
 
     % Resampling NEG_DATA with weights of positive example
-    afprintf(sprintf('[INFO] Resampling negative and positive data (ratio = %3.6f)... ', opts.general.random_undersampling_ratio));
+    afprintf(sprintf('[INFO] Resampling positive and negative data (ratio = %3.6f)... ', opts.general.random_undersampling_ratio));
 
     [resampled_data, resampled_labels] = fh_imdb_utils.resampleData( ...
       data_train, ...
@@ -276,17 +288,17 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(ensemble_options)
     training_resampled_imdb.images.labels = single(resampled_labels);
     training_resampled_imdb.images.set = 1 * ones(length(resampled_labels), 1);
 
-    afprintf(sprintf('[INFO] Training model (negative: %d, positive: %d)...\n', ...
-      numel(find(resampled_labels == 1)), ...
-      numel(find(resampled_labels == 2))));
+    afprintf(sprintf('[INFO] Training model (positive: %d, negative: %d)...\n', ...
+      numel(find(resampled_labels == 2)), ...
+      numel(find(resampled_labels == 1))));
     opts.single_cnn_options.imdb = training_resampled_imdb;
     [net, ~] = cnnAmir(opts.single_cnn_options);
 
     % IMPORTANT NOTE: we randomly undersample when training a model, but then,
     % we use all of the training samples (in their order) to update weights.
-    afprintf(sprintf('[INFO] Computing validation set predictions (negative: %d, positive: %d)...\n', ...
-      data_train_negative_count, ...
-      data_train_positive_count));
+    afprintf(sprintf('[INFO] Computing validation set predictions (positive: %d, negative: %d)...\n', ...
+      data_train_positive_count, ...
+      data_train_negative_count));
     validation_predictions = getPredictionsFromNetOnImdb(net, validation_imdb, 3);
     [ ...
       validation_acc, ...
@@ -375,9 +387,9 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(ensemble_options)
     % -------------------------------------------------------------------------
     %                                       8. test on single model of ensemble
     % -------------------------------------------------------------------------
-    afprintf(sprintf('[INFO] Computing test set predictions (negative: %d, positive: %d)...\n', ...
-      data_test_negative_count, ...
-      data_test_positive_count));
+    afprintf(sprintf('[INFO] Computing test set predictions (positive: %d, negative: %d)...\n', ...
+      data_test_positive_count, ...
+      data_test_negative_count));
     test_predictions = getPredictionsFromNetOnImdb(net, test_imdb, 3);
     [ ...
       test_acc, ...
@@ -392,10 +404,10 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(ensemble_options)
     ensemble_models{t}.model_net = H{t};
     ensemble_models{t}.model_loss = L(t);
     ensemble_models{t}.model_weight = B(t);
-    ensemble_models{t}.train_negative_count = numel(find(resampled_labels == 1));
     ensemble_models{t}.train_positive_count = numel(find(resampled_labels == 2));
-    ensemble_models{t}.validation_negative_count = data_train_negative_count;
+    ensemble_models{t}.train_negative_count = numel(find(resampled_labels == 1));
     ensemble_models{t}.validation_positive_count = data_train_positive_count;
+    ensemble_models{t}.validation_negative_count = data_train_negative_count;
     ensemble_models{t}.validation_predictions = validation_predictions;
     ensemble_models{t}.validation_labels = labels_train;
     ensemble_models{t}.validation_accuracy = validation_acc;
@@ -403,8 +415,8 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(ensemble_options)
     ensemble_models{t}.validation_specificity = validation_spec;
     ensemble_models{t}.validation_weights_pre_update = W(t,:);
     ensemble_models{t}.validation_weights_post_update = W(t + 1,:);
-    ensemble_models{t}.test_negative_count = data_test_negative_count;
     ensemble_models{t}.test_positive_count = data_test_positive_count;
+    ensemble_models{t}.test_negative_count = data_test_negative_count;
     ensemble_models{t}.test_predictions = test_predictions;
     ensemble_models{t}.test_labels = labels_test;
     ensemble_models{t}.test_accuracy = test_acc;
@@ -481,11 +493,11 @@ function weighted_results = testAllEnsembleModelsOnTestImdb(ensemble_models, imd
   % -------------------------------------------------------------------------
   data_test = imdb.images.data(:,:,:,imdb.images.set == 3);
   labels_test = imdb.images.labels(imdb.images.set == 3);
-  data_test_negative = data_test(:,:,:,labels_test == 1);
   data_test_positive = data_test(:,:,:,labels_test == 2);
+  data_test_negative = data_test(:,:,:,labels_test == 1);
   data_test_count = size(data_test, 4);
-  data_test_negative_count = size(data_test_negative, 4);
   data_test_positive_count = size(data_test_positive, 4);
+  data_test_negative_count = size(data_test_negative, 4);
 
   % -------------------------------------------------------------------------
   % Construct IMDB
@@ -506,10 +518,10 @@ function weighted_results = testAllEnsembleModelsOnTestImdb(ensemble_models, imd
   test_set_predictions_per_model = {};
   for i = 1:size(H, 2) % looping through all trained networks
     afprintf(sprintf('\n'));
-    afprintf(sprintf('[INFO] Computing test set predictions for model #%d (negative: %d, positive: %d)...\n', ...
+    afprintf(sprintf('[INFO] Computing test set predictions for model #%d (positive: %d, negative: %d)...\n', ...
       i, ...
-      data_test_negative_count, ...
-      data_test_positive_count));
+      data_test_positive_count, ...
+      data_test_negative_count));
     net = H{i};
     test_set_predictions_per_model{i} = getPredictionsFromNetOnImdb(net, test_imdb, 3);
     [acc, sens, spec] = getAccSensSpec(labels_test, test_set_predictions_per_model{i}, true);
@@ -518,8 +530,8 @@ function weighted_results = testAllEnsembleModelsOnTestImdb(ensemble_models, imd
   for i = 1:data_test_count
     % Calculating the total weight of the class labels from all the models
     % produced during boosting
-    wt_negative = 0; % class 1
     wt_positive = 0; % class 2
+    wt_negative = 0; % class 1
     for j = 1:size(H, 2) % looping through all trained networks
        p = test_set_predictions_per_model{j}(i);
        if p == 2 % if is positive

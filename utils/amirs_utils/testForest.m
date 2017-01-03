@@ -7,10 +7,10 @@ function results = testForest(dataset)
       opts.general.network_arch = 'lenet';
       % imdb = constructMnistTwoClassUnbalancedImdb(opts.general.network_arch, 1, 9);
       imdb = constructMnistTwoClassUnbalancedImdb(opts.general.network_arch, 9, 4);
-    case 'mnist-two-class-unbalanced'
+    case 'cifar-two-class-unbalanced'
       opts.general.network_arch = 'lenet';
       % imdb = constructMnistTwoClassUnbalancedImdb(opts.general.network_arch, 1, 9);
-      imdb = constructMnistTwoClassUnbalancedImdb(opts.general.network_arch, 9, 4);
+      imdb = constructCifarTwoClassUnbalancedImdb(9, 4);
     case 'prostate'
       % TODO: fixup and test
       % opts.general.network_arch = 'prostatenet';
@@ -70,6 +70,7 @@ function results = testForest(dataset)
   all_tests_results = {};
   test_repeat_count = 10;
   for i = 1: test_repeat_count
+    afprintf(sprintf('\nTest #%d\n', i));
     t = templateTree('MinLeafSize',5);
     tic
     rus_tree = fitensemble( ...

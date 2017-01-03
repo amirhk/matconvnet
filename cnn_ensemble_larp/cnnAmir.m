@@ -97,12 +97,16 @@ function [net, results] = cnn_amir(inputs_opts)
           imdb = constructProstateImdb(opts);
         case 'cifar'
           imdb = constructCifarImdb(opts);
+        case 'cifar-two-class-unbalanced'
+          % TODO: have to pass in which class is +ve and -ve
+          imdb = constructCifarTwoClassUnbalancedImdb(opts.imdb.data_dir, opts.general.network_arch);
         case 'coil-100'
           imdb = constructCOIL100Imdb(opts);
         case 'mnist'
           imdb = constructMnistImdb(opts);
         case 'mnist-two-class-unbalanced'
-          imdb = constructMnistUnbalancedTwoClassImdb(opts.imdb.data_dir, opts.general.network_arch);
+          % TODO: have to pass in which class is +ve and -ve
+          imdb = constructMnistTwoClassUnbalancedImdb(opts.imdb.data_dir, opts.general.network_arch);
         case 'stl-10'
           imdb = constructSTL10Imdb(opts);
       end

@@ -35,7 +35,7 @@ function [all_tests_net, all_tests_results] = testSingleNetwork(balance_train, b
   single_test_options.gpus = ifNotMacSetGpu(gpu);
 
   for i = 1:test_repeat_count
-    fprintf('\n');
+    afprintf(sprintf('\nTest #%d\n', i));
     [all_tests_net{i}, all_tests_results{i}] = cnnAmir(single_test_options);
     results.test_acc(i) = all_tests_results{i}.test.acc;
     results.test_sens(i) = all_tests_results{i}.test.sens;

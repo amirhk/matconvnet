@@ -58,14 +58,14 @@ function [ ...
   labels_test = imdb.images.labels(data_test_indices);
 
   if print_info
-    afprintf(sprintf('[INFO] TRAINING SET: total: %d, negative: %d, positive: %d\n', ...
+    afprintf(sprintf('[INFO] TRAINING SET: total: %d, positive: %d, negative: %d\n', ...
       data_train_count, ...
-      data_train_negative_count, ...
-      data_train_positive_count));
-    afprintf(sprintf('[INFO] TESTING SET: total: %d, negative: %d, positive: %d\n', ...
+      data_train_positive_count, ...
+      data_train_negative_count));
+    afprintf(sprintf('[INFO] TESTING SET: total: %d, positive: %d, negative: %d\n', ...
       data_test_count, ...
-      data_test_negative_count, ...
-      data_test_positive_count));
+      data_test_positive_count, ...
+      data_test_negative_count));
   end
 
 % TODO: this should really be resampleImdb w/ a bunch of options to resample
@@ -76,13 +76,13 @@ function [resampled_data, resampled_labels] = resampleData(data, labels, weights
   % -------------------------------------------------------------------------
   % Initial stuff
   % -------------------------------------------------------------------------
-  data_negative = data(:,:,:,labels == 1);
   data_positive = data(:,:,:,labels == 2);
+  data_negative = data(:,:,:,labels == 1);
   data_count = size(data, 4);
-  data_negative_count = size(data_negative, 4);
   data_positive_count = size(data_positive, 4);
-  data_negative_indices = find(labels == 1);
+  data_negative_count = size(data_negative, 4);
   data_positive_indices = find(labels == 2);
+  data_negative_indices = find(labels == 1);
 
   % -------------------------------------------------------------------------
   % Random Under-sampling (RUS): Negative Data
@@ -104,8 +104,8 @@ function [resampled_data, resampled_labels] = resampleData(data, labels, weights
   % -------------------------------------------------------------------------
   % Weighted Upsampling (more weight -> more repeat): Negative & Positive Data
   % -------------------------------------------------------------------------
-  max_repeat_negative = 25;
   max_repeat_positive = 200;
+  max_repeat_negative = 25;
   normalized_weights = weights / min(weights);
   repeat_counts = ceil(normalized_weights);
   for j = data_negative_indices
@@ -122,19 +122,19 @@ function [resampled_data, resampled_labels] = resampleData(data, labels, weights
   negative_repeat_counts = repeat_counts(downsampled_data_negative_indices);
   positive_repeat_counts = repeat_counts(data_positive_indices);
 
-  upsampled_data_negative = upsample(downsampled_data_negative, negative_repeat_counts);
   upsampled_data_positive = upsample(data_positive, positive_repeat_counts);
+  upsampled_data_negative = upsample(downsampled_data_negative, negative_repeat_counts);
 
   % -------------------------------------------------------------------------
   % Putting it all together
   % -------------------------------------------------------------------------
-  resampled_data_negative_count = size(upsampled_data_negative, 4);
   resampled_data_positive_count = size(upsampled_data_positive, 4);
-  resampled_data_all = cat(4, upsampled_data_negative, upsampled_data_positive);
+  resampled_data_negative_count = size(upsampled_data_negative, 4);
+  resampled_data_all = cat(4, upsampled_data_positive, upsampled_data_negative);
   resampled_labels_all = cat( ...
     2, ...
-    1 * ones(1, resampled_data_negative_count), ...
-    2 * ones(1, resampled_data_positive_count));
+    1 * ones(1, resampled_data_positive_count), ...
+    2 * ones(1, resampled_data_negative_count));
 
   % -------------------------------------------------------------------------
   % Shuffle this to mixup order of negative and positive in imdb so we don't
@@ -326,24 +326,24 @@ function imdb = balanceImdb(imdb, set_name, balance_type)
   afprintf(sprintf('done!\n\n'));
 
 % -------------------------------------------------------------------------
-function imdb = constructTwoClassUnbalancedImdb(imdb, negative_class_number, positive_class_number)
+function imdb = constructTwoClassUnbalancedImdb(imdb, positive_class_number, negative_class_number)
 % -------------------------------------------------------------------------
   % indices
-  train_negative_indices = bsxfun(@and, imdb.images.labels == negative_class_number, imdb.images.set == 1);
   train_positive_indices = bsxfun(@and, imdb.images.labels == positive_class_number, imdb.images.set == 1);
-  test_negative_indices = bsxfun(@and, imdb.images.labels == negative_class_number, imdb.images.set == 3);
+  train_negative_indices = bsxfun(@and, imdb.images.labels == negative_class_number, imdb.images.set == 1);
   test_positive_indices = bsxfun(@and, imdb.images.labels == positive_class_number, imdb.images.set == 3);
+  test_negative_indices = bsxfun(@and, imdb.images.labels == negative_class_number, imdb.images.set == 3);
 
   % train set
-  data_train_negative = imdb.images.data(:,:,:,train_negative_indices);
   data_train_positive = imdb.images.data(:,:,:,train_positive_indices);
+  data_train_negative = imdb.images.data(:,:,:,train_negative_indices);
   downsampled_data_train_positive_indices = randsample(size(data_train_positive, 4), floor(size(data_train_positive, 4) / 200));
   downsampled_data_train_positive = data_train_positive(:,:,:, downsampled_data_train_positive_indices);
 
-  data_train_negative = data_train_negative;
   data_train_positive = downsampled_data_train_positive;
-  labels_train_negative = 1 * ones(1, size(data_train_negative, 4));
+  data_train_negative = data_train_negative;
   labels_train_positive = 2 * ones(1, size(data_train_positive, 4));
+  labels_train_negative = 1 * ones(1, size(data_train_negative, 4));
 
   data_train = cat(4, data_train_positive, data_train_negative);
   labels_train = cat(2, labels_train_positive, labels_train_negative);
@@ -354,10 +354,10 @@ function imdb = constructTwoClassUnbalancedImdb(imdb, negative_class_number, pos
   labels_train = labels_train(ix);
 
   % test set
-  data_test_negative = imdb.images.data(:,:,:,test_negative_indices);
   data_test_positive = imdb.images.data(:,:,:,test_positive_indices);
-  labels_test_negative = 1 * ones(1, size(data_test_negative, 4));
+  data_test_negative = imdb.images.data(:,:,:,test_negative_indices);
   labels_test_positive = 2 * ones(1, size(data_test_positive, 4));
+  labels_test_negative = 1 * ones(1, size(data_test_negative, 4));
 
   data_test = cat(4, data_test_positive, data_test_negative);
   labels_test = cat(2, labels_test_positive, labels_test_negative);
