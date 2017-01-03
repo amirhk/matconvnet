@@ -1,9 +1,9 @@
 function imdb = loadSavedImdb(dataset, posneg_balance)
-  % dataset: {'mnist-two-class-unbalanced', 'cifar-two-class-unbalanced'}
+  % dataset: {'mnist-two-class', 'cifar-two-class'}
   % posneg_balance: {'unbalanced', 'balanced-low', 'balanced-high'}
   afprintf(sprintf('[INFO] Loading imdb (dataset: %s, posneg_balance: %s)\n', dataset, posneg_balance));
   switch dataset
-    case 'mnist-two-class-unbalanced'
+    case 'mnist-two-class'
       switch posneg_balance
         case 'unbalanced'
           tmp = load(fullfile(getDevPath(), 'data', 'two_class_imdbs', 'saved-two-class-mnist-pos9-neg4-unbalanced.mat'));

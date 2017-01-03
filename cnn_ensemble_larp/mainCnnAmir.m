@@ -6,7 +6,7 @@ function main_cnn_amir(varargin)
 % -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- == -- ==
   % dataset_list = {'cifar', 'stl-10', 'coil-100'}; % {'mnist', 'cifar', 'stl-10', 'coil-100'}
   % dataset_list = {'cifar', 'coil-100', 'mnist', 'stl-10'};
-  dataset_list = {'mnist-two-class-unbalanced'};
+  dataset_list = {'mnist-two-class'};
 
   % network_arch = 'mnistnet';
   % % backprop_depth_list = [8, 6, 4];

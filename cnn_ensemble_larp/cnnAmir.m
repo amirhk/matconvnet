@@ -96,7 +96,7 @@ function [net, results] = cnn_amir(inputs_opts)
           imdb = constructProstateImdb(opts);
         case 'cifar'
           imdb = constructCifarImdb(opts);
-        % case 'cifar-two-class-unbalanced'
+        % case 'cifar-two-class'
         %   % TODO: unbalanced imdbs should always be generated separately and consistent across all tests
         %   % TODO: have to pass in which class is +ve and -ve
         %   % TODO: should specifiy whether 'balanced-low' or 'balanced-high'...
@@ -105,7 +105,7 @@ function [net, results] = cnn_amir(inputs_opts)
           imdb = constructCOIL100Imdb(opts);
         case 'mnist'
           imdb = constructMnistImdb(opts);
-        % case 'mnist-two-class-unbalanced'
+        % case 'mnist-two-class'
         %   % TODO: unbalanced imdbs should always be generated separately and consistent across all tests
         %   % TODO: have to pass in which class is +ve and -ve
         %   % TODO: should specifiy whether 'balanced-low' or 'balanced-high'...

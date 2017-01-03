@@ -12,7 +12,7 @@ function folds = kFoldCNNRusboost()
   % -------------------------------------------------------------------------
   %                                                               opts.general
   % -------------------------------------------------------------------------
-  opts.general.dataset = 'mnist-two-class-unbalanced';
+  opts.general.dataset = 'mnist-two-class';
   switch opts.general.dataset
     case 'prostate'
       opts.general.network_arch = 'prostatenet';
