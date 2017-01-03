@@ -18,6 +18,19 @@ function saveStruct2File(input_struct, filePath, recursion_depth)
           fprintf(fileID, '\t');
         end
         fprintf(fileID, '%s: %d\n', fields{i}, value);
+      case 'single'
+        for j = 1:recursion_depth
+          fprintf(fileID, '\t');
+        end
+        if numel(value) == 1
+          fprintf(fileID, '%s: %.6f\n', fields{i}, value);
+        else
+          fprintf(fileID, '%s: ', fields{i});
+          for k = 1:numel(value)
+            fprintf(fileID, '%.6f  ', value(k));
+          end
+          fprintf(fileID, '\n');
+        end
       case 'double'
         for j = 1:recursion_depth
           fprintf(fileID, '\t');

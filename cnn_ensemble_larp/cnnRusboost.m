@@ -199,7 +199,7 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(ensemble_options)
   %                               samples (to be randomly-undersampled later)
   % -------------------------------------------------------------------------
   fh_imdb_utils = imdbTwoClassUtils;
-  afprintf(sprintf('[INFO] balancing imdb... '));
+  afprintf(sprintf('[INFO] Balancing imdb... '));
   imdb = fh_imdb_utils.balanceImdb(imdb, 'train', 'downsample');
   afprintf(sprintf('[INFO] done!\n'));
   [ ...

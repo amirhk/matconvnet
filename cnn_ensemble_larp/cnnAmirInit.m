@@ -415,12 +415,14 @@ function structuredLayer = reluLayer(layer_number)
   structuredLayer = struct( ...
     'type', 'relu', ...
     'name', sprintf('relu%s', layer_number));
+
 % --------------------------------------------------------------------
 function structuredLayer = tanhLayer(layer_number)
 % --------------------------------------------------------------------
   structuredLayer = struct( ...
     'type', 'tanh', ...
     'name', sprintf('tanh%s', layer_number));
+
 % --------------------------------------------------------------------
 function structuredLayer = poolingLayer(layer_number)
 % --------------------------------------------------------------------
@@ -431,6 +433,7 @@ function structuredLayer = poolingLayer(layer_number)
     'pool', [2 2], ...
     'stride', 2, ...
     'pad', 0); % Emulate caffe_n
+
 % --------------------------------------------------------------------
 function structuredLayer = poolingLayerAlexNet(layer_number)
 % --------------------------------------------------------------------
@@ -441,6 +444,7 @@ function structuredLayer = poolingLayerAlexNet(layer_number)
     'pool', [3 3], ...
     'stride', 2, ...
     'pad', [0 1 0 1]); % Emulate caffe_n
+
 % --------------------------------------------------------------------
 function structuredLayer = poolingLayerLeNetAvg(layer_number)
 % --------------------------------------------------------------------
@@ -451,6 +455,7 @@ function structuredLayer = poolingLayerLeNetAvg(layer_number)
     'pool', [3 3], ...
     'stride', 2, ...
     'pad', [0 1 0 1]); % Emulate caffe_n
+
 % --------------------------------------------------------------------
 function structuredLayer = poolingLayerLeNetMax(layer_number)
 % --------------------------------------------------------------------
@@ -461,6 +466,7 @@ function structuredLayer = poolingLayerLeNetMax(layer_number)
     'pool', [3 3], ...
     'stride', 2, ...
     'pad', [0 1 0 1]); % Emulate caffe_n
+
 % --------------------------------------------------------------------
 function structuredLayer = dropoutLayer(layer_number, dropout_ratio)
 % --------------------------------------------------------------------
@@ -468,6 +474,7 @@ function structuredLayer = dropoutLayer(layer_number, dropout_ratio)
     'type', 'dropout', ...
     'name', sprintf('dropout%s', layer_number), ...
     'rate', dropout_ratio);
+
 % --------------------------------------------------------------------
 function structuredLayer = bnormLayer(layer_number, ndim)
 % --------------------------------------------------------------------
@@ -476,6 +483,7 @@ function structuredLayer = bnormLayer(layer_number, ndim)
     'weights', {{ones(ndim, 1, 'single'), zeros(ndim, 1, 'single')}}, ...
     'learningRate', [1 1], ...
     'weightDecay', [0 0]);
+
 % --------------------------------------------------------------------
 function throwException(msg)
 % --------------------------------------------------------------------

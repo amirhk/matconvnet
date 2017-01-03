@@ -53,5 +53,6 @@ function imdb = constructMnistUnbalancedTwoClassImdb(network_arch, negative_clas
   imdb.meta.classes = arrayfun(@(x)sprintf('%d',x),0:9,'uniformoutput',false) ;
   afprintf(sprintf('done!\n\n'));
 
-  afprintf(sprintf('== == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == ==\n\n'));
+  printConsoleOutputSeparator();
   [~] = fh_imdb_utils.getImdbInfo(imdb, true);
+  printConsoleOutputSeparator();
