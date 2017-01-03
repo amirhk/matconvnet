@@ -326,7 +326,7 @@ function imdb = balanceImdb(imdb, set_name, balance_type)
   afprintf(sprintf('done!\n\n'));
 
 % -------------------------------------------------------------------------
-function imdb = constructTwoClassUnbalancedImdb(imdb, positive_class_number, negative_class_number)
+function imdb = constructTwoClassUnbalancedImdb(imdb, positive_class_number, negative_class_number, unbalance_inverse_ratio)
 % -------------------------------------------------------------------------
   % indices
   train_positive_indices = bsxfun(@and, imdb.images.labels == positive_class_number, imdb.images.set == 1);
@@ -337,7 +337,7 @@ function imdb = constructTwoClassUnbalancedImdb(imdb, positive_class_number, neg
   % train set
   data_train_positive = imdb.images.data(:,:,:,train_positive_indices);
   data_train_negative = imdb.images.data(:,:,:,train_negative_indices);
-  downsampled_data_train_positive_indices = randsample(size(data_train_positive, 4), floor(size(data_train_positive, 4) / 200));
+  downsampled_data_train_positive_indices = randsample(size(data_train_positive, 4), floor(size(data_train_positive, 4) / unbalance_inverse_ratio));
   downsampled_data_train_positive = data_train_positive(:,:,:, downsampled_data_train_positive_indices);
 
   data_train_positive = downsampled_data_train_positive;

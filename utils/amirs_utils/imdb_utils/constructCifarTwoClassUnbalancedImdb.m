@@ -9,7 +9,7 @@ function imdb = constructCifarTwoClassUnbalancedImdb(positive_class_number, nega
   imdb = constructCifarImdb(opts);
 
   fh_imdb_utils = imdbTwoClassUtils;
-  imdb = fh_imdb_utils.constructTwoClassUnbalancedImdb(imdb, positive_class_number, negative_class_number);
+  imdb = fh_imdb_utils.constructTwoClassUnbalancedImdb(imdb, positive_class_number, negative_class_number, 200);
   afprintf(sprintf('done!\n\n'));
 
   printConsoleOutputSeparator();
