@@ -1,7 +1,7 @@
 function [all_tests_net, all_tests_results] = testSingleNetwork(dataset, posneg_balance, backprop_depth, gpu)
   all_tests_net = {};
   all_tests_results = {};
-  test_repeat_count = 5;
+  test_repeat_count = 10;
   opts.general.dataset = dataset;
   opts.general.network_arch = 'lenet';
   opts.imdb.posneg_balance = posneg_balance;
