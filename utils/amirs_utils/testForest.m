@@ -90,16 +90,23 @@ function results = testForest(input_opts)
     tic
     Yfit = predict(rus_tree, cov_type(is_test,:));
     toc
-    tab = tabulate(Y(is_test));
-    confusion_matrix = bsxfun(@rdivide, confusionmat(Y(is_test), Yfit), tab(:,2)) * 100;
+    % tab = tabulate(Y(is_test));
+    % confusion_matrix = bsxfun(@rdivide, confusionmat(Y(is_test), Yfit), tab(:,2)) * 100;
+    % acc = (1 - l_loss(end)) * 100;
+    % spec = confusion_matrix(1,1);
+    % sens = confusion_matrix(2,2);
 
-    acc = (1 - l_loss(end)) * 100;
-    spec = confusion_matrix(1,1);
-    sens = confusion_matrix(2,2);
+    labels = Y(is_test);
+    predictions = Yfit;
+    [ ...
+      acc, ...
+      sens, ...
+      spec, ...
+    ] = getAccSensSpec(labels, predictions, true);
 
-    afprintf(sprintf('[INFO] Acc: %6.2f\n', acc));
-    afprintf(sprintf('[INFO] Sens: %6.2f\n', sens));
-    afprintf(sprintf('[INFO] Spec: %6.2f\n', spec));
+    afprintf(sprintf('[INFO] Acc: %.6f\n', acc));
+    afprintf(sprintf('[INFO] Sens: %.6f\n', sens));
+    afprintf(sprintf('[INFO] Spec: %.6f\n', spec));
     printConsoleOutputSeparator();
 
     results.test_acc(i) = acc;
