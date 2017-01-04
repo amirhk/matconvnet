@@ -59,6 +59,20 @@ function folds = kFoldCNNRusboost(input_opts)
   opts.paths.options_file_path = fullfile(opts.paths.experiment_dir, 'options.txt');
   opts.paths.results_file_path = fullfile(opts.paths.experiment_dir, 'results.txt');
 
+
+
+  % -------------------------------------------------------------------------
+  %                                              opts.single_ensemble_options
+  % -------------------------------------------------------------------------
+  opts.single_ensemble_options.dataset = opts.general.dataset;
+  opts.single_ensemble_options.network_arch = opts.general.network_arch;
+  opts.single_ensemble_options.iteration_count = opts.general.iteration_count_limit;
+  opts.single_ensemble_options.experiment_parent_dir = opts.paths.experiment_dir;
+  opts.single_ensemble_options.gpu = ifNotMacSetGpu(getValueFromFieldOrDefault(input_opts, 'gpu', 1));
+  opts.single_ensemble_options.backprop_depth = getValueFromFieldOrDefault(input_opts, 'backprop_depth', 4);
+  opts.single_ensemble_options.symmetric_weight_updates = getValueFromFieldOrDefault(input_opts, 'symmetric_weight_updates', false);
+  opts.single_ensemble_options.symmetric_loss_updates = getValueFromFieldOrDefault(input_opts, 'symmetric_loss_updates', false);
+
   % -------------------------------------------------------------------------
   %                                                    save experiment setup!
   % -------------------------------------------------------------------------
@@ -106,21 +120,13 @@ function folds = kFoldCNNRusboost(input_opts)
   % -------------------------------------------------------------------------
   %                                        train ensemble larp for each fold!
   % -------------------------------------------------------------------------
-  single_ensemble_options.dataset = opts.general.dataset;
-  single_ensemble_options.network_arch = opts.general.network_arch;
-  single_ensemble_options.iteration_count = opts.general.iteration_count_limit;
-  single_ensemble_options.experiment_parent_dir = opts.paths.experiment_dir;
-  single_ensemble_options.gpu = ifNotMacSetGpu(getValueFromFieldOrDefault(input_opts, 'gpu', 1));
-  single_ensemble_options.backprop_depth = getValueFromFieldOrDefault(input_opts, 'backprop_depth', 4);
-  single_ensemble_options.symmetric_weight_updates = getValueFromFieldOrDefault(input_opts, 'symmetric_weight_updates', false);
-  single_ensemble_options.symmetric_loss_updates = getValueFromFieldOrDefault(input_opts, 'symmetric_loss_updates', false);
   for i = 1:opts.general.number_of_folds
     afprintf(sprintf('[INFO] Running cnn_rusboost on fold #%d...\n', i));
-    single_ensemble_options.imdb = imdbs{i};
+    opts.single_ensemble_options.imdb = imdbs{i};
     [ ...
       folds.(sprintf('fold_%d', i)).ensemble_models, ...
       folds.(sprintf('fold_%d', i)).weighted_results, ...
-    ] = mainCNNRusboost(single_ensemble_options);
+    ] = mainCNNRusboost(opts.single_ensemble_options);
     % overwrite and save results so far
     save(opts.paths.folds_file_path, 'folds');
     saveKFoldResults(folds, opts.paths.results_file_path);
