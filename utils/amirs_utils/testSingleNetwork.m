@@ -65,7 +65,7 @@ function results = testSingleNetwork(input_opts)
 
   for i = 1:test_repeat_count
     printConsoleOutputSeparator();
-    afprintf(sprintf('\nTest #%d\n', i));
+    afprintf(sprintf('Test #%d\n', i));
     [all_tests_net{i}, all_tests_results{i}] = cnnAmir(single_cnn_options);
     results.test_acc(i) = all_tests_results{i}.test.acc;
     results.test_sens(i) = all_tests_results{i}.test.sens;
