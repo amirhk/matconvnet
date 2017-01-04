@@ -32,7 +32,7 @@ function runAllTests(dataset, posneg_balance);
     mkdir(opts.paths.experiment_dir);
   end
   opts.paths.options_file_path = fullfile(opts.paths.experiment_dir, 'options.txt');
-  opts.paths.results_file_path = fullfile(opts.paths.experiment_dir, 'results.txt');
+  % opts.paths.results_file_path = fullfile(opts.paths.experiment_dir, 'results.txt');
 
   % -------------------------------------------------------------------------
   %                                                    save experiment setup!

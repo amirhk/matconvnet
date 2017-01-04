@@ -113,19 +113,19 @@ function [resampled_data, resampled_labels] = resampleData(data, labels, weights
   max_repeat_negative = 25;
   normalized_weights = weights / min(weights);
   repeat_counts = ceil(normalized_weights);
-  for j = data_negative_indices
-    if repeat_counts(j) > max_repeat_negative
-      repeat_counts(j) = max_repeat_negative;
-    end
-  end
   for j = data_positive_indices
     if repeat_counts(j) > max_repeat_positive
       repeat_counts(j) = max_repeat_positive;
     end
   end
+  for j = data_negative_indices
+    if repeat_counts(j) > max_repeat_negative
+      repeat_counts(j) = max_repeat_negative;
+    end
+  end
 
-  negative_repeat_counts = repeat_counts(downsampled_data_negative_indices);
   positive_repeat_counts = repeat_counts(data_positive_indices);
+  negative_repeat_counts = repeat_counts(downsampled_data_negative_indices);
 
   upsampled_data_positive = upsample(data_positive, positive_repeat_counts);
   upsampled_data_negative = upsample(downsampled_data_negative, negative_repeat_counts);
@@ -138,8 +138,8 @@ function [resampled_data, resampled_labels] = resampleData(data, labels, weights
   resampled_data_all = cat(4, upsampled_data_positive, upsampled_data_negative);
   resampled_labels_all = cat( ...
     2, ...
-    1 * ones(1, resampled_data_positive_count), ...
-    2 * ones(1, resampled_data_negative_count));
+    2 * ones(1, resampled_data_positive_count), ...
+    1 * ones(1, resampled_data_negative_count));
 
   % -------------------------------------------------------------------------
   % Shuffle this to mixup order of negative and positive in imdb so we don't
