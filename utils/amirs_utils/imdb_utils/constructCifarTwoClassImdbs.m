@@ -15,18 +15,6 @@ function [imdb_balanced_high, imdb_balanced_low, imdb_unbalanced] = constructCif
     negative_class_number);
 
   % -------------------------------------------------------------------------
-  %                                                             balanced-high
-  % -------------------------------------------------------------------------
-  afprintf(sprintf('[INFO] `balanced-high`...\n'));
-  imdb = fh_imdb_utils.constructTwoClassUnbalancedImdb(all_cifar_imdb, positive_class_number, negative_class_number, 1);
-  imdb_balanced_high = imdb;
-  afprintf(sprintf('done!\n\n'));
-
-  [~] = fh_imdb_utils.getImdbInfo(imdb, true);
-  printConsoleOutputSeparator();
-  save(sprintf('%s-balanced-train-5000-5000.mat', save_file_name_prefix), 'imdb');
-
-  % -------------------------------------------------------------------------
   %                                                              balanced-low
   % -------------------------------------------------------------------------
   afprintf(sprintf('[INFO] `balanced-low`...\n'));
@@ -50,3 +38,15 @@ function [imdb_balanced_high, imdb_balanced_low, imdb_unbalanced] = constructCif
   [~] = fh_imdb_utils.getImdbInfo(imdb, true);
   printConsoleOutputSeparator();
   save(sprintf('%s-unbalanced-25-5000.mat', save_file_name_prefix), 'imdb');
+
+  % -------------------------------------------------------------------------
+  %                                                             balanced-high
+  % -------------------------------------------------------------------------
+  afprintf(sprintf('[INFO] `balanced-high`...\n'));
+  imdb = fh_imdb_utils.constructTwoClassUnbalancedImdb(all_cifar_imdb, positive_class_number, negative_class_number, 1);
+  imdb_balanced_high = imdb;
+  afprintf(sprintf('done!\n\n'));
+
+  [~] = fh_imdb_utils.getImdbInfo(imdb, true);
+  printConsoleOutputSeparator();
+  save(sprintf('%s-balanced-train-5000-5000.mat', save_file_name_prefix), 'imdb');
