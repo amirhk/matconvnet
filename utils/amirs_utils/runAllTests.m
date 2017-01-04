@@ -85,16 +85,40 @@ function runAllTests(dataset, posneg_balance, gpu);
   % exp 1
   single_test_options.backprop_depth = 4;
   single_test_options.symmetric_weight_updates = false;
+  single_test_options.symmetric_loss_updates = false;
   fh.kFoldCNNRusboost(single_test_options);
   % exp 2
   single_test_options.backprop_depth = 4;
   single_test_options.symmetric_weight_updates = true;
+  single_test_options.symmetric_loss_updates = false;
   fh.kFoldCNNRusboost(single_test_options);
   % exp 3
   single_test_options.backprop_depth = 13;
   single_test_options.symmetric_weight_updates = false;
+  single_test_options.symmetric_loss_updates = false;
   fh.kFoldCNNRusboost(single_test_options);
   % exp 4
   single_test_options.backprop_depth = 13;
   single_test_options.symmetric_weight_updates = true;
+  single_test_options.symmetric_loss_updates = false;
+  fh.kFoldCNNRusboost(single_test_options);
+  % exp 5
+  single_test_options.backprop_depth = 4;
+  single_test_options.symmetric_weight_updates = false;
+  single_test_options.symmetric_loss_updates = true;
+  fh.kFoldCNNRusboost(single_test_options);
+  % exp 6
+  single_test_options.backprop_depth = 4;
+  single_test_options.symmetric_weight_updates = true;
+  single_test_options.symmetric_loss_updates = true;
+  fh.kFoldCNNRusboost(single_test_options);
+  % exp 7
+  single_test_options.backprop_depth = 13;
+  single_test_options.symmetric_weight_updates = false;
+  single_test_options.symmetric_loss_updates = true;
+  fh.kFoldCNNRusboost(single_test_options);
+  % exp 8
+  single_test_options.backprop_depth = 13;
+  single_test_options.symmetric_weight_updates = true;
+  single_test_options.symmetric_loss_updates = true;
   fh.kFoldCNNRusboost(single_test_options);

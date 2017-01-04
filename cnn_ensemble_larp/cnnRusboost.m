@@ -113,6 +113,7 @@ function folds = kFoldCNNRusboost(input_opts)
   single_ensemble_options.gpu = ifNotMacSetGpu(getValueFromFieldOrDefault(input_opts, 'gpu', 1));
   single_ensemble_options.backprop_depth = getValueFromFieldOrDefault(input_opts, 'backprop_depth', 4);
   single_ensemble_options.symmetric_weight_updates = getValueFromFieldOrDefault(input_opts, 'symmetric_weight_updates', false);
+  single_ensemble_options.symmetric_loss_updates = getValueFromFieldOrDefault(input_opts, 'symmetric_loss_updates', false);
   for i = 1:opts.general.number_of_folds
     afprintf(sprintf('[INFO] Running cnn_rusboost on fold #%d...\n', i));
     single_ensemble_options.imdb = imdbs{i};
@@ -176,6 +177,10 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(single_ensemble_o
   opts.ensemble_options.symmetric_weight_updates = getValueFromFieldOrDefault( ...
     single_ensemble_options, ...
     'symmetric_weight_updates', ...
+    false);
+  opts.ensemble_options.symmetric_loss_updates = getValueFromFieldOrDefault( ...
+    single_ensemble_options, ...
+    'symmetric_loss_updates', ...
     false);
   opts.ensemble_options.random_undersampling_ratio = (50/50);
 
@@ -313,8 +318,11 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(single_ensemble_o
         continue;
       else
         if labels_train(i) == 2
-          % loss = loss + min(negative_to_positive_ratio, 5) * W(t, i);
-          loss = loss + W(t, i);
+          if opts.ensemble_options.symmetric_loss_updates
+            loss = loss + W(t, i);
+          else
+            loss = loss + W(t, i) * min(negative_to_positive_ratio, 2)
+          end
         else
           loss = loss + W(t, i);
         end
@@ -368,7 +376,7 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(single_ensemble_o
           if opts.ensemble_options.symmetric_weight_updates
             W(t + 1, i) = W(t, i);
           else
-            W(t + 1, i) = min(negative_to_positive_ratio, 2) * W(t, i);
+            W(t + 1, i) = W(t, i) * min(negative_to_positive_ratio, 2);
           end
         else
           W(t + 1, i) = W(t, i);
