@@ -321,7 +321,7 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(single_ensemble_o
           if opts.ensemble_options.symmetric_loss_updates
             loss = loss + W(t, i);
           else
-            loss = loss + W(t, i) * min(negative_to_positive_ratio, 2)
+            loss = loss + W(t, i) * min(negative_to_positive_ratio, 2);
           end
         else
           loss = loss + W(t, i);
