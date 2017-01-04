@@ -1,5 +1,5 @@
 % --------------------------------------------------------------------
-function [imdb_balanced_high, imdb_balanced_high, imdb_unbalanced] = constructCifarTwoClassImdbs(positive_class_number, negative_class_number)
+function [imdb_balanced_high, imdb_balanced_low, imdb_unbalanced] = constructCifarTwoClassImdbs(positive_class_number, negative_class_number)
 % --------------------------------------------------------------------
   afprintf(sprintf('[INFO] Constructing unbalanced CIFAR imdbs...\n'));
   opts.imdb.data_dir = fullfile(getDevPath(), 'data', 'source', 'cifar');
@@ -32,7 +32,7 @@ function [imdb_balanced_high, imdb_balanced_high, imdb_unbalanced] = constructCi
   afprintf(sprintf('[INFO] `balanced-low`...\n'));
   imdb = fh_imdb_utils.constructTwoClassUnbalancedImdb(all_cifar_imdb, positive_class_number, negative_class_number, 200);
   imdb = fh_imdb_utils.balanceImdb(imdb, 'train', 'downsample');
-  imdb_balanced_high = imdb;
+  imdb_balanced_low = imdb;
   afprintf(sprintf('done!\n\n'));
 
   [~] = fh_imdb_utils.getImdbInfo(imdb, true);
