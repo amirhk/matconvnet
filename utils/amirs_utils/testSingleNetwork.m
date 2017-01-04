@@ -14,7 +14,7 @@ function results = testSingleNetwork(input_opts)
   %                                                                 opts.imdb
   % -------------------------------------------------------------------------
   opts.imdb.posneg_balance = getValueFromFieldOrDefault(input_opts, 'posneg_balance', 'unbalanced');
-  imdb = loadSavedImdb(dataset, posneg_balance);
+  imdb = loadSavedImdb(opts.general.dataset, opts.imdb.posneg_balance);
 
   % -------------------------------------------------------------------------
   %                                                                opts.train

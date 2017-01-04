@@ -9,7 +9,7 @@ function results = testForest(input_opts)
   %                                                                 opts.imdb
   % -------------------------------------------------------------------------
   opts.imdb.posneg_balance = getValueFromFieldOrDefault(input_opts, 'posneg_balance', 'unbalanced');
-  imdb = loadSavedImdb(dataset, posneg_balance);
+  imdb = loadSavedImdb(opts.general.dataset, opts.imdb.posneg_balance);
 
   % -------------------------------------------------------------------------
   %                                                                opts.train
@@ -28,9 +28,8 @@ function results = testForest(input_opts)
     'experiment_parent_dir', ...
     fullfile(vl_rootnn, 'experiment_results'));
   opts.paths.experiment_dir = fullfile(opts.paths.experiment_parent_dir, sprintf( ...
-    'test-forest-%s-%s-%s', ...
+    'test-forest-%s-%s', ...
     opts.general.dataset, ...
-    opts.general.network_arch, ...
     opts.paths.time_string));
   if ~exist(opts.paths.experiment_dir)
     mkdir(opts.paths.experiment_dir);
