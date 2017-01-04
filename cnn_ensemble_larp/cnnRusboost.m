@@ -10,9 +10,9 @@ function fh = cnnRusboost()
 function folds = kFoldCNNRusboost(opts)
 % -------------------------------------------------------------------------
   % -------------------------------------------------------------------------
-  %                                                               opts.general
+  %                                                              opts.general
   % -------------------------------------------------------------------------
-  opts.general.dataset = getValueFromFieldOrDefault(opts, 'dataset', 'mnist-two-class');
+  opts.general.dataset = getValueFromFieldOrDefault(input_opts, 'dataset', 'mnist-two-class');
   switch opts.general.dataset
     case 'prostate'
       opts.general.network_arch = 'prostatenet';
@@ -23,7 +23,7 @@ function folds = kFoldCNNRusboost(opts)
   opts.general.iteration_count_limit = 10;
 
   % -------------------------------------------------------------------------
-  %                                                                  opts.imdb
+  %                                                                 opts.imdb
   % -------------------------------------------------------------------------
   switch opts.general.dataset
     case 'prostate'
@@ -38,19 +38,20 @@ function folds = kFoldCNNRusboost(opts)
       opts.imdb.test_augment_positive = 'none';
       opts.imdb.test_augment_negative = 'none';
     otherwise
-      opts.imdb.posneg_balance = getValueFromFieldOrDefault(opts, 'posneg_balance', 'unbalanced');
+      opts.imdb.posneg_balance = getValueFromFieldOrDefault(input_opts, 'posneg_balance', 'unbalanced');
   end
 
   % -------------------------------------------------------------------------
   %                                                                opts.paths
   % -------------------------------------------------------------------------
-  opts.paths.time_string = ...
-    sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
-  opts.paths.experiment_dir = ...
-    fullfile( ...
-      vl_rootnn, ...
-      'experiment_results', ...
-      sprintf('k-fold-rusboost-%s', opts.paths.time_string));
+  opts.paths.time_string = sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
+  opts.paths.experiment_parent_dir = getValueFromFieldOrDefault( ...
+    single_ensemble_options, ...
+    'experiment_parent_dir', ...
+    fullfile(vl_rootnn, 'experiment_results'));
+  opts.paths.experiment_dir = fullfile(opts.paths.experiment_parent_dir, sprintf( ...
+    'k-fold-rusboost-%s', ...
+    opts.paths.time_string));
   if ~exist(opts.paths.experiment_dir)
     mkdir(opts.paths.experiment_dir);
   end
@@ -109,9 +110,9 @@ function folds = kFoldCNNRusboost(opts)
   single_ensemble_options.network_arch = opts.general.network_arch;
   single_ensemble_options.iteration_count = opts.general.iteration_count_limit;
   single_ensemble_options.experiment_parent_dir = opts.paths.experiment_dir;
-  single_ensemble_options.gpus = ifNotMacSetGpu(getValueFromFieldOrDefault(opts, 'gpus', 1));
-  single_ensemble_options.backprop_depth = getValueFromFieldOrDefault(opts, 'backprop_depth', 4);
-  single_ensemble_options.symmetric_weight_updates = false;
+  single_ensemble_options.gpus = ifNotMacSetGpu(getValueFromFieldOrDefault(input_opts, 'gpu', 1));
+  single_ensemble_options.backprop_depth = getValueFromFieldOrDefault(input_opts, 'backprop_depth', 4);
+  single_ensemble_options.symmetric_weight_updates = getValueFromFieldOrDefault(input_opts, 'symmetric_weight_updates', false);
   for i = 1:opts.general.number_of_folds
     afprintf(sprintf('[INFO] Running cnn_rusboost on fold #%d...\n', i));
     single_ensemble_options.imdb = imdbs{i};
@@ -186,7 +187,7 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(single_ensemble_o
   opts.single_cnn_options.experiment_parent_dir = opts.paths.experiment_dir;
   opts.single_cnn_options.weight_init_source = 'gen';
   opts.single_cnn_options.weight_init_sequence = {'compRand', 'compRand', 'compRand'};
-  opts.single_cnn_options.gpus = ifNotMacSetGpu(getValueFromFieldOrDefault(opts, 'gpus', 1));
+  opts.single_cnn_options.gpus = ifNotMacSetGpu(getValueFromFieldOrDefault(single_ensemble_options, 'gpu', 1));
   opts.single_cnn_options.backprop_depth = getValueFromFieldOrDefault(single_ensemble_options, 'backprop_depth', 4);
   opts.single_cnn_options.debug_flag = false;
 

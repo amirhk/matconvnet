@@ -12,8 +12,21 @@ function imdb = loadSavedImdb(dataset, posneg_balance)
         case 'balanced-high'
           tmp = load(fullfile(getDevPath(), 'data', 'two_class_imdbs', 'saved-two-class-mnist-pos9-neg4-balanced-train-5000-5000.mat'));
       end
-    case 'cifar'
+    case 'cifar-two-class'
       fprintf('TODO: implement!')
+    case 'prostate'
+      fprintf('TODO: implement!')
+      % TODO: fixup and test
+      % opts.general.network_arch = 'prostatenet';
+      % num_test_patients = 10;
+      % tmp_opts.dataDir = fullfile(getDevPath(), 'matconvnet/data_1/_prostate');
+      % tmp_opts.imdbBalancedDir = fullfile(getDevPath(), 'matconvnet/data_1/balanced-prostate-prostatenet');
+      % tmp_opts.imdbBalancedPath = fullfile(getDevPath(), 'matconvnet/data_1/balanced-prostate-prostatenet/imdb.mat');
+      % tmp_opts.leaveOutType = 'special';
+      % randomPatientIndices = randperm(104);
+      % tmp_opts.leaveOutIndices = randomPatientIndices(1:num_test_patients);
+      % tmp_opts.contrastNormalization = true;
+      % tmp_opts.whitenData = true;
   end
   imdb = tmp.imdb;
   afprintf(sprintf('[INFO] done!\n'));

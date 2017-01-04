@@ -1,35 +1,33 @@
-function results = testForest(dataset, posneg_balance, boosting_method)
+function results = testForest(input_opts)
 
-  opts.general.dataset = dataset;
-  opts.imdb.posneg_balance = posneg_balance;
+  % -------------------------------------------------------------------------
+  %                                                              opts.general
+  % -------------------------------------------------------------------------
+  opts.general.dataset = getValueFromFieldOrDefault(input_opts, 'dataset', 'mnist-two-class');
 
-  afprintf(sprintf('[INFO] Constructing (???) / loading imdb...\n'));
-  switch opts.general.dataset
-    case 'prostate'
-      % TODO: fixup and test
-      % opts.general.network_arch = 'prostatenet';
-      % num_test_patients = 10;
-      % tmp_opts.dataDir = fullfile(getDevPath(), 'matconvnet/data_1/_prostate');
-      % tmp_opts.imdbBalancedDir = fullfile(getDevPath(), 'matconvnet/data_1/balanced-prostate-prostatenet');
-      % tmp_opts.imdbBalancedPath = fullfile(getDevPath(), 'matconvnet/data_1/balanced-prostate-prostatenet/imdb.mat');
-      % tmp_opts.leaveOutType = 'special';
-      % randomPatientIndices = randperm(104);
-      % tmp_opts.leaveOutIndices = randomPatientIndices(1:num_test_patients);
-      % tmp_opts.contrastNormalization = true;
-      % tmp_opts.whitenData = true;
-    otherwise
-      imdb = loadSavedImdb(dataset, posneg_balance);
-  end
-  afprintf(sprintf('done!\n'));
+  % -------------------------------------------------------------------------
+  %                                                                 opts.imdb
+  % -------------------------------------------------------------------------
+  opts.imdb.posneg_balance = getValueFromFieldOrDefault(input_opts, 'posneg_balance', 'unbalanced');
+  imdb = loadSavedImdb(dataset, posneg_balance);
 
-  images = reshape(imdb.images.data, 3072, [])';
-  labels = imdb.images.labels;
-  opts.train.num_examples = length(labels);
+  % -------------------------------------------------------------------------
+  %                                                                opts.train
+  % -------------------------------------------------------------------------
+  opts.train.num_examples = size(imdb.images.data, 4);
   opts.train.num_features = 3072;
   opts.train.num_trees = 1000;
-  opts.train.boosting_method = boosting_method; % {'AdaBoostM1', 'RUSBoost'}
+  opts.train.boosting_method = getValueFromFieldOrDefault(input_opts, 'boosting_method', 'AdaBoostM1'); % {'AdaBoostM1', 'RUSBoost'}
+
+  % -------------------------------------------------------------------------
+  %                                                                opts.paths
+  % -------------------------------------------------------------------------
   opts.paths.time_string = sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
-  opts.paths.experiment_dir = fullfile(vl_rootnn, 'experiment_results', sprintf( ...
+  opts.paths.experiment_parent_dir = getValueFromFieldOrDefault( ...
+    input_opts, ...
+    'experiment_parent_dir', ...
+    fullfile(vl_rootnn, 'experiment_results'));
+  opts.paths.experiment_dir = fullfile(opts.paths.experiment_parent_dir, sprintf( ...
     'test-forest-%s-%s-%s', ...
     opts.general.dataset, ...
     opts.general.network_arch, ...
@@ -39,16 +37,18 @@ function results = testForest(dataset, posneg_balance, boosting_method)
   end
   opts.paths.options_file_path = fullfile(opts.paths.experiment_dir, 'options.txt');
   opts.paths.results_file_path = fullfile(opts.paths.experiment_dir, 'results.txt');
+
+  % -------------------------------------------------------------------------
+  %                                                    save experiment setup!
+  % -------------------------------------------------------------------------
   saveStruct2File(opts, opts.paths.options_file_path, 0);
 
   %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %%
 
+  images = reshape(imdb.images.data, 3072, [])';
+  labels = imdb.images.labels;
   Y = labels(1:opts.train.num_examples);
   cov_type = images(1:opts.train.num_examples,1:opts.train.num_features);
-  % tabulate(Y);
-
-  %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %%
-
   is_train = imdb.images.set == 1;
   is_test = imdb.images.set == 3;
 
@@ -107,7 +107,6 @@ function results = testForest(dataset, posneg_balance, boosting_method)
     results.test_sens(i) = sens;
     results.test_spec(i) = spec;
   end
-
 
   results.test_acc_mean = mean(results.test_acc);
   results.test_sens_mean = mean(results.test_sens);
