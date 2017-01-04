@@ -90,16 +90,16 @@ function [data, labels] = choosePortionOfImdb(data, labels, portion)
   output_labels = {};
   for i = 1:number_of_classes
     label_indices{i} = (labels == i);
-    afprintf(sprintf('\t[INFO] found %d images with label %d...\n', size(label_indices{i}, 2), i));
+    afprintf(sprintf('\t[INFO] found %d images with label %02d...\n', size(label_indices{i}, 2), i));
   end
   afprintf(sprintf('\n'));
 
   tic;
   for i = 1:number_of_classes
-    afprintf(sprintf('\t[INFO] extracting images for class %d...', i));
+    afprintf(sprintf('\t[INFO] extracting images for class %02d... ', i));
     output_data{i} = data(:,:,:,label_indices{i});
     output_labels{i} = labels(label_indices{i});
-    afprintf(sprintf('done! \t'));
+    fprintf('done! \t');
     toc;
   end
   afprintf(sprintf('\n'));
