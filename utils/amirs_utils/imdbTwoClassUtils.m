@@ -211,7 +211,7 @@ function imdb = constructPartialImdb(data, labels, set_number)
 function imdb = balanceImdb(imdb, set_name, balance_type)
   % set_name = {'train', 'test'}
   % balance_type = {'downsample', 'augment'}
-% % -------------------------------------------------------------------------
+% -------------------------------------------------------------------------
 
   % -------------------------------------------------------------------------
   %                                                                  get info
