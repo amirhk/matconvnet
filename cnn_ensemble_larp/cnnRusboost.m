@@ -7,7 +7,7 @@ function fh = cnnRusboost()
   fh.printKFoldResults = @printKFoldResults;
 
 % -------------------------------------------------------------------------
-function folds = kFoldCNNRusboost(opts)
+function folds = kFoldCNNRusboost(input_opts)
 % -------------------------------------------------------------------------
   % -------------------------------------------------------------------------
   %                                                              opts.general
