@@ -97,7 +97,7 @@ function folds = kFoldCNNRusboost(input_opts)
     otherwise
       for i = 1:opts.general.number_of_folds
         afprintf(sprintf('\n'));
-        afprintf(sprintf('[INFO] Constructing / loading imdb for fold #%d...\n', i));
+        afprintf(sprintf('[INFO] Loading imdb for fold #%d...\n', i));
         imdbs{i} = loadSavedImdb(opts.general.dataset, opts.imdb.posneg_balance);
         afprintf(sprintf('[INFO] done!\n'));
       end
