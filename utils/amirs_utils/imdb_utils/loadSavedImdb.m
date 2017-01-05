@@ -35,13 +35,13 @@ function imdb = loadSavedImdb(dataset, posneg_balance)
       % TODO: fixup and test
       % opts.general.network_arch = 'prostatenet';
       % num_test_patients = 10;
-      % tmp_opts.dataDir = fullfile(getDevPath(), 'matconvnet/data_1/_prostate');
-      % tmp_opts.imdbBalancedDir = fullfile(getDevPath(), 'matconvnet/data_1/balanced-prostate-prostatenet');
-      % tmp_opts.imdbBalancedPath = fullfile(getDevPath(), 'matconvnet/data_1/balanced-prostate-prostatenet/imdb.mat');
-      % tmp_opts.leaveOutType = 'special';
-      % randomPatientIndices = randperm(104);
-      % tmp_opts.leaveOutIndices = randomPatientIndices(1:num_test_patients);
-      % tmp_opts.contrastNormalization = true;
+      % tmp_opts.data_dir = fullfile(getDevPath(), 'matconvnet/data_1/_prostate');
+      % tmp_opts.imdb_balanced_dir = fullfile(getDevPath(), 'matconvnet/data_1/balanced-prostate-prostatenet');
+      % tmp_opts.imdb_balanced_path = fullfile(getDevPath(), 'matconvnet/data_1/balanced-prostate-prostatenet/imdb.mat');
+      % tmp_opts.leave_out_type = 'special';
+      % random_patient_indices = randperm(104);
+      % tmp_opts.leaveOutIndices = random_patient_indices(1:num_test_patients);
+      % tmp_opts.contrast_normalization = true;
       % tmp_opts.whitenData = true;
   end
   imdb = tmp.imdb;

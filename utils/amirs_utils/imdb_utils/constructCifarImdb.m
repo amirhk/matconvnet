@@ -45,7 +45,7 @@ function imdb = constructCifarImdb(opts)
   % Single-Layer Networks in Unsupervised Feature Learning` Adam
   % Coates, Honglak Lee, Andrew Y. Ng
 
-  if opts.imdb.contrastNormalization
+  if opts.imdb.contrast_normalization
     afprintf(sprintf('[INFO] contrast-normalizing data... '));
     z = reshape(data,[],number_of_train_and_test_images);
     z = bsxfun(@minus, z, mean(z,1));

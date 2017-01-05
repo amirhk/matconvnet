@@ -16,7 +16,7 @@ function imdb = constructSvhnImdb(opts)
   % normalize by image mean and std as suggested in `An Analysis of
   % Single-Layer Networks in Unsupervised Feature Learning` Adam
   % Coates, Honglak Lee, Andrew Y. Ng
-  if opts.imdb.contrastNormalization
+  if opts.imdb.contrast_normalization
     afprintf(sprintf('[INFO] Contrast-normalizing data... '));
     z = reshape(data,[],size(data, 4));
     z = bsxfun(@minus, z, mean(z,1));
@@ -25,7 +25,6 @@ function imdb = constructSvhnImdb(opts)
     data = reshape(z, 32, 32, 3, []);
     afprintf(sprintf('done.\n'));
   end
-
 
   imdb.images.data = data;
   imdb.images.labels = labels;

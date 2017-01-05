@@ -3,24 +3,24 @@ function [imdb_balanced_high, imdb_balanced_low, imdb_unbalanced] = constructTwo
 % --------------------------------------------------------------------
   afprintf(sprintf('[INFO] Constructing unbalanced `%s` imdbs...\n', dataset));
   opts.imdb.data_dir = fullfile(getDevPath(), 'data', 'source', dataset);
-  switch  da
+  switch  dataset
     case 'mnist'
       opts.general.network_arch = network_arch;
       all_class_imdb = constructMnistImdb(opts);
     case 'cifar'
       opts.imdb.imdb_portion = 1.0;
-      opts.imdb.contrastNormalization = true;
+      opts.imdb.contrast_normalization = true;
       opts.imdb.whiten_data = true;
       all_class_imdb = constructCifarImdb(opts);
     case 'cifar'
-      opts.imdb.contrastNormalization = true;
+      opts.imdb.contrast_normalization = true;
       all_class_imdb = constructSvhnImdb(opts);
   end
 
   fh_imdb_utils = imdbTwoClassUtils;
   save_file_name_prefix = sprintf( ...
     'saved-two-class-%s-pos%d-neg%d', ...
-    dataset,
+    dataset, ...
     positive_class_number, ...
     negative_class_number);
 
