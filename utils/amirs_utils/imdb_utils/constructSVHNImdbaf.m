@@ -1,5 +1,5 @@
 % --------------------------------------------------------------------
-function imdb = constructSVHNImdb(opts)
+function imdb = constructSvhnImdb(opts)
 % --------------------------------------------------------------------
   afprintf(sprintf('[INFO] Constructing SVHN imdb...\n'));
   train_file = load(fullfile(opts.imdb.data_dir, 'train_32x32.mat'));

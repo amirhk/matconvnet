@@ -61,22 +61,22 @@ function runAllTests(dataset, posneg_balance, gpu);
   % -------------------------------------------------------------------------
   %                                                                    forest
   % -------------------------------------------------------------------------
-  % exp 1
-  single_test_options.boosting_method = 'AdaBoostM1';
-  testForest(single_test_options);
-  % exp 2
-  single_test_options.boosting_method = 'RUSBoost';
-  testForest(single_test_options);
-
-  % % -------------------------------------------------------------------------
-  % %                                                                single cnn
-  % % -------------------------------------------------------------------------
   % % exp 1
-  % single_test_options.backprop_depth = 4;
-  % testSingleNetwork(single_test_options);
+  % single_test_options.boosting_method = 'AdaBoostM1';
+  % testForest(single_test_options);
   % % exp 2
-  % single_test_options.backprop_depth = 13;
-  % testSingleNetwork(single_test_options);
+  % single_test_options.boosting_method = 'RUSBoost';
+  % testForest(single_test_options);
+
+  % -------------------------------------------------------------------------
+  %                                                                single cnn
+  % -------------------------------------------------------------------------
+  % exp 1
+  single_test_options.backprop_depth = 4;
+  testSingleNetwork(single_test_options);
+  % exp 2
+  single_test_options.backprop_depth = 13;
+  testSingleNetwork(single_test_options);
 
   % % -------------------------------------------------------------------------
   % %                                                              ensemble cnn

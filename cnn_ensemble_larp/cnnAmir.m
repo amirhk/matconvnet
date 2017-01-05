@@ -112,6 +112,8 @@ function [net, results] = cnn_amir(inputs_opts)
         %   imdb = constructMnistTwoClassUnbalancedImdb(opts.imdb.data_dir, opts.general.network_arch);
         case 'stl-10'
           imdb = constructSTL10Imdb(opts);
+        case 'svhn'
+          imdb = constructSVHNImdb(opts);
       end
       if opts.general.debug_flag; afprintf(sprintf('[INFO] saving new imdb... ')); end;
       save(opts.paths.imdb_path, '-struct', 'imdb');
