@@ -30,6 +30,15 @@ function imdb = loadSavedImdb(dataset, posneg_balance)
         case 'balanced-high'
           tmp = load(fullfile(getDevPath(), 'data', 'two_class_imdbs', 'saved-two-class-cifar-pos5-neg10-balanced-train-5000-5000.mat'));
         end
+    case 'svhn-two-class-9-4'
+      switch posneg_balance
+        case 'balanced-low'
+          tmp = load(fullfile(getDevPath(), 'data', 'two_class_imdbs', 'saved-two-class-svhn-pos9-neg4-balanced-low-train-23-23.mat'));
+        case 'unbalanced'
+          tmp = load(fullfile(getDevPath(), 'data', 'two_class_imdbs', 'saved-two-class-svhn-pos9-neg4-unbalanced-train-23-7458.mat'));
+        case 'balanced-high'
+          tmp = load(fullfile(getDevPath(), 'data', 'two_class_imdbs', 'saved-two-class-svhn-pos9-neg4-balanced-high-train-4659-7458.mat'));
+        end
     case 'prostate'
       fprintf('TODO: implement!')
       % TODO: fixup and test
