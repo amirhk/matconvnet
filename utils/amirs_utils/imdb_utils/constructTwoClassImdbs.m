@@ -12,7 +12,7 @@ function [imdb_balanced_high, imdb_balanced_low, imdb_unbalanced] = constructTwo
       opts.imdb.contrast_normalization = true;
       opts.imdb.whiten_data = true;
       all_class_imdb = constructCifarImdb(opts);
-    case 'cifar'
+    case 'svhn'
       opts.imdb.contrast_normalization = true;
       all_class_imdb = constructSvhnImdb(opts);
   end
