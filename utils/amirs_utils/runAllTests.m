@@ -60,9 +60,9 @@ function runAllTests(dataset, posneg_balance, gpu);
   % -------------------------------------------------------------------------
   %                                                                    forest
   % -------------------------------------------------------------------------
-  % exp 1
-  single_test_options.boosting_method = 'AdaBoostM1';
-  testForest(single_test_options);
+  % % exp 1
+  % single_test_options.boosting_method = 'AdaBoostM1';
+  % testForest(single_test_options);
   % exp 2
   single_test_options.boosting_method = 'RUSBoost';
   testForest(single_test_options);
