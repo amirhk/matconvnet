@@ -2,7 +2,7 @@ function results = testVaryingBatchSize(input_opts)
   % -------------------------------------------------------------------------
   %                                                              opts.general
   % -------------------------------------------------------------------------
-  opts.general.dataset = getValueFromFieldOrDefault(input_opts, 'dataset', 'mnist-two-class-9-4');
+  opts.general.dataset = getValueFromFieldOrDefault(input_opts, 'dataset', 'mnist');
   opts.general.network_arch = 'lenet';
 
   % -------------------------------------------------------------------------
@@ -35,7 +35,7 @@ function results = testVaryingBatchSize(input_opts)
   single_cnn_options.network_arch = opts.general.network_arch;
   single_cnn_options.experiment_parent_dir = opts.paths.experiment_dir;
   single_cnn_options.debug_flag = false;
-  single_cnn_options.gpus = ifNotMacSetGpu(getValueFromFieldOrDefault(opts, 'gpu', 1));
+  single_cnn_options.gpus = ifNotMacSetGpu(getValueFromFieldOrDefault(input_opts, 'gpu', 1));
 
   % all_tests_net = {};
   all_tests_results = {};

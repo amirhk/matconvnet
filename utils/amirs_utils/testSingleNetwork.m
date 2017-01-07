@@ -56,7 +56,7 @@ function results = testSingleNetwork(input_opts)
   single_cnn_options.weight_init_source = 'gen';
   single_cnn_options.weight_init_sequence = {'compRand', 'compRand', 'compRand'};
   single_cnn_options.debug_flag = false;
-  single_cnn_options.gpus = ifNotMacSetGpu(getValueFromFieldOrDefault(opts, 'gpu', 1));
+  single_cnn_options.gpus = ifNotMacSetGpu(getValueFromFieldOrDefault(input_opts, 'gpu', 1));
 
   all_tests_net = {};
   all_tests_results = {};
