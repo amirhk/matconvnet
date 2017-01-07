@@ -51,6 +51,7 @@ function results = testVaryingBatchSizeNetwork(input_opts)
   test_number = 1;
   for backprop_depth = [4, 13]
     for batch_size = [100, 256, 512, 1024]
+      i = test_number;
       printConsoleOutputSeparator();
       afprintf(sprintf('Test #%d\n', i));
       single_cnn_options.backprop_depth = backprop_depth;
