@@ -88,28 +88,20 @@ function [net, results] = cnn_amir(inputs_opts)
   if numel(fields(opts.imdb.imdb)) % meaning an imdb was passed in as input
     imdb = opts.imdb.imdb;
   else
-    if ~opts.imdb.regen && exist(opts.paths.imdb_path, 'file') % if already created, and we're not asking for regen
+    if exist(opts.paths.imdb_path, 'file') && ~opts.imdb.regen % if already created, and we're not asking for regen
       imdb = load(opts.paths.imdb_path);
     else % else just construct the imdb
       switch opts.general.dataset
-        case 'prostate'
-          imdb = constructProstateImdb(opts);
+        % case '*-two-class'
+          % unbalanced imdbs should always be generated separately and consistent across all tests
         case 'cifar'
           imdb = constructCifarImdb(opts);
-        % case 'cifar-two-class'
-        %   % TODO: unbalanced imdbs should always be generated separately and consistent across all tests
-        %   % TODO: have to pass in which class is +ve and -ve
-        %   % TODO: should specifiy whether 'balanced-low' or 'balanced-high'...
-        %   imdb = constructCifarTwoClassUnbalancedImdb(opts.imdb.data_dir, opts.general.network_arch);
         case 'coil-100'
           imdb = constructCOIL100Imdb(opts);
         case 'mnist'
           imdb = constructMnistImdb(opts);
-        % case 'mnist-two-class'
-        %   % TODO: unbalanced imdbs should always be generated separately and consistent across all tests
-        %   % TODO: have to pass in which class is +ve and -ve
-        %   % TODO: should specifiy whether 'balanced-low' or 'balanced-high'...
-        %   imdb = constructMnistTwoClassUnbalancedImdb(opts.imdb.data_dir, opts.general.network_arch);
+        case 'prostate'
+          imdb = constructProstateImdb(opts);
         case 'stl-10'
           imdb = constructSTL10Imdb(opts);
         case 'svhn'
