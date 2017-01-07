@@ -292,7 +292,7 @@ function [new_data, new_labels] = balanceData(data, labels, should_balance)
     ix = ix(1:cancer_count);
     subsampled_healthy_data = healthy_data(:,:,:,ix);
     new_data = cat(4, subsampled_healthy_data, cancer_data);
-    new_labels = [1*ones(1,size(subsampled_healthy_data, 4)) 2*ones(1,cancer_count)]; % same number of healthy and cancer now.
+    new_labels = [1 * ones(1, size(subsampled_healthy_data, 4)) 2 * ones(1, cancer_count)]; % same number of healthy and cancer now.
     afprintf(sprintf('done.\n'));
 
     % shuffle them so we have intermixed subsampled_healthy_data and cancer_data

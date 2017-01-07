@@ -3,7 +3,7 @@ function results = testForest(input_opts)
   % -------------------------------------------------------------------------
   %                                                              opts.general
   % -------------------------------------------------------------------------
-  opts.general.dataset = getValueFromFieldOrDefault(input_opts, 'dataset', 'mnist-two-class');
+  opts.general.dataset = getValueFromFieldOrDefault(input_opts, 'dataset', 'mnist-two-class-9-4');
 
   % -------------------------------------------------------------------------
   %                                                                 opts.imdb

@@ -12,7 +12,7 @@ function folds = kFoldCNNRusboost(input_opts)
   % -------------------------------------------------------------------------
   %                                                              opts.general
   % -------------------------------------------------------------------------
-  opts.general.dataset = getValueFromFieldOrDefault(input_opts, 'dataset', 'mnist-two-class');
+  opts.general.dataset = getValueFromFieldOrDefault(input_opts, 'dataset', 'mnist-two-class-9-4');
   switch opts.general.dataset
     case 'prostate'
       opts.general.network_arch = 'prostatenet';
