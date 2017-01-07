@@ -97,13 +97,13 @@ function [net, results] = cnn_amir(inputs_opts)
         case 'cifar'
           imdb = constructCifarImdb(opts);
         case 'coil-100'
-          imdb = constructCOIL100Imdb(opts);
+          imdb = constructCoil100Imdb(opts);
         case 'mnist'
           imdb = constructMnistImdb(opts);
         case 'prostate'
           imdb = constructProstateImdb(opts);
         case 'stl-10'
-          imdb = constructSTL10Imdb(opts);
+          imdb = constructStl10Imdb(opts);
         case 'svhn'
           imdb = constructSvhnImdb(opts);
       end
@@ -149,7 +149,7 @@ function [net, results] = cnn_amir(inputs_opts)
   % TODO: should net & imdb even be part of the opts file?? no!
   [ST,~] = dbstack();
   results = {};
-  if strcmp(ST(2).file, 'mainCnnAmir.m') || strcmp(ST(2).file, 'testSingleNetwork.m')
+  if numel(ST) > 2 && ~strcmp(ST(2).file, 'cnnRusboost.m')
     predictions_train = getPredictionsFromNetOnImdb(net, imdb, 1);
     labels_train = imdb.images.labels(imdb.images.set == 1);
     [ ...

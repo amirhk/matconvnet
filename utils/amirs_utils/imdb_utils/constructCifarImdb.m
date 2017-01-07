@@ -1,7 +1,7 @@
 % -------------------------------------------------------------------------
 function imdb = constructCifarImdb(opts)
 % -------------------------------------------------------------------------
-  afprintf(sprintf('[INFO] Constructing CIFAR imdb (portion = %d percent)...\n\n', opts.imdb.imdb_portion * 100));
+  afprintf(sprintf('[INFO] Constructing CIFAR imdb...\n\n'));
   % Prepare the imdb structure, returns image data with mean image subtracted
   unpack_path = fullfile(opts.imdb.data_dir, 'cifar-10-batches-mat');
   files = [arrayfun(@(n) sprintf('data_batch_%d.mat', n), 1:5, 'UniformOutput', false) ...
@@ -34,10 +34,12 @@ function imdb = constructCifarImdb(opts)
   data_mean = mean(data(:,:,:,set == 1), 4);
   data = bsxfun(@minus, data, data_mean);
 
-  [output_data, output_labels] = choosePortionOfImdb(data(:,:,:,1:50000), labels(1:50000), opts.imdb.imdb_portion);
+  % [output_data, output_labels] = choosePortionOfImdb(data(:,:,:,1:50000), labels(1:50000), opts.imdb.imdb_portion);
+  [output_data, output_labels] = choosePortionOfImdb(data(:,:,:,1:50000), labels(1:50000), 1);
   data = single(cat(4, output_data, data(:,:,:,50001:60000))); % amend with test data
   labels = single(cat(2, output_labels, labels(50001:60000))); % amend with test data
-  set = [ones(1, 50000 * opts.imdb.imdb_portion) 3 * ones(1, 10000)]; % all of the test portion
+  % set = [ones(1, 50000 * opts.imdb.imdb_portion) 3 * ones(1, 10000)]; % all of the test portion
+  set = [ones(1, 50000 * 1) 3 * ones(1, 10000)]; % all of the test portion
   number_of_train_and_test_images = size(labels, 2);
   afprintf(sprintf('[INFO] number_of_train_and_test_images in portion: %d.\n', number_of_train_and_test_images));
 
@@ -75,7 +77,7 @@ function imdb = constructCifarImdb(opts)
   imdb.images.set = set;
   imdb.meta.sets = {'train', 'val', 'test'};
   imdb.meta.classes = clNames.label_names;
-  afprintf(sprintf('[INFO] Finished constructing CIFAR imdb (portion = %d percent)!\n', opts.imdb.imdb_portion * 100));
+  afprintf(sprintf('[INFO] Finished constructing CIFAR imdb!\n'));
 
 % -------------------------------------------------------------------------
 function [data, labels] = choosePortionOfImdb(data, labels, portion)
@@ -92,7 +94,7 @@ function [data, labels] = choosePortionOfImdb(data, labels, portion)
     label_indices{i} = (labels == i);
     afprintf(sprintf('\t[INFO] found %d images with label %02d...\n', size(label_indices{i}, 2), i));
   end
-  afprintf(sprintf('\n'));
+  fprintf('\n');
 
   tic;
   for i = 1:number_of_classes
@@ -102,7 +104,7 @@ function [data, labels] = choosePortionOfImdb(data, labels, portion)
     fprintf('done! \t');
     toc;
   end
-  afprintf(sprintf('\n'));
+  fprintf('\n');
 
   for i = 1:number_of_classes
     portioned_output_data{i} = output_data{i}(:,:,:,1:number_of_images_per_class);

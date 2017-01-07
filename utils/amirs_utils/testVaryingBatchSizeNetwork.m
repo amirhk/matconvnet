@@ -6,15 +6,10 @@ function results = testVaryingBatchSizeNetwork(input_opts)
   opts.general.network_arch = 'lenet';
 
   % -------------------------------------------------------------------------
-  %                                                                 opts.imdb
-  % -------------------------------------------------------------------------
-  opts.imdb.posneg_balance = getValueFromFieldOrDefault(input_opts, 'posneg_balance', 'unbalanced');
-  imdb = loadSavedImdb(opts.general.dataset, opts.imdb.posneg_balance);
-
-  % -------------------------------------------------------------------------
   %                                                                opts.train
   % -------------------------------------------------------------------------
-  opts.train.backprop_depth = getValueFromFieldOrDefault(input_opts, 'backprop_depth', 4);
+  % opts.train.backprop_depth = getValueFromFieldOrDefault(input_opts, 'backprop_depth', 4);
+  % opts.train.batch_size = getValueFromFieldOrDefault(input_opts, 'batch_size', 100);
 
   % -------------------------------------------------------------------------
   %                                                                opts.paths
@@ -44,27 +39,42 @@ function results = testVaryingBatchSizeNetwork(input_opts)
 
   single_cnn_options.dataset = opts.general.dataset;
   single_cnn_options.network_arch = opts.general.network_arch;
-  single_cnn_options.imdb = imdb;
   single_cnn_options.experiment_parent_dir = opts.paths.experiment_dir;
-  single_cnn_options.backprop_depth = opts.train.backprop_depth;
-  single_cnn_options.weight_decay = 0.0001;
-  single_cnn_options.weight_init_source = 'gen';
-  single_cnn_options.weight_init_sequence = {'compRand', 'compRand', 'compRand'};
+  % single_cnn_options.backprop_depth = opts.train.backprop_depth;
+  % single_cnn_options.batch_size = opts.train.batch_size;
   single_cnn_options.debug_flag = false;
   single_cnn_options.gpus = ifNotMacSetGpu(getValueFromFieldOrDefault(opts, 'gpu', 1));
 
-  all_tests_net = {};
+  % all_tests_net = {};
   all_tests_results = {};
-  test_repeat_count = 10;
 
-  for i = 1:test_repeat_count
-    printConsoleOutputSeparator();
-    afprintf(sprintf('Test #%d\n', i));
-    [all_tests_net{i}, all_tests_results{i}] = cnnAmir(single_cnn_options);
-    results.test_acc(i) = all_tests_results{i}.test.acc;
-    results.test_sens(i) = all_tests_results{i}.test.sens;
-    results.test_spec(i) = all_tests_results{i}.test.spec;
+  test_number = 1;
+  for backprop_depth = [4, 13]
+    for batch_size = [100, 256, 512, 1024]
+      printConsoleOutputSeparator();
+      afprintf(sprintf('Test #%d\n', i));
+      single_cnn_options.backprop_depth = backprop_depth;
+      single_cnn_options.batch_size = batch_size;
+      [~, all_tests_results{i}] = cnnAmir(single_cnn_options);
+      results.train_acc(i) = all_tests_results{i}.train.acc;
+      results.train_sens(i) = all_tests_results{i}.train.sens;
+      results.train_spec(i) = all_tests_results{i}.train.spec;
+      results.test_acc(i) = all_tests_results{i}.test.acc;
+      results.test_sens(i) = all_tests_results{i}.test.sens;
+      results.test_spec(i) = all_tests_results{i}.test.spec;
+      test_number = test_number + 1;
+    end
   end
+
+
+
+  results.train_acc_mean = mean(results.train_acc);
+  results.train_sens_mean = mean(results.train_sens);
+  results.train_spec_mean = mean(results.train_spec);
+  results.train_acc_std = std(results.train_acc);
+  results.train_sens_std = std(results.train_sens);
+  results.train_spec_std = std(results.train_spec);
+
 
   results.test_acc_mean = mean(results.test_acc);
   results.test_sens_mean = mean(results.test_sens);
@@ -83,9 +93,9 @@ function results = testVaryingBatchSizeNetwork(input_opts)
 
 
 
-single_cnn_options.dataset = 'svhn';
-single_cnn_options.network_arch = 'lenet';
-single_cnn_options.backprop_depth = 13;
-single_cnn_options.debug_flag = false;
-single_cnn_options.regen = true;
-cnnAmir(single_cnn_options);
+% single_cnn_options.dataset = 'svhn';
+% single_cnn_options.network_arch = 'lenet';
+% single_cnn_options.backprop_depth = 13;
+% single_cnn_options.debug_flag = false;
+% single_cnn_options.regen = true;
+% cnnAmir(single_cnn_options);
