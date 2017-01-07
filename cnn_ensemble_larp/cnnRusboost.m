@@ -288,7 +288,7 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(single_ensemble_o
       afprintf(sprintf('[INFO] Weights no longer large enough to take sample from; terminating!\n'));
       break;
     end
-    afprintf(sprintf('done!\n'));
+    fprintf('done!\n');
 
     training_resampled_imdb.images.data = single(resampled_data);
     training_resampled_imdb.images.labels = single(resampled_labels);
