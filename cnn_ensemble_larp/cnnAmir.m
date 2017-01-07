@@ -149,7 +149,7 @@ function [net, results] = cnn_amir(inputs_opts)
   % TODO: should net & imdb even be part of the opts file?? no!
   [ST,~] = dbstack();
   results = {};
-  if numel(ST) > 2 && ~strcmp(ST(2).file, 'cnnRusboost.m')
+  if numel(ST) >= 2 && strcmp(ST(2).file, 'mainCnnAmir.m') || strcmp(ST(2).file, 'testSingleNetwork.m')
     predictions_train = getPredictionsFromNetOnImdb(net, imdb, 1);
     labels_train = imdb.images.labels(imdb.images.set == 1);
     [ ...
