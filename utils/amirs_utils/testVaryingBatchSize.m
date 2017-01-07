@@ -42,7 +42,7 @@ function results = testVaryingBatchSize(input_opts)
 
   test_number = 1;
   for backprop_depth = [4, 13]
-    for batch_size = [100, 256, 512, 1024]
+    for batch_size = [10, 25, 100, 250, 500, 1000, 10000, 50000]
       i = test_number;
       printConsoleOutputSeparator();
       afprintf(sprintf('Test #%d\n', test_number));

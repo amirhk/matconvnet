@@ -35,7 +35,7 @@ function imdb = constructCOIL100Imdb(opts)
         afprintf(sprintf('\t\t[INFO] finished processing %d files.\n', object_num));
       end
     end
-    afprintf(sprintf('\tdone\n'));
+    fprintf('\tdone\n');
 
     meta_train.data = images(train_images_indices,:);
     meta_train.labels = labels(train_images_indices);
@@ -44,17 +44,17 @@ function imdb = constructCOIL100Imdb(opts)
 
     afprintf(sprintf('\t[INFO] Saving train meta data (large file ~25MB)...'));
     save(fullfile(opts.imdb.data_dir, 'train.mat'), 'meta_train');
-    afprintf(sprintf('done\n'));
+    fprintf('done\n');
     afprintf(sprintf('\t[INFO] Saving test meta data (large file ~25MB)...'));
     save(fullfile(opts.imdb.data_dir, 'test.mat'), 'meta_test');
-    afprintf(sprintf('done\n'));
+    fprintf('done\n');
   else
     afprintf(sprintf('\t[INFO] Found pre-existing train and test meta files. Loading... '));
     meta_train = load(train_file);
     meta_train = meta_train.meta_train;
     meta_test = load(test_file);
     meta_test = meta_test.meta_test;
-    afprintf(sprintf('done.\n'));
+    fprintf('done.\n');
   end
 
   % disp(meta_train);
@@ -62,7 +62,7 @@ function imdb = constructCOIL100Imdb(opts)
   labels_train = meta_train.labels;
   afprintf(sprintf('\t[INFO] Processing and resizing `train` images... '));
   data_train = imresize(reshape(data_train', image_size_y,image_size_x,image_size_z,[]), [32,32]);
-  afprintf(sprintf('done.\n'));
+  fprintf('done.\n');
   labels_train = single(labels_train);
   set_train = 1 * ones(1, num_of_images / 2);
 
@@ -70,7 +70,7 @@ function imdb = constructCOIL100Imdb(opts)
   labels_test = meta_test.labels;
   afprintf(sprintf('\t[INFO] Processing and resizing `test` images... '));
   data_test = imresize(reshape(data_test', image_size_y,image_size_x,image_size_z,[]), [32,32]);
-  afprintf(sprintf('done.\n'));
+  fprintf('done.\n');
   labels_test = single(labels_test);
   set_test = 3 * ones(1, num_of_images / 2);
 
@@ -90,4 +90,4 @@ function imdb = constructCOIL100Imdb(opts)
   % imdb.meta.classes = ... i just made 100 classes myself, 1 per object (that
   % has 72 angles)... so we don't really have names for these classes. Note, we
   % can most definitely come up with fewer classes, say 'cup', 'car', 'fruit'...
-  afprintf(sprintf('done!\n\n'));
+  fprintf('done!\n\n');
