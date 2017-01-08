@@ -631,12 +631,12 @@ function saveKFoldResults(folds, results_file_path)
     all_folds_specificity(i) = k_fold_results.(sprintf('fold_%d', i)).weighted_test_specificity;
   end
 
-  k_fold_results.kfold_acc_avg = mean(all_folds_accuracy);
-  k_fold_results.kfold_sens_avg = mean(all_folds_sensitivity);
-  k_fold_results.kfold_spec_avg = mean(all_folds_specificity);
-  k_fold_results.kfold_acc_std = std(all_folds_accuracy);
-  k_fold_results.kfold_sens_std = std(all_folds_sensitivity);
-  k_fold_results.kfold_spec_std = std(all_folds_specificity);
+  k_fold_results.kfold_accuracy_avg = mean(all_folds_accuracy);
+  k_fold_results.kfold_sensitivity_avg = mean(all_folds_sensitivity);
+  k_fold_results.kfold_specificity_avg = mean(all_folds_specificity);
+  k_fold_results.kfold_accuracy_std = std(all_folds_accuracy);
+  k_fold_results.kfold_sensitivity_std = std(all_folds_sensitivity);
+  k_fold_results.kfold_specificity_std = std(all_folds_specificity);
 
   % don't amend file, but overwrite...
   delete(results_file_path);
