@@ -8,18 +8,15 @@ function results = testForest(input_opts)
   % -------------------------------------------------------------------------
   %                                                                 opts.imdb
   % -------------------------------------------------------------------------
-  opts.imdb.posneg_balance = getValueFromFieldOrDefault(input_opts, 'posneg_balance', 'unbalanced');
-  tmp_opts.dataset = opts.general.dataset;
-  tmp_opts.posneg_balance = opts.imdb.posneg_balance;
-  imdb = loadSavedImdb(tmp_opts);
+  imdb = getValueFromFieldOrDefault(input_opts, 'imdb', struct());
 
   % -------------------------------------------------------------------------
   %                                                                opts.train
   % -------------------------------------------------------------------------
-  opts.train.num_examples = size(imdb.images.data, 4);
-  opts.train.num_features = 3072;
-  opts.train.num_trees = 1000;
-  opts.train.boosting_method = getValueFromFieldOrDefault(input_opts, 'boosting_method', 'AdaBoostM1'); % {'AdaBoostM1', 'RUSBoost'}
+  opts.train.number_of_examples = size(imdb.images.data, 4);
+  opts.train.number_of_features = 3072;
+  opts.train.number_of_trees = getValueFromFieldOrDefault(input_opts, 'number_of_trees', 1000);
+  opts.train.boosting_method = getValueFromFieldOrDefault(input_opts, 'boosting_method', 'RUSBoost'); % {'AdaBoostM1', 'RUSBoost'}
 
   % -------------------------------------------------------------------------
   %                                                                opts.paths
@@ -44,82 +41,69 @@ function results = testForest(input_opts)
   % -------------------------------------------------------------------------
   saveStruct2File(opts, opts.paths.options_file_path, 0);
 
-  %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %%
+  % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
   images = reshape(imdb.images.data, 3072, [])';
   labels = imdb.images.labels;
-  Y = labels(1:opts.train.num_examples);
-  cov_type = images(1:opts.train.num_examples,1:opts.train.num_features);
+  Y = labels(1:opts.train.number_of_examples);
+  cov_type = images(1:opts.train.number_of_examples,1:opts.train.number_of_features);
   is_train = imdb.images.set == 1;
   is_test = imdb.images.set == 3;
 
-  %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %%
-  all_tests_rus_trees = {};
-  all_tests_results = {};
-  test_repeat_count = 10;
-  for i = 1: test_repeat_count
-    printConsoleOutputSeparator();
-    afprintf(sprintf('Test #%d\n', i));
-    t = templateTree('MinLeafSize',5);
-    tic
-    rus_tree = fitensemble( ...
-      cov_type(is_train,:), ...
-      Y(is_train), ...
-      opts.train.boosting_method, ...
-      opts.train.num_trees, ...
-      t, ...
-      'LearnRate', 0.1, ...
-      'nprint', 50);
-    toc
-    all_tests_rus_trees{i} = rus_tree;
+  % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  printConsoleOutputSeparator();
+  afprintf(sprintf('Test #%d\n', i));
+  t = templateTree('MinLeafSize',5);
+  tic
+  rus_tree = fitensemble( ...
+    cov_type(is_train,:), ...
+    Y(is_train), ...
+    opts.train.boosting_method, ...
+    opts.train.number_of_trees, ...
+    t, ...
+    'LearnRate', 0.1, ...
+    'nprint', 25);
+  toc
 
-    %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %%
+  % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-    l_loss = loss(rus_tree, cov_type(is_test,:), Y(is_test), 'mode', 'cumulative');
+  l_loss = loss(rus_tree, cov_type(is_test,:), Y(is_test), 'mode', 'cumulative');
 
-    %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %%
+  % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-    % figure;
-    % tic
-    % plot(l_loss);
-    % toc
-    % grid on;
-    % xlabel('Number of trees');
-    % ylabel('Test classification error');
+  % figure;
+  % tic
+  % plot(l_loss);
+  % toc
+  % grid on;
+  % xlabel('Number of trees');
+  % ylabel('Test classification error');
 
-    %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %%
+  % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-    tic
-    Yfit = predict(rus_tree, cov_type(is_test,:));
-    toc
-    % tab = tabulate(Y(is_test));
-    % confusion_matrix = bsxfun(@rdivide, confusionmat(Y(is_test), Yfit), tab(:,2)) * 100;
-    % acc = (1 - l_loss(end)) * 100;
-    % spec = confusion_matrix(1,1);
-    % sens = confusion_matrix(2,2);
+  tic
+  Yfit = predict(rus_tree, cov_type(is_test,:));
+  toc
+  % tab = tabulate(Y(is_test));
+  % confusion_matrix = bsxfun(@rdivide, confusionmat(Y(is_test), Yfit), tab(:,2)) * 100;
+  % acc = (1 - l_loss(end)) * 100;
+  % spec = confusion_matrix(1,1);
+  % sens = confusion_matrix(2,2);
 
-    labels = Y(is_test);
-    predictions = Yfit;
-    [ ...
-      acc, ...
-      sens, ...
-      spec, ...
-    ] = getAccSensSpec(labels, predictions, true);
+  labels = Y(is_test);
+  predictions = Yfit;
+  [ ...
+    acc, ...
+    sens, ...
+    spec, ...
+  ] = getAccSensSpec(labels, predictions, true);
 
-    afprintf(sprintf('[INFO] Acc: %.6f\n', acc));
-    afprintf(sprintf('[INFO] Sens: %.6f\n', sens));
-    afprintf(sprintf('[INFO] Spec: %.6f\n', spec));
-    printConsoleOutputSeparator();
+  afprintf(sprintf('[INFO] Acc: %.6f\n', acc));
+  afprintf(sprintf('[INFO] Sens: %.6f\n', sens));
+  afprintf(sprintf('[INFO] Spec: %.6f\n', spec));
+  printConsoleOutputSeparator();
 
-    results.test_acc(i) = acc;
-    results.test_sens(i) = sens;
-    results.test_spec(i) = spec;
-  end
+  results.weighted_test_accuracy = acc;
+  results.weighted_test_sensitivity = sens;
+  results.weighted_test_specificity = spec;
 
-  results.test_acc_mean = mean(results.test_acc);
-  results.test_sens_mean = mean(results.test_sens);
-  results.test_spec_mean = mean(results.test_spec);
-  results.test_acc_std = std(results.test_acc);
-  results.test_sens_std = std(results.test_sens);
-  results.test_spec_std = std(results.test_spec);
-  saveStruct2File(results, opts.paths.results_file_path, 0);

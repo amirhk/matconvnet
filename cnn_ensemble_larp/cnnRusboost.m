@@ -1,113 +1,5 @@
-function fh = cnnRusboost()
-  % assign function handles so we can call these local functions from elsewhere
-  fh.mainCNNRusboost = @mainCNNRusboost;
-  fh.kFoldCNNRusboost = @kFoldCNNRusboost;
-  fh.testAllEnsembleModelsOnTestImdb = @testAllEnsembleModelsOnTestImdb;
-  fh.saveKFoldResults = @saveKFoldResults;
-  fh.printKFoldResults = @printKFoldResults;
-
 % -------------------------------------------------------------------------
-function folds = kFoldCNNRusboost(input_opts)
-% -------------------------------------------------------------------------
-  % -------------------------------------------------------------------------
-  %                                                              opts.general
-  % -------------------------------------------------------------------------
-  opts.general.dataset = getValueFromFieldOrDefault(input_opts, 'dataset', 'mnist-two-class-9-4');
-  opts.general.network_arch = 'lenet';
-  opts.general.number_of_folds = 5;
-  opts.general.iteration_count_limit = 3;
-
-  % -------------------------------------------------------------------------
-  %                                                                 opts.imdb
-  % -------------------------------------------------------------------------
-  opts.imdb.posneg_balance = getValueFromFieldOrDefault(input_opts, 'posneg_balance', 'unbalanced');
-  if strcmp(opts.general.dataset, 'prostate-v2-20-patients')
-    assert(opts.general.number_of_folds == 5);
-    assert(strcmp(opts.imdb.posneg_balance, 'unbalanced') || strcmp(opts.imdb.posneg_balance, 'balanced-high'));
-  end
-
-  % -------------------------------------------------------------------------
-  %                                                                opts.paths
-  % -------------------------------------------------------------------------
-  opts.paths.time_string = sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
-  opts.paths.experiment_parent_dir = getValueFromFieldOrDefault( ...
-    input_opts, ...
-    'experiment_parent_dir', ...
-    fullfile(vl_rootnn, 'experiment_results'));
-  opts.paths.experiment_dir = fullfile(opts.paths.experiment_parent_dir, sprintf( ...
-    'k-fold-rusboost-%s', ...
-    opts.paths.time_string));
-  if ~exist(opts.paths.experiment_dir)
-    mkdir(opts.paths.experiment_dir);
-  end
-  opts.paths.folds_file_path = fullfile(opts.paths.experiment_dir, 'folds.mat');
-  opts.paths.options_file_path = fullfile(opts.paths.experiment_dir, 'options.txt');
-  opts.paths.results_file_path = fullfile(opts.paths.experiment_dir, 'results.txt');
-
-  % -------------------------------------------------------------------------
-  %                                              opts.single_ensemble_options
-  % -------------------------------------------------------------------------
-  opts.single_ensemble_options.dataset = opts.general.dataset;
-  opts.single_ensemble_options.network_arch = opts.general.network_arch;
-  opts.single_ensemble_options.iteration_count = opts.general.iteration_count_limit;
-  opts.single_ensemble_options.experiment_parent_dir = opts.paths.experiment_dir;
-  opts.single_ensemble_options.gpu = ifNotMacSetGpu(getValueFromFieldOrDefault(input_opts, 'gpu', 1));
-  opts.single_ensemble_options.backprop_depth = getValueFromFieldOrDefault(input_opts, 'backprop_depth', 4);
-  opts.single_ensemble_options.symmetric_weight_updates = getValueFromFieldOrDefault(input_opts, 'symmetric_weight_updates', false);
-  opts.single_ensemble_options.symmetric_loss_updates = getValueFromFieldOrDefault(input_opts, 'symmetric_loss_updates', false);
-
-  % -------------------------------------------------------------------------
-  %                                                    save experiment setup!
-  % -------------------------------------------------------------------------
-  saveStruct2File(opts, opts.paths.options_file_path, 0);
-
-  % -------------------------------------------------------------------------
-  %                                                                     start
-  % -------------------------------------------------------------------------
-  afprintf(sprintf( ...
-    '[INFO] Running K-fold CNN Rusboost (K = %d)...\n', ...
-    opts.general.number_of_folds), 1);
-
-  % -------------------------------------------------------------------------
-  %                                             create the imdb for each fold
-  % -------------------------------------------------------------------------
-  imdbs = {}; % separate so don't have to save ~1.5 GB of imdbs!!!
-
-  for i = 1:opts.general.number_of_folds
-    afprintf(sprintf('\n'));
-    afprintf(sprintf('[INFO] Loading imdb for fold #%d...\n', i));
-    tmp_opts.dataset = opts.general.dataset;
-    tmp_opts.posneg_balance = opts.imdb.posneg_balance;
-    tmp_opts.fold_number = i; % currently only implemented for prostate data
-    imdbs{i} = loadSavedImdb(tmp_opts);
-    afprintf(sprintf('[INFO] done!\n'));
-  end
-
-  % -------------------------------------------------------------------------
-  %                                        train ensemble larp for each fold!
-  % -------------------------------------------------------------------------
-  for i = 1:opts.general.number_of_folds
-    afprintf(sprintf('[INFO] Running cnn_rusboost on fold #%d...\n', i));
-    opts.single_ensemble_options.imdb = imdbs{i};
-    % [ ...
-    %   folds.(sprintf('fold_%d', i)).ensemble_models, ...
-    %   folds.(sprintf('fold_%d', i)).weighted_results, ...
-    % ] = mainCNNRusboost(opts.single_ensemble_options);
-    [ ...
-      folds.(sprintf('fold_%d', i)).ensemble_performance_summary, ...
-    ] = mainCNNRusboost(opts.single_ensemble_options);
-    % overwrite and save results so far
-    save(opts.paths.folds_file_path, 'folds');
-    saveKFoldResults(folds, opts.paths.results_file_path);
-  end
-
-  % -------------------------------------------------------------------------
-  %                                                             print results
-  % -------------------------------------------------------------------------
-  % printKFoldResults(folds);
-
-% -------------------------------------------------------------------------
-function ensemble_performance_summary = mainCNNRusboost(single_ensemble_options)
+function ensemble_performance_summary = cnnRusboost(single_ensemble_options)
 % -------------------------------------------------------------------------
   % -------------------------------------------------------------------------
   %                                                              opts.general
@@ -116,11 +8,11 @@ function ensemble_performance_summary = mainCNNRusboost(single_ensemble_options)
   opts.general.dataset = getValueFromFieldOrDefault( ...
     single_ensemble_options, ...
     'dataset', ...
-    'prostate');
+    'mnist-two-class-9-4');
   opts.general.network_arch = getValueFromFieldOrDefault( ...
     single_ensemble_options, ...
     'network_arch', ...
-    'prostatenet');
+    'lenet');
   opts.general.iteration_count = getValueFromFieldOrDefault( ...
     single_ensemble_options, ...
     'iteration_count', ...
@@ -135,10 +27,11 @@ function ensemble_performance_summary = mainCNNRusboost(single_ensemble_options)
     'experiment_parent_dir', ...
     fullfile(vl_rootnn, 'experiment_results'));
   opts.paths.experiment_dir = fullfile(opts.paths.experiment_parent_dir, sprintf( ...
-    'rusboost-%s-%s-%s', ...
+    'rusboost-%s-%s-%s-max-iteration-count-%d', ...
     opts.general.dataset, ...
     opts.general.network_arch, ...
-    opts.paths.time_string));
+    opts.paths.time_string, ...
+    opts.general.iteration_count));
   if ~exist(opts.paths.experiment_dir)
     mkdir(opts.paths.experiment_dir);
   end
@@ -167,7 +60,7 @@ function ensemble_performance_summary = mainCNNRusboost(single_ensemble_options)
   opts.single_cnn_options.experiment_parent_dir = opts.paths.experiment_dir;
   opts.single_cnn_options.weight_init_source = 'gen';
   opts.single_cnn_options.weight_init_sequence = {'compRand', 'compRand', 'compRand'};
-  opts.single_cnn_options.gpus = ifNotMacSetGpu(getValueFromFieldOrDefault(single_ensemble_options, 'gpu', 1));
+  opts.single_cnn_options.gpus = ifNotMacSetGpu(getValueFromFieldOrDefault(single_ensemble_options, 'gpus', 1));
   opts.single_cnn_options.backprop_depth = getValueFromFieldOrDefault(single_ensemble_options, 'backprop_depth', 4);
   opts.single_cnn_options.debug_flag = false;
 
@@ -601,43 +494,3 @@ function weighted_results = getWeightedEnsembleResultsOnTestSet(ensemble_models,
   weighted_results.test_accuracy = weighted_accuracy;
   weighted_results.test_sensitivity = weighted_sensitivity;
   weighted_results.test_specificity = weighted_specificity;
-
-% -------------------------------------------------------------------------
-function saveKFoldResults(folds, results_file_path)
-% -------------------------------------------------------------------------
-  number_of_folds = numel(fields(folds));
-  for i = 1:number_of_folds
-    ensemble_performance_summary_for_fold = folds.(sprintf('fold_%d', i)).ensemble_performance_summary;
-    k_fold_results.(sprintf('fold_%d', i)).model_weight_normalized = ensemble_performance_summary_for_fold.model_weight_normalized;
-    k_fold_results.(sprintf('fold_%d', i)).train_positive_count = ensemble_performance_summary_for_fold.train_positive_count;
-    k_fold_results.(sprintf('fold_%d', i)).train_negative_count = ensemble_performance_summary_for_fold.train_negative_count;
-    k_fold_results.(sprintf('fold_%d', i)).validation_accuracy = ensemble_performance_summary_for_fold.validation_accuracy;
-    k_fold_results.(sprintf('fold_%d', i)).validation_sensitivity = ensemble_performance_summary_for_fold.validation_sensitivity;
-    k_fold_results.(sprintf('fold_%d', i)).validation_specificity = ensemble_performance_summary_for_fold.validation_specificity;
-    k_fold_results.(sprintf('fold_%d', i)).test_accuracy = ensemble_performance_summary_for_fold.test_accuracy;
-    k_fold_results.(sprintf('fold_%d', i)).test_sensitivity = ensemble_performance_summary_for_fold.test_sensitivity;
-    k_fold_results.(sprintf('fold_%d', i)).test_specificity = ensemble_performance_summary_for_fold.test_specificity;
-    k_fold_results.(sprintf('fold_%d', i)).weighted_test_accuracy = ensemble_performance_summary_for_fold.weighted_test_accuracy;
-    k_fold_results.(sprintf('fold_%d', i)).weighted_test_sensitivity = ensemble_performance_summary_for_fold.weighted_test_sensitivity;
-    k_fold_results.(sprintf('fold_%d', i)).weighted_test_specificity = ensemble_performance_summary_for_fold.weighted_test_specificity;
-  end
-
-  all_folds_accuracy = [];
-  all_folds_sensitivity = [];
-  all_folds_specificity = [];
-  for i = 1:number_of_folds
-    all_folds_accuracy(i) = k_fold_results.(sprintf('fold_%d', i)).weighted_test_accuracy;
-    all_folds_sensitivity(i) = k_fold_results.(sprintf('fold_%d', i)).weighted_test_sensitivity;
-    all_folds_specificity(i) = k_fold_results.(sprintf('fold_%d', i)).weighted_test_specificity;
-  end
-
-  k_fold_results.kfold_accuracy_avg = mean(all_folds_accuracy);
-  k_fold_results.kfold_sensitivity_avg = mean(all_folds_sensitivity);
-  k_fold_results.kfold_specificity_avg = mean(all_folds_specificity);
-  k_fold_results.kfold_accuracy_std = std(all_folds_accuracy);
-  k_fold_results.kfold_sensitivity_std = std(all_folds_sensitivity);
-  k_fold_results.kfold_specificity_std = std(all_folds_specificity);
-
-  % don't amend file, but overwrite...
-  delete(results_file_path);
-  saveStruct2File(k_fold_results, results_file_path, 0);

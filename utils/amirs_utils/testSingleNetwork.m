@@ -8,10 +8,7 @@ function results = testSingleNetwork(input_opts)
   % -------------------------------------------------------------------------
   %                                                                 opts.imdb
   % -------------------------------------------------------------------------
-  opts.imdb.posneg_balance = getValueFromFieldOrDefault(input_opts, 'posneg_balance', 'unbalanced');
-  tmp_opts.dataset = opts.general.dataset;
-  tmp_opts.posneg_balance = opts.imdb.posneg_balance;
-  imdb = loadSavedImdb(tmp_opts);
+  imdb = getValueFromFieldOrDefault(input_opts, 'imdb', struct());
 
   % -------------------------------------------------------------------------
   %                                                                opts.train
@@ -53,25 +50,9 @@ function results = testSingleNetwork(input_opts)
   single_cnn_options.weight_init_source = 'gen';
   single_cnn_options.weight_init_sequence = {'compRand', 'compRand', 'compRand'};
   single_cnn_options.debug_flag = false;
-  single_cnn_options.gpus = ifNotMacSetGpu(getValueFromFieldOrDefault(input_opts, 'gpu', 1));
+  single_cnn_options.gpus = ifNotMacSetGpu(getValueFromFieldOrDefault(input_opts, 'gpus', 1));
 
-  all_tests_net = {};
-  all_tests_results = {};
-  test_repeat_count = 10;
-
-  for i = 1:test_repeat_count
-    printConsoleOutputSeparator();
-    afprintf(sprintf('Test #%d\n', i));
-    [all_tests_net{i}, all_tests_results{i}] = cnnAmir(single_cnn_options);
-    results.test_acc(i) = all_tests_results{i}.test.acc;
-    results.test_sens(i) = all_tests_results{i}.test.sens;
-    results.test_spec(i) = all_tests_results{i}.test.spec;
-  end
-
-  results.test_acc_mean = mean(results.test_acc);
-  results.test_sens_mean = mean(results.test_sens);
-  results.test_spec_mean = mean(results.test_spec);
-  results.test_acc_std = std(results.test_acc);
-  results.test_sens_std = std(results.test_sens);
-  results.test_spec_std = std(results.test_spec);
-  saveStruct2File(results, opts.paths.results_file_path, 0);
+  [~, cnn_results] = cnnAmir(single_cnn_options);
+  results.weighted_test_accuracy = cnn_results.test.acc;
+  results.weighted_test_sensitivity = cnn_results.test.sens;
+  results.weighted_test_specificity = cnn_results.test.spec;
