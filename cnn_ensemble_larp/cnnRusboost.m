@@ -404,6 +404,13 @@ function ensemble_performance_summary = getEnsemblePerformanceSummary(ensemble_m
 % -------------------------------------------------------------------------
 function weighted_results = getWeightedEnsembleResultsOnTestSet(ensemble_models, test_imdb)
 % -------------------------------------------------------------------------
+  if ~numel(ensemble_models)
+    weighted_results.test_accuracy = 0;
+    weighted_results.test_sensitivity = 0;
+    weighted_results.test_specificity = 0;
+    return
+  end
+
   fprintf('\n');
   afprintf(sprintf('[INFO] ENSEMBLE RESULTS ON TEST SET: \n'));
   printConsoleOutputSeparator();

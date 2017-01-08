@@ -50,7 +50,7 @@ function output_opts = cnn_amir_init(input_opts)
           output_opts.train.learning_rate = [0.05*ones(1,30) 0.005*ones(1,10) 0.0005*ones(1,10)]; % matconvnet default
         case 'prostate-v2-20-patients'
           output_opts.train.learning_rate = [0.05*ones(1,10) 0.005*ones(1,20) 0.001*ones(1,20)];
-          % output_opts.train.learning_rate = [0.05*ones(1,2)];
+          % output_opts.train.learning_rate = [0.05*ones(1,1)];
       end
     case 'alexnet'
       switch opts.dataset
