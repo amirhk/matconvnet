@@ -1,4 +1,4 @@
-function results = testVaryingBatchSize(input_opts)
+function testVaryingBatchSize(input_opts)
   % -------------------------------------------------------------------------
   %                                                              opts.general
   % -------------------------------------------------------------------------
@@ -52,7 +52,6 @@ function results = testVaryingBatchSize(input_opts)
       test_number = test_number + 1;
     end
   end
-  saveStruct2File(results, opts.paths.results_file_path, 0);
 
 % single_cnn_options.dataset = 'svhn';
 % single_cnn_options.gpu = 3;
