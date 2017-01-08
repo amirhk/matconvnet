@@ -75,7 +75,7 @@ function imdb = loadSavedImdb(input_opts)
               tmp = load(fullfile(path_to_imdbs, 'prostate', 'saved-two-class-prostate-v2-20-patients-pos2-neg1-balanced-high-train-544-588.mat'));
           end
         otherwise
-          fprintf('TODO: implement!')
+          fprintf('TODO: implement!');
       end
     % case 'prostate'
     %   fprintf('TODO: implement!')
