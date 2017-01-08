@@ -15,7 +15,7 @@ function folds = kFoldCNNRusboost(input_opts)
   opts.general.dataset = getValueFromFieldOrDefault(input_opts, 'dataset', 'mnist-two-class-9-4');
   opts.general.network_arch = 'lenet';
   opts.general.number_of_folds = 5;
-  opts.general.iteration_count_limit = 10;
+  opts.general.iteration_count_limit = 3;
 
   % -------------------------------------------------------------------------
   %                                                                 opts.imdb
@@ -23,7 +23,7 @@ function folds = kFoldCNNRusboost(input_opts)
   opts.imdb.posneg_balance = getValueFromFieldOrDefault(input_opts, 'posneg_balance', 'unbalanced');
   if strcmp(opts.general.dataset, 'prostate-v2-20-patients')
     assert(opts.general.number_of_folds == 5);
-    assert(strcmp(opts.imdb.posneg_balance, 'balanced-low') || strcmp(opts.imdb.posneg_balance, 'unbalanced'));
+    assert(strcmp(opts.imdb.posneg_balance, 'unbalanced') || strcmp(opts.imdb.posneg_balance, 'balanced-high'));
   end
 
   % -------------------------------------------------------------------------
@@ -89,9 +89,12 @@ function folds = kFoldCNNRusboost(input_opts)
   for i = 1:opts.general.number_of_folds
     afprintf(sprintf('[INFO] Running cnn_rusboost on fold #%d...\n', i));
     opts.single_ensemble_options.imdb = imdbs{i};
+    % [ ...
+    %   folds.(sprintf('fold_%d', i)).ensemble_models, ...
+    %   folds.(sprintf('fold_%d', i)).weighted_results, ...
+    % ] = mainCNNRusboost(opts.single_ensemble_options);
     [ ...
-      folds.(sprintf('fold_%d', i)).ensemble_models, ...
-      folds.(sprintf('fold_%d', i)).weighted_results, ...
+      folds.(sprintf('fold_%d', i)).ensemble_performance_summary, ...
     ] = mainCNNRusboost(opts.single_ensemble_options);
     % overwrite and save results so far
     save(opts.paths.folds_file_path, 'folds');
@@ -101,10 +104,10 @@ function folds = kFoldCNNRusboost(input_opts)
   % -------------------------------------------------------------------------
   %                                                             print results
   % -------------------------------------------------------------------------
-  printKFoldResults(folds);
+  % printKFoldResults(folds);
 
 % -------------------------------------------------------------------------
-function [ensemble_models, weighted_results] = mainCNNRusboost(single_ensemble_options)
+function ensemble_performance_summary = mainCNNRusboost(single_ensemble_options)
 % -------------------------------------------------------------------------
   % -------------------------------------------------------------------------
   %                                                              opts.general
@@ -218,7 +221,7 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(single_ensemble_o
   H = {};
   B = [];
 
-  t = 1; % loop counter
+  iteration = 1; % loop counter
   count = 1; % number of times the same boosting iteration have been repeated
 
   % -------------------------------------------------------------------------
@@ -234,9 +237,9 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(single_ensemble_o
   % -------------------------------------------------------------------------
   printConsoleOutputSeparator();
   ensemble_models = {};
-  while t <= opts.general.iteration_count
+  while iteration <= opts.general.iteration_count
     afprintf(sprintf('\n'));
-    afprintf(sprintf('[INFO] Boosting iteration #%d (attempt %d)...\n', t, count));
+    afprintf(sprintf('[INFO] Boosting iteration #%d (attempt %d)...\n', iteration, count));
 
     % Resampling NEG_DATA with weights of positive example
     afprintf(sprintf(...
@@ -247,7 +250,7 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(single_ensemble_o
       [resampled_data, resampled_labels] = fh_imdb_utils.resampleData( ...
         data_train, ...
         labels_train, ...
-        W(t, :), ...
+        W(iteration, :), ...
         opts.ensemble_options.random_undersampling_ratio);
       flag = true;
     catch
@@ -274,9 +277,9 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(single_ensemble_o
       data_train_negative_count));
     validation_predictions = getPredictionsFromNetOnImdb(net, validation_imdb, 3);
     [ ...
-      validation_acc, ...
-      validation_sens, ...
-      validation_spec, ...
+      validation_accuracy, ...
+      validation_sensitivity, ...
+      validation_specificity, ...
     ] = getAccSensSpec(labels_train, validation_predictions, true);
 
     % -------------------------------------------------------------------------
@@ -291,12 +294,12 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(single_ensemble_o
       else
         if labels_train(i) == 2
           if opts.ensemble_options.symmetric_loss_updates
-            loss = loss + W(t, i);
+            loss = loss + W(iteration, i);
           else
-            loss = loss + W(t, i) * min(negative_to_positive_ratio, 2);
+            loss = loss + W(iteration, i) * min(negative_to_positive_ratio, 2);
           end
         else
-          loss = loss + W(t, i);
+          loss = loss + W(iteration, i);
         end
       end
     end
@@ -306,9 +309,9 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(single_ensemble_o
     % the loop is broken and rolled back to the state where loss > 0.5 was not
     % encountered.
     if count > 5
-      L = L(1:t-1);
-      H = H(1:t-1);
-      B = B(1:t-1);
+      L = L(1:iteration-1);
+      H = H(1:iteration-1);
+      B = B(1:iteration-1);
       afprintf(sprintf('Too many iterations have loss > 0.5\n'));
       afprintf(sprintf('Aborting boosting...\n'));
       break;
@@ -325,14 +328,14 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(single_ensemble_o
       count = 1;
     end
 
-    H{t} = net; % Hypothesis function / Trained CNN Network
-    L(t) = loss; % Pseudo-loss at each iteration
+    H{iteration} = net; % Hypothesis function / Trained CNN Network
+    L(iteration) = loss; % Pseudo-loss at each iteration
     beta = loss / (1 - loss); % Setting weight update parameter 'beta'.
-    B(t) = log(1 / beta); % Weight of the hypothesis
+    B(iteration) = log(1 / beta); % Weight of the hypothesis
 
     % % At the final iteration there is no need to update the weights any
     % % further
-    % if t == opts.general.iteration_count
+    % if iteration == opts.general.iteration_count
     %     break;
     % end
 
@@ -342,25 +345,25 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(single_ensemble_o
     afprintf(sprintf('[INFO] Updating weights... '));
     for i = 1:data_train_count
       if labels_train(i) == validation_predictions(i)
-        W(t + 1, i) = W(t, i) * beta;
+        W(iteration + 1, i) = W(iteration, i) * beta;
       else
         if labels_train(i) == 2
           if opts.ensemble_options.symmetric_weight_updates
-            W(t + 1, i) = W(t, i);
+            W(iteration + 1, i) = W(iteration, i);
           else
-            W(t + 1, i) = W(t, i) * min(negative_to_positive_ratio, 2);
+            W(iteration + 1, i) = W(iteration, i) * min(negative_to_positive_ratio, 2);
           end
         else
-          W(t + 1, i) = W(t, i);
+          W(iteration + 1, i) = W(iteration, i);
         end
       end
     end
     fprintf('done!\n');
 
     % Normalizing the weight for the next iteration
-    sum_W = sum(W(t + 1, :));
+    sum_W = sum(W(iteration + 1, :));
     for i = 1:data_train_count
-      W(t + 1, i) = W(t + 1, i) / sum_W;
+      W(iteration + 1, i) = W(iteration + 1, i) / sum_W;
     end
 
     % -------------------------------------------------------------------------
@@ -371,53 +374,64 @@ function [ensemble_models, weighted_results] = mainCNNRusboost(single_ensemble_o
       data_test_negative_count));
     test_predictions = getPredictionsFromNetOnImdb(net, test_imdb, 3);
     [ ...
-      test_acc, ...
-      test_sens, ...
-      test_spec, ...
+      test_accuracy, ...
+      test_sensitivity, ...
+      test_specificity, ...
     ] = getAccSensSpec(labels_test, test_predictions, true);
 
     % -------------------------------------------------------------------------
     %                                          9. save single model of ensemble
     % -------------------------------------------------------------------------
     afprintf(sprintf('[INFO] Saving model and info... '));
-    ensemble_models{t}.model_net = H{t};
-    ensemble_models{t}.model_loss = L(t);
-    ensemble_models{t}.model_weight = B(t);
-    ensemble_models{t}.train_positive_count = numel(find(resampled_labels == 2));
-    ensemble_models{t}.train_negative_count = numel(find(resampled_labels == 1));
-    ensemble_models{t}.validation_positive_count = data_train_positive_count;
-    ensemble_models{t}.validation_negative_count = data_train_negative_count;
-    ensemble_models{t}.validation_predictions = validation_predictions;
-    ensemble_models{t}.validation_labels = labels_train;
-    ensemble_models{t}.validation_accuracy = validation_acc;
-    ensemble_models{t}.validation_sensitivity = validation_sens;
-    ensemble_models{t}.validation_specificity = validation_spec;
-    ensemble_models{t}.validation_weights_pre_update = W(t,:);
-    ensemble_models{t}.validation_weights_post_update = W(t + 1,:);
-    ensemble_models{t}.test_positive_count = data_test_positive_count;
-    ensemble_models{t}.test_negative_count = data_test_negative_count;
-    ensemble_models{t}.test_predictions = test_predictions;
-    ensemble_models{t}.test_labels = labels_test;
-    ensemble_models{t}.test_accuracy = test_acc;
-    ensemble_models{t}.test_sensitivity = test_sens;
-    ensemble_models{t}.test_specificity = test_spec;
+    ensemble_models{iteration}.model_net = H{iteration};
+    ensemble_models{iteration}.model_loss = L(iteration);
+    ensemble_models{iteration}.model_weight_normalized = 0;
+    ensemble_models{iteration}.model_weight_not_normalized = B(iteration);
+    ensemble_models{iteration}.train_positive_count = numel(find(resampled_labels == 2));
+    ensemble_models{iteration}.train_negative_count = numel(find(resampled_labels == 1));
+    ensemble_models{iteration}.validation_positive_count = data_train_positive_count;
+    ensemble_models{iteration}.validation_negative_count = data_train_negative_count;
+    ensemble_models{iteration}.validation_predictions = validation_predictions;
+    ensemble_models{iteration}.validation_labels = labels_train;
+    ensemble_models{iteration}.validation_accuracy = validation_accuracy;
+    ensemble_models{iteration}.validation_sensitivity = validation_sensitivity;
+    ensemble_models{iteration}.validation_specificity = validation_specificity;
+    ensemble_models{iteration}.validation_weights_pre_update = W(iteration,:);
+    ensemble_models{iteration}.validation_weights_post_update = W(iteration + 1,:);
+    ensemble_models{iteration}.test_positive_count = data_test_positive_count;
+    ensemble_models{iteration}.test_negative_count = data_test_negative_count;
+    ensemble_models{iteration}.test_predictions = test_predictions;
+    ensemble_models{iteration}.test_labels = labels_test;
+    ensemble_models{iteration}.test_accuracy = test_accuracy;
+    ensemble_models{iteration}.test_sensitivity = test_sensitivity;
+    ensemble_models{iteration}.test_specificity = test_specificity;
     save(opts.paths.ensemble_models_file_path, 'ensemble_models');
     fprintf('done!\n');
-    plotEnsemblePerformance(ensemble_models, opts.paths.experiment_dir);
+    plotIncrementalEnsemblePerformance(ensemble_models, opts.paths.experiment_dir);
     % Incrementing loop counter
-    t = t + 1;
+    iteration = iteration + 1;
+  end
+  % -------------------------------------------------------------------------
+  % 10. now that all iterations are complete normalize and save model weights
+  % -------------------------------------------------------------------------
+  B = B / sum(B);
+  for iteration = 1:length(B)
+    ensemble_models{iteration}.model_weight_normalized = B(iteration);
   end
 
+  % folds.(sprintf('fold_%d', i))
+
   % -------------------------------------------------------------------------
-  % 8. test on test set, keeping in mind beta's between each mode
+  %            11. test on test set, keeping in mind beta's between each mode
   % -------------------------------------------------------------------------
   % The final hypothesis is calculated and tested on the test set simulteneously
   printConsoleOutputSeparator();
-  weighted_results = testAllEnsembleModelsOnTestImdb(ensemble_models, imdb);
+  ensemble_performance_summary = getEnsemblePerformanceSummary(ensemble_models, test_imdb);
+  saveStruct2File(ensemble_performance_summary, opts.paths.results_file_path, 0);
   printConsoleOutputSeparator();
 
 % -------------------------------------------------------------------------
-function plotEnsemblePerformance(ensemble_models, experiment_dir)
+function plotIncrementalEnsemblePerformance(ensemble_models, experiment_dir)
 % -------------------------------------------------------------------------
   num_models_in_ensemble = numel(ensemble_models);
   ensemble_models_validation_accuracy = zeros(1, num_models_in_ensemble);
@@ -459,51 +473,97 @@ function plotEnsemblePerformance(ensemble_models, experiment_dir)
   drawnow;
   print(2, model_fig_path, '-dpdf');
 
-%-------------------------------------------------------------------------
-function weighted_results = testAllEnsembleModelsOnTestImdb(ensemble_models, imdb)
 % -------------------------------------------------------------------------
-  % TODO: this has already been computed before... don't do redundant work and
-  % stop killing trees
+function ensemble_performance_summary = getEnsemblePerformanceSummary(ensemble_models, test_imdb)
+% -------------------------------------------------------------------------
+  ensemble_performance_summary.model_weight_normalized = 0;
+  ensemble_performance_summary.train_positive_count = 0;
+  ensemble_performance_summary.train_negative_count = 0;
+  ensemble_performance_summary.validation_accuracy = 0;
+  ensemble_performance_summary.validation_sensitivity = 0;
+  ensemble_performance_summary.validation_specificity = 0;
+  ensemble_performance_summary.test_accuracy = 0;
+  ensemble_performance_summary.test_sensitivity = 0;
+  ensemble_performance_summary.test_specificity = 0;
+  ensemble_performance_summary.weighted_test_accuracy = 0;
+  ensemble_performance_summary.weighted_test_sensitivity = 0;
+  ensemble_performance_summary.weighted_test_specificity= 0;
+
+
+  number_of_models_in_ensemble = numel(ensemble_models);
+  for iteration = 1:number_of_models_in_ensemble
+    ensemble_performance_summary.model_weight_normalized(iteration) = ensemble_models{iteration}.model_weight_normalized;
+    ensemble_performance_summary.train_positive_count(iteration) = ensemble_models{iteration}.train_positive_count;
+    ensemble_performance_summary.train_negative_count(iteration) = ensemble_models{iteration}.train_negative_count;
+    ensemble_performance_summary.validation_accuracy(iteration) = ensemble_models{iteration}.validation_accuracy;
+    ensemble_performance_summary.validation_sensitivity(iteration) = ensemble_models{iteration}.validation_sensitivity;
+    ensemble_performance_summary.validation_specificity(iteration) = ensemble_models{iteration}.validation_specificity;
+    ensemble_performance_summary.test_accuracy(iteration) = ensemble_models{iteration}.test_accuracy;
+    ensemble_performance_summary.test_sensitivity(iteration) = ensemble_models{iteration}.test_sensitivity;
+    ensemble_performance_summary.test_specificity(iteration) = ensemble_models{iteration}.test_specificity;
+  end
+
+  weighted_results = getWeightedEnsembleResultsOnTestSet(ensemble_models, test_imdb);
+  ensemble_performance_summary.weighted_test_accuracy = weighted_results.test_accuracy;
+  ensemble_performance_summary.weighted_test_sensitivity = weighted_results.test_sensitivity;
+  ensemble_performance_summary.weighted_test_specificity = weighted_results.test_specificity;
+
+  % ensemble_performance_summary.weighted_results = weighted_results;
+  % weighted_results.test_accuracy = weighted_accuracy;
+  % weighted_results.test_sensitivity = weighted_sensitivity;
+  % weighted_results.test_specificity = weighted_specificity;
+
+% -------------------------------------------------------------------------
+function weighted_results = getWeightedEnsembleResultsOnTestSet(ensemble_models, test_imdb)
+% -------------------------------------------------------------------------
   fprintf('\n');
   afprintf(sprintf('[INFO] ENSEMBLE RESULTS ON TEST SET: \n'));
   printConsoleOutputSeparator();
+
   % -------------------------------------------------------------------------
   % Initial stuff
   % -------------------------------------------------------------------------
-  data_test = imdb.images.data(:,:,:,imdb.images.set == 3);
-  labels_test = imdb.images.labels(imdb.images.set == 3);
-  data_test_positive = data_test(:,:,:,labels_test == 2);
-  data_test_negative = data_test(:,:,:,labels_test == 1);
-  data_test_count = size(data_test, 4);
-  data_test_positive_count = size(data_test_positive, 4);
-  data_test_negative_count = size(data_test_negative, 4);
-
-  % -------------------------------------------------------------------------
-  % Construct IMDB
-  % -------------------------------------------------------------------------
   fh_imdb_utils = imdbTwoClassUtils;
-  test_imdb = fh_imdb_utils.constructPartialImdb(data_test, labels_test, 3);
+  [ ...
+    data, ...
+    data_train, ...
+    data_train_positive, ...
+    data_train_negative, ...
+    data_train_indices, ...
+    data_train_positive_indices, ...
+    data_train_negative_indices, ...
+    data_train_count, ...
+    data_train_positive_count, ...
+    data_train_negative_count, ...
+    labels_train, ...
+    data_test, ...
+    data_test_positive, ...
+    data_test_negative, ...
+    data_test_indices, ...
+    data_test_positive_indices, ...
+    data_test_negative_indices, ...
+    data_test_count, ...
+    data_test_positive_count, ...
+    data_test_negative_count, ...
+    labels_test, ...
+  ] = fh_imdb_utils.getImdbInfo(test_imdb, 1);
 
-  H = {};
-  B = zeros(1, numel(ensemble_models));
-  for i = 1:numel(B)
-    H{i} = ensemble_models{i}.model_net;
-    B(i) = ensemble_models{i}.model_weight;
+  number_of_models_in_ensemble = numel(ensemble_models);
+  B = zeros(1, number_of_models_in_ensemble);
+  for iteration = 1:numel(B)
+    B(iteration) = ensemble_models{iteration}.model_weight_normalized;
   end
-  assert(numel(H) == numel(B))
-  B = B / sum(B);
 
-  weighted_test_set_predictions = zeros(data_test_count, 2);
+  weighted_ensemble_prediction = zeros(1, data_test_count);
   test_set_predictions_per_model = {};
-  for i = 1:size(H, 2) % looping through all trained networks
+  for iteration = 1:number_of_models_in_ensemble % looping through all trained models
     afprintf(sprintf('\n'));
-    afprintf(sprintf('[INFO] Computing test set predictions for model #%d (positive: %d, negative: %d)...\n', ...
-      i, ...
+    afprintf(sprintf('[INFO] Getting test set predictions for model #%d (positive: %d, negative: %d)...', ...
+      iteration, ...
       data_test_positive_count, ...
       data_test_negative_count));
-    net = H{i};
-    test_set_predictions_per_model{i} = getPredictionsFromNetOnImdb(net, test_imdb, 3);
-    [acc, sens, spec] = getAccSensSpec(labels_test, test_set_predictions_per_model{i}, true);
+    test_set_predictions_per_model{iteration} = ensemble_models{iteration}.test_predictions;
+    fprintf('done.\n');
   end
 
   for i = 1:data_test_count
@@ -511,19 +571,19 @@ function weighted_results = testAllEnsembleModelsOnTestImdb(ensemble_models, imd
     % produced during boosting
     wt_positive = 0; % class 2
     wt_negative = 0; % class 1
-    for j = 1:size(H, 2) % looping through all trained networks
-       p = test_set_predictions_per_model{j}(i);
+    for iteration = 1:number_of_models_in_ensemble % looping through all trained models
+       p = test_set_predictions_per_model{iteration}(i);
        if p == 2 % if is positive
-           wt_positive = wt_positive + B(j);
+           wt_positive = wt_positive + B(iteration);
        else
-           wt_negative = wt_negative + B(j);
+           wt_negative = wt_negative + B(iteration);
        end
     end
 
     if (wt_positive > wt_negative)
-        weighted_test_set_predictions(i,:) = [2 wt_positive];
+        weighted_ensemble_prediction(i) = 2;
     else
-        weighted_test_set_predictions(i,:) = [1 wt_negative];
+        weighted_ensemble_prediction(i) = 1;
     end
   end
 
@@ -531,86 +591,53 @@ function weighted_results = testAllEnsembleModelsOnTestImdb(ensemble_models, imd
   % 7. done, go treat yourself to something sugary!
   % -------------------------------------------------------------------------
   printConsoleOutputSeparator();
-  predictions_test = weighted_test_set_predictions(:, 1)';
-  [weighted_acc, weighted_sens, weighted_spec] = getAccSensSpec(labels_test, predictions_test, false);
-  afprintf(sprintf('Model weights:\n'))
-  disp(B);
-  afprintf(sprintf('[INFO] Weighted Acc: %3.6f\n', weighted_acc));
-  afprintf(sprintf('[INFO] Weighted Sens: %3.6f\n', weighted_sens));
-  afprintf(sprintf('[INFO] Weighted Spec: %3.6f\n', weighted_spec));
-  weighted_results.test_acc = weighted_acc;
-  weighted_results.test_sens = weighted_sens;
-  weighted_results.test_spec = weighted_spec;
-
-% -------------------------------------------------------------------------
-function results = getKFoldResults(folds)
-% -------------------------------------------------------------------------
-  all_folds_acc = [];
-  all_folds_sens = [];
-  all_folds_spec = [];
-  all_folds_ensemble_count = [];
-  number_of_folds = numel(fields(folds));
-  for i = 1:number_of_folds
-    for j = 1:numel(folds.(sprintf('fold_%d', i)).ensemble_models)
-      % results.(sprintf('fold_%d', i)).weight(j) = ...
-      %   folds.(sprintf('fold_%d', i)).ensemble_models{j}.model_weight; % weight is normalized a bunch of times after each iter...
-      results.(sprintf('fold_%d', i)).validation_acc(j) = ...
-        folds.(sprintf('fold_%d', i)).ensemble_models{j}.validation_accuracy;
-      results.(sprintf('fold_%d', i)).validation_sens(j) = ...
-        folds.(sprintf('fold_%d', i)).ensemble_models{j}.validation_sensitivity;
-      results.(sprintf('fold_%d', i)).validation_spec(j) = ...
-        folds.(sprintf('fold_%d', i)).ensemble_models{j}.validation_specificity;
-      results.(sprintf('fold_%d', i)).test_acc(j) = ...
-        folds.(sprintf('fold_%d', i)).ensemble_models{j}.test_accuracy;
-      results.(sprintf('fold_%d', i)).test_sens(j) = ...
-        folds.(sprintf('fold_%d', i)).ensemble_models{j}.test_sensitivity;
-      results.(sprintf('fold_%d', i)).test_spec(j) = ...
-        folds.(sprintf('fold_%d', i)).ensemble_models{j}.test_specificity;
-    end
-    results.(sprintf('fold_%d', i)).weighted_acc = ...
-      folds.(sprintf('fold_%d', i)).weighted_results.test_acc;
-    results.(sprintf('fold_%d', i)).weighted_sens = ...
-      folds.(sprintf('fold_%d', i)).weighted_results.test_sens;
-    results.(sprintf('fold_%d', i)).weighted_spec = ...
-      folds.(sprintf('fold_%d', i)).weighted_results.test_spec;
+  predictions_test = weighted_ensemble_prediction;
+  afprintf(sprintf('Weighted results:\n'));
+  afprintf(sprintf('Model Weights: '), 1);
+  for i = 1:length(B)
+    fprintf('%.2f,\t', B(i));
   end
-
-  for i = 1:number_of_folds
-    all_folds_acc(i) = folds.(sprintf('fold_%d', i)).weighted_results.test_acc;
-    all_folds_sens(i) = folds.(sprintf('fold_%d', i)).weighted_results.test_sens;
-    all_folds_spec(i) = folds.(sprintf('fold_%d', i)).weighted_results.test_spec;
-    all_folds_ensemble_count(i) = numel(folds.(sprintf('fold_%d', i)).ensemble_models);
-  end
-  results.kfold_acc_avg = mean(all_folds_acc);
-  results.kfold_sens_avg = mean(all_folds_sens);
-  results.kfold_spec_avg = mean(all_folds_spec);
-  results.kfold_ensemble_count_avg = mean(all_folds_ensemble_count);
-
-  results.kfold_acc_std = std(all_folds_acc);
-  results.kfold_sens_std = std(all_folds_sens);
-  results.kfold_spec_std = std(all_folds_spec);
-  results.kfold_ensemble_count_std = std(all_folds_ensemble_count);
+  [weighted_accuracy, weighted_sensitivity, weighted_specificity] = getAccSensSpec(labels_test, predictions_test, true);
+  weighted_results.test_accuracy = weighted_accuracy;
+  weighted_results.test_sensitivity = weighted_sensitivity;
+  weighted_results.test_specificity = weighted_specificity;
 
 % -------------------------------------------------------------------------
 function saveKFoldResults(folds, results_file_path)
 % -------------------------------------------------------------------------
-  results = getKFoldResults(folds);
+  number_of_folds = numel(fields(folds));
+  for i = 1:number_of_folds
+    ensemble_performance_summary_for_fold = folds.(sprintf('fold_%d', i)).ensemble_performance_summary;
+    k_fold_results.(sprintf('fold_%d', i)).model_weight_normalized = ensemble_performance_summary_for_fold.model_weight_normalized;
+    k_fold_results.(sprintf('fold_%d', i)).train_positive_count = ensemble_performance_summary_for_fold.train_positive_count;
+    k_fold_results.(sprintf('fold_%d', i)).train_negative_count = ensemble_performance_summary_for_fold.train_negative_count;
+    k_fold_results.(sprintf('fold_%d', i)).validation_accuracy = ensemble_performance_summary_for_fold.validation_accuracy;
+    k_fold_results.(sprintf('fold_%d', i)).validation_sensitivity = ensemble_performance_summary_for_fold.validation_sensitivity;
+    k_fold_results.(sprintf('fold_%d', i)).validation_specificity = ensemble_performance_summary_for_fold.validation_specificity;
+    k_fold_results.(sprintf('fold_%d', i)).test_accuracy = ensemble_performance_summary_for_fold.test_accuracy;
+    k_fold_results.(sprintf('fold_%d', i)).test_sensitivity = ensemble_performance_summary_for_fold.test_sensitivity;
+    k_fold_results.(sprintf('fold_%d', i)).test_specificity = ensemble_performance_summary_for_fold.test_specificity;
+    k_fold_results.(sprintf('fold_%d', i)).weighted_test_accuracy = ensemble_performance_summary_for_fold.weighted_test_accuracy;
+    k_fold_results.(sprintf('fold_%d', i)).weighted_test_sensitivity = ensemble_performance_summary_for_fold.weighted_test_sensitivity;
+    k_fold_results.(sprintf('fold_%d', i)).weighted_test_specificity = ensemble_performance_summary_for_fold.weighted_test_specificity;
+  end
+
+  all_folds_accuracy = [];
+  all_folds_sensitivity = [];
+  all_folds_specificity = [];
+  for i = 1:number_of_folds
+    all_folds_accuracy(i) = k_fold_results.(sprintf('fold_%d', i)).weighted_test_accuracy;
+    all_folds_sensitivity(i) = k_fold_results.(sprintf('fold_%d', i)).weighted_test_sensitivity;
+    all_folds_specificity(i) = k_fold_results.(sprintf('fold_%d', i)).weighted_test_specificity;
+  end
+
+  k_fold_results.kfold_acc_avg = mean(all_folds_accuracy);
+  k_fold_results.kfold_sens_avg = mean(all_folds_sensitivity);
+  k_fold_results.kfold_spec_avg = mean(all_folds_specificity);
+  k_fold_results.kfold_acc_std = std(all_folds_accuracy);
+  k_fold_results.kfold_sens_std = std(all_folds_sensitivity);
+  k_fold_results.kfold_spec_std = std(all_folds_specificity);
+
   % don't amend file, but overwrite...
   delete(results_file_path);
-  saveStruct2File(results, results_file_path, 0);
-
-% _p------------------------------------------------------------------------
-function printKFoldResults(folds)
-% -------------------------------------------------------------------------
-  format shortG
-  % for i = 1:numel(folds)
-  %   afprintf(sprintf('Fold #%d Weighted RusBoost Performance:\n', i));
-  %   disp(folds.(sprintf('fold_%d', i)).weighted_results);
-  % end
-  results = getKFoldResults(folds);
-  afprintf(sprintf(' -- -- -- -- -- -- -- -- -- ALL FOLDS -- -- -- -- -- -- -- -- -- \n'));
-  afprintf(sprintf(' -- -- -- -- -- -- -- -- -- TODO AMIR! -- -- -- -- -- -- -- -- -- \n'));
-  % afprintf(sprintf('acc: %3.6f, std: %3.6f\n', mean(results.all_folds_acc), std(results.all_folds_acc)));
-  % afprintf(sprintf('sens: %3.6f, std: %3.6f\n', mean(results.all_folds_sens), std(results.all_folds_sens)));
-  % afprintf(sprintf('spec: %3.6f, std: %3.6f\n', mean(results.all_folds_spec), std(results.all_folds_spec)));
-  % afprintf(sprintf('ensemble count: %3.6f, std: %3.6f\n', mean(results.all_folds_ensemble_count), std(results.all_folds_ensemble_count)));
+  saveStruct2File(k_fold_results, results_file_path, 0);

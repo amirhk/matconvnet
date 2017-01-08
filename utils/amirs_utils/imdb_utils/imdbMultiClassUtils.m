@@ -10,7 +10,7 @@ function [ ...
   data_test_per_class, ...
   data_test_count_per_class, ...
   data_test_indices_per_class, ...
-  labels_test] = getImdbInfo(imdb, print_info)
+  labels_test] = getImdbInfo(imdb, debug_flag)
 % -------------------------------------------------------------------------
   % enforce row vector before doing bsxfun
   imdb.images.labels = reshape(imdb.images.labels, 1, prod(size(imdb.images.labels)));
@@ -30,7 +30,7 @@ function [ ...
     data_test_per_class{class_number} = imdb.images.data(:,:,:,data_test_indices_per_class{class_number});
   end
 
-  if print_info
+  if debug_flag
     afprintf(sprintf('[INFO] imdb info:\n'));
     afprintf(sprintf('[INFO] TRAINING SET:\n'));
     afprintf(sprintf('[INFO] total: %d\n', sum([data_train_count_per_class{:}], 2)), 1);
