@@ -401,11 +401,6 @@ function ensemble_performance_summary = getEnsemblePerformanceSummary(ensemble_m
   ensemble_performance_summary.weighted_test_sensitivity = weighted_results.test_sensitivity;
   ensemble_performance_summary.weighted_test_specificity = weighted_results.test_specificity;
 
-  % ensemble_performance_summary.weighted_results = weighted_results;
-  % weighted_results.test_accuracy = weighted_accuracy;
-  % weighted_results.test_sensitivity = weighted_sensitivity;
-  % weighted_results.test_specificity = weighted_specificity;
-
 % -------------------------------------------------------------------------
 function weighted_results = getWeightedEnsembleResultsOnTestSet(ensemble_models, test_imdb)
 % -------------------------------------------------------------------------
