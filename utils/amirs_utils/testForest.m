@@ -9,7 +9,9 @@ function results = testForest(input_opts)
   %                                                                 opts.imdb
   % -------------------------------------------------------------------------
   opts.imdb.posneg_balance = getValueFromFieldOrDefault(input_opts, 'posneg_balance', 'unbalanced');
-  imdb = loadSavedImdb(opts.general.dataset, opts.imdb.posneg_balance);
+  tmp_opts.dataset = opts.general.dataset;
+  tmp_opts.posneg_balance = opts.imdb.posneg_balance;
+  imdb = loadSavedImdb(tmp_opts);
 
   % -------------------------------------------------------------------------
   %                                                                opts.train

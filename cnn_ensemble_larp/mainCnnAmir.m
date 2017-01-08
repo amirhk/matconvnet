@@ -113,7 +113,9 @@ function main_cnn_amir(varargin)
         for weight_decay = weight_decay_list
           for backprop_depth = backprop_depth_list
             for leave_out_index = leave_out_indices
-              opts.imdb = loadSavedImdb(dataset, posneg_balance);
+              tmp_opts.dataset = dataset;
+              tmp_opts.posneg_balance = posneg_balance;
+              opts.imdb = loadSavedImdb(tmp_opts);
               opts.dataset = char(dataset);
               opts.network_arch = network_arch;
               opts.backprop_depth = backprop_depth;

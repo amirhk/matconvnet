@@ -27,9 +27,6 @@ function output_opts = cnn_amir_init(input_opts)
       end
     case 'lenet'
       switch opts.dataset
-        case 'prostate-v2-20-patients'
-          output_opts.train.learning_rate = [0.05*ones(1,10) 0.005*ones(1,20) 0.001*ones(1,20)];
-          % output_opts.train.learning_rate = [0.05*ones(1,2)];
         case 'cifar'
           output_opts.train.learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)]; % matconvnet default
         case 'cifar-two-class-deer-horse'
@@ -51,6 +48,9 @@ function output_opts = cnn_amir_init(input_opts)
         case 'svhn-two-class-9-4'
           % output_opts.train.learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)]; % matconvnet default
           output_opts.train.learning_rate = [0.05*ones(1,30) 0.005*ones(1,10) 0.0005*ones(1,10)]; % matconvnet default
+        case 'prostate-v2-20-patients'
+          output_opts.train.learning_rate = [0.05*ones(1,10) 0.005*ones(1,20) 0.001*ones(1,20)];
+          % output_opts.train.learning_rate = [0.05*ones(1,2)];
       end
     case 'alexnet'
       switch opts.dataset

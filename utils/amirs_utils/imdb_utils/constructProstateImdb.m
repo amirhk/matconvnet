@@ -11,8 +11,8 @@ function imdb = constructProstateImdb(opts)
 
   switch opts.leave_out_type
     case 'special'
-      train_patient_indices = setdiff(all_patient_indices, opts.leaveOutIndices);
-      test_patient_indices  = opts.leaveOutIndices;
+      train_patient_indices = setdiff(all_patient_indices, opts.leave_out_indices);
+      test_patient_indices  = opts.leave_out_indices;
       train_balance         = getValueFromFieldOrDefault(opts, 'train_balance', false);
       train_augment_healthy = getValueFromFieldOrDefault(opts, 'train_augment_healthy', 'none');
       train_augment_cancer  = getValueFromFieldOrDefault(opts, 'train_augment_cancer', 'none');
@@ -183,33 +183,15 @@ function imdb = constructProstateImdbHelper( ...
     afprintf(sprintf('done.\n'));
   end
 
-  % if opts.whiten_data
-  %   afprintf(sprintf('[INFO] whitening data... '));
-  %   z = reshape(data,[],total_number_of_samples);
-  %   W = z(:,set == 1)*z(:,set == 1)'/total_number_of_samples;
-  %   [V,D] = eig(W);
-  %   % the scale is selected to approximately preserve the norm of W
-  %   d2 = diag(D);
-  %   en = sqrt(mean(d2));
-  %   z = V*diag(en./max(sqrt(d2), 10))*V'*z;
-  %   data = reshape(z, 32, 32, number_of_modalities, []);
-  %   afprintf(sprintf('done.\n'));
-  % end
-
-  afprintf(sprintf('== == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == ==\n\n'));
-
-  afprintf(sprintf('[INFO] total number of samples: %d\n', total_number_of_samples));
-  afprintf(sprintf('[INFO] number of `train` data - healthy: %d\n', size(data_train(:,:,:,labels_train == 1),4)));
-  afprintf(sprintf('[INFO] number of `train` data - cancer: %d\n', size(data_train(:,:,:,labels_train == 2),4)));
-  afprintf(sprintf('[INFO] number of `test` data - healthy: %d\n', size(data_test(:,:,:,labels_test == 1),4)));
-  afprintf(sprintf('[INFO] number of `test` data - cancer: %d\n', size(data_test(:,:,:,labels_test == 2),4)));
-
   imdb.images.data = data;
   imdb.images.labels = single(labels);
   imdb.images.set = set;
   imdb.meta.sets = {'train', 'val', 'test'};
   % imdb.meta.classes = ...
   afprintf(sprintf('done!\n\n'));
+  printConsoleOutputSeparator();
+  fh_imdb_utils = imdbTwoClassUtils;
+  fh_imdb_utils.getImdbInfo(imdb, true);
 
 % --------------------------------------------------------------------
 function [data, labels] = loadSamplesV2(opts, patient_indices_in_set, modalitites_in_use)
@@ -515,5 +497,5 @@ function imdb = testProstateImdbConstructor()
   opts.leave_out_type = 'none';
   opts.leave_out_index = 1;
   opts.contrast_normalization = true;
-  opts.whiten_data = true;
+  % opts.whiten_data = true;
   imdb = constructProstateImdb(opts);

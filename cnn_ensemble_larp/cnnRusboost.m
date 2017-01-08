@@ -13,34 +13,17 @@ function folds = kFoldCNNRusboost(input_opts)
   %                                                              opts.general
   % -------------------------------------------------------------------------
   opts.general.dataset = getValueFromFieldOrDefault(input_opts, 'dataset', 'mnist-two-class-9-4');
-  % switch opts.general.dataset
-  %   case 'prostate'
-  %     opts.general.network_arch = 'prostatenet';
-  %   otherwise % unbalanced mnist, unbalanced cifar, ...
-  %     opts.general.network_arch = 'lenet';
-  % end
   opts.general.network_arch = 'lenet';
   opts.general.number_of_folds = 5;
-  opts.general.iteration_count_limit = 5;
+  opts.general.iteration_count_limit = 10;
 
   % -------------------------------------------------------------------------
   %                                                                 opts.imdb
   % -------------------------------------------------------------------------
-  switch opts.general.dataset
-    case 'prostate'
-      opts.imdb.num_patients = 104;
-      opts.imdb.leave_out_type = 'special';
-      opts.imdb.contrast_normalization = true;
-      % opts.imdb.whitenData = true;
-      opts.imdb.train_balance = false;
-      opts.imdb.train_augment_positive = 'none';
-      opts.imdb.train_augment_negative = 'none';
-      opts.imdb.test_balance = false;
-      opts.imdb.test_augment_positive = 'none';
-      opts.imdb.test_augment_negative = 'none';
-    % case 'prostate-v2-20-patients'
-    otherwise
-      opts.imdb.posneg_balance = getValueFromFieldOrDefault(input_opts, 'posneg_balance', 'unbalanced');
+  opts.imdb.posneg_balance = getValueFromFieldOrDefault(input_opts, 'posneg_balance', 'unbalanced');
+  if strcmp(opts.general.dataset, 'prostate-v2-20-patients')
+    assert(opts.general.number_of_folds == 5);
+    assert(strcmp(opts.imdb.posneg_balance, 'balanced-low') || strcmp(opts.imdb.posneg_balance, 'unbalanced'));
   end
 
   % -------------------------------------------------------------------------
@@ -60,8 +43,6 @@ function folds = kFoldCNNRusboost(input_opts)
   opts.paths.folds_file_path = fullfile(opts.paths.experiment_dir, 'folds.mat');
   opts.paths.options_file_path = fullfile(opts.paths.experiment_dir, 'options.txt');
   opts.paths.results_file_path = fullfile(opts.paths.experiment_dir, 'results.txt');
-
-
 
   % -------------------------------------------------------------------------
   %                                              opts.single_ensemble_options
@@ -92,55 +73,14 @@ function folds = kFoldCNNRusboost(input_opts)
   % -------------------------------------------------------------------------
   imdbs = {}; % separate so don't have to save ~1.5 GB of imdbs!!!
 
-  switch opts.general.dataset
-    case 'prostate'
-      patients_per_fold = ceil(opts.imdb.num_patients / opts.general.number_of_folds);
-      random_patient_indices = randperm(104);
-      for i = 1:opts.general.number_of_folds
-        afprintf(sprintf('\n'));
-        afprintf(sprintf('[INFO] Randomly dividing for fold #%d...\n', i));
-        start_index = 1 + (i - 1) * patients_per_fold;
-        end_index = min(104, i * patients_per_fold);
-        folds.(sprintf('fold_%d', i)).patient_indices = ...
-          random_patient_indices(start_index : end_index);
-        afprintf(sprintf('[INFO] done!\n'));
-        afprintf(sprintf('[INFO] Constructing imdb for fold #%d...\n', i));
-        opts.imdb.leave_out_indices = folds.(sprintf('fold_%d', i)).patient_indices;
-        imdb = constructProstateImdb(opts.imdb);
-        imdbs{i} = imdb;
-        afprintf(sprintf('[INFO] done!\n'));
-      end
-    case 'prostate-v2-20-patients'
-      assert(opts.general.number_of_folds == 5);
-      i = 1;
-      path_to_prostate_imdbs = fullfile(getDevPath(), 'data', 'two_class_imdbs', 'prostate');
-      % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-      tmp = load(fullfile(path_to_prostate_imdbs, 'saved-two-class-prostate-v2-20-patients-pos2-neg1-unbalaned-train-51-655.mat'));
-      imdbs{i} = tmp.imdb;
-      i = i + 1;
-      % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-      tmp = load(fullfile(path_to_prostate_imdbs, 'saved-two-class-prostate-v2-20-patients-pos2-neg1-unbalaned-train-62-597.mat'));
-      imdbs{i} = tmp.imdb;
-      i = i + 1;
-      % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-      tmp = load(fullfile(path_to_prostate_imdbs, 'saved-two-class-prostate-v2-20-patients-pos2-neg1-unbalaned-train-68-544.mat'));
-      imdbs{i} = tmp.imdb;
-      i = i + 1;
-      % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-      tmp = load(fullfile(path_to_prostate_imdbs, 'saved-two-class-prostate-v2-20-patients-pos2-neg1-unbalaned-train-68-567.mat'));
-      imdbs{i} = tmp.imdb;
-      i = i + 1;
-      % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-      tmp = load(fullfile(path_to_prostate_imdbs, 'saved-two-class-prostate-v2-20-patients-pos2-neg1-unbalaned-train-71-493.mat'));
-      imdbs{i} = tmp.imdb;
-
-    otherwise
-      for i = 1:opts.general.number_of_folds
-        afprintf(sprintf('\n'));
-        afprintf(sprintf('[INFO] Loading imdb for fold #%d...\n', i));
-        imdbs{i} = loadSavedImdb(opts.general.dataset, opts.imdb.posneg_balance);
-        afprintf(sprintf('[INFO] done!\n'));
-      end
+  for i = 1:opts.general.number_of_folds
+    afprintf(sprintf('\n'));
+    afprintf(sprintf('[INFO] Loading imdb for fold #%d...\n', i));
+    tmp_opts.dataset = opts.general.dataset;
+    tmp_opts.posneg_balance = opts.imdb.posneg_balance;
+    tmp_opts.fold_number = i; % currently only implemented for prostate data
+    imdbs{i} = loadSavedImdb(tmp_opts);
+    afprintf(sprintf('[INFO] done!\n'));
   end
 
   % -------------------------------------------------------------------------

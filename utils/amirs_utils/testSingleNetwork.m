@@ -3,18 +3,15 @@ function results = testSingleNetwork(input_opts)
   %                                                              opts.general
   % -------------------------------------------------------------------------
   opts.general.dataset = getValueFromFieldOrDefault(input_opts, 'dataset', 'mnist-two-class-9-4');
-  switch opts.general.dataset
-    case 'prostate'
-      opts.general.network_arch = 'prostatenet';
-    otherwise % unbalanced mnist, unbalanced cifar, ...
-      opts.general.network_arch = 'lenet';
-  end
+  opts.general.network_arch = 'lenet';
 
   % -------------------------------------------------------------------------
   %                                                                 opts.imdb
   % -------------------------------------------------------------------------
   opts.imdb.posneg_balance = getValueFromFieldOrDefault(input_opts, 'posneg_balance', 'unbalanced');
-  imdb = loadSavedImdb(opts.general.dataset, opts.imdb.posneg_balance);
+  tmp_opts.dataset = opts.general.dataset;
+  tmp_opts.posneg_balance = opts.imdb.posneg_balance;
+  imdb = loadSavedImdb(tmp_opts);
 
   % -------------------------------------------------------------------------
   %                                                                opts.train
