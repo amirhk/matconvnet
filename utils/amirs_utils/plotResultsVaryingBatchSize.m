@@ -435,3 +435,10 @@ function i = printLoadSuccess(i);
   fprintf('\t[INFO] file %d loaded successfully.\n', i);
   i = i + 1;
 end
+
+
+plotResultsVaryingBatchSize('coil-100', '/Volumes/Amir/matconvnet/experiment_results/test-varying-batch-size-7-Jan-2017-17-58-18-coil-100-lenet')
+plotResultsVaryingBatchSize('stl-10', '/Volumes/Amir/matconvnet/experiment_results/test-varying-batch-size-7-Jan-2017-17-58-17-stl-10-lenet')
+plotResultsVaryingBatchSize('mnist', '/Volumes/Amir/matconvnet/experiment_results/test-varying-batch-size-8-Jan-2017-03-16-17-mnist-lenet')
+plotResultsVaryingBatchSize('cifar', '/Volumes/Amir/matconvnet/experiment_results/test-varying-batch-size-8-Jan-2017-02-44-55-cifar-lenet')
+plotResultsVaryingBatchSize('svhn', '/Volumes/Amir/matconvnet/experiment_results/test-varying-batch-size-8-Jan-2017-02-45-13-svhn-lenet')

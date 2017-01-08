@@ -2,7 +2,13 @@
 function imdb = constructProstateImdb(opts)
 % -------------------------------------------------------------------------
   afprintf(sprintf('[INFO] Constructing / loading Prostate imdb.\n'));
-  all_patient_indices = 1:1:104;
+  switch opts.dataset
+    case 'prostate-v2-20-patients'
+      all_patient_indices = 1:1:20;
+    case 'prostate-v3-104-patients'
+      all_patient_indices = 1:1:104;
+  end
+
   switch opts.leave_out_type
     case 'special'
       train_patient_indices = setdiff(all_patient_indices, opts.leaveOutIndices);
@@ -122,15 +128,24 @@ function imdb = constructProstateImdbHelper( ...
     % 'I_b3_crop', ...
   };
 
+  switch opts.dataset
+    case 'prostate-v2-20-patients'
+      loadSamples = @loadSamplesV2;
+    case 'prostate-v3-104-patients'
+      % TODO: haven't written the code to support this yet...
+      opts.label_class = label_class;
+      loadSamples = @loadSamplesV3;
+  end
+
   % TRAIN
   afprintf(sprintf('== == == == == == == == == == == == ==  TRAIN  == == == == == == == == == == == == == == == == == == == == ==\n\n'));
-  [data_train, labels_train] = loadSamples(opts, train_patient_indices, modalitites_in_use, label_class);
+  [data_train, labels_train] = loadSamples(opts, train_patient_indices, modalitites_in_use);
   [data_train, labels_train] = balanceData(data_train, labels_train, train_balance);
   [data_train, labels_train] = augmentData(data_train, labels_train, train_augment_healthy, train_augment_cancer);
 
   % TEST
   afprintf(sprintf('== == == == == == == == == == == == ==  TEST  == == == == == == == == == == == == == == == == == == == == ==\n\n'));
-  [data_test, labels_test] = loadSamples(opts, test_patient_indices, modalitites_in_use, label_class);
+  [data_test, labels_test] = loadSamples(opts, test_patient_indices, modalitites_in_use);
   [data_test, labels_test] = balanceData(data_test, labels_test, test_balance);
   [data_test, labels_test] = augmentData(data_test, labels_test, test_augment_healthy, test_augment_cancer);
 
@@ -197,7 +212,85 @@ function imdb = constructProstateImdbHelper( ...
   afprintf(sprintf('done!\n\n'));
 
 % --------------------------------------------------------------------
-function [data, labels] = loadSamples(opts, patient_indices_in_set, modalitites_in_use, label_class)
+function [data, labels] = loadSamplesV2(opts, patient_indices_in_set, modalitites_in_use)
+% --------------------------------------------------------------------
+  data = [];
+  labels = [];
+  set = [];
+
+  % if ~numel(patient_indices_in_set)
+  %   return ([data, labels, set]);
+  % end
+  if ~numel(patient_indices_in_set)
+    return;
+  end
+
+  modality_count = numel(modalitites_in_use);
+
+  total_suspicious_tissue_count_in_set = 0;
+  all_patients_list = dir(fullfile(opts.dataDir, '1*'));
+  for i = patient_indices_in_set
+    single_patient_directory = char(all_patients_list(i).name);
+    suspicious_tissues_for_patient = dir(fullfile(opts.dataDir, char(single_patient_directory), '*_Candidate*'));
+    for j = 1:length(suspicious_tissues_for_patient)
+      total_suspicious_tissue_count_in_set = total_suspicious_tissue_count_in_set + 1;
+    end
+  end
+  afprintf(sprintf('[INFO] Total suspicious tissue count (healthy or cancer) for %d patients: %d\n', ...
+    numel(patient_indices_in_set), ...
+    total_suspicious_tissue_count_in_set));
+
+  % alloc memory for the matrices
+  data = zeros(32, 32, modality_count, total_suspicious_tissue_count_in_set);
+  % labels_gleason = zeros(1, total_suspicious_tissue_count_in_set);
+  % labels_pirad = zeros(1, total_suspicious_tissue_count_in_set);
+  labels = zeros(1, total_suspicious_tissue_count_in_set);
+  set = zeros(1, total_suspicious_tissue_count_in_set);
+
+  total_patient_count_in_set = length(patient_indices_in_set);
+  sample_count = 0;
+  patient_count = 0;
+  afprintf(sprintf('[INFO] Loading patients... #'));
+  for i = patient_indices_in_set
+    patient_count = patient_count + 1;
+    for j = 0:log10(patient_count - 1) + 5 % + 5 because of ` / ###`
+      fprintf('\b'); % delete previous counter display
+    end
+    fprintf('%d / %d', patient_count, total_patient_count_in_set);
+
+    % afprintf(sprintf('[INFO] Loading up suspicious tissues from patient #%03d (%03d of %03d)... ', i, patient_count, total_patient_count_in_set));
+    single_patient_directory = char(all_patients_list(i).name);
+    suspicious_tissues_for_patient = dir(fullfile(opts.dataDir, single_patient_directory, '*_Candidate*'));
+    for j = 1:length(suspicious_tissues_for_patient)
+      sample_count = sample_count + 1;
+      suspicious_tissue_file = char(suspicious_tissues_for_patient(j).name);
+      suspicious_tissue = load(fullfile(opts.dataDir, single_patient_directory, suspicious_tissue_file));
+      % tmp = zeros(32, 32, modality_count);
+      tmp = [];
+      for k = 1:modality_count
+        tmp(:,:,k) = suspicious_tissue.(modalitites_in_use{k});
+      end
+      % resize to 32x32 for each modality
+      tmp = imresize(tmp, [32, 32], 'bicubic');
+      data(:,:,:,sample_count) = tmp;
+      % labels_gleason(1, sample_count) = suspicious_tissue.Gleason;
+      % labels_pirad(1, sample_count) = suspicious_tissue.PIRAD;
+      labels(1, sample_count) = suspicious_tissue.class;
+    end
+    fprintf('done.\n');
+  end
+  % switch opts.label_class
+  %   case 'Gleason'
+  %     labels = labels_gleason >= 6;
+  %   case 'PIRAD'
+  %     labels = labels_pirad >= 4;
+  % end
+  % labels start from 1
+  labels = labels + 1;
+  afprintf(sprintf('done.\n'));
+
+% --------------------------------------------------------------------
+function [data, labels] = loadSamplesV3(opts, patient_indices_in_set, modalitites_in_use)
 % --------------------------------------------------------------------
   data = [];
   labels = [];
@@ -260,7 +353,7 @@ function [data, labels] = loadSamples(opts, patient_indices_in_set, modalitites_
     end
     % afprintf(sprintf('done.\n'));
   end
-  switch label_class
+  switch opts.label_class
     case 'Gleason'
       labels = labels_gleason >= 6;
     case 'PIRAD'
