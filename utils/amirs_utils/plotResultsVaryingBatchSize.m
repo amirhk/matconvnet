@@ -1,23 +1,160 @@
 function plotResultsVaryingBatchSize(dataset, experiment_parent_dir)
+  % experiment_results_dir = '/Volumes/Amir/matconvnet/experiment_results/';
   % experiment_parent_dir = '/Volumes/Amir/matconvnet/experiment_results/test-varying-batch-size-7-Jan-2017-17-58-18-coil-100-lenet';
 
   experiment_parent_dir_obj = dir(fullfile(experiment_parent_dir, sprintf('%s*', dataset)));
-  bpd_04_results = [];
-  bpd_13_results = [];
+  bpd_04_results = {};
+  bpd_13_results = {};
   for i = 1:length(experiment_parent_dir_obj)
     tmpSubDirName = experiment_parent_dir_obj(i).name;
-    disp(tmpSubDirName);
+    % disp(tmpSubDirName);
     if strcmp(tmpSubDirName(end-1:end), '04')
-      bpd_04_results(end+1) = tmpSubDirName;
+      bpd_04_results{end+1} = tmpSubDirName;
     elseif strcmp(tmpSubDirName(end-1:end), '13')
-      bpd_13_results(end+1) = tmpSubDirName;
+      bpd_13_results{end+1} = tmpSubDirName;
     end
     % TODO: if ends in 04... save in order as the LaRP results
     % TODO: if ends in 13... save in order as the Fully Train results
   end
-  disp(bpd_04_results);
-  disp(bpd_13_results);
-  keyboard
+  % disp(bpd_04_results);
+  % disp(bpd_13_results);
+  % keyboard
+
+  i = 1;
+  fprintf('[INFO] Loading result files...\n');
+  bpd_04_batch_size_10_result_after_50_epoch = load(fullfile(experiment_parent_dir, bpd_04_results{1}, 'net-epoch-50.mat')); fprintf('\t%d\n', i); i = i + 1;
+  bpd_04_batch_size_25_result_after_50_epoch = load(fullfile(experiment_parent_dir, bpd_04_results{2}, 'net-epoch-50.mat')); fprintf('\t%d\n', i); i = i + 1;
+  bpd_04_batch_size_100_result_after_50_epoch = load(fullfile(experiment_parent_dir, bpd_04_results{3}, 'net-epoch-50.mat')); fprintf('\t%d\n', i); i = i + 1;
+  bpd_04_batch_size_250_result_after_50_epoch = load(fullfile(experiment_parent_dir, bpd_04_results{4}, 'net-epoch-50.mat')); fprintf('\t%d\n', i); i = i + 1;
+  bpd_04_batch_size_500_result_after_50_epoch = load(fullfile(experiment_parent_dir, bpd_04_results{5}, 'net-epoch-50.mat')); fprintf('\t%d\n', i); i = i + 1;
+  bpd_04_batch_size_1000_result_after_50_epoch = load(fullfile(experiment_parent_dir, bpd_04_results{6}, 'net-epoch-50.mat')); fprintf('\t%d\n', i); i = i + 1;
+  bpd_04_batch_size_10000_result_after_50_epoch = load(fullfile(experiment_parent_dir, bpd_04_results{7}, 'net-epoch-50.mat')); fprintf('\t%d\n', i); i = i + 1;
+  bpd_04_batch_size_50000_result_after_50_epoch = load(fullfile(experiment_parent_dir, bpd_04_results{8}, 'net-epoch-50.mat')); fprintf('\t%d\n', i); i = i + 1;
+
+  bpd_13_batch_size_10_result_after_50_epoch = load(fullfile(experiment_parent_dir, bpd_13_results{1}, 'net-epoch-50.mat')); fprintf('\t%d\n', i); i = i + 1;
+  bpd_13_batch_size_25_result_after_50_epoch = load(fullfile(experiment_parent_dir, bpd_13_results{2}, 'net-epoch-50.mat')); fprintf('\t%d\n', i); i = i + 1;
+  bpd_13_batch_size_100_result_after_50_epoch = load(fullfile(experiment_parent_dir, bpd_13_results{3}, 'net-epoch-50.mat')); fprintf('\t%d\n', i); i = i + 1;
+  bpd_13_batch_size_250_result_after_50_epoch = load(fullfile(experiment_parent_dir, bpd_13_results{4}, 'net-epoch-50.mat')); fprintf('\t%d\n', i); i = i + 1;
+  bpd_13_batch_size_500_result_after_50_epoch = load(fullfile(experiment_parent_dir, bpd_13_results{5}, 'net-epoch-50.mat')); fprintf('\t%d\n', i); i = i + 1;
+  bpd_13_batch_size_1000_result_after_50_epoch = load(fullfile(experiment_parent_dir, bpd_13_results{6}, 'net-epoch-50.mat')); fprintf('\t%d\n', i); i = i + 1;
+  bpd_13_batch_size_10000_result_after_50_epoch = load(fullfile(experiment_parent_dir, bpd_13_results{7}, 'net-epoch-50.mat')); fprintf('\t%d\n', i); i = i + 1;
+  bpd_13_batch_size_50000_result_after_50_epoch = load(fullfile(experiment_parent_dir, bpd_13_results{8}, 'net-epoch-50.mat')); fprintf('\t%d\n', i); i = i + 1;
+  fprintf('done.\n');
+
+  for resultType = {'train', 'val'}
+    resultType = char(resultType);
+    h = figure;
+    set(gca, 'fontsize', 18)
+    hold on;
+    grid on;
+    experiment_title = sprintf('varying_batch_size');
+    % experiment_count = 0;
+    % legend_name_list = {};
+    % for subExperimentDir = subExperimentDirs
+    % for batch_size = [10, 25, 100, 250, 500, 1000, 10000, 50000]
+    %   % experiment_count = experiment_count + 1;
+    %   % subExperimentDir = char(subExperimentDir);
+    %   % tmp_exp = experiments.(sprintf('exp_%s', subExperimentDir)).(sprintf('fc_plus_%d', backPropDepth));
+    %   tmp_exp_folder =
+    %   tmp_exp = load(fullfile(experiment_results_dir, eval()bpd_04_results{1}, 'net-epoch-50.mat'));
+    %   plot( ...
+    %     1:50, [tmp_exp.info.(resultType).error(1,1:50)],  ...
+    %     'LineWidth', 3);
+    %   % legend_name_list{experiment_count} = subExperimentDir;
+    %   % fprintf('convergance accuracy %s: %6.5f\n', subExperimentDir, 1 - tmp_exp.info.(resultType).error(1,epochNum));
+    % end
+    plot( ...
+      1:50, [bpd_04_batch_size_10_result_after_50_epoch.info.(resultType).error(1,1:50)],  ...
+      1:50, [bpd_04_batch_size_25_result_after_50_epoch.info.(resultType).error(1,1:50)],  ...
+      1:50, [bpd_04_batch_size_100_result_after_50_epoch.info.(resultType).error(1,1:50)],  ...
+      1:50, [bpd_04_batch_size_250_result_after_50_epoch.info.(resultType).error(1,1:50)],  ...
+      1:50, [bpd_04_batch_size_500_result_after_50_epoch.info.(resultType).error(1,1:50)],  ...
+      1:50, [bpd_04_batch_size_1000_result_after_50_epoch.info.(resultType).error(1,1:50)],  ...
+      1:50, [bpd_04_batch_size_10000_result_after_50_epoch.info.(resultType).error(1,1:50)],  ...
+      1:50, [bpd_04_batch_size_50000_result_after_50_epoch.info.(resultType).error(1,1:50)],  ...
+      'LineWidth', 3);
+
+    title(experiment_title);
+    xlabel('epoch')
+    ylim([0, 1]);
+    % legend(legend_name_list);
+    legend(...
+      'batch size = 10', ...
+      'batch size = 25', ...
+      'batch size = 100', ...
+      'batch size = 250', ...
+      'batch size = 500', ...
+      'batch size = 1000', ...
+      'batch size = 10000', ...
+      'batch size = 50000');
+    switch resultType
+      case 'train'
+        ylabel('Training Error');
+        fileName = sprintf('%s_%s_bpd_04_train_comparison.eps', experiment_title, dataset);
+      case 'val'
+        ylabel('Test Error');
+        fileName = sprintf('%s_%s_bpd_04_test_comparison.eps', experiment_title, dataset);
+    end
+    saveas(h, fileName, 'epsc');
+  end
+
+
+  for resultType = {'train', 'val'}
+    resultType = char(resultType);
+    h = figure;
+    set(gca, 'fontsize', 18)
+    hold on;
+    grid on;
+    experiment_title = sprintf('varying_batch_size');
+    % experiment_count = 0;
+    % legend_name_list = {};
+    % for subExperimentDir = subExperimentDirs
+    % for batch_size = [10, 25, 100, 250, 500, 1000, 10000, 50000]
+    %   % experiment_count = experiment_count + 1;
+    %   % subExperimentDir = char(subExperimentDir);
+    %   % tmp_exp = experiments.(sprintf('exp_%s', subExperimentDir)).(sprintf('fc_plus_%d', backPropDepth));
+    %   tmp_exp_folder =
+    %   tmp_exp = load(fullfile(experiment_results_dir, eval()bpd_04_results{1}, 'net-epoch-50.mat'));
+    %   plot( ...
+    %     1:50, [tmp_exp.info.(resultType).error(1,1:50)],  ...
+    %     'LineWidth', 3);
+    %   % legend_name_list{experiment_count} = subExperimentDir;
+    %   % fprintf('convergance accuracy %s: %6.5f\n', subExperimentDir, 1 - tmp_exp.info.(resultType).error(1,epochNum));
+    % end
+    plot( ...
+      1:50, [bpd_13_batch_size_10_result_after_50_epoch.info.(resultType).error(1,1:50)],  ...
+      1:50, [bpd_13_batch_size_25_result_after_50_epoch.info.(resultType).error(1,1:50)],  ...
+      1:50, [bpd_13_batch_size_100_result_after_50_epoch.info.(resultType).error(1,1:50)],  ...
+      1:50, [bpd_13_batch_size_250_result_after_50_epoch.info.(resultType).error(1,1:50)],  ...
+      1:50, [bpd_13_batch_size_500_result_after_50_epoch.info.(resultType).error(1,1:50)],  ...
+      1:50, [bpd_13_batch_size_1000_result_after_50_epoch.info.(resultType).error(1,1:50)],  ...
+      1:50, [bpd_13_batch_size_10000_result_after_50_epoch.info.(resultType).error(1,1:50)],  ...
+      1:50, [bpd_13_batch_size_50000_result_after_50_epoch.info.(resultType).error(1,1:50)],  ...
+      'LineWidth', 3);
+
+    title(experiment_title);
+    xlabel('epoch')
+    ylim([0, 1]);
+    % legend(legend_name_list);
+    legend(...
+      'batch size = 10', ...
+      'batch size = 25', ...
+      'batch size = 100', ...
+      'batch size = 250', ...
+      'batch size = 500', ...
+      'batch size = 1000', ...
+      'batch size = 10000', ...
+      'batch size = 50000');
+    switch resultType
+      case 'train'
+        ylabel('Training Error');
+        fileName = sprintf('%s_%s_bpd_13_train_comparison.eps', experiment_title, dataset);
+      case 'val'
+        ylabel('Test Error');
+        fileName = sprintf('%s_%s_bpd_13_test_comparison.eps', experiment_title, dataset);
+    end
+    saveas(h, fileName, 'epsc');
+  end
   % TODO: plot later...
 
     % resultsDir = '/Volumes/Amir/results/';

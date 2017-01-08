@@ -41,7 +41,8 @@ function testVaryingBatchSize(input_opts)
   all_tests_results = {};
 
   test_number = 1;
-  for backprop_depth = [4, 13]
+  % for backprop_depth = [4, 13]
+  for backprop_depth = [13]
     for batch_size = [10, 25, 100, 250, 500, 1000, 10000, 50000]
       i = test_number;
       printConsoleOutputSeparator();
