@@ -61,9 +61,9 @@ function runAllTests(dataset, posneg_balance, gpus);
   %                                                                    forest
   % -------------------------------------------------------------------------
   experiment_options.training_method = 'forest';
-  % Exp. 1
-  experiment_options.boosting_method = 'AdaBoostM1';
-  testKFold(experiment_options);
+  % % Exp. 1
+  % experiment_options.boosting_method = 'AdaBoostM1';
+  % testKFold(experiment_options);
   % Exp. 2
   experiment_options.boosting_method = 'RUSBoost';
   testKFold(experiment_options);
@@ -83,6 +83,7 @@ function runAllTests(dataset, posneg_balance, gpus);
   %                                                              ensemble cnn
   % -------------------------------------------------------------------------
   experiment_options.training_method = 'ensemble-cnn';
+  experiment_options.iteration_count = 8;
   % Exp. 1
   experiment_options.backprop_depth = 4;
   experiment_options.symmetric_weight_updates = true;

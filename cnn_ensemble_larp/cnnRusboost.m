@@ -369,18 +369,21 @@ function plotIncrementalEnsemblePerformance(ensemble_models, experiment_dir)
 % -------------------------------------------------------------------------
 function ensemble_performance_summary = getEnsemblePerformanceSummary(ensemble_models, test_imdb)
 % -------------------------------------------------------------------------
-  ensemble_performance_summary.model_weight_normalized = 0;
-  ensemble_performance_summary.train_positive_count = 0;
-  ensemble_performance_summary.train_negative_count = 0;
-  ensemble_performance_summary.validation_accuracy = 0;
-  ensemble_performance_summary.validation_sensitivity = 0;
-  ensemble_performance_summary.validation_specificity = 0;
-  ensemble_performance_summary.test_accuracy = 0;
-  ensemble_performance_summary.test_sensitivity = 0;
-  ensemble_performance_summary.test_specificity = 0;
-  ensemble_performance_summary.weighted_test_accuracy = 0;
-  ensemble_performance_summary.weighted_test_sensitivity = 0;
-  ensemble_performance_summary.weighted_test_specificity= 0;
+  if ~numel(ensemble_models)
+    ensemble_performance_summary.model_weight_normalized = 0;
+    ensemble_performance_summary.train_positive_count = 0;
+    ensemble_performance_summary.train_negative_count = 0;
+    ensemble_performance_summary.validation_accuracy = 0;
+    ensemble_performance_summary.validation_sensitivity = 0;
+    ensemble_performance_summary.validation_specificity = 0;
+    ensemble_performance_summary.test_accuracy = 0;
+    ensemble_performance_summary.test_sensitivity = 0;
+    ensemble_performance_summary.test_specificity = 0;
+    ensemble_performance_summary.weighted_test_accuracy = 0;
+    ensemble_performance_summary.weighted_test_sensitivity = 0;
+    ensemble_performance_summary.weighted_test_specificity= 0;
+    return;
+  end
 
 
   number_of_models_in_ensemble = numel(ensemble_models);
