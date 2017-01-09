@@ -14,11 +14,16 @@ function folds = testKFold(input_opts)
   % -------------------------------------------------------------------------
   opts.imdb.posneg_balance = getValueFromFieldOrDefault(input_opts, 'posneg_balance', 'unbalanced');
   if strcmp(opts.general.dataset, 'prostate-v2-20-patients')
-    assert(opts.general.number_of_folds == 5);
-    assert( ...
-      strcmp(opts.imdb.posneg_balance, 'unbalanced') || ...
-      strcmp(opts.imdb.posneg_balance, 'balanced-high') || ...
-      strcmp(opts.imdb.posneg_balance, 'leave-one-out-unbalanced'));
+    switch opts.imdb.posneg_balance
+      case 'unbalanced'
+        opts.general.number_of_folds == 5
+      case 'balanced-high'
+        opts.general.number_of_folds == 5
+      case 'leave-one-out-unbalanced'
+        opts.general.number_of_folds = 20;
+      otherwise
+        assert(false);
+    end
   end
 
   % -------------------------------------------------------------------------
