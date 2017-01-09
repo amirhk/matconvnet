@@ -106,4 +106,4 @@ function results = testForest(input_opts)
   results.weighted_test_accuracy = acc;
   results.weighted_test_sensitivity = sens;
   results.weighted_test_specificity = spec;
-
+  saveStruct2File(results, opts.paths.results_file_path, 0);

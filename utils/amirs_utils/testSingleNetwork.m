@@ -56,3 +56,4 @@ function results = testSingleNetwork(input_opts)
   results.weighted_test_accuracy = cnn_results.test.acc;
   results.weighted_test_sensitivity = cnn_results.test.sens;
   results.weighted_test_specificity = cnn_results.test.spec;
+  saveStruct2File(results, opts.paths.results_file_path, 0);
