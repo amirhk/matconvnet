@@ -116,6 +116,7 @@ function imdb = loadSavedImdb(input_opts)
               tmp = load(fullfile(path_to_imdbs, 'prostate', 'leave-one-out-unbalanced', 'patient-19-unbalaced-saved-two-class-prostate-v2-20-patients-pos2-neg1-train-77-696.mat'));
             case 20
               tmp = load(fullfile(path_to_imdbs, 'prostate', 'leave-one-out-unbalanced', 'patient-20-unbalaced-saved-two-class-prostate-v2-20-patients-pos2-neg1-train-77-691.mat'));
+          end
         case 'leave-one-out-balanced-high'
           switch fold_number
             case 1
