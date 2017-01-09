@@ -1,4 +1,4 @@
-function results = testSingleNetwork(input_opts)
+function [trained_model, performance_summary] = testSingleNetwork(input_opts)
   % -------------------------------------------------------------------------
   %                                                              opts.general
   % -------------------------------------------------------------------------
@@ -52,8 +52,10 @@ function results = testSingleNetwork(input_opts)
   single_cnn_options.debug_flag = false;
   single_cnn_options.gpus = ifNotMacSetGpu(getValueFromFieldOrDefault(input_opts, 'gpus', 1));
 
-  [~, cnn_results] = cnnAmir(single_cnn_options);
-  results.weighted_test_accuracy = cnn_results.test.acc;
-  results.weighted_test_sensitivity = cnn_results.test.sens;
-  results.weighted_test_specificity = cnn_results.test.spec;
-  saveStruct2File(results, opts.paths.results_file_path, 0);
+  [net, results] = cnnAmir(single_cnn_options);
+
+  trained_model = net;
+  performance_summary.weighted_test_accuracy = results.test.acc;
+  performance_summary.weighted_test_sensitivity = results.test.sens;
+  performance_summary.weighted_test_specificity = results.test.spec;
+  saveStruct2File(performance_summary, opts.paths.results_file_path, 0);

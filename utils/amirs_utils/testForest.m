@@ -1,4 +1,4 @@
-function results = testForest(input_opts)
+function [trained_model, performance_summary] = testForest(input_opts)
 
   % -------------------------------------------------------------------------
   %                                                              opts.general
@@ -44,10 +44,9 @@ function results = testForest(input_opts)
 
   % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-  images = reshape(imdb.images.data, 3072, [])';
+  vectorized_images = reshape(imdb.images.data, 3072, [])';
   labels = imdb.images.labels;
   Y = labels(1:opts.train.number_of_examples);
-  cov_type = images(1:opts.train.number_of_examples,1:opts.train.number_of_features);
   is_train = imdb.images.set == 1;
   is_test = imdb.images.set == 3;
 
@@ -56,7 +55,7 @@ function results = testForest(input_opts)
   t = templateTree('MinLeafSize',5);
   tic
   rus_tree = fitensemble( ...
-    cov_type(is_train,:), ...
+    vectorized_images(is_train,:), ...
     Y(is_train), ...
     opts.train.boosting_method, ...
     opts.train.number_of_trees, ...
@@ -67,7 +66,7 @@ function results = testForest(input_opts)
 
   % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-  l_loss = loss(rus_tree, cov_type(is_test,:), Y(is_test), 'mode', 'cumulative');
+  l_loss = loss(rus_tree, vectorized_images(is_test,:), Y(is_test), 'mode', 'cumulative');
 
   % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
@@ -82,7 +81,7 @@ function results = testForest(input_opts)
   % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
   tic
-  Yfit = predict(rus_tree, cov_type(is_test,:));
+  Yfit = predict(rus_tree, vectorized_images(is_test,:));
   toc
   % tab = tabulate(Y(is_test));
   % confusion_matrix = bsxfun(@rdivide, confusionmat(Y(is_test), Yfit), tab(:,2)) * 100;
@@ -99,7 +98,8 @@ function results = testForest(input_opts)
   ] = getAccSensSpec(test_labels, test_predictions, true);
   printConsoleOutputSeparator();
 
-  results.weighted_test_accuracy = acc;
-  results.weighted_test_sensitivity = sens;
-  results.weighted_test_specificity = spec;
-  saveStruct2File(results, opts.paths.results_file_path, 0);
+  trained_model = rus_tree;
+  performance_summary.weighted_test_accuracy = acc;
+  performance_summary.weighted_test_sensitivity = sens;
+  performance_summary.weighted_test_specificity = spec;
+  saveStruct2File(performance_summary, opts.paths.results_file_path, 0);

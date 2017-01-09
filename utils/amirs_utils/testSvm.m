@@ -1,4 +1,4 @@
-function results = testSvm(input_opts)
+function [trained_model, performance_summary] = testSvm(input_opts)
 
   % -------------------------------------------------------------------------
   %                                                              opts.general
@@ -41,10 +41,9 @@ function results = testSvm(input_opts)
 
   % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-  images = reshape(imdb.images.data, 3072, [])';
+  vectorized_images = reshape(imdb.images.data, 3072, [])';
   labels = imdb.images.labels;
   Y = labels(1:opts.train.number_of_examples);
-  cov_type = images(1:opts.train.number_of_examples,1:opts.train.number_of_features);
   is_train = imdb.images.set == 1;
   is_test = imdb.images.set == 3;
 
@@ -52,8 +51,8 @@ function results = testSvm(input_opts)
   printConsoleOutputSeparator();
 
 
-  svm_struct = svmtrain(cov_type(is_train,:), Y(is_train));
-  test_predictions = svmclassify(svm_struct , cov_type(is_test,:));
+  svm_struct = svmtrain(vectorized_images(is_train,:), Y(is_train));
+  test_predictions = svmclassify(svm_struct , vectorized_images(is_test,:));
   test_labels = Y(is_test);
 
   [ ...
@@ -63,7 +62,8 @@ function results = testSvm(input_opts)
   ] = getAccSensSpec(test_labels, test_predictions, true);
   printConsoleOutputSeparator();
 
-  results.weighted_test_accuracy = acc;
-  results.weighted_test_sensitivity = sens;
-  results.weighted_test_specificity = spec;
-  saveStruct2File(results, opts.paths.results_file_path, 0);
+  trained_model = svm_struct;
+  performance_summary.weighted_test_accuracy = acc;
+  performance_summary.weighted_test_sensitivity = sens;
+  performance_summary.weighted_test_specificity = spec;
+  saveStruct2File(performance_summary, opts.paths.results_file_path, 0);

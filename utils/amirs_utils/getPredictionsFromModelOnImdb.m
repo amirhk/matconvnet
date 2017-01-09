@@ -1,8 +1,24 @@
 % -------------------------------------------------------------------------
-function predictions = getPredictionsFromNetOnImdb(net, imdb, set)
+function predictions = getPredictionsFromModelOnImdb(model, training_method, imdb, set)
 % -------------------------------------------------------------------------
   afprintf(sprintf('[INFO] Computing predictions from net on imdb (set `%d`)...\n', set));
   imdb = filterImdbForSet(imdb, set);
+  switch training_method
+    case 'svm'
+      predictions = getPredictionsFromSvmStructOnImdb(model, imdb);
+    case 'cnn'
+      predictions = getPredictionsFromNetOnImdb(model, imdb);
+  end
+
+% -------------------------------------------------------------------------
+function predictions = getPredictionsFromSvmStructOnImdb(svm_struct, imdb)
+% -------------------------------------------------------------------------
+  vectorized_images = reshape(imdb.images.data, 3072, [])';
+  predictions = svmclassify(svm_struct, vectorized_images);
+
+% -------------------------------------------------------------------------
+function predictions = getPredictionsFromNetOnImdb(net, imdb)
+% -------------------------------------------------------------------------
   [net, info] = cnnTrain(net, imdb, getBatch(), ...
     'debug_flag', false, ...
     'continue', false, ...

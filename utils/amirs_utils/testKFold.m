@@ -4,10 +4,15 @@ function folds = testKFold(input_opts)
   % -------------------------------------------------------------------------
   %                                                              opts.general
   % -------------------------------------------------------------------------
-  opts.general.training_method = getValueFromFieldOrDefault(input_opts, 'training_method', 'ensemble-cnn');
+
   opts.general.dataset = getValueFromFieldOrDefault(input_opts, 'dataset', 'mnist-two-class-9-4');
-  opts.general.network_arch = 'lenet';
-  opts.general.number_of_folds = getValueFromFieldOrDefault(input_opts, 'number_of_folds', 5);
+  opts.general.network_arch = getValueFromFieldOrDefault(input_opts, 'network_arch', 'lenet');
+
+  % -------------------------------------------------------------------------
+  %                                                       opts.k_fold_options
+  % -------------------------------------------------------------------------
+  opts.k_fold_options.training_method = getValueFromFieldOrDefault(input_opts, 'training_method', 'ensemble-cnn');
+  opts.k_fold_options.number_of_folds = getValueFromFieldOrDefault(input_opts, 'number_of_folds', 5);
 
   % -------------------------------------------------------------------------
   %                                                                 opts.imdb
@@ -62,10 +67,16 @@ function folds = testKFold(input_opts)
       opts.single_training_method_options.backprop_depth = getValueFromFieldOrDefault(input_opts, 'backprop_depth', 4);
       opts.single_training_method_options.gpus = ifNotMacSetGpu(getValueFromFieldOrDefault(input_opts, 'gpus', 1));
     case 'ensemble-cnn'
-      opts.single_training_method_options.network_arch = opts.general.network_arch;
+      opts.single_training_method_options.training_method = getValueFromFieldOrDefault(input_opts, 'single_training_method_options', 'cnn');
       opts.single_training_method_options.iteration_count = getValueFromFieldOrDefault(input_opts, 'iteration_count', 10);
+      opts.single_training_method_options.symmetric_weight_updates = getValueFromFieldOrDefault(input_opts, 'symmetric_weight_updates', false);
+      opts.single_training_method_options.symmetric_loss_updates = getValueFromFieldOrDefault(input_opts, 'symmetric_loss_updates', false);
+      opts.single_training_method_options.network_arch = opts.general.network_arch;
       opts.single_training_method_options.gpus = ifNotMacSetGpu(getValueFromFieldOrDefault(input_opts, 'gpus', 1));
       opts.single_training_method_options.backprop_depth = getValueFromFieldOrDefault(input_opts, 'backprop_depth', 4);
+    case 'ensemble-svm'
+      opts.single_training_method_options.training_method = getValueFromFieldOrDefault(input_opts, 'single_training_method_options', 'svm');
+      opts.single_training_method_options.iteration_count = getValueFromFieldOrDefault(input_opts, 'iteration_count', 10);
       opts.single_training_method_options.symmetric_weight_updates = getValueFromFieldOrDefault(input_opts, 'symmetric_weight_updates', false);
       opts.single_training_method_options.symmetric_loss_updates = getValueFromFieldOrDefault(input_opts, 'symmetric_loss_updates', false);
   end
@@ -101,7 +112,6 @@ function folds = testKFold(input_opts)
   % -------------------------------------------------------------------------
   %                                                      train for each fold!
   % -------------------------------------------------------------------------
-
   switch opts.general.training_method
     case 'svm'
       trainingMethodFunctionHandle = @testSvm;
@@ -110,25 +120,29 @@ function folds = testKFold(input_opts)
     case 'single-cnn'
       trainingMethodFunctionHandle = @testSingleNetwork;
     case 'ensemble-cnn'
-      trainingMethodFunctionHandle = @cnnRusboost;
+      trainingMethodFunctionHandle = @rusboost;
+    case 'ensemble-svm'
+      trainingMethodFunctionHandle = @rusboost;
   end
 
   for i = 1:opts.general.number_of_folds
     afprintf(sprintf('[INFO] Running `%s` on fold #%d...\n', opts.general.training_method, i));
     opts.single_training_method_options.imdb = imdbs{i};
-    folds.(sprintf('fold_%d', i)).performance_summary = ...
-      trainingMethodFunctionHandle(opts.single_training_method_options);
+    [ ...
+      trained_model, ...
+      performance_summary, ...
+    ] = trainingMethodFunctionHandle(opts.single_training_method_options);
+    folds.(sprintf('fold_%d', i)).performance_summary = performance_summary;
     % overwrite and save results so far
     afprintf(sprintf('[INFO] done!\n'));
     afprintf(sprintf('[INFO] Saving incremental results...\n'));
     save(opts.paths.folds_file_path, 'folds');
-    saveKFoldResults(folds, opts.paths.results_file_path);
+    saveIncrementalKFoldResults(folds, opts.paths.results_file_path);
     afprintf(sprintf('[INFO] done!\n\n'));
   end
 
-
 % -------------------------------------------------------------------------
-function saveKFoldResults(folds, results_file_path)
+function saveIncrementalKFoldResults(folds, results_file_path)
 % -------------------------------------------------------------------------
   number_of_folds = numel(fields(folds));
   for i = 1:number_of_folds

@@ -1,29 +1,32 @@
 % -------------------------------------------------------------------------
-function ensemble_performance_summary = cnnRusboost(single_ensemble_options)
+function [ensemble_models, ensemble_performance_summary] = rusboost(input_opts)
 % -------------------------------------------------------------------------
   % -------------------------------------------------------------------------
   %                                                              opts.general
   % -------------------------------------------------------------------------
-  imdb = getValueFromFieldOrDefault(single_ensemble_options, 'imdb', struct());
-  opts.general.dataset = getValueFromFieldOrDefault( ...
-    single_ensemble_options, ...
-    'dataset', ...
-    'mnist-two-class-9-4');
-  opts.general.network_arch = getValueFromFieldOrDefault( ...
-    single_ensemble_options, ...
-    'network_arch', ...
-    'lenet');
-  opts.general.iteration_count = getValueFromFieldOrDefault( ...
-    single_ensemble_options, ...
-    'iteration_count', ...
-    5);
+  opts.general.dataset = getValueFromFieldOrDefault(input_opts, 'dataset', 'mnist-two-class-9-4');
+  opts.general.network_arch = getValueFromFieldOrDefault(input_opts, 'network_arch', 'lenet');
+
+  % -------------------------------------------------------------------------
+  %                                                     opts.ensemble_options
+  % -------------------------------------------------------------------------
+  opts.ensemble_options.training_method = getValueFromFieldOrDefault(input_opts, 'training_method', 'cnn');
+  opts.ensemble_options.iteration_count = getValueFromFieldOrDefault(input_opts, 'iteration_count', 5);
+  opts.ensemble_options.symmetric_weight_updates = getValueFromFieldOrDefault(input_opts, 'symmetric_weight_updates', false);
+  opts.ensemble_options.symmetric_loss_updates = getValueFromFieldOrDefault(input_opts, 'symmetric_loss_updates', false);
+  opts.ensemble_options.random_undersampling_ratio = (50/50);
+
+  % -------------------------------------------------------------------------
+  %                                                                 opts.imdb
+  % -------------------------------------------------------------------------
+  imdb = getValueFromFieldOrDefault(input_opts, 'imdb', struct());
 
   % -------------------------------------------------------------------------
   %                                                                opts.paths
   % -------------------------------------------------------------------------
   opts.paths.time_string = sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
   opts.paths.experiment_parent_dir = getValueFromFieldOrDefault( ...
-    single_ensemble_options, ...
+    input_opts, ...
     'experiment_parent_dir', ...
     fullfile(vl_rootnn, 'experiment_results'));
   opts.paths.experiment_dir = fullfile(opts.paths.experiment_parent_dir, sprintf( ...
@@ -40,29 +43,21 @@ function ensemble_performance_summary = cnnRusboost(single_ensemble_options)
   opts.paths.ensemble_models_file_path = fullfile(opts.paths.experiment_dir, 'ensemble_models.mat');
 
   % -------------------------------------------------------------------------
-  %                                                     opts.ensemble_options
+  %                                                 opts.single_model_options
   % -------------------------------------------------------------------------
-  opts.ensemble_options.symmetric_weight_updates = getValueFromFieldOrDefault( ...
-    single_ensemble_options, ...
-    'symmetric_weight_updates', ...
-    false);
-  opts.ensemble_options.symmetric_loss_updates = getValueFromFieldOrDefault( ...
-    single_ensemble_options, ...
-    'symmetric_loss_updates', ...
-    false);
-  opts.ensemble_options.random_undersampling_ratio = (50/50);
-
-  % -------------------------------------------------------------------------
-  %                                                   opts.single_cnn_options
-  % -------------------------------------------------------------------------
-  opts.single_cnn_options.dataset = opts.general.dataset;
-  opts.single_cnn_options.network_arch = opts.general.network_arch;
-  opts.single_cnn_options.experiment_parent_dir = opts.paths.experiment_dir;
-  opts.single_cnn_options.weight_init_source = 'gen';
-  opts.single_cnn_options.weight_init_sequence = {'compRand', 'compRand', 'compRand'};
-  opts.single_cnn_options.gpus = ifNotMacSetGpu(getValueFromFieldOrDefault(single_ensemble_options, 'gpus', 1));
-  opts.single_cnn_options.backprop_depth = getValueFromFieldOrDefault(single_ensemble_options, 'backprop_depth', 4);
-  opts.single_cnn_options.debug_flag = false;
+  opts.single_model_options.dataset = opts.general.dataset;
+  opts.single_model_options.experiment_parent_dir = opts.paths.experiment_dir;
+  switch opts.ensemble_options.training_method
+    case 'svm'
+      % no additional options
+    case 'cnn'
+      opts.single_model_options.network_arch = opts.general.network_arch;
+      opts.single_model_options.weight_init_source = 'gen';
+      opts.single_model_options.weight_init_sequence = {'compRand', 'compRand', 'compRand'};
+      opts.single_model_options.gpus = ifNotMacSetGpu(getValueFromFieldOrDefault(input_opts, 'gpus', 1));
+      opts.single_model_options.backprop_depth = getValueFromFieldOrDefault(input_opts, 'backprop_depth', 4);
+      opts.single_model_options.debug_flag = false;
+  end
 
   % -------------------------------------------------------------------------
   %                                                    save experiment setup!
@@ -125,8 +120,7 @@ function ensemble_performance_summary = cnnRusboost(single_ensemble_options)
   test_imdb = fh_imdb_utils.constructPartialImdb(data_test, labels_test, 3);
 
   % -------------------------------------------------------------------------
-  %                              5. go through T iterations of RUSBoost, each
-  %                                              training a CNN over E epochs
+  %      5. go through T iterations of RUSBoost, each training a single model
   % -------------------------------------------------------------------------
   printConsoleOutputSeparator();
   ensemble_models = {};
@@ -160,8 +154,14 @@ function ensemble_performance_summary = cnnRusboost(single_ensemble_options)
     afprintf(sprintf('[INFO] Training model (positive: %d, negative: %d)...\n', ...
       numel(find(resampled_labels == 2)), ...
       numel(find(resampled_labels == 1))));
-    opts.single_cnn_options.imdb = training_resampled_imdb;
-    [net, ~] = cnnAmir(opts.single_cnn_options);
+    opts.single_model_options.imdb = training_resampled_imdb;
+
+    switch opts.ensemble_options.training_method
+      case 'svm'
+        [model, ~] = testSvm(opts.single_model_options);
+      case 'cnn'
+        [model, ~] = cnnAmir(opts.single_model_options);
+    end
 
     % IMPORTANT NOTE: we randomly undersample when training a model, but then,
     % we use all of the training samples (in their order) to update weights.
@@ -169,7 +169,7 @@ function ensemble_performance_summary = cnnRusboost(single_ensemble_options)
       '[INFO] Computing validation set predictions (positive: %d, negative: %d)...\n', ...
       data_train_positive_count, ...
       data_train_negative_count));
-    validation_predictions = getPredictionsFromNetOnImdb(net, validation_imdb, 3);
+    validation_predictions = getPredictionsFromModelOnImdb(model, training_method, validation_imdb, 3);
     [ ...
       validation_accuracy, ...
       validation_sensitivity, ...
@@ -222,7 +222,7 @@ function ensemble_performance_summary = cnnRusboost(single_ensemble_options)
       count = 1;
     end
 
-    H{iteration} = net; % Hypothesis function / Trained CNN Network
+    H{iteration} = net; % Hypothesis function / trained model
     L(iteration) = loss; % Pseudo-loss at each iteration
     beta = loss / (1 - loss); % Setting weight update parameter 'beta'.
     B(iteration) = log(1 / beta); % Weight of the hypothesis
@@ -266,7 +266,7 @@ function ensemble_performance_summary = cnnRusboost(single_ensemble_options)
     afprintf(sprintf('[INFO] Computing test set predictions (positive: %d, negative: %d)...\n', ...
       data_test_positive_count, ...
       data_test_negative_count));
-    test_predictions = getPredictionsFromNetOnImdb(net, test_imdb, 3);
+    test_predictions = getPredictionsFromModelOnImdb(net, training_method, test_imdb, 3);
     [ ...
       test_accuracy, ...
       test_sensitivity, ...

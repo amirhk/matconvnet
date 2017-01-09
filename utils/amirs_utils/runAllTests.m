@@ -57,7 +57,13 @@ function runAllTests(dataset, posneg_balance, gpus);
   % -------------------------------------------------------------------------
   experiment_options.training_method = 'svm';
   % Exp. 1
-  experiment_options.boosting_method = 'AdaBoostM1';
+  testKFold(experiment_options);
+
+  % -------------------------------------------------------------------------
+  %                                                              ensemble svm
+  % -------------------------------------------------------------------------
+  experiment_options.training_method = 'ensemble-svm';
+  % Exp. 1
   testKFold(experiment_options);
 
   % -------------------------------------------------------------------------
