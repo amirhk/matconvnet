@@ -52,7 +52,6 @@ function results = testForest(input_opts)
 
   % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   printConsoleOutputSeparator();
-  afprintf(sprintf('Test #%d\n', i));
   t = templateTree('MinLeafSize',5);
   tic
   rus_tree = fitensemble( ...
