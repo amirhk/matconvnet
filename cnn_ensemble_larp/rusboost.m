@@ -34,7 +34,7 @@ function [ensemble_models, ensemble_performance_summary] = rusboost(input_opts)
     opts.general.dataset, ...
     opts.general.network_arch, ...
     opts.paths.time_string, ...
-    opts.general.iteration_count));
+    opts.ensemble_options.iteration_count));
   if ~exist(opts.paths.experiment_dir)
     mkdir(opts.paths.experiment_dir);
   end
@@ -124,7 +124,7 @@ function [ensemble_models, ensemble_performance_summary] = rusboost(input_opts)
   % -------------------------------------------------------------------------
   printConsoleOutputSeparator();
   ensemble_models = {};
-  while iteration <= opts.general.iteration_count
+  while iteration <= opts.ensemble_options.iteration_count
     afprintf(sprintf('\n'));
     afprintf(sprintf('[INFO] Boosting iteration #%d (attempt %d)...\n', iteration, count));
 
@@ -169,7 +169,7 @@ function [ensemble_models, ensemble_performance_summary] = rusboost(input_opts)
       '[INFO] Computing validation set predictions (positive: %d, negative: %d)...\n', ...
       data_train_positive_count, ...
       data_train_negative_count));
-    validation_predictions = getPredictionsFromModelOnImdb(model, training_method, validation_imdb, 3);
+    validation_predictions = getPredictionsFromModelOnImdb(model, opts.ensemble_options.training_method, validation_imdb, 3);
     [ ...
       validation_accuracy, ...
       validation_sensitivity, ...
@@ -222,14 +222,14 @@ function [ensemble_models, ensemble_performance_summary] = rusboost(input_opts)
       count = 1;
     end
 
-    H{iteration} = net; % Hypothesis function / trained model
+    H{iteration} = model; % Hypothesis function / trained model
     L(iteration) = loss; % Pseudo-loss at each iteration
     beta = loss / (1 - loss); % Setting weight update parameter 'beta'.
     B(iteration) = log(1 / beta); % Weight of the hypothesis
 
     % % At the final iteration there is no need to update the weights any
     % % further
-    % if iteration == opts.general.iteration_count
+    % if iteration == opts.ensemble_options.iteration_count
     %     break;
     % end
 
@@ -266,7 +266,7 @@ function [ensemble_models, ensemble_performance_summary] = rusboost(input_opts)
     afprintf(sprintf('[INFO] Computing test set predictions (positive: %d, negative: %d)...\n', ...
       data_test_positive_count, ...
       data_test_negative_count));
-    test_predictions = getPredictionsFromModelOnImdb(net, training_method, test_imdb, 3);
+    test_predictions = getPredictionsFromModelOnImdb(model, opts.ensemble_options.training_method, test_imdb, 3);
     [ ...
       test_accuracy, ...
       test_sensitivity, ...
@@ -277,7 +277,7 @@ function [ensemble_models, ensemble_performance_summary] = rusboost(input_opts)
     %                                          9. save single model of ensemble
     % -------------------------------------------------------------------------
     afprintf(sprintf('[INFO] Saving model and info... '));
-    ensemble_models{iteration}.model_net = H{iteration};
+    ensemble_models{iteration}.model = H{iteration};
     ensemble_models{iteration}.model_loss = L(iteration);
     ensemble_models{iteration}.model_weight_normalized = 0;
     ensemble_models{iteration}.model_weight_not_normalized = B(iteration);

@@ -21,13 +21,13 @@ function folds = testKFold(input_opts)
   if strcmp(opts.general.dataset, 'prostate-v2-20-patients')
     switch opts.imdb.posneg_balance
       case 'k=5-fold-unbalanced'
-        opts.general.number_of_folds == 5
+        opts.k_fold_options.number_of_folds == 5
       case 'k=5-fold-balanced-high'
-        opts.general.number_of_folds == 5
+        opts.k_fold_options.number_of_folds == 5
       case 'leave-one-out-unbalanced'
-        opts.general.number_of_folds = 20;
+        opts.k_fold_options.number_of_folds = 20;
       case 'leave-one-out-balanced-high'
-        opts.general.number_of_folds = 20;
+        opts.k_fold_options.number_of_folds = 20;
       otherwise
         assert(false);
     end
@@ -43,8 +43,8 @@ function folds = testKFold(input_opts)
     fullfile(vl_rootnn, 'experiment_results'));
   opts.paths.experiment_dir = fullfile(opts.paths.experiment_parent_dir, sprintf( ...
     'k=%d-fold-%s-%s', ...
-    opts.general.number_of_folds, ...
-    opts.general.training_method, ...
+    opts.k_fold_options.number_of_folds, ...
+    opts.k_fold_options.training_method, ...
     opts.paths.time_string));
   if ~exist(opts.paths.experiment_dir)
     mkdir(opts.paths.experiment_dir);
@@ -58,7 +58,7 @@ function folds = testKFold(input_opts)
   % -------------------------------------------------------------------------
   opts.single_training_method_options.dataset = opts.general.dataset;
   opts.single_training_method_options.experiment_parent_dir = opts.paths.experiment_dir;
-  switch opts.general.training_method
+  switch opts.k_fold_options.training_method
     case 'svm'
       % no additional options
     case 'forest'
@@ -91,15 +91,15 @@ function folds = testKFold(input_opts)
   % -------------------------------------------------------------------------
   afprintf(sprintf( ...
     '[INFO] Running K-fold `%s` (K = %d)...\n', ...
-    opts.general.training_method, ...
-    opts.general.number_of_folds), 1);
+    opts.k_fold_options.training_method, ...
+    opts.k_fold_options.number_of_folds), 1);
 
   % -------------------------------------------------------------------------
   %                                             create the imdb for each fold
   % -------------------------------------------------------------------------
   imdbs = {}; % separate so don't have to save ~1.5 GB of imdbs!!!
 
-  for i = 1:opts.general.number_of_folds
+  for i = 1:opts.k_fold_options.number_of_folds
     afprintf(sprintf('\n'));
     afprintf(sprintf('[INFO] Loading imdb for fold #%d...\n', i));
     tmp_opts.dataset = opts.general.dataset;
@@ -112,7 +112,7 @@ function folds = testKFold(input_opts)
   % -------------------------------------------------------------------------
   %                                                      train for each fold!
   % -------------------------------------------------------------------------
-  switch opts.general.training_method
+  switch opts.k_fold_options.training_method
     case 'svm'
       trainingMethodFunctionHandle = @testSvm;
     case 'forest'
@@ -125,8 +125,8 @@ function folds = testKFold(input_opts)
       trainingMethodFunctionHandle = @rusboost;
   end
 
-  for i = 1:opts.general.number_of_folds
-    afprintf(sprintf('[INFO] Running `%s` on fold #%d...\n', opts.general.training_method, i));
+  for i = 1:opts.k_fold_options.number_of_folds
+    afprintf(sprintf('[INFO] Running `%s` on fold #%d...\n', opts.k_fold_options.training_method, i));
     opts.single_training_method_options.imdb = imdbs{i};
     [ ...
       trained_model, ...
