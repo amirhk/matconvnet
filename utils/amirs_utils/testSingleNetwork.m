@@ -39,7 +39,7 @@ function results = testSingleNetwork(input_opts)
   % -------------------------------------------------------------------------
   saveStruct2File(opts, opts.paths.options_file_path, 0);
 
-  %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %%
+  % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
   single_cnn_options.dataset = opts.general.dataset;
   single_cnn_options.network_arch = opts.general.network_arch;
