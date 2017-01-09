@@ -147,6 +147,7 @@ function ensemble_performance_summary = cnnRusboost(single_ensemble_options)
         opts.ensemble_options.random_undersampling_ratio);
       flag = true;
     catch
+      fprintf('\n');
       afprintf(sprintf('[INFO] Weights no longer large enough to take sample from; terminating!\n'));
       break;
     end
