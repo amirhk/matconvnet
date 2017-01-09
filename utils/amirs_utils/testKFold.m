@@ -15,11 +15,13 @@ function folds = testKFold(input_opts)
   opts.imdb.posneg_balance = getValueFromFieldOrDefault(input_opts, 'posneg_balance', 'unbalanced');
   if strcmp(opts.general.dataset, 'prostate-v2-20-patients')
     switch opts.imdb.posneg_balance
-      case 'unbalanced'
+      case 'k=5-fold-unbalanced'
         opts.general.number_of_folds == 5
-      case 'balanced-high'
+      case 'k=5-fold-balanced-high'
         opts.general.number_of_folds == 5
       case 'leave-one-out-unbalanced'
+        opts.general.number_of_folds = 20;
+      case 'leave-one-out-balanced-high'
         opts.general.number_of_folds = 20;
       otherwise
         assert(false);
@@ -141,6 +143,10 @@ function saveKFoldResults(folds, results_file_path)
     all_folds_sensitivity(i) = k_fold_results.(sprintf('fold_%d', i)).weighted_test_sensitivity;
     all_folds_specificity(i) = k_fold_results.(sprintf('fold_%d', i)).weighted_test_specificity;
   end
+
+  all_folds_accuracy = all_folds_accuracy(~isnan(all_folds_accuracy));
+  all_folds_sensitivity = all_folds_sensitivity(~isnan(all_folds_sensitivity));
+  all_folds_specificity = all_folds_specificity(~isnan(all_folds_specificity));
 
   k_fold_results.kfold_accuracy_avg = mean(all_folds_accuracy);
   k_fold_results.kfold_sensitivity_avg = mean(all_folds_sensitivity);
