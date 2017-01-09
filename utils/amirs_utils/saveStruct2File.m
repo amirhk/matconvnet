@@ -17,17 +17,29 @@ function saveStruct2File(input_struct, filePath, recursion_depth)
         for j = 1:recursion_depth
           fprintf(fileID, '\t');
         end
-        fprintf(fileID, '%s: %d\n', fields{i}, value);
+        if value
+          fprintf(fileID, '%s: true\n', fields{i});
+        else
+          fprintf(fileID, '%s: false\n', fields{i});
+        end
       case 'single'
         for j = 1:recursion_depth
           fprintf(fileID, '\t');
         end
         if numel(value) == 1
-          fprintf(fileID, '%s: %.6f\n', fields{i}, value);
+          if round(value) == value
+            fprintf(fileID, '%s: %d\n', fields{i}, value);
+          else
+            fprintf(fileID, '%s: %.6f\n', fields{i}, value);
+          end
         else
           fprintf(fileID, '%s: ', fields{i});
           for k = 1:numel(value)
-            fprintf(fileID, '%.6f  ', value(k));
+            if round(value(k)) == value(k)
+              fprintf(fileID, '%d  ', value(k));
+            else
+              fprintf(fileID, '%.6f  ', value(k));
+            end
           end
           fprintf(fileID, '\n');
         end
@@ -36,11 +48,19 @@ function saveStruct2File(input_struct, filePath, recursion_depth)
           fprintf(fileID, '\t');
         end
         if numel(value) == 1
-          fprintf(fileID, '%s: %.6f\n', fields{i}, value);
+          if round(value) == value
+            fprintf(fileID, '%s: %d\n', fields{i}, value);
+          else
+            fprintf(fileID, '%s: %.6f\n', fields{i}, value);
+          end
         else
           fprintf(fileID, '%s: ', fields{i});
           for k = 1:numel(value)
-            fprintf(fileID, '%.6f  ', value(k));
+            if round(value(k)) == value(k)
+              fprintf(fileID, '%d  ', value(k));
+            else
+              fprintf(fileID, '%.6f  ', value(k));
+            end
           end
           fprintf(fileID, '\n');
         end
@@ -61,7 +81,11 @@ function saveStruct2File(input_struct, filePath, recursion_depth)
             case 'char'
               fprintf(fileID, '%s  ', x);
             case 'double'
-              fprintf(fileID, '%.6f  ', x);
+              if round(x) == x
+                fprintf(fileID, '%d  ', x);
+              else
+                fprintf(fileID, '%.6f  ', x);
+              end
           end
         end
     end

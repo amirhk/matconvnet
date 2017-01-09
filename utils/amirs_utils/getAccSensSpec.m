@@ -4,6 +4,7 @@ function [acc, sens, spec] = getAccSensSpec(labels, predictions, debug_flag)
   % enforce row vector before doing sum(...)
   labels = reshape(labels, 1, prod(size(labels)));
   predictions = reshape(predictions, 1, prod(size(predictions)));
+  assert(length(labels) == length(predictions));
 
   positive_class_num = 2;
   negative_class_num = 1;
