@@ -54,6 +54,10 @@ function folds = testKFold(input_opts)
   opts.single_training_method_options.dataset = opts.general.dataset;
   opts.single_training_method_options.experiment_parent_dir = opts.paths.experiment_dir;
   switch opts.general.training_method
+    case 'svm'
+      % no additional options
+    case 'forest'
+      opts.single_training_method_options.boosting_method = getValueFromFieldOrDefault(input_opts, 'boosting_method', 'RUSBoost');
     case 'single-cnn'
       opts.single_training_method_options.backprop_depth = getValueFromFieldOrDefault(input_opts, 'backprop_depth', 4);
       opts.single_training_method_options.gpus = ifNotMacSetGpu(getValueFromFieldOrDefault(input_opts, 'gpus', 1));
@@ -64,8 +68,6 @@ function folds = testKFold(input_opts)
       opts.single_training_method_options.backprop_depth = getValueFromFieldOrDefault(input_opts, 'backprop_depth', 4);
       opts.single_training_method_options.symmetric_weight_updates = getValueFromFieldOrDefault(input_opts, 'symmetric_weight_updates', false);
       opts.single_training_method_options.symmetric_loss_updates = getValueFromFieldOrDefault(input_opts, 'symmetric_loss_updates', false);
-    case 'forest'
-      opts.single_training_method_options.boosting_method = getValueFromFieldOrDefault(input_opts, 'boosting_method', 'RUSBoost');
   end
 
   % -------------------------------------------------------------------------
@@ -101,12 +103,14 @@ function folds = testKFold(input_opts)
   % -------------------------------------------------------------------------
 
   switch opts.general.training_method
+    case 'svm'
+      trainingMethodFunctionHandle = @testSvm;
+    case 'forest'
+      trainingMethodFunctionHandle = @testForest;
     case 'single-cnn'
       trainingMethodFunctionHandle = @testSingleNetwork;
     case 'ensemble-cnn'
       trainingMethodFunctionHandle = @cnnRusboost;
-    case 'forest'
-      trainingMethodFunctionHandle = @testForest;
   end
 
   for i = 1:opts.general.number_of_folds
@@ -115,8 +119,11 @@ function folds = testKFold(input_opts)
     folds.(sprintf('fold_%d', i)).performance_summary = ...
       trainingMethodFunctionHandle(opts.single_training_method_options);
     % overwrite and save results so far
+    afprintf(sprintf('[INFO] done!\n'));
+    afprintf(sprintf('[INFO] Saving incremental results...\n'));
     save(opts.paths.folds_file_path, 'folds');
     saveKFoldResults(folds, opts.paths.results_file_path);
+    afprintf(sprintf('[INFO] done!\n\n'));
   end
 
 

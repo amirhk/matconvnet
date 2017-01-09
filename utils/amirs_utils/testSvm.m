@@ -1,4 +1,4 @@
-function results = testForest(input_opts)
+function results = testSvm(input_opts)
 
   % -------------------------------------------------------------------------
   %                                                              opts.general
@@ -15,8 +15,6 @@ function results = testForest(input_opts)
   % -------------------------------------------------------------------------
   opts.train.number_of_examples = size(imdb.images.data, 4);
   opts.train.number_of_features = 3072;
-  opts.train.number_of_trees = getValueFromFieldOrDefault(input_opts, 'number_of_trees', 1000);
-  opts.train.boosting_method = getValueFromFieldOrDefault(input_opts, 'boosting_method', 'RUSBoost'); % {'AdaBoostM1', 'RUSBoost'}
 
   % -------------------------------------------------------------------------
   %                                                                opts.paths
@@ -29,8 +27,7 @@ function results = testForest(input_opts)
   opts.paths.experiment_dir = fullfile(opts.paths.experiment_parent_dir, sprintf( ...
     'test-forest-%s-%s', ...
     opts.paths.time_string, ...
-    opts.general.dataset, ...
-    opts.train.boosting_method));
+    opts.general.dataset));
   if ~exist(opts.paths.experiment_dir)
     mkdir(opts.paths.experiment_dir);
   end
@@ -53,45 +50,12 @@ function results = testForest(input_opts)
 
   % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   printConsoleOutputSeparator();
-  t = templateTree('MinLeafSize',5);
-  tic
-  rus_tree = fitensemble( ...
-    cov_type(is_train,:), ...
-    Y(is_train), ...
-    opts.train.boosting_method, ...
-    opts.train.number_of_trees, ...
-    t, ...
-    'LearnRate', 0.1, ...
-    'nprint', 25);
-  toc
 
-  % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-  l_loss = loss(rus_tree, cov_type(is_test,:), Y(is_test), 'mode', 'cumulative');
-
-  % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
-  % figure;
-  % tic
-  % plot(l_loss);
-  % toc
-  % grid on;
-  % xlabel('Number of trees');
-  % ylabel('Test classification error');
-
-  % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
-  tic
-  Yfit = predict(rus_tree, cov_type(is_test,:));
-  toc
-  % tab = tabulate(Y(is_test));
-  % confusion_matrix = bsxfun(@rdivide, confusionmat(Y(is_test), Yfit), tab(:,2)) * 100;
-  % acc = (1 - l_loss(end)) * 100;
-  % spec = confusion_matrix(1,1);
-  % sens = confusion_matrix(2,2);
-
+  svm_struct = svmtrain(cov_type(is_train,:), Y(is_train));
+  test_predictions = svmclassify(svm_struct , cov_type(is_test,:));
   test_labels = Y(is_test);
-  test_predictions = Yfit;
+
   [ ...
     acc, ...
     sens, ...
