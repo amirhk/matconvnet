@@ -65,7 +65,7 @@ function [ensemble_models, ensemble_performance_summary] = rusboost(input_opts)
   saveStruct2File(opts, opts.paths.options_file_path, 0);
 
   % -------------------------------------------------------------------------
-  %                     2. process the imdb to separate positive and negative
+  %                     1. process the imdb to separate positive and negative
   %                               samples (to be randomly-undersampled later)
   % -------------------------------------------------------------------------
   fh_imdb_utils = imdbTwoClassUtils;
@@ -94,7 +94,7 @@ function [ensemble_models, ensemble_performance_summary] = rusboost(input_opts)
   ] = fh_imdb_utils.getImdbInfo(imdb, 1);
 
   % -------------------------------------------------------------------------
-  %                                     3. initialize training sample weights
+  %                                     2. initialize training sample weights
   % -------------------------------------------------------------------------
   % W stores the weights of the instances in each row for every iteration of
   % boosting. Weights for all the instances are initialized by 1/m for the
@@ -113,14 +113,14 @@ function [ensemble_models, ensemble_performance_summary] = rusboost(input_opts)
   count = 1; % number of times the same boosting iteration have been repeated
 
   % -------------------------------------------------------------------------
-  %                       4. create training (barebones) and validation imdbs
+  %                       3. create training (barebones) and validation imdbs
   % -------------------------------------------------------------------------
   training_resampled_imdb = fh_imdb_utils.constructPartialImdb([], [], 3); % barebones; filled in below
   validation_imdb = fh_imdb_utils.constructPartialImdb(data_train, labels_train, 3);
   test_imdb = fh_imdb_utils.constructPartialImdb(data_test, labels_test, 3);
 
   % -------------------------------------------------------------------------
-  %      5. go through T iterations of RUSBoost, each training a single model
+  %      4. go through T iterations of RUSBoost, each training a single model
   % -------------------------------------------------------------------------
   printConsoleOutputSeparator();
   ensemble_models = {};
@@ -151,6 +151,9 @@ function [ensemble_models, ensemble_performance_summary] = rusboost(input_opts)
     training_resampled_imdb.images.labels = single(resampled_labels);
     training_resampled_imdb.images.set = 1 * ones(length(resampled_labels), 1);
 
+    % -------------------------------------------------------------------------
+    %                                                            5. Train model
+    % -------------------------------------------------------------------------
     afprintf(sprintf('[INFO] Training model (positive: %d, negative: %d)...\n', ...
       numel(find(resampled_labels == 2)), ...
       numel(find(resampled_labels == 1))));
@@ -163,6 +166,9 @@ function [ensemble_models, ensemble_performance_summary] = rusboost(input_opts)
         [model, ~] = cnnAmir(opts.single_model_options);
     end
 
+    % -------------------------------------------------------------------------
+    %                          6. Compute the pseudo loss of hypothesis 'model'
+    % -------------------------------------------------------------------------
     % IMPORTANT NOTE: we randomly undersample when training a model, but then,
     % we use all of the training samples (in their order) to update weights.
     afprintf(sprintf( ...
@@ -176,9 +182,6 @@ function [ensemble_models, ensemble_performance_summary] = rusboost(input_opts)
       validation_specificity, ...
     ] = getAccSensSpec(labels_train, validation_predictions, true);
 
-    % -------------------------------------------------------------------------
-    %                        6. Computing the pseudo loss of hypothesis 'model'
-    % -------------------------------------------------------------------------
     afprintf(sprintf('[INFO] Computing pseudo loss... '));
     negative_to_positive_ratio = data_train_negative_count / data_train_positive_count;
     loss = 0;
@@ -234,7 +237,7 @@ function [ensemble_models, ensemble_performance_summary] = rusboost(input_opts)
     % end
 
     % -------------------------------------------------------------------------
-    %                                                        7. Updating weight
+    %                                                          7. Update weight
     % -------------------------------------------------------------------------
     afprintf(sprintf('[INFO] Updating weights... '));
     for i = 1:data_train_count
@@ -261,7 +264,7 @@ function [ensemble_models, ensemble_performance_summary] = rusboost(input_opts)
     end
 
     % -------------------------------------------------------------------------
-    %                                       8. test on single model of ensemble
+    %                            8. Test on test set (single model of ensemble)
     % -------------------------------------------------------------------------
     afprintf(sprintf('[INFO] Computing test set predictions (positive: %d, negative: %d)...\n', ...
       data_test_positive_count, ...
@@ -274,7 +277,7 @@ function [ensemble_models, ensemble_performance_summary] = rusboost(input_opts)
     ] = getAccSensSpec(labels_test, test_predictions, true);
 
     % -------------------------------------------------------------------------
-    %                                          9. save single model of ensemble
+    %                                          9. Save single model of ensemble
     % -------------------------------------------------------------------------
     afprintf(sprintf('[INFO] Saving model and info... '));
     ensemble_models{iteration}.model = H{iteration};
@@ -306,7 +309,7 @@ function [ensemble_models, ensemble_performance_summary] = rusboost(input_opts)
     iteration = iteration + 1;
   end
   % -------------------------------------------------------------------------
-  % 10. now that all iterations are complete normalize and save model weights
+  %         10. All iterations are complete; normalize and save model weights
   % -------------------------------------------------------------------------
   B = B / sum(B);
   for iteration = 1:length(B)
@@ -316,7 +319,7 @@ function [ensemble_models, ensemble_performance_summary] = rusboost(input_opts)
   % folds.(sprintf('fold_%d', i))
 
   % -------------------------------------------------------------------------
-  %            11. test on test set, keeping in mind beta's between each mode
+  %                                                      11. Test on test set
   % -------------------------------------------------------------------------
   % The final hypothesis is calculated and tested on the test set simulteneously
   printConsoleOutputSeparator();

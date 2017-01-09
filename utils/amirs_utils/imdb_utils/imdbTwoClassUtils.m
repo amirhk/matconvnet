@@ -110,8 +110,10 @@ function [resampled_data, resampled_labels] = resampleData(data, labels, weights
   % -------------------------------------------------------------------------
   % Weighted Upsampling (more weight -> more repeat): Negative & Positive Data
   % -------------------------------------------------------------------------
-  max_repeat_positive = 200;
-  max_repeat_negative = 25;
+  % max_repeat_positive = 200;
+  % max_repeat_negative = 25;
+  % max_repeat_positive = 100000000;
+  % max_repeat_negative = 100000000;
   normalized_weights = weights / min(weights);
   repeat_counts = ceil(normalized_weights);
   for j = data_positive_indices
