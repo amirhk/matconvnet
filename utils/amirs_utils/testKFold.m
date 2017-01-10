@@ -30,7 +30,14 @@ function folds = testKFold(input_opts)
   % -------------------------------------------------------------------------
 
   opts.general.dataset = getValueFromFieldOrDefault(input_opts, 'dataset', 'mnist-two-class-9-4');
-  opts.general.network_arch = getValueFromFieldOrDefault(input_opts, 'network_arch', 'lenet');
+  opts.general.network_arch = getValueFromFieldOrDefault(input_opts, 'network_arch', 'two-class-lenet');
+  if strcmp(opts.general.dataset, 'prostate-v2-20-patients') || ...
+    strcmp(opts.general.dataset, 'mnist-two-class-9-4') || ...
+    strcmp(opts.general.dataset, 'svhn-two-class-9-4') || ...
+    strcmp(opts.general.dataset, 'cifar-two-deer-horse') || ...
+    strcmp(opts.general.dataset, 'cifar-two-deer-truck')
+    assert(strcmp(opts.general.network_arch, 'two-class-lenet'));
+  end
 
   % -------------------------------------------------------------------------
   %                                                       opts.k_fold_options
@@ -45,9 +52,9 @@ function folds = testKFold(input_opts)
   if strcmp(opts.general.dataset, 'prostate-v2-20-patients')
     switch opts.imdb.posneg_balance
       case 'k=5-fold-unbalanced'
-        opts.k_fold_options.number_of_folds == 5
+        opts.k_fold_options.number_of_folds == 5;
       case 'k=5-fold-balanced-high'
-        opts.k_fold_options.number_of_folds == 5
+        opts.k_fold_options.number_of_folds == 5;
       case 'leave-one-out-unbalanced'
         opts.k_fold_options.number_of_folds = 20;
       case 'leave-one-out-balanced-high'

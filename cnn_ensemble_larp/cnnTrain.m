@@ -1,4 +1,6 @@
+% -------------------------------------------------------------------------
 function [net, info] = cnn_train(net, imdb, getBatch, varargin)
+% -------------------------------------------------------------------------
   % CNN_TRAIN   Demonstrates training a CNN
   %    CNN_TRAIN() is an example learner implementing stochastic
   %    gradient descent with momentum to train a CNN. It can be used
@@ -27,7 +29,7 @@ function [net, info] = cnn_train(net, imdb, getBatch, varargin)
   opts.numSubBatches = 1;
   opts.train = [];
   opts.val = [];
-  opts.num_epochs = 300;
+  opts.num_epochs = 50;
   opts.gpus = []; % which GPU devices to use (none, one, or more)
   opts.learning_rate = 0.001;
   opts.continue = true;
@@ -104,6 +106,9 @@ function [net, info] = cnn_train(net, imdb, getBatch, varargin)
       case 'multiclass'
         opts.error_function = @error_multiclass;
         if isempty(opts.errorLabels), opts.errorLabels = {'top1e', 'top5e'}; end
+      case 'two-class'
+        opts.error_function = @error_two_class;
+        if isempty(opts.errorLabels), opts.errorLabels = {'top1e'}; end
       case 'binary'
         opts.error_function = @error_binary;
         if isempty(opts.errorLabels), opts.errorLabels = {'bine'}; end
@@ -224,17 +229,19 @@ function [net, info] = cnn_train(net, imdb, getBatch, varargin)
     epoch = 1;
     val = opts.val;
     if numGpus <= 1
-      [predictions, labels] = evaluate_one_epoch_of_trained_network(opts, getBatch, epoch, val, 0, imdb, net);
+      [top_predictions, all_predictions, labels] = evaluate_one_epoch_of_trained_network(opts, getBatch, epoch, val, 0, imdb, net);
     else
       spmd(numGpus)
-        [predictions_, labels_] = evaluate_one_epoch_of_trained_network(opts, getBatch, epoch, val, 0, imdb, net);
+        [top_predictions_, all_predictions_, labels_] = evaluate_one_epoch_of_trained_network(opts, getBatch, epoch, val, 0, imdb, net);
       end
       % TODO: WARNING: because the returned predictions could be coming from
       % multiple GPUs, the ordering of the predicited class may be fucked!
-      predictions = cat(2, predictions_{:});
+      top_predictions = cat(2, top_predictions_{:});
+      all_predictions = cat(2, all_predictions_{:});
       labels = cat(2, labels_{:});
     end
-    info.predictions = predictions;
+    info.top_predictions = top_predictions;
+    info.all_predictions = all_predictions;
     info.labels = labels;
   end
 
@@ -260,6 +267,28 @@ function err = error_multiclass(opts, labels, res)
   error = ~bsxfun(@eq, predictions, labels);
   err(1,1) = sum(sum(sum(mass .* error(:,:,1,:))));
   err(2,1) = sum(sum(sum(mass .* min(error(:,:,1:5,:),[],3))));
+
+% -------------------------------------------------------------------------
+function err = error_two_class(opts, labels, res)
+% -------------------------------------------------------------------------
+  predictions = gather(res(end-1).x);
+  [~,predictions] = sort(predictions, 3, 'descend');
+
+  % be resilient to badly formatted labels
+  if numel(labels) == size(predictions, 4)
+    labels = reshape(labels,1,1,1,[]);
+  end
+
+  % skip null labels
+  mass = single(labels(:,:,1,:) > 0);
+  if size(labels,3) == 2
+    % if there is a second channel in labels, used it as weights
+    mass = mass .* labels(:,:,2,:);
+    labels(:,:,2,:) = [];
+  end
+
+  error = ~bsxfun(@eq, predictions, labels);
+  err(1,1) = sum(sum(sum(mass .* error(:,:,1,:)))); % top1
 
 % -------------------------------------------------------------------------
 function err = error_binaryclass(opts, labels, res)
@@ -307,7 +336,7 @@ function  [net_cpu,stats,prof] = process_epoch(opts, getBatch, epoch, subset, le
     end
     batch_size = min(opts.batch_size, numel(subset) - t + 1);
     batchTime = tic;
-    numDone = 0;
+    num_done = 0;
     error = [];
     for s=1:opts.numSubBatches
       % get this image batch and prefetch the next
@@ -350,7 +379,7 @@ function  [net_cpu,stats,prof] = process_epoch(opts, getBatch, epoch, subset, le
           reshape(opts.error_function(opts, labels, res),[],1); ...
         ] ...
       ], 2);
-      numDone = numDone + numel(batch);
+      num_done = num_done + numel(batch);
     end
 
     % gather and accumulate gradients across labs
@@ -379,7 +408,7 @@ function  [net_cpu,stats,prof] = process_epoch(opts, getBatch, epoch, subset, le
       for i=1:numel(opts.errorLabels)
         fprintf(' %s:%.3g', opts.errorLabels{i}, stats(i+2)/n);
       end
-      fprintf(' [%d/%d]', numDone, batch_size);
+      fprintf(' [%d/%d]', num_done, batch_size);
       fprintf('\n');
     end
 
@@ -476,7 +505,31 @@ function write_gradients(mmap, net, res)
   end
 
 % -------------------------------------------------------------------------
-function [all_predictions, all_labels] = evaluate_one_epoch_of_trained_network(opts, getBatch, epoch, subset, learning_rate, imdb, net_cpu)
+function [all_samples_top_class_predictions, all_samples_all_class_predictions, all_labels] = evaluate_one_epoch_of_trained_network(opts, getBatch, epoch, subset, learning_rate, imdb, net_cpu)
+% -------------------------------------------------------------------------
+  % validation mode if learning rate is zero
+  % if nargout > 2, mpiprofile on; end
+
+  % numGpus = numel(opts.gpus);
+  % if numGpus >= 1
+  %   one = gpuArray(single(1));
+  % else
+  %   one = single(1);
+  % end
+
+  % softmaxloss
+  net_1 = net_cpu;
+  % softmax
+  net_2.layers = net_1.layers;
+  net_2.layers{end}.type = 'softmax';
+
+  [all_samples_top_class_predictions, ~, all_labels_1] = tmpBeef(opts, getBatch, epoch, subset, learning_rate, imdb, net_1, 'softmaxloss');
+  [~, all_samples_all_class_predictions, all_labels_2] = tmpBeef(opts, getBatch, epoch, subset, learning_rate, imdb, net_2, 'softmax');
+  assert(isequal(all_labels_1, all_labels_1))
+  all_labels = all_labels_1;
+
+% -------------------------------------------------------------------------
+function [all_samples_top_class_predictions, all_samples_all_class_predictions, all_labels] = tmpBeef(opts, getBatch, epoch, subset, learning_rate, imdb, net_cpu, loss_layer_type)
 % -------------------------------------------------------------------------
   % move CNN to GPU as needed
   numGpus = numel(opts.gpus);
@@ -487,22 +540,14 @@ function [all_predictions, all_labels] = evaluate_one_epoch_of_trained_network(o
     net_cpu = [];
   end
 
-  % validation mode if learning rate is zero
-  training = learning_rate > 0;
-  if training, mode = 'training'; else, mode = 'validation'; end
-  if nargout > 2, mpiprofile on; end
+  training = false;
+  mode = 'validation';
 
-  numGpus = numel(opts.gpus);
-  if numGpus >= 1
-    one = gpuArray(single(1));
-  else
-    one = single(1);
-  end
   res = [];
   mmap = [];
-  all_predictions = [];
+  all_samples_top_class_predictions = [];
+  all_samples_all_class_predictions = [];
   all_labels = [];
-
   if ~opts.debug_flag
     afprintf(sprintf('[INFO] processed     %d samples', 0), 1);
   end
@@ -513,8 +558,7 @@ function [all_predictions, all_labels] = evaluate_one_epoch_of_trained_network(o
               fix(t/opts.batch_size)+1, ceil(numel(subset)/opts.batch_size));
     end
     batch_size = min(opts.batch_size, numel(subset) - t + 1);
-    batchTime = tic;
-    numDone = 0;
+    num_done = 0;
     error = [];
 
     for s=1:opts.numSubBatches
@@ -541,7 +585,8 @@ function [all_predictions, all_labels] = evaluate_one_epoch_of_trained_network(o
 
       % evaluate CNN
       net.layers{end}.class = labels;
-      if training, dzdy = one; else, dzdy = []; end
+      % if training, dzdy = one; else, dzdy = []; end
+      dzdy = [];
       res = vl_simplenn(net, im, dzdy, res, ...
                         'accumulate', s ~= 1, ...
                         'disableDropout', ~training, ...
@@ -550,19 +595,29 @@ function [all_predictions, all_labels] = evaluate_one_epoch_of_trained_network(o
                         'sync', opts.sync, ...
                         'cudnn', opts.cudnn);
 
-      predictions = gather(res(end-1).x);
-      [~,predictions] = sort(predictions, 3, 'descend');
+      switch loss_layer_type
+        case 'softmaxloss'
+          batch_samples_all_class_predictions = gather(res(end-1).x);
+          [~,batch_samples_top_class_predictions] = sort(batch_samples_all_class_predictions, 3, 'descend');
 
-      all_predictions = cat( ...
-        2, ...
-        all_predictions, ...
-        reshape(predictions(:,:,1,:), 1, []));
+          all_samples_top_class_predictions = cat( ...
+            2, ...
+            all_samples_top_class_predictions, ...
+            reshape(batch_samples_top_class_predictions(:,:,1,:), 1, []));
+        case 'softmax'
+
+          batch_samples_all_class_predictions = gather(res(end).x);
+          all_samples_all_class_predictions = cat( ...
+            2, ...
+            all_samples_top_class_predictions, ...
+            reshape(batch_samples_all_class_predictions(:,:,:,:), 2, []));
+      end
       all_labels  = cat( ...
         2, ...
         all_labels, ...
         reshape(labels, 1, []));
 
-      numDone = numDone + numel(batch);
+      num_done = num_done + numel(batch);
     end
 
     if ~opts.debug_flag

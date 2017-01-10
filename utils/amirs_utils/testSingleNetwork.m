@@ -29,7 +29,14 @@ function [trained_model, performance_summary] = testSingleNetwork(input_opts)
   %                                                              opts.general
   % -------------------------------------------------------------------------
   opts.general.dataset = getValueFromFieldOrDefault(input_opts, 'dataset', 'mnist-two-class-9-4');
-  opts.general.network_arch = 'lenet';
+  opts.general.network_arch = getValueFromFieldOrDefault(input_opts, 'network_arch', 'two-class-lenet');
+  if strcmp(opts.general.dataset, 'prostate-v2-20-patients') || ...
+    strcmp(opts.general.dataset, 'mnist-two-class-9-4') || ...
+    strcmp(opts.general.dataset, 'svhn-two-class-9-4') || ...
+    strcmp(opts.general.dataset, 'cifar-two-deer-horse') || ...
+    strcmp(opts.general.dataset, 'cifar-two-deer-truck')
+    assert(strcmp(opts.general.network_arch, 'two-class-lenet'));
+  end
 
   % -------------------------------------------------------------------------
   %                                                                 opts.imdb

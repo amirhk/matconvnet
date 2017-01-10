@@ -31,6 +31,13 @@ function [net, results] = cnn_amir(inputs_opts)
   % -------------------------------------------------------------------------
   opts.general.dataset = getValueFromFieldOrDefault(inputs_opts, 'dataset', 'cifar');
   opts.general.network_arch = getValueFromFieldOrDefault(inputs_opts, 'network_arch', 'lenet');
+  if strcmp(opts.general.dataset, 'prostate-v2-20-patients') || ...
+    strcmp(opts.general.dataset, 'mnist-two-class-9-4') || ...
+    strcmp(opts.general.dataset, 'svhn-two-class-9-4') || ...
+    strcmp(opts.general.dataset, 'cifar-two-deer-horse') || ...
+    strcmp(opts.general.dataset, 'cifar-two-deer-truck')
+    assert(strcmp(opts.general.network_arch, 'two-class-lenet'));
+  end
   opts.general.debug_flag = getValueFromFieldOrDefault(inputs_opts, 'debug_flag', true);
 
   % -------------------------------------------------------------------------
@@ -56,6 +63,7 @@ function [net, results] = cnn_amir(inputs_opts)
   opts.train.gpus = getValueFromFieldOrDefault(inputs_opts, 'gpus', getDefaultProcessor());
   opts.train.backprop_depth = getValueFromFieldOrDefault(inputs_opts, 'backprop_depth', 4);
   opts.train.batch_size = getValueFromFieldOrDefault(inputs_opts, 'batch_size', 100);
+  opts.train.error_function = getErrorFunctionForDataset(opts.general.dataset);
   opts.train.learning_rate = getValueFromFieldOrDefault(inputs_opts, 'learning_rate', [0.05*ones(1,10) 0.005*ones(1,20) 0.001*ones(1,20)]);
   opts.train.num_epochs = getValueFromFieldOrDefault(inputs_opts, 'num_epochs', numel(opts.train.learning_rate));
   opts.train.weight_decay = getValueFromFieldOrDefault(inputs_opts, 'weight_decay', 0.0001);
@@ -115,6 +123,7 @@ function [net, results] = cnn_amir(inputs_opts)
       imdb = load(opts.paths.imdb_path);
     else % else just construct the imdb
       switch opts.general.dataset
+        % TODO: remove completely.... just always load a saved imdb... no regen unless manually supervised by amir
         % case '*-two-class'
           % unbalanced imdbs should always be generated separately and consistent across all tests
         case 'cifar'
@@ -173,23 +182,37 @@ function [net, results] = cnn_amir(inputs_opts)
   [ST,~] = dbstack();
   results = {};
   if numel(ST) >= 2 && strcmp(ST(2).file, 'mainCnnAmir.m') || strcmp(ST(2).file, 'testSingleNetwork.m')
-    predictions_train = getPredictionsFromModelOnImdb(net, 'cnn', imdb, 1);
+    [top_train_predictions, all_train_predictions] = getPredictionsFromModelOnImdb(net, 'cnn', imdb, 1);
     labels_train = imdb.images.labels(imdb.images.set == 1);
     [ ...
       results.train.acc, ...
       results.train.sens, ...
       results.train.spec, ...
-    ] = getAccSensSpec(labels_train, predictions_train, true);
-    predictions_test = getPredictionsFromModelOnImdb(net, 'cnn', imdb, 3);
+    ] = getAccSensSpec(labels_train, top_train_predictions, true);
+    [top_test_predictions, all_test_predictions] = getPredictionsFromModelOnImdb(net, 'cnn', imdb, 3);
     labels_test = imdb.images.labels(imdb.images.set == 3);
     [ ...
       results.test.acc, ...
       results.test.sens, ...
       results.test.spec, ...
-    ] = getAccSensSpec(labels_test, predictions_test, true);
+    ] = getAccSensSpec(labels_test, top_test_predictions, true);
     saveStruct2File(results, opts.paths.results_file_path, 0);
   end
   results.info = info;
+
+% -------------------------------------------------------------------------
+function error_function = getErrorFunctionForDataset(dataset)
+% -------------------------------------------------------------------------
+  if strcmp(dataset, 'prostate-v2-20-patients') || ...
+    strcmp(dataset, 'mnist-two-class-9-4') || ...
+    strcmp(dataset, 'svhn-two-class-9-4') || ...
+    strcmp(dataset, 'cifar-two-deer-horse') || ...
+    strcmp(dataset, 'cifar-two-deer-truck')
+    error_function = 'two-class';
+  else
+    error_function = 'multiclass';
+  end
+
 
 % -------------------------------------------------------------------------
 function processor = getDefaultProcessor()

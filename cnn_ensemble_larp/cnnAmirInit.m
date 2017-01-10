@@ -28,53 +28,54 @@ function output_opts = cnn_amir_init(input_opts)
   opts.weight_init_source = input_opts.net.weight_init_source;
   opts.weight_init_sequence = input_opts.net.weight_init_sequence;
 
+  if strcmp(opts.dataset, 'prostate-v2-20-patients') || ...
+    strcmp(opts.dataset, 'mnist-two-class-9-4') || ...
+    strcmp(opts.dataset, 'svhn-two-class-9-4') || ...
+    strcmp(opts.dataset, 'cifar-two-deer-horse') || ...
+    strcmp(opts.dataset, 'cifar-two-deer-truck')
+    assert(strcmp(opts.network_arch, 'two-class-lenet'));
+  end
+
   tic;
   s = rng;
   rng(0);
   net.layers = {};
   % Meta parameters
   switch opts.network_arch
-    case 'prostatenet'
-      switch opts.dataset
-        case 'prostate'
-          % output_opts.train.learning_rate = [0.001*ones(1,50)]; % matconvnet default
-          % output_opts.train.learning_rate = [0.01*ones(1,50) 0.005*ones(1,50) 0.001*ones(1,100) 0.0005*ones(1,100)]; % matconvnet default
-          % output_opts.train.learning_rate = [0.005*ones(1,40) 0.001*ones(1,50) 0.0005*ones(1,110)]; % matconvnet default
-          % output_opts.train.learning_rate = [0.005*ones(1,40) 0.001*ones(1,50)];
-          % output_opts.train.learning_rate = [0.05*ones(1,1)];
-          output_opts.train.learning_rate = [0.05*ones(1,10) 0.005*ones(1,20) 0.001*ones(1,20)];
-      end
     case 'mnistnet'
       switch opts.dataset
         case 'mnist'
           output_opts.train.learning_rate = [0.001*ones(1,50)]; % matconvnet default
       end
-    case 'lenet'
+    case 'two-class-lenet'
       switch opts.dataset
-        case 'cifar'
-          output_opts.train.learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)]; % matconvnet default
         case 'cifar-two-class-deer-horse'
           output_opts.train.learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)]; % matconvnet default
         case 'cifar-two-class-deer-truck'
           output_opts.train.learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)]; % matconvnet default
-        case 'coil-100'
-          output_opts.train.learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)]; % matconvnet default
-        case 'mnist'
-          output_opts.train.learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)]; % matconvnet default
         case 'mnist-two-class-9-4'
           output_opts.train.learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)]; % matconvnet default
-          % output_opts.train.learning_rate = [0.05*ones(1,2)];
-        case 'stl-10'
-          output_opts.train.learning_rate = [0.5*ones(1,20) 0.05*ones(1,15)  0.1:-0.01:0.06 0.05*ones(1,10)]; % javad-LR
-        case 'svhn'
-          % output_opts.train.learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)]; % matconvnet default
-          output_opts.train.learning_rate = [0.05*ones(1,30) 0.005*ones(1,10) 0.0005*ones(1,10)]; % matconvnet default
+          output_opts.train.learning_rate = [0.05*ones(1,10)];
         case 'svhn-two-class-9-4'
           % output_opts.train.learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)]; % matconvnet default
           output_opts.train.learning_rate = [0.05*ones(1,30) 0.005*ones(1,10) 0.0005*ones(1,10)]; % matconvnet default
         case 'prostate-v2-20-patients'
           output_opts.train.learning_rate = [0.05*ones(1,10) 0.005*ones(1,20) 0.001*ones(1,20)];
-          output_opts.train.learning_rate = [0.05*ones(1,5)];
+          % output_opts.train.learning_rate = [0.05*ones(1,5)];
+      end
+    case 'lenet'
+      switch opts.dataset
+        case 'cifar'
+          output_opts.train.learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)]; % matconvnet default
+        case 'coil-100'
+          output_opts.train.learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)]; % matconvnet default
+        case 'mnist'
+          output_opts.train.learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)]; % matconvnet default
+        case 'stl-10'
+          output_opts.train.learning_rate = [0.5*ones(1,20) 0.05*ones(1,15)  0.1:-0.01:0.06 0.05*ones(1,10)]; % javad-LR
+        case 'svhn'
+          % output_opts.train.learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)]; % matconvnet default
+          output_opts.train.learning_rate = [0.05*ones(1,30) 0.005*ones(1,10) 0.0005*ones(1,10)]; % matconvnet default
       end
     case 'alexnet'
       switch opts.dataset
@@ -95,17 +96,41 @@ function output_opts = cnn_amir_init(input_opts)
   output_opts.train.num_epochs = numel(output_opts.train.learning_rate);
 
   switch opts.network_arch
-    case 'prostatenet'
+    case 'mnistnet'
       % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
       % --- --- ---                                                     --- --- --
-      % --- --- ---                  PROSTATENET                        --- --- --
+      % --- --- ---                    MNISTNET                         --- --- --
       % --- --- ---                                                     --- --- --
       % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
       layer_number = 1;
-      % net.layers{end+1} = convLayer(opts.dataset, opts.network_arch, layer_number, 5, 4, 32, 1/100, 2, char(opts.weight_init_sequence{1}), 'gen');
+      net.layers{end+1} = convLayer(opts.dataset, opts.network_arch, layer_number, 5, 1, 20, 1/100, 0, char(opts.weight_init_sequence{1}), opts.weight_init_source);
+      net.layers{end+1} = poolingLayer(layer_number);
+
+      % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
+      layer_number = layer_number + 2;
+      net.layers{end+1} = convLayer(opts.dataset, opts.network_arch, layer_number, 5, 20, 50, 1/100, 0, char(opts.weight_init_sequence{1}), opts.weight_init_source);
+      net.layers{end+1} = poolingLayer(layer_number);
+
+      % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
+      layer_number = layer_number + 2;
+      net.layers{end+1} = convLayer(opts.dataset, opts.network_arch, layer_number, 4, 50, 500, 1/100, 0, char(opts.weight_init_sequence{1}), opts.weight_init_source);
+      net.layers{end+1} = reluLayer(layer_number);
+
+      % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
+      layer_number = layer_number + 2;
+      net.layers{end+1} = convLayer(opts.dataset, opts.network_arch, layer_number, 1, 500, 10, 1/100, 0, 'compRand', 'gen');
+
+      % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
+      % Loss layer
+      net.layers{end+1} = struct('type', 'softmaxloss');
+    case 'two-class-lenet'
+      % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
+      % --- --- ---                                                     --- --- --
+      % --- --- ---                TWO-CLASS-LENET                      --- --- --
+      % --- --- ---                                                     --- --- --
+      % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
+      layer_number = 1;
       net.layers{end+1} = convLayer(opts.dataset, opts.network_arch, layer_number, 5, 3, 32, 1/100, 2, char(opts.weight_init_sequence{1}), opts.weight_init_source);
-      % net.layers{end+1} = convLayer(opts.dataset, opts.network_arch, layer_number, 5, 4, 32, 1/100, 2, char(opts.weight_init_sequence{1}), opts.weight_init_source);
-      % net.layers{end+1} = convLayer(opts.dataset, opts.network_arch, layer_number, 5, 8, 32, 1/100, 2, char(opts.weight_init_sequence{1}), opts.weight_init_source);
       net.layers{end+1} = poolingLayerLeNetMax(layer_number);
       net.layers{end+1} = reluLayer(layer_number);
 
@@ -134,33 +159,6 @@ function output_opts = cnn_amir_init(input_opts)
       % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
       % Loss layer
       net.layers{end+1} = struct('type', 'softmaxloss');
-    case 'mnistnet'
-      % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
-      % --- --- ---                                                     --- --- --
-      % --- --- ---                    MNISTNET                         --- --- --
-      % --- --- ---                                                     --- --- --
-      % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
-      layer_number = 1;
-      net.layers{end+1} = convLayer(opts.dataset, opts.network_arch, layer_number, 5, 1, 20, 1/100, 0, char(opts.weight_init_sequence{1}), opts.weight_init_source);
-      net.layers{end+1} = poolingLayer(layer_number);
-
-      % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
-      layer_number = layer_number + 2;
-      net.layers{end+1} = convLayer(opts.dataset, opts.network_arch, layer_number, 5, 20, 50, 1/100, 0, char(opts.weight_init_sequence{1}), opts.weight_init_source);
-      net.layers{end+1} = poolingLayer(layer_number);
-
-      % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
-      layer_number = layer_number + 2;
-      net.layers{end+1} = convLayer(opts.dataset, opts.network_arch, layer_number, 4, 50, 500, 1/100, 0, char(opts.weight_init_sequence{1}), opts.weight_init_source);
-      net.layers{end+1} = reluLayer(layer_number);
-
-      % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
-      layer_number = layer_number + 2;
-      net.layers{end+1} = convLayer(opts.dataset, opts.network_arch, layer_number, 1, 500, 10, 1/100, 0, 'compRand', 'gen');
-
-      % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
-      % Loss layer
-      net.layers{end+1} = struct('type', 'softmaxloss');
     case 'lenet'
       % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
       % --- --- ---                                                     --- --- --
@@ -171,20 +169,17 @@ function output_opts = cnn_amir_init(input_opts)
       net.layers{end+1} = convLayer(opts.dataset, opts.network_arch, layer_number, 5, 3, 32, 1/100, 2, char(opts.weight_init_sequence{1}), opts.weight_init_source);
       net.layers{end+1} = poolingLayerLeNetMax(layer_number);
       net.layers{end+1} = reluLayer(layer_number);
-      % net.layers{end+1} = tanhLayer(layer_number);
 
       % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
       layer_number = layer_number + 3;
       net.layers{end+1} = convLayer(opts.dataset, opts.network_arch, layer_number, 5, 32, 32, 5/100, 2, char(opts.weight_init_sequence{2}), opts.weight_init_source);
       net.layers{end+1} = reluLayer(layer_number);
-      % net.layers{end+1} = tanhLayer(layer_number);
       net.layers{end+1} = poolingLayerLeNetAvg(layer_number);
 
       % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
       layer_number = layer_number + 3;
       net.layers{end+1} = convLayer(opts.dataset, opts.network_arch, layer_number, 5, 32, 64, 5/100, 2, char(opts.weight_init_sequence{3}), opts.weight_init_source);
       net.layers{end+1} = reluLayer(layer_number);
-      % net.layers{end+1} = tanhLayer(layer_number);
       net.layers{end+1} = poolingLayerLeNetAvg(layer_number);
 
       % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
@@ -192,7 +187,6 @@ function output_opts = cnn_amir_init(input_opts)
       layer_number = layer_number + 3;
       net.layers{end+1} = convLayer(opts.dataset, opts.network_arch, layer_number, 4, 64, 64, 5/100, 0, 'compRand', 'gen');
       net.layers{end+1} = reluLayer(layer_number);
-      % net.layers{end+1} = tanhLayer(layer_number);
 
       % --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --
       layer_number = layer_number + 2;

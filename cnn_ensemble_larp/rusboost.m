@@ -29,7 +29,14 @@ function [ensemble_models, ensemble_performance_summary] = rusboost(input_opts)
   %                                                              opts.general
   % -------------------------------------------------------------------------
   opts.general.dataset = getValueFromFieldOrDefault(input_opts, 'dataset', 'mnist-two-class-9-4');
-  opts.general.network_arch = getValueFromFieldOrDefault(input_opts, 'network_arch', 'lenet');
+  opts.general.network_arch = getValueFromFieldOrDefault(input_opts, 'network_arch', 'two-class-lenet');
+  if strcmp(opts.general.dataset, 'prostate-v2-20-patients') || ...
+    strcmp(opts.general.dataset, 'mnist-two-class-9-4') || ...
+    strcmp(opts.general.dataset, 'svhn-two-class-9-4') || ...
+    strcmp(opts.general.dataset, 'cifar-two-deer-horse') || ...
+    strcmp(opts.general.dataset, 'cifar-two-deer-truck')
+    assert(strcmp(opts.general.network_arch, 'two-class-lenet'));
+  end
 
   % -------------------------------------------------------------------------
   %                                                     opts.ensemble_options
@@ -54,10 +61,11 @@ function [ensemble_models, ensemble_performance_summary] = rusboost(input_opts)
     'experiment_parent_dir', ...
     fullfile(vl_rootnn, 'experiment_results'));
   opts.paths.experiment_dir = fullfile(opts.paths.experiment_parent_dir, sprintf( ...
-    'rusboost-%s-%s-%s-max-iteration-count-%d', ...
+    'rusboost-%s-%s-%s-%s-max-iteration-count-%d', ...
     opts.general.dataset, ...
     opts.general.network_arch, ...
     opts.paths.time_string, ...
+    opts.ensemble_options.training_method, ...
     opts.ensemble_options.iteration_count));
   if ~exist(opts.paths.experiment_dir)
     mkdir(opts.paths.experiment_dir);
@@ -199,18 +207,20 @@ function [ensemble_models, ensemble_performance_summary] = rusboost(input_opts)
       '[INFO] Computing validation set predictions (positive: %d, negative: %d)...\n', ...
       data_train_positive_count, ...
       data_train_negative_count));
-    validation_predictions = getPredictionsFromModelOnImdb(model, opts.ensemble_options.training_method, validation_imdb, 3);
+    [top_validation_predictions, all_validation_predictions] = ...
+      getPredictionsFromModelOnImdb(model, opts.ensemble_options.training_method, validation_imdb, 3);
+
     [ ...
       validation_accuracy, ...
       validation_sensitivity, ...
       validation_specificity, ...
-    ] = getAccSensSpec(labels_train, validation_predictions, true);
+    ] = getAccSensSpec(labels_train, top_validation_predictions, true);
 
     afprintf(sprintf('[INFO] Computing pseudo loss... '));
     negative_to_positive_ratio = data_train_negative_count / data_train_positive_count;
     loss = 0;
     for i = 1:data_train_count
-      if labels_train(i) == validation_predictions(i)
+      if labels_train(i) == top_validation_predictions(i)
         continue;
       else
         if labels_train(i) == 2
@@ -265,7 +275,7 @@ function [ensemble_models, ensemble_performance_summary] = rusboost(input_opts)
     % -------------------------------------------------------------------------
     afprintf(sprintf('[INFO] Updating weights... '));
     for i = 1:data_train_count
-      if labels_train(i) == validation_predictions(i)
+      if labels_train(i) == top_validation_predictions(i)
         W(iteration + 1, i) = W(iteration, i) * beta;
       else
         if labels_train(i) == 2
@@ -293,12 +303,13 @@ function [ensemble_models, ensemble_performance_summary] = rusboost(input_opts)
     afprintf(sprintf('[INFO] Computing test set predictions (positive: %d, negative: %d)...\n', ...
       data_test_positive_count, ...
       data_test_negative_count));
-    test_predictions = getPredictionsFromModelOnImdb(model, opts.ensemble_options.training_method, test_imdb, 3);
+    [top_test_predictions, all_test_predictions] = ...
+      getPredictionsFromModelOnImdb(model, opts.ensemble_options.training_method, test_imdb, 3);
     [ ...
       test_accuracy, ...
       test_sensitivity, ...
       test_specificity, ...
-    ] = getAccSensSpec(labels_test, test_predictions, true);
+    ] = getAccSensSpec(labels_test, top_test_predictions, true);
 
     % -------------------------------------------------------------------------
     %                                          9. Save single model of ensemble
@@ -312,7 +323,8 @@ function [ensemble_models, ensemble_performance_summary] = rusboost(input_opts)
     ensemble_models{iteration}.train_negative_count = numel(find(resampled_labels == 1));
     ensemble_models{iteration}.validation_positive_count = data_train_positive_count;
     ensemble_models{iteration}.validation_negative_count = data_train_negative_count;
-    ensemble_models{iteration}.validation_predictions = validation_predictions;
+    ensemble_models{iteration}.top_validation_predictions = top_validation_predictions;
+    ensemble_models{iteration}.all_validation_predictions = all_validation_predictions;
     ensemble_models{iteration}.validation_labels = labels_train;
     ensemble_models{iteration}.validation_accuracy = validation_accuracy;
     ensemble_models{iteration}.validation_sensitivity = validation_sensitivity;
@@ -321,7 +333,8 @@ function [ensemble_models, ensemble_performance_summary] = rusboost(input_opts)
     ensemble_models{iteration}.validation_weights_post_update = W(iteration + 1,:);
     ensemble_models{iteration}.test_positive_count = data_test_positive_count;
     ensemble_models{iteration}.test_negative_count = data_test_negative_count;
-    ensemble_models{iteration}.test_predictions = test_predictions;
+    ensemble_models{iteration}.top_test_predictions = top_test_predictions;
+    ensemble_models{iteration}.all_test_predictions = all_test_predictions;
     ensemble_models{iteration}.test_labels = labels_test;
     ensemble_models{iteration}.test_accuracy = test_accuracy;
     ensemble_models{iteration}.test_sensitivity = test_sensitivity;
@@ -486,7 +499,7 @@ function weighted_results = getWeightedEnsembleResultsOnTestSet(ensemble_models,
       iteration, ...
       data_test_positive_count, ...
       data_test_negative_count));
-    test_set_predictions_per_model{iteration} = ensemble_models{iteration}.test_predictions;
+    test_set_predictions_per_model{iteration} = ensemble_models{iteration}.top_test_predictions;
     fprintf('done.\n');
   end
 
