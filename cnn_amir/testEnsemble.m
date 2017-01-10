@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function [ensemble_models, ensemble_performance_summary] = testRusboost(input_opts)
+function [trained_model, performance_summary] = testEnsemble(input_opts)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -34,6 +34,8 @@ function [ensemble_models, ensemble_performance_summary] = testRusboost(input_op
   % -------------------------------------------------------------------------
   %                                                     opts.ensemble_options
   % -------------------------------------------------------------------------
+  % TODO... implement boosting methods in addition to RUSBoost
+  opts.ensemble_options.boosting_method = getValueFromFieldOrDefault(input_opts, 'boosting_method', 'rusboost');
   opts.ensemble_options.training_method = getValueFromFieldOrDefault(input_opts, 'training_method', 'cnn');
   opts.ensemble_options.iteration_count = getValueFromFieldOrDefault(input_opts, 'iteration_count', 5);
   opts.ensemble_options.symmetric_weight_updates = getValueFromFieldOrDefault(input_opts, 'symmetric_weight_updates', false);
@@ -54,7 +56,8 @@ function [ensemble_models, ensemble_performance_summary] = testRusboost(input_op
     'experiment_parent_dir', ...
     fullfile(vl_rootnn, 'experiment_results'));
   opts.paths.experiment_dir = fullfile(opts.paths.experiment_parent_dir, sprintf( ...
-    'rusboost-%s-%s-%s-%s-max-iteration-count-%d', ...
+    'ensemble-%s-%s-%s-%s-%s-max-iteration-count-%d', ...
+    opts.ensemble_options.boosting_method, ...
     opts.general.dataset, ...
     opts.general.network_arch, ...
     opts.paths.time_string, ...
@@ -77,11 +80,10 @@ function [ensemble_models, ensemble_performance_summary] = testRusboost(input_op
       % no additional options
     case 'cnn'
       opts.single_model_options.network_arch = opts.general.network_arch;
-      opts.single_model_options.weight_init_source = 'gen';
-      opts.single_model_options.weight_init_sequence = {'compRand', 'compRand', 'compRand'};
-      opts.single_model_options.gpus = ifNotMacSetGpu(getValueFromFieldOrDefault(input_opts, 'gpus', 1));
       opts.single_model_options.backprop_depth = getValueFromFieldOrDefault(input_opts, 'backprop_depth', 4);
-      opts.single_model_options.debug_flag = false;
+      opts.single_model_options.gpus = ifNotMacSetGpu(getValueFromFieldOrDefault(input_opts, 'gpus', 1));
+      opts.single_model_options.debug_flag = getValueFromFieldOrDefault(input_opts, 'debug_flag', false);
+      opts.single_model_options.return_performance_summary = false;
   end
 
   % -------------------------------------------------------------------------
@@ -145,7 +147,7 @@ function [ensemble_models, ensemble_performance_summary] = testRusboost(input_op
   test_imdb = fh_imdb_utils.constructPartialImdb(data_test, labels_test, 3);
 
   % -------------------------------------------------------------------------
-  %      4. go through T iterations of RUSBoost, each training a single model
+  %        4. go through T iterations of *boost, each training a single model
   % -------------------------------------------------------------------------
   printConsoleOutputSeparator();
   ensemble_models = {};
@@ -188,7 +190,7 @@ function [ensemble_models, ensemble_performance_summary] = testRusboost(input_op
       case 'svm'
         [model, ~] = testSvm(opts.single_model_options);
       case 'cnn'
-        [model, ~] = cnnAmir(opts.single_model_options);
+        [model, ~] = testCnn(opts.single_model_options);
     end
 
     % -------------------------------------------------------------------------
@@ -347,13 +349,15 @@ function [ensemble_models, ensemble_performance_summary] = testRusboost(input_op
   end
 
   % -------------------------------------------------------------------------
-  %                                                      11. Test on test set
+  %                                      11. Test on test set & assign output
   % -------------------------------------------------------------------------
-  % The final hypothesis is calculated and tested on the test set simulteneously
-  printConsoleOutputSeparator();
-  ensemble_performance_summary = getEnsemblePerformanceSummary(ensemble_models, test_imdb);
-  saveStruct2File(ensemble_performance_summary, opts.paths.results_file_path, 0);
-  printConsoleOutputSeparator();
+  trained_model = ensemble_models;
+  performance_summary = getEnsemblePerformanceSummary(ensemble_models, test_imdb);
+
+  % -------------------------------------------------------------------------
+  %                                                           12. Save output
+  % -------------------------------------------------------------------------
+  saveStruct2File(performance_summary, opts.paths.results_file_path, 0);
 
 % -------------------------------------------------------------------------
 function plotIncrementalEnsemblePerformance(ensemble_models, experiment_dir)
@@ -416,7 +420,6 @@ function ensemble_performance_summary = getEnsemblePerformanceSummary(ensemble_m
     ensemble_performance_summary.weighted_test_specificity= 0;
     return;
   end
-
 
   number_of_models_in_ensemble = numel(ensemble_models);
   for iteration = 1:number_of_models_in_ensemble
@@ -524,6 +527,7 @@ function weighted_results = getWeightedEnsembleResultsOnTestSet(ensemble_models,
   predictions_test = weighted_ensemble_prediction;
   afprintf(sprintf('Weighted results:\n'));
   afprintf(sprintf('Model Weights: '), 1);
+  fprintf('\n');
   for i = 1:length(B)
     fprintf('%.2f,\t', B(i));
   end

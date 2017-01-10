@@ -26,5 +26,5 @@
 cd matconvnet
 addpath matlab
 addpath(genpath('utils'))
-addpath(genpath('cnn_amir_1')) % or _2
+addpath(genpath('cnn_amir'))
 vl_setupnn

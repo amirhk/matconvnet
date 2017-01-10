@@ -75,11 +75,7 @@ function testVaryingBatchSize(input_opts)
       afprintf(sprintf('Test #%d\n', test_number));
       single_cnn_options.backprop_depth = backprop_depth;
       single_cnn_options.batch_size = batch_size;
-      cnnAmir(single_cnn_options);
+      testCnn(single_cnn_options);
       test_number = test_number + 1;
     end
   end
-
-% single_cnn_options.dataset = 'svhn';
-% single_cnn_options.gpu = 3;
-% cnnAmir(single_cnn_options);

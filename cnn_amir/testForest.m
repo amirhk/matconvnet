@@ -29,6 +29,7 @@ function [trained_model, performance_summary] = testForest(input_opts)
   %                                                              opts.general
   % -------------------------------------------------------------------------
   opts.general.dataset = getValueFromFieldOrDefault(input_opts, 'dataset', 'mnist-two-class-9-4');
+  opts.general.return_performance_summary = getValueFromFieldOrDefault(input_opts, 'return_performance_summary', true);
 
   % -------------------------------------------------------------------------
   %                                                                 opts.imdb
@@ -38,8 +39,7 @@ function [trained_model, performance_summary] = testForest(input_opts)
   % -------------------------------------------------------------------------
   %                                                                opts.train
   % -------------------------------------------------------------------------
-  opts.train.number_of_examples = size(imdb.images.data, 4);
-  opts.train.number_of_features = 3072;
+  opts.train.number_of_features = prod(size(imdb.images.data(:,:,:,1))); % 32 x 32 x 3 = 3072
   opts.train.number_of_trees = getValueFromFieldOrDefault(input_opts, 'number_of_trees', 1000);
   opts.train.boosting_method = getValueFromFieldOrDefault(input_opts, 'boosting_method', 'RUSBoost'); % {'AdaBoostM1', 'RUSBoost'}
 
@@ -67,64 +67,79 @@ function [trained_model, performance_summary] = testForest(input_opts)
   % -------------------------------------------------------------------------
   saveStruct2File(opts, opts.paths.options_file_path, 0);
 
-  % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
-  vectorized_images = reshape(imdb.images.data, 3072, [])';
+  % -------------------------------------------------------------------------
+  %                                                   prepare data and labels
+  % -------------------------------------------------------------------------
+  vectorized_data = reshape(imdb.images.data, opts.train.number_of_features, [])';
   labels = imdb.images.labels;
-  Y = labels(1:opts.train.number_of_examples);
   is_train = imdb.images.set == 1;
   is_test = imdb.images.set == 3;
 
-  % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  vectorized_data_train = vectorized_data(is_train, :);
+  vectorized_data_test = vectorized_data(is_test, :);
+  labels_train = labels(is_train);
+  labels_test = labels(is_test);
+
+  % -------------------------------------------------------------------------
+  %                                                                     train
+  % -------------------------------------------------------------------------
   printConsoleOutputSeparator();
-  t = templateTree('MinLeafSize',5);
-  tic
-  rus_tree = fitensemble( ...
-    vectorized_images(is_train,:), ...
-    Y(is_train), ...
+  tree_template = templateTree('MinLeafSize',5);
+  boosted_forest = fitensemble( ...
+    vectorized_data_train, ...
+    labels_train, ...
     opts.train.boosting_method, ...
     opts.train.number_of_trees, ...
-    t, ...
+    tree_template, ...
     'LearnRate', 0.1, ...
     'nprint', 25);
-  toc
 
-  % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
-  l_loss = loss(rus_tree, vectorized_images(is_test,:), Y(is_test), 'mode', 'cumulative');
-
-  % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
-  % figure;
-  % tic
-  % plot(l_loss);
-  % toc
-  % grid on;
-  % xlabel('Number of trees');
-  % ylabel('Test classification error');
-
-  % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
-  tic
-  Yfit = predict(rus_tree, vectorized_images(is_test,:));
-  toc
+  % -------------------------------------------------------------------------
+  %                                                   get performance summary
+  % -------------------------------------------------------------------------
+  % l_loss = loss(boosted_forest, vectorized_data_train, labels_train, 'mode', 'cumulative');
   % tab = tabulate(Y(is_test));
   % confusion_matrix = bsxfun(@rdivide, confusionmat(Y(is_test), Yfit), tab(:,2)) * 100;
   % acc = (1 - l_loss(end)) * 100;
   % spec = confusion_matrix(1,1);
   % sens = confusion_matrix(2,2);
+  if opts.general.return_performance_summary
+    [top_train_predictions, ~] = getPredictionsFromModelOnImdb(boosted_forest, 'forest', imdb, 1);
+    afprintf(sprintf('[INFO] Model performance on `train` set\n'));
+    [ ...
+      train_accuracy, ...
+      train_sensitivity, ...
+      train_specificity, ...
+    ] = getAccSensSpec(labels_train, top_train_predictions, true);
+    [top_test_predictions, ~] = getPredictionsFromModelOnImdb(boosted_forest, 'forest', imdb, 3);
+    afprintf(sprintf('[INFO] Model performance on `test` set\n'));
+    [ ...
+      test_accuracy, ...
+      test_sensitivity, ...
+      test_specificity, ...
+    ] = getAccSensSpec(labels_test, top_test_predictions, true);
+    printConsoleOutputSeparator();
+  else
+    train_accuracy = -1;
+    train_sensitivity = -1;
+    train_specificity = -1;
+    test_accuracy = -1;
+    test_sensitivity = -1;
+    test_specificity = -1;
+  end
 
-  test_labels = Y(is_test);
-  test_predictions = Yfit;
-  [ ...
-    acc, ...
-    sens, ...
-    spec, ...
-  ] = getAccSensSpec(test_labels, test_predictions, true);
-  printConsoleOutputSeparator();
+  % -------------------------------------------------------------------------
+  %                                                             assign output
+  % -------------------------------------------------------------------------
+  trained_model = boosted_forest;
+  performance_summary.train.accuracy = train_accuracy;
+  performance_summary.train.sensitivity = train_sensitivity;
+  performance_summary.train.specificity = train_specificity;
+  performance_summary.test.accuracy = test_accuracy;
+  performance_summary.test.sensitivity = test_sensitivity;
+  performance_summary.test.specificity = test_specificity;
 
-  trained_model = rus_tree;
-  performance_summary.weighted_test_accuracy = acc;
-  performance_summary.weighted_test_sensitivity = sens;
-  performance_summary.weighted_test_specificity = spec;
+  % -------------------------------------------------------------------------
+  %                                                               save output
+  % -------------------------------------------------------------------------
   saveStruct2File(performance_summary, opts.paths.results_file_path, 0);

@@ -30,7 +30,6 @@ function folds = testKFold(input_opts)
   % -------------------------------------------------------------------------
 
   opts.general.dataset = getValueFromFieldOrDefault(input_opts, 'dataset', 'mnist-two-class-9-4');
-  opts.general.network_arch = getValueFromFieldOrDefault(input_opts, 'network_arch', 'lenet');
 
   % -------------------------------------------------------------------------
   %                                                       opts.k_fold_options
@@ -88,21 +87,31 @@ function folds = testKFold(input_opts)
     case 'forest'
       opts.single_training_method_options.boosting_method = getValueFromFieldOrDefault(input_opts, 'boosting_method', 'RUSBoost');
     case 'single-cnn'
+      opts.single_training_method_options.network_arch = getValueFromFieldOrDefault(input_opts, 'network_arch', 'lenet');
       opts.single_training_method_options.backprop_depth = getValueFromFieldOrDefault(input_opts, 'backprop_depth', 4);
       opts.single_training_method_options.gpus = ifNotMacSetGpu(getValueFromFieldOrDefault(input_opts, 'gpus', 1));
+      opts.single_training_method_options.debug_flag = getValueFromFieldOrDefault(input_opts, 'debug_flag', false);
     case 'ensemble-cnn'
+      % ensemble options
+      opts.ensemble_options.boosting_method = getValueFromFieldOrDefault(input_opts, 'boosting_method', 'rusboost');
       opts.single_training_method_options.training_method = getValueFromFieldOrDefault(input_opts, 'single_training_method_options', 'cnn');
-      opts.single_training_method_options.iteration_count = getValueFromFieldOrDefault(input_opts, 'iteration_count', 10);
+      opts.single_training_method_options.iteration_count = getValueFromFieldOrDefault(input_opts, 'iteration_count', 5);
       opts.single_training_method_options.symmetric_weight_updates = getValueFromFieldOrDefault(input_opts, 'symmetric_weight_updates', false);
       opts.single_training_method_options.symmetric_loss_updates = getValueFromFieldOrDefault(input_opts, 'symmetric_loss_updates', false);
-      opts.single_training_method_options.network_arch = opts.general.network_arch;
-      opts.single_training_method_options.gpus = ifNotMacSetGpu(getValueFromFieldOrDefault(input_opts, 'gpus', 1));
+      % cnn options
+      opts.single_training_method_options.network_arch = getValueFromFieldOrDefault(input_opts, 'network_arch', 'lenet');
       opts.single_training_method_options.backprop_depth = getValueFromFieldOrDefault(input_opts, 'backprop_depth', 4);
+      opts.single_training_method_options.gpus = ifNotMacSetGpu(getValueFromFieldOrDefault(input_opts, 'gpus', 1));
+      opts.single_training_method_options.debug_flag = getValueFromFieldOrDefault(input_opts, 'debug_flag', false);
     case 'ensemble-svm'
+      % ensemble options
+      opts.ensemble_options.boosting_method = getValueFromFieldOrDefault(input_opts, 'boosting_method', 'rusboost');
       opts.single_training_method_options.training_method = getValueFromFieldOrDefault(input_opts, 'single_training_method_options', 'svm');
-      opts.single_training_method_options.iteration_count = getValueFromFieldOrDefault(input_opts, 'iteration_count', 10);
+      opts.single_training_method_options.iteration_count = getValueFromFieldOrDefault(input_opts, 'iteration_count', 5);
       opts.single_training_method_options.symmetric_weight_updates = getValueFromFieldOrDefault(input_opts, 'symmetric_weight_updates', false);
       opts.single_training_method_options.symmetric_loss_updates = getValueFromFieldOrDefault(input_opts, 'symmetric_loss_updates', false);
+      % svm options
+      % no additional options
   end
 
   % -------------------------------------------------------------------------
@@ -142,11 +151,11 @@ function folds = testKFold(input_opts)
     case 'forest'
       trainingMethodFunctionHandle = @testForest;
     case 'single-cnn'
-      trainingMethodFunctionHandle = @testSingleNetwork;
+      trainingMethodFunctionHandle = @testCnn;
     case 'ensemble-cnn'
-      trainingMethodFunctionHandle = @rusboost;
+      trainingMethodFunctionHandle = @testEnsemble;
     case 'ensemble-svm'
-      trainingMethodFunctionHandle = @rusboost;
+      trainingMethodFunctionHandle = @testEnsemble;
   end
 
   for i = 1:opts.k_fold_options.number_of_folds
@@ -172,33 +181,36 @@ function saveIncrementalKFoldResults(folds, results_file_path)
   for i = 1:number_of_folds
     performance_summary_for_fold = folds.(sprintf('fold_%d', i)).performance_summary;
     % copy all fields; mandatory fields:
-    %  * weighted_test_accuracy
-    %  * weighted_test_sensitivity
-    %  * weighted_test_specificity
+    %  * test.accuracy
+    %  * test.sensitivity
+    %  * test.specificity
     for fn = fieldnames(performance_summary_for_fold)'
       k_fold_results.(sprintf('fold_%d', i)).(fn{1}) = performance_summary_for_fold.(fn{1});
     end
   end
 
-  all_folds_accuracy = [];
-  all_folds_sensitivity = [];
-  all_folds_specificity = [];
-  for i = 1:number_of_folds
-    all_folds_accuracy(i) = k_fold_results.(sprintf('fold_%d', i)).weighted_test_accuracy;
-    all_folds_sensitivity(i) = k_fold_results.(sprintf('fold_%d', i)).weighted_test_sensitivity;
-    all_folds_specificity(i) = k_fold_results.(sprintf('fold_%d', i)).weighted_test_specificity;
+  for set = {'train', 'test'}
+    set = char(set);
+    all_folds_accuracy = [];
+    all_folds_sensitivity = [];
+    all_folds_specificity = [];
+    for i = 1:number_of_folds
+      all_folds_accuracy(i) = k_fold_results.(sprintf('fold_%d', i)).(set).accuracy;
+      all_folds_sensitivity(i) = k_fold_results.(sprintf('fold_%d', i)).(set).sensitivity;
+      all_folds_specificity(i) = k_fold_results.(sprintf('fold_%d', i)).(set).specificity;
+    end
+
+    all_folds_accuracy = all_folds_accuracy(~isnan(all_folds_accuracy));
+    all_folds_sensitivity = all_folds_sensitivity(~isnan(all_folds_sensitivity));
+    all_folds_specificity = all_folds_specificity(~isnan(all_folds_specificity));
+
+    k_fold_results.k_fold.(set).accuracy_avg = mean(all_folds_accuracy);
+    k_fold_results.k_fold.(set).sensitivity_avg = mean(all_folds_sensitivity);
+    k_fold_results.k_fold.(set).specificity_avg = mean(all_folds_specificity);
+    k_fold_results.k_fold.(set).accuracy_std = std(all_folds_accuracy);
+    k_fold_results.k_fold.(set).sensitivity_std = std(all_folds_sensitivity);
+    k_fold_results.k_fold.(set).specificity_std = std(all_folds_specificity);
   end
-
-  all_folds_accuracy = all_folds_accuracy(~isnan(all_folds_accuracy));
-  all_folds_sensitivity = all_folds_sensitivity(~isnan(all_folds_sensitivity));
-  all_folds_specificity = all_folds_specificity(~isnan(all_folds_specificity));
-
-  k_fold_results.kfold_accuracy_avg = mean(all_folds_accuracy);
-  k_fold_results.kfold_sensitivity_avg = mean(all_folds_sensitivity);
-  k_fold_results.kfold_specificity_avg = mean(all_folds_specificity);
-  k_fold_results.kfold_accuracy_std = std(all_folds_accuracy);
-  k_fold_results.kfold_sensitivity_std = std(all_folds_sensitivity);
-  k_fold_results.kfold_specificity_std = std(all_folds_specificity);
 
   % don't amend file, but overwrite...
   delete(results_file_path);

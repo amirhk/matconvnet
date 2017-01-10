@@ -133,5 +133,5 @@ function runBottleneckTests(dataset, network_arch, gpus);
     disp(bottleneck_structure);
     single_cnn_options.bottleneck_structure = bottleneck_structure{1};
     single_cnn_options.backprop_depth = 13 + numel(bottleneck_structure{1});
-    cnnAmir(single_cnn_options);
+    testCnn(single_cnn_options);
   end

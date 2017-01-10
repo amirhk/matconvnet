@@ -31,6 +31,7 @@ function [trained_model, performance_summary] = testCnn(input_opts)
   % -------------------------------------------------------------------------
   opts.general.dataset = getValueFromFieldOrDefault(input_opts, 'dataset', 'cifar');
   opts.general.network_arch = getValueFromFieldOrDefault(input_opts, 'network_arch', 'lenet');
+  opts.general.return_performance_summary = getValueFromFieldOrDefault(input_opts, 'return_performance_summary', true);
   opts.general.debug_flag = getValueFromFieldOrDefault(input_opts, 'debug_flag', true);
 
   % -------------------------------------------------------------------------
@@ -103,9 +104,9 @@ function [trained_model, performance_summary] = testCnn(input_opts)
   %                                                               get network
   % -------------------------------------------------------------------------
   if numel(opts.net.bottleneck_structure) > 0
-    output_opts = cnnAmirInitWithBottlenecks(opts);
+    output_opts = cnnInitWithBottlenecks(opts);
   else
-    output_opts = cnnAmirInit(opts);
+    output_opts = cnnInit(opts);
   end
   opts.net = mergeStructs(opts.net, output_opts.net);
   opts.train = mergeStructs(opts.train, output_opts.train);
@@ -173,35 +174,51 @@ function [trained_model, performance_summary] = testCnn(input_opts)
   end
 
   % -------------------------------------------------------------------------
-  %                                        accuracy, sensitivity, specificity
+  %                                                   get performance summary
   % -------------------------------------------------------------------------
-  % TODO: should net & imdb even be part of the opts file?? no!
-  [ST,~] = dbstack();
-  results = {};
-  if numel(ST) >= 2 && strcmp(ST(2).file, 'mainCnnAmir.m') || strcmp(ST(2).file, 'testSingleNetwork.m')
-    [top_train_predictions, all_train_predictions] = getPredictionsFromModelOnImdb(net, 'cnn', imdb, 1);
+  if opts.general.return_performance_summary
+    [top_train_predictions, ~] = getPredictionsFromModelOnImdb(net, 'cnn', imdb, 1);
     labels_train = imdb.images.labels(imdb.images.set == 1);
+    afprintf(sprintf('[INFO] Model performance on `train` set\n'));
     [ ...
-      results.train.acc, ...
-      results.train.sens, ...
-      results.train.spec, ...
+      train_accuracy, ...
+      train_sensitivity, ...
+      train_specificity, ...
     ] = getAccSensSpec(labels_train, top_train_predictions, true);
-    [top_test_predictions, all_test_predictions] = getPredictionsFromModelOnImdb(net, 'cnn', imdb, 3);
+    [top_test_predictions, ~] = getPredictionsFromModelOnImdb(net, 'cnn', imdb, 3);
+    afprintf(sprintf('[INFO] Model performance on `test` set\n'));
     labels_test = imdb.images.labels(imdb.images.set == 3);
     [ ...
-      results.test.acc, ...
-      results.test.sens, ...
-      results.test.spec, ...
+      test_accuracy, ...
+      test_sensitivity, ...
+      test_specificity, ...
     ] = getAccSensSpec(labels_test, top_test_predictions, true);
-    saveStruct2File(results, opts.paths.results_file_path, 0);
+    printConsoleOutputSeparator();
+  else
+    train_accuracy = -1;
+    train_sensitivity = -1;
+    train_specificity = -1;
+    test_accuracy = -1;
+    test_sensitivity = -1;
+    test_specificity = -1;
   end
-  results.info = info;
 
   % -------------------------------------------------------------------------
-  %                                                                    output
+  %                                                             assign output
   % -------------------------------------------------------------------------
   trained_model = net;
-  performance_summary = results;
+  performance_summary.info = info;
+  performance_summary.train.accuracy = train_accuracy;
+  performance_summary.train.sensitivity = train_sensitivity;
+  performance_summary.train.specificity = train_specificity;
+  performance_summary.test.accuracy = test_accuracy;
+  performance_summary.test.sensitivity = test_sensitivity;
+  performance_summary.test.specificity = test_specificity;
+
+  % -------------------------------------------------------------------------
+  %                                                               save output
+  % -------------------------------------------------------------------------
+  saveStruct2File(performance_summary, opts.paths.results_file_path, 0);
 
 % -------------------------------------------------------------------------
 function error_function = getErrorFunctionForDataset(dataset)
