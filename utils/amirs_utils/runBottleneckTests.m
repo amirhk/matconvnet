@@ -30,10 +30,10 @@ function runBottleneckTests(dataset, gpus);
   % -------------------------------------------------------------------------
   opts.general.dataset = dataset;
   opts.imdb.dataset = opts.general.dataset;
+  opts.general.network_arch = 'lenet';
   if isTwoClassImdb(dataset)
     opts.imdb.posneg_balance = 'balanced-low';
   else
-    opts.general.network_arch = 'lenet';
     opts.imdb.network_arch = opts.general.network_arch;
   end
 
