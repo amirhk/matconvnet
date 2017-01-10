@@ -51,7 +51,7 @@ function saveStruct2File(input_struct, filePath, recursion_depth)
           fprintf(fileID, '\t');
         end
         if numel(value) == 1
-          if round(value) == value
+          if round(value) == value && value > 1
             fprintf(fileID, '%s: %d\n', fields{i}, value);
           else
             fprintf(fileID, '%s: %.6f\n', fields{i}, value);
@@ -59,7 +59,7 @@ function saveStruct2File(input_struct, filePath, recursion_depth)
         else
           fprintf(fileID, '%s: ', fields{i});
           for k = 1:numel(value)
-            if round(value(k)) == value(k)
+            if round(value(k)) == value(k) && value(k) > 1
               fprintf(fileID, '%d  ', value(k));
             else
               fprintf(fileID, '%.6f  ', value(k));
@@ -72,7 +72,7 @@ function saveStruct2File(input_struct, filePath, recursion_depth)
           fprintf(fileID, '\t');
         end
         if numel(value) == 1
-          if round(value) == value
+          if round(value) == value && value > 1
             fprintf(fileID, '%s: %d\n', fields{i}, value);
           else
             fprintf(fileID, '%s: %.6f\n', fields{i}, value);
@@ -80,7 +80,7 @@ function saveStruct2File(input_struct, filePath, recursion_depth)
         else
           fprintf(fileID, '%s: ', fields{i});
           for k = 1:numel(value)
-            if round(value(k)) == value(k)
+            if round(value(k)) == value(k) && value(k) > 1
               fprintf(fileID, '%d  ', value(k));
             else
               fprintf(fileID, '%.6f  ', value(k));
@@ -105,7 +105,7 @@ function saveStruct2File(input_struct, filePath, recursion_depth)
             case 'char'
               fprintf(fileID, '%s  ', x);
             case 'double'
-              if round(x) == x
+              if round(x) == x && x > 1
                 fprintf(fileID, '%d  ', x);
               else
                 fprintf(fileID, '%.6f  ', x);

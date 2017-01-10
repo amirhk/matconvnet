@@ -26,14 +26,14 @@ function constructProstateImdbs(input_opts)
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
 
-  posneg_balance                   = getValueFromFieldOrDefault(input_opts, 'posneg_balance', 'unbalaced');
+  posneg_balance                   = getValueFromFieldOrDefault(input_opts, 'posneg_balance', 'unbalanced');
   imdb_opts.dataset                = getValueFromFieldOrDefault(input_opts, 'dataset', 'prostate-v2-20-patients');
   imdb_opts.dataDir                = getValueFromFieldOrDefault(input_opts, 'dataDir', '/Users/a6karimi/dev/data/source/prostate/v2 - 20 patients');
   imdb_opts.leave_out_type         = getValueFromFieldOrDefault(input_opts, 'leave_out_type', 'special');
   imdb_opts.train_balance          = getValueFromFieldOrDefault(input_opts, 'train_balance', false);
   imdb_opts.train_augment_healthy  = getValueFromFieldOrDefault(input_opts, 'train_augment_healthy', 'none');
   switch posneg_balance
-    case 'unbalaced'
+    case 'unbalanced'
       imdb_opts.train_augment_cancer   = getValueFromFieldOrDefault(input_opts, 'train_augment_cancer', 'none');
     case 'balanced-high'
       imdb_opts.train_augment_cancer   = getValueFromFieldOrDefault(input_opts, 'train_augment_cancer', 'rotate');
@@ -52,7 +52,7 @@ function constructProstateImdbs(input_opts)
       number_of_patients = 104;
   end
 
-  leave_one_out = false;
+  leave_one_out = true;
   if leave_one_out
     number_of_folds = 20;
   else
@@ -64,16 +64,16 @@ function constructProstateImdbs(input_opts)
   random_patient_indices = randperm(number_of_patients);
   for i = 1:number_of_folds
     afprintf(sprintf('\n'));
-    afprintf(sprintf('[INFO] Randomly dividing for fold #%d...\n', i));
+    afprintf(sprintf('[INFO] Randomly dividing for fold #%d / %d...\n', i, number_of_folds));
     start_index = 1 + (i - 1) * patients_per_fold;
     end_index = min(number_of_patients, i * patients_per_fold);
     afprintf(sprintf('[INFO] done!\n'));
-    afprintf(sprintf('[INFO] Constructing imdb for fold #%d...\n', i));
+    afprintf(sprintf('[INFO] Constructing imdb for fold #%d / %d...\n', i, number_of_folds));
     imdb_opts.leave_out_indices = random_patient_indices(start_index : end_index);
     imdb = constructProstateImdb(imdb_opts);
     if leave_one_out
       single_patient_index = start_index;
-      fh_imdb_utils.saveImdb(imdb, imdb_opts.dataset, sprintf('patient-%d-%s', single_patient_index, posneg_balance), 2, 1);
+      fh_imdb_utils.saveImdb(imdb, imdb_opts.dataset, sprintf('patient-%02d-%s', single_patient_index, posneg_balance), 2, 1);
     else
       fh_imdb_utils.saveImdb(imdb, imdb_opts.dataset, posneg_balance, 2, 1);
     end
