@@ -155,7 +155,6 @@ function [net, results] = cnn_amir(input_opts)
   opts_copy.imdb.imdb = '< too large to print imdb >';
   saveStruct2File(opts_copy, opts.paths.options_file_path, 0);
 
-
   % -------------------------------------------------------------------------
   %                                                                     train
   % -------------------------------------------------------------------------
@@ -206,16 +205,6 @@ function error_function = getErrorFunctionForDataset(dataset)
   else
     error_function = 'multiclass';
   end
-
-
-% % -------------------------------------------------------------------------
-% function processor = getDefaultProcessor()
-% % -------------------------------------------------------------------------
-%   if ispc
-%     processor = [1]; % GPU at index 1
-%   else
-%     processor = [];
-%   end
 
 % -------------------------------------------------------------------------
 function processor_string = getProcessorStringFromProcessorList(processor_list)
