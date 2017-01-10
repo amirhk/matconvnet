@@ -1,4 +1,4 @@
-function output_opts = cnnAmirInit(input_opts)
+function output_opts = cnnAmirInitWithBottlenecks(input_opts)
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
 
@@ -31,6 +31,7 @@ function output_opts = cnnAmirInit(input_opts)
   opts.network_arch = input_opts.general.network_arch;
   opts.weight_init_source = input_opts.net.weight_init_source;
   opts.weight_init_sequence = input_opts.net.weight_init_sequence;
+  opts.bottleneck_structure = input_opts.net.bottleneck_structure;
 
   % -------------------------------------------------------------------------
   %                                                         Set learning rate
@@ -83,18 +84,33 @@ function output_opts = cnnAmirInit(input_opts)
       % -----------------------------------------------------------------------
       %                                                                   LENET
       % -----------------------------------------------------------------------
+      % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --  conv block 01
       layer_number = 1;
       net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 3, 32, 1/100, 2, char(opts.weight_init_sequence{1}), opts.weight_init_source);
       net.layers{end+1} = fh.poolingLayerLeNetMax(layer_number);
       net.layers{end+1} = fh.reluLayer(layer_number);
 
+      % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --  conv block 02
       layer_number = layer_number + 3;
-      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 32, 32, 5/100, 2, char(opts.weight_init_sequence{2}), opts.weight_init_source);
+      if numel(opts.bottleneck_structure) >= 1
+        bottleneck_width = opts.bottleneck_structure(1);
+        net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 32, bottleneck_width, 5/100, 2, char(opts.weight_init_sequence{2}), opts.weight_init_source);
+        net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, bottleneck_width, 32, 5/100, 2, char(opts.weight_init_sequence{2}), opts.weight_init_source);
+      else
+        net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 32, 32, 5/100, 2, char(opts.weight_init_sequence{2}), opts.weight_init_source);
+      end
       net.layers{end+1} = fh.reluLayer(layer_number);
       net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
 
+      % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --  conv block 03
       layer_number = layer_number + 3;
-      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 32, 64, 5/100, 2, char(opts.weight_init_sequence{3}), opts.weight_init_source);
+      if numel(opts.bottleneck_structure) >= 2
+        bottleneck_width = opts.bottleneck_structure(2);
+        net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 32, bottleneck_width, 5/100, 2, char(opts.weight_init_sequence{3}), opts.weight_init_source);
+        net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, bottleneck_width, 64, 5/100, 2, char(opts.weight_init_sequence{3}), opts.weight_init_source);
+      else
+        net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 32, 64, 5/100, 2, char(opts.weight_init_sequence{3}), opts.weight_init_source);
+      end
       net.layers{end+1} = fh.reluLayer(layer_number);
       net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
 
@@ -114,48 +130,6 @@ function output_opts = cnnAmirInit(input_opts)
 
       % LOSS LAYER
       net.layers{end+1} = fh.softmaxlossLayer();
-    case 'alexnet'
-      % -----------------------------------------------------------------------
-      %                                                                 ALEXNET
-      % -----------------------------------------------------------------------
-      layer_number = 1;
-      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 3, 96, 5/1000, 2, char(opts.weight_init_sequence{1}), opts.weight_init_source);
-      net.layers{end+1} = fh.reluLayer(layer_number);
-
-      layer_number = layer_number + 2;
-      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 96, 256, 5/1000, 2, char(opts.weight_init_sequence{2}), opts.weight_init_source);
-      net.layers{end+1} = fh.reluLayer(layer_number);
-      net.layers{end+1} = fh.poolingLayerAlexNet(layer_number);
-
-      layer_number = layer_number + 3;
-      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 3, 256, 384, 5/1000, 1, char(opts.weight_init_sequence{3}), opts.weight_init_source);
-      net.layers{end+1} = fh.reluLayer(layer_number);
-      net.layers{end+1} = fh.poolingLayerAlexNet(layer_number);
-
-      layer_number = layer_number + 3;
-      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 3, 384, 384, 5/1000, 1, char(opts.weight_init_sequence{4}), opts.weight_init_source);
-      net.layers{end+1} = fh.reluLayer(layer_number);
-
-      layer_number = layer_number + 2;
-      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 3, 384, 256, 5/1000, 1, char(opts.weight_init_sequence{5}), opts.weight_init_source);
-      net.layers{end+1} = fh.reluLayer(layer_number);
-      net.layers{end+1} = fh.poolingLayerAlexNet(layer_number);
-
-      % FULLY CONNECTED
-      layer_number = layer_number + 3;
-      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 4, 256, 128, 5/1000, 0, 'compRand', 'gen');
-      net.layers{end+1} = fh.reluLayer(layer_number);
-
-      layer_number = layer_number + 2;
-      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 128, 64, 5/100, 0, 'compRand', 'gen');
-      net.layers{end+1} = fh.reluLayer(layer_number);
-
-      layer_number = layer_number + 2;
-      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 64, 10, 5/100, 0, 'compRand', 'gen');
-      net.layers{end+1} = fh.reluLayer(layer_number);
-
-      % LOSS LAYER
-      net.layers{end+1} = fh.softmaxlossLayer();
   end
 
   % -------------------------------------------------------------------------
@@ -163,3 +137,11 @@ function output_opts = cnnAmirInit(input_opts)
   % -------------------------------------------------------------------------
   rng(s);
   output_opts.net.net = net;
+
+
+
+
+
+
+
+

@@ -1,4 +1,4 @@
-function [net, results] = cnn_amir(inputs_opts)
+function [net, results] = cnn_amir(input_opts)
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
 
@@ -29,44 +29,38 @@ function [net, results] = cnn_amir(inputs_opts)
   % -------------------------------------------------------------------------
   %                                                              opts.general
   % -------------------------------------------------------------------------
-  opts.general.dataset = getValueFromFieldOrDefault(inputs_opts, 'dataset', 'cifar');
-  opts.general.network_arch = getValueFromFieldOrDefault(inputs_opts, 'network_arch', 'lenet');
-  if strcmp(opts.general.dataset, 'prostate-v2-20-patients') || ...
-    strcmp(opts.general.dataset, 'mnist-two-class-9-4') || ...
-    strcmp(opts.general.dataset, 'svhn-two-class-9-4') || ...
-    strcmp(opts.general.dataset, 'cifar-two-deer-horse') || ...
-    strcmp(opts.general.dataset, 'cifar-two-deer-truck')
-    assert(strcmp(opts.general.network_arch, 'two-class-lenet'));
-  end
-  opts.general.debug_flag = getValueFromFieldOrDefault(inputs_opts, 'debug_flag', true);
+  opts.general.dataset = getValueFromFieldOrDefault(input_opts, 'dataset', 'cifar');
+  opts.general.network_arch = getValueFromFieldOrDefault(input_opts, 'network_arch', 'lenet');
+  opts.general.debug_flag = getValueFromFieldOrDefault(input_opts, 'debug_flag', true);
 
   % -------------------------------------------------------------------------
   %                                                                  opts.net
   % -------------------------------------------------------------------------
-  opts.net.net = getValueFromFieldOrDefault(inputs_opts, 'network', struct()); % may optionally pass in the network
-  opts.net.weight_init_source = getValueFromFieldOrDefault(inputs_opts, 'weight_init_source', 'gen');
-  opts.net.weight_init_sequence = getValueFromFieldOrDefault(inputs_opts, 'weight_init_sequence', {'compRand', 'compRand', 'compRand'});
+  opts.net.net = getValueFromFieldOrDefault(input_opts, 'network', struct()); % may optionally pass in the network
+  opts.net.weight_init_source = getValueFromFieldOrDefault(input_opts, 'weight_init_source', 'gen');
+  opts.net.weight_init_sequence = getValueFromFieldOrDefault(input_opts, 'weight_init_sequence', {'compRand', 'compRand', 'compRand'});
+  opts.net.bottleneck_structure = getValueFromFieldOrDefault(input_opts, 'bottleneck_structure', []);
 
   % -------------------------------------------------------------------------
   %                                                                 opts.imdb
   % -------------------------------------------------------------------------
-  opts.imdb.imdb = getValueFromFieldOrDefault(inputs_opts, 'imdb', struct()); % may optionally pass in the imdb
+  opts.imdb.imdb = getValueFromFieldOrDefault(input_opts, 'imdb', struct()); % may optionally pass in the imdb
   opts.imdb.data_dir = fullfile(getDevPath(), 'data', 'source', sprintf('%s', opts.general.dataset));
-  opts.imdb.whiten_data = getValueFromFieldOrDefault(inputs_opts, 'whiten_data', true);
-  opts.imdb.contrast_normalization = getValueFromFieldOrDefault(inputs_opts, 'contrast_normalization', true);
-  opts.imdb.regen = getValueFromFieldOrDefault(inputs_opts, 'regen', false);
-  opts.imdb.portion = getValueFromFieldOrDefault(inputs_opts, 'portion', 1.0);
+  opts.imdb.whiten_data = getValueFromFieldOrDefault(input_opts, 'whiten_data', true);
+  opts.imdb.contrast_normalization = getValueFromFieldOrDefault(input_opts, 'contrast_normalization', true);
+  opts.imdb.regen = getValueFromFieldOrDefault(input_opts, 'regen', false);
+  opts.imdb.portion = getValueFromFieldOrDefault(input_opts, 'portion', 1.0);
 
   % -------------------------------------------------------------------------
   %                                                                opts.train
   % -------------------------------------------------------------------------
-  opts.train.gpus = getValueFromFieldOrDefault(inputs_opts, 'gpus', getDefaultProcessor());
-  opts.train.backprop_depth = getValueFromFieldOrDefault(inputs_opts, 'backprop_depth', 4);
-  opts.train.batch_size = getValueFromFieldOrDefault(inputs_opts, 'batch_size', 100);
+  opts.train.gpus = ifNotMacSetGpu(getValueFromFieldOrDefault(input_opts, 'gpus', 1));
+  opts.train.backprop_depth = getValueFromFieldOrDefault(input_opts, 'backprop_depth', 4);
+  opts.train.batch_size = getValueFromFieldOrDefault(input_opts, 'batch_size', 100);
   opts.train.error_function = getErrorFunctionForDataset(opts.general.dataset);
-  opts.train.learning_rate = getValueFromFieldOrDefault(inputs_opts, 'learning_rate', [0.05*ones(1,10) 0.005*ones(1,20) 0.001*ones(1,20)]);
-  opts.train.num_epochs = getValueFromFieldOrDefault(inputs_opts, 'num_epochs', numel(opts.train.learning_rate));
-  opts.train.weight_decay = getValueFromFieldOrDefault(inputs_opts, 'weight_decay', 0.0001);
+  opts.train.learning_rate = getValueFromFieldOrDefault(input_opts, 'learning_rate', [0.05*ones(1,10) 0.005*ones(1,20) 0.001*ones(1,20)]);
+  opts.train.num_epochs = getValueFromFieldOrDefault(input_opts, 'num_epochs', numel(opts.train.learning_rate));
+  opts.train.weight_decay = getValueFromFieldOrDefault(input_opts, 'weight_decay', 0.0001);
 
   % -------------------------------------------------------------------------
   %                                                                opts.other
@@ -79,7 +73,7 @@ function [net, results] = cnn_amir(inputs_opts)
   %                                                                opts.paths
   % -------------------------------------------------------------------------
   opts.paths.experiment_parent_dir = getValueFromFieldOrDefault( ...
-    inputs_opts, ...
+    input_opts, ...
     'experiment_parent_dir', ...
     fullfile(vl_rootnn, 'experiment_results'));
   opts.paths.experiment_dir = fullfile(opts.paths.experiment_parent_dir, sprintf( ...
@@ -108,7 +102,11 @@ function [net, results] = cnn_amir(inputs_opts)
   % -------------------------------------------------------------------------
   %                                                               get network
   % -------------------------------------------------------------------------
-  output_opts = cnnAmirInit(opts);
+  if numel(opts.net.bottleneck_structure) > 0
+    output_opts = cnnAmirInitWithBottlenecks(opts);
+  else
+    output_opts = cnnAmirInit(opts);
+  end
   opts.net = mergeStructs(opts.net, output_opts.net);
   opts.train = mergeStructs(opts.train, output_opts.train);
   % opts.train.weight_init_sequence = printWeightInitSequence(opts.net.weight_init_sequence); % TODO really needed?
@@ -203,25 +201,21 @@ function [net, results] = cnn_amir(inputs_opts)
 % -------------------------------------------------------------------------
 function error_function = getErrorFunctionForDataset(dataset)
 % -------------------------------------------------------------------------
-  if strcmp(dataset, 'prostate-v2-20-patients') || ...
-    strcmp(dataset, 'mnist-two-class-9-4') || ...
-    strcmp(dataset, 'svhn-two-class-9-4') || ...
-    strcmp(dataset, 'cifar-two-deer-horse') || ...
-    strcmp(dataset, 'cifar-two-deer-truck')
+  if isTwoClassImdb(dataset)
     error_function = 'two-class';
   else
     error_function = 'multiclass';
   end
 
 
-% -------------------------------------------------------------------------
-function processor = getDefaultProcessor()
-% -------------------------------------------------------------------------
-  if ispc
-    processor = [1]; % GPU at index 1
-  else
-    processor = [];
-  end
+% % -------------------------------------------------------------------------
+% function processor = getDefaultProcessor()
+% % -------------------------------------------------------------------------
+%   if ispc
+%     processor = [1]; % GPU at index 1
+%   else
+%     processor = [];
+%   end
 
 % -------------------------------------------------------------------------
 function processor_string = getProcessorStringFromProcessorList(processor_list)
