@@ -32,7 +32,6 @@ function [net, results] = cnn_amir(inputs_opts)
   opts.train.gpus = getValueFromFieldOrDefault(inputs_opts, 'gpus', getDefaultProcessor());
   opts.train.backprop_depth = getValueFromFieldOrDefault(inputs_opts, 'backprop_depth', 4);
   opts.train.batch_size = getValueFromFieldOrDefault(inputs_opts, 'batch_size', 100);
-  opts.train.error_function = getErrorFunctionForDataset(opts.general.dataset);
   opts.train.learning_rate = getValueFromFieldOrDefault(inputs_opts, 'learning_rate', [0.05*ones(1,10) 0.005*ones(1,20) 0.001*ones(1,20)]);
   opts.train.num_epochs = getValueFromFieldOrDefault(inputs_opts, 'num_epochs', numel(opts.train.learning_rate));
   opts.train.weight_decay = getValueFromFieldOrDefault(inputs_opts, 'weight_decay', 0.0001);
@@ -150,14 +149,14 @@ function [net, results] = cnn_amir(inputs_opts)
   [ST,~] = dbstack();
   results = {};
   if numel(ST) >= 2 && strcmp(ST(2).file, 'mainCnnAmir.m') || strcmp(ST(2).file, 'testSingleNetwork.m')
-    predictions_train = getPredictionsFromNetOnImdb(net, imdb, 1);
+    predictions_train = getPredictionsFromModelOnImdb(net, 'cnn', imdb, 1);
     labels_train = imdb.images.labels(imdb.images.set == 1);
     [ ...
       results.train.acc, ...
       results.train.sens, ...
       results.train.spec, ...
     ] = getAccSensSpec(labels_train, predictions_train, true);
-    predictions_test = getPredictionsFromNetOnImdb(net, imdb, 3);
+    predictions_test = getPredictionsFromModelOnImdb(net, 'cnn', imdb, 3);
     labels_test = imdb.images.labels(imdb.images.set == 3);
     [ ...
       results.test.acc, ...
@@ -167,15 +166,6 @@ function [net, results] = cnn_amir(inputs_opts)
     saveStruct2File(results, opts.paths.results_file_path, 0);
   end
   results.info = info;
-
-% -------------------------------------------------------------------------
-function error_function = getErrorFunctionForDataset(dataset)
-% -------------------------------------------------------------------------
-  if strcmp(dataset, 'prostate')
-    error_function = 'multiclass-prostate';
-  else
-    error_function = 'multiclass';
-  end
 
 % -------------------------------------------------------------------------
 function processor = getDefaultProcessor()

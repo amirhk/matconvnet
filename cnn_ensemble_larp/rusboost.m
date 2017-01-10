@@ -316,8 +316,6 @@ function [ensemble_models, ensemble_performance_summary] = rusboost(input_opts)
     ensemble_models{iteration}.model_weight_normalized = B(iteration);
   end
 
-  % folds.(sprintf('fold_%d', i))
-
   % -------------------------------------------------------------------------
   %                                                      11. Test on test set
   % -------------------------------------------------------------------------
