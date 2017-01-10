@@ -21,10 +21,3 @@
 % CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
-
-% place in location where matlab opens up....
-cd matconvnet
-addpath matlab
-addpath(genpath('utils'))
-addpath(genpath('cnn_amir_1')) % or _2
-vl_setupnn
