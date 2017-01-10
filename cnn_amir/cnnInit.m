@@ -1,4 +1,4 @@
-function output_opts = cnnAmirInit(input_opts)
+function output_opts = cnnInit(input_opts)
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
 

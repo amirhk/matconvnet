@@ -1,4 +1,4 @@
-function output_opts = cnnAmirInitWithBottlenecks(input_opts)
+function output_opts = cnnInitWithBottlenecks(input_opts)
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
 

@@ -1,4 +1,4 @@
-function [net, results] = cnn_amir(input_opts)
+function [trained_model, performance_summary] = testCnn(input_opts)
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
 
@@ -196,6 +196,12 @@ function [net, results] = cnn_amir(input_opts)
     saveStruct2File(results, opts.paths.results_file_path, 0);
   end
   results.info = info;
+
+  % -------------------------------------------------------------------------
+  %                                                                    output
+  % -------------------------------------------------------------------------
+  trained_model = net;
+  performance_summary = results;
 
 % -------------------------------------------------------------------------
 function error_function = getErrorFunctionForDataset(dataset)

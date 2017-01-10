@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function [ensemble_models, ensemble_performance_summary] = rusboost(input_opts)
+function [ensemble_models, ensemble_performance_summary] = testRusboost(input_opts)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
