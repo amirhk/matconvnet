@@ -81,7 +81,7 @@ function saveStruct2File(input_struct, filePath, recursion_depth)
           fprintf(fileID, '%s: ', fields{i});
           for k = 1:numel(value)
             if round(value(k)) == value(k) && value(k) > 1
-              fprintf(fileID, '%d  ', value(k));
+              fprintf(fileID, '%8.d  ', value(k));
             else
               fprintf(fileID, '%.6f  ', value(k));
             end

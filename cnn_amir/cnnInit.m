@@ -60,7 +60,7 @@ function output_opts = cnnInit(input_opts)
           output_opts.train.learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];
         case 'mnist-two-class-9-4'
           output_opts.train.learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];
-          output_opts.train.learning_rate = [0.05*ones(1,10)];
+          % output_opts.train.learning_rate = [0.05*ones(1,10)];
         case 'svhn-two-class-9-4'
           output_opts.train.learning_rate = [0.05*ones(1,30) 0.005*ones(1,10) 0.0005*ones(1,10)];
         case 'prostate-v2-20-patients'
