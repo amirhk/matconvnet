@@ -345,6 +345,8 @@ function [trained_model, performance_summary] = testEnsemble(input_opts)
   % -------------------------------------------------------------------------
   %         10. All iterations are complete; normalize and save model weights
   % -------------------------------------------------------------------------
+  very_high_number = 10e9;
+  B(B > very_high_number) = very_high_number; % to replace Inf weight (when model has no loss)
   B = B / sum(B);
   for iteration = 1:length(B)
     ensemble.(sprintf('iteration_%d', iteration)).trained_model.weight_normalized = B(iteration);
