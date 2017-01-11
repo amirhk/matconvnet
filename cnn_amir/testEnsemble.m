@@ -125,15 +125,15 @@ function [trained_model, performance_summary] = testEnsemble(input_opts)
   % W stores the weights of the instances in each row for every iteration of
   % boosting. Weights for all the instances are initialized by 1/m for the
   % first iteration.
-  W = 1 / data_train_count * ones(1, data_train_count);
+  sample_weights_per_iteration = 1 / data_train_count * ones(1, data_train_count);
 
   % L stores pseudo loss values, H stores hypothesis, B stores (1/beta)
   % values that is used as the weight of the % hypothesis while forming the
   % final hypothesis. % All of the following are of length <=T and stores
   % values for every iteration of the boosting process.
-  L = [];
-  H = {};
-  B = [];
+  loss_per_iteration = [];
+  model_per_iteration = {};
+  model_weight_per_iteration = [];
 
   iteration = 1; % loop counter
   count = 1; % number of times the same boosting iteration have been repeated
@@ -164,7 +164,7 @@ function [trained_model, performance_summary] = testEnsemble(input_opts)
       [resampled_data, resampled_labels] = fh_imdb_utils.resampleData( ...
         data_train, ...
         labels_train, ...
-        W(iteration, :), ...
+        sample_weights_per_iteration(iteration, :), ...
         opts.ensemble_options.random_undersampling_ratio);
       flag = true;
     catch
@@ -221,12 +221,12 @@ function [trained_model, performance_summary] = testEnsemble(input_opts)
       else
         if labels_train(i) == 2
           if opts.ensemble_options.symmetric_loss_updates
-            loss = loss + W(iteration, i);
+            loss = loss + sample_weights_per_iteration(iteration, i);
           else
-            loss = loss + W(iteration, i) * min(negative_to_positive_ratio, 2);
+            loss = loss + sample_weights_per_iteration(iteration, i) * min(negative_to_positive_ratio, 2);
           end
         else
-          loss = loss + W(iteration, i);
+          loss = loss + sample_weights_per_iteration(iteration, i);
         end
       end
     end
@@ -236,9 +236,9 @@ function [trained_model, performance_summary] = testEnsemble(input_opts)
     % the loop is broken and rolled back to the state where loss > 0.5 was not
     % encountered.
     if count > 5
-      L = L(1:iteration-1);
-      H = H(1:iteration-1);
-      B = B(1:iteration-1);
+      loss_per_iteration = loss_per_iteration(1:iteration-1);
+      model_per_iteration = model_per_iteration(1:iteration-1);
+      model_weight_per_iteration = model_weight_per_iteration(1:iteration-1);
       afprintf(sprintf('Too many iterations have loss > 0.5\n'));
       afprintf(sprintf('Aborting boosting...\n'));
       break;
@@ -255,10 +255,10 @@ function [trained_model, performance_summary] = testEnsemble(input_opts)
       count = 1;
     end
 
-    H{iteration} = model; % Hypothesis function / trained model
-    L(iteration) = loss; % Pseudo-loss at each iteration
+    model_per_iteration{iteration} = model; % Hypothesis function / trained model
+    loss_per_iteration(iteration) = loss; % Pseudo-loss at each iteration
     beta = loss / (1 - loss); % Setting weight update parameter 'beta'.
-    B(iteration) = log(1 / beta); % Weight of the hypothesis
+    model_weight_per_iteration(iteration) = log(1 / beta); % Weight of the hypothesis
 
     % % At the final iteration there is no need to update the weights any
     % % further
@@ -272,25 +272,25 @@ function [trained_model, performance_summary] = testEnsemble(input_opts)
     afprintf(sprintf('[INFO] Updating weights... '));
     for i = 1:data_train_count
       if labels_train(i) == top_validation_predictions(i)
-        W(iteration + 1, i) = W(iteration, i) * beta;
+        sample_weights_per_iteration(iteration + 1, i) = sample_weights_per_iteration(iteration, i) * beta;
       else
         if labels_train(i) == 2
           if opts.ensemble_options.symmetric_weight_updates
-            W(iteration + 1, i) = W(iteration, i);
+            sample_weights_per_iteration(iteration + 1, i) = sample_weights_per_iteration(iteration, i);
           else
-            W(iteration + 1, i) = W(iteration, i) * min(negative_to_positive_ratio, 2);
+            sample_weights_per_iteration(iteration + 1, i) = sample_weights_per_iteration(iteration, i) * min(negative_to_positive_ratio, 2);
           end
         else
-          W(iteration + 1, i) = W(iteration, i);
+          sample_weights_per_iteration(iteration + 1, i) = sample_weights_per_iteration(iteration, i);
         end
       end
     end
     fprintf('done!\n');
 
     % Normalizing the weight for the next iteration
-    sum_W = sum(W(iteration + 1, :));
+    sum_W = sum(sample_weights_per_iteration(iteration + 1, :));
     for i = 1:data_train_count
-      W(iteration + 1, i) = W(iteration + 1, i) / sum_W;
+      sample_weights_per_iteration(iteration + 1, i) = sample_weights_per_iteration(iteration + 1, i) / sum_W;
     end
 
     % -------------------------------------------------------------------------
@@ -312,10 +312,10 @@ function [trained_model, performance_summary] = testEnsemble(input_opts)
     %                                          9. Save single model of ensemble
     % -------------------------------------------------------------------------
     afprintf(sprintf('[INFO] Saving model and info... '));
-    ensemble.(sprintf('iteration_%d', iteration)).trained_model.model = H{iteration};
-    ensemble.(sprintf('iteration_%d', iteration)).trained_model.loss = L(iteration);
+    ensemble.(sprintf('iteration_%d', iteration)).trained_model.model = model_per_iteration{iteration};
+    ensemble.(sprintf('iteration_%d', iteration)).trained_model.loss = loss_per_iteration(iteration);
     ensemble.(sprintf('iteration_%d', iteration)).trained_model.weight_normalized = 0;
-    ensemble.(sprintf('iteration_%d', iteration)).trained_model.weight_not_normalized = B(iteration);
+    ensemble.(sprintf('iteration_%d', iteration)).trained_model.weight_not_normalized = model_weight_per_iteration(iteration);
     ensemble.(sprintf('iteration_%d', iteration)).trained_model.positive_count = numel(find(resampled_labels == 2));
     ensemble.(sprintf('iteration_%d', iteration)).trained_model.negative_count = numel(find(resampled_labels == 1));
     ensemble.(sprintf('iteration_%d', iteration)).validation.positive_count = data_train_positive_count;
@@ -334,8 +334,8 @@ function [trained_model, performance_summary] = testEnsemble(input_opts)
     ensemble.(sprintf('iteration_%d', iteration)).test.accuracy = test_accuracy;
     ensemble.(sprintf('iteration_%d', iteration)).test.sensitivity = test_sensitivity;
     ensemble.(sprintf('iteration_%d', iteration)).test.specificity = test_specificity;
-    ensemble.(sprintf('iteration_%d', iteration)).samples.weights.pre_update = W(iteration,:);
-    ensemble.(sprintf('iteration_%d', iteration)).samples.weights.post_update = W(iteration + 1,:);
+    ensemble.(sprintf('iteration_%d', iteration)).samples.weights.pre_update = sample_weights_per_iteration(iteration,:);
+    ensemble.(sprintf('iteration_%d', iteration)).samples.weights.post_update = sample_weights_per_iteration(iteration + 1,:);
     save(opts.paths.ensemble_models_file_path, 'ensemble');
     fprintf('done!\n');
     plotIncrementalEnsemblePerformance(ensemble, opts.paths.experiment_dir);
@@ -346,11 +346,11 @@ function [trained_model, performance_summary] = testEnsemble(input_opts)
   %         10. All iterations are complete; normalize and save model weights
   % -------------------------------------------------------------------------
   very_high_number = 10e1;
-  B(B > very_high_number) = very_high_number; % to replace Inf weight (when model has no loss)
-  B = B / sum(B);
-  B(B < 1 / very_high_number) = 0; % to replace really small weights with 0
-  for iteration = 1:length(B)
-    ensemble.(sprintf('iteration_%d', iteration)).trained_model.weight_normalized = B(iteration);
+  model_weight_per_iteration(model_weight_per_iteration > very_high_number) = very_high_number; % to replace Inf weight (when model has no loss)
+  model_weight_per_iteration = model_weight_per_iteration / sum(model_weight_per_iteration);
+  model_weight_per_iteration(model_weight_per_iteration < 1 / very_high_number) = 0; % to replace really small weights with 0
+  for iteration = 1:length(model_weight_per_iteration)
+    ensemble.(sprintf('iteration_%d', iteration)).trained_model.weight_normalized = model_weight_per_iteration(iteration);
   end
 
   % -------------------------------------------------------------------------
@@ -610,7 +610,7 @@ function plotIncrementalEnsemblePerformance(ensemble, experiment_dir)
 %   number_of_models_in_ensemble = numel(ensemble_models);
 %   B = zeros(1, number_of_models_in_ensemble);
 %   for iteration = 1:numel(B)
-%     B(iteration) = ensemble_models{iteration}.model_weight_normalized;
+%     model_weight_per_iteration(iteration) = ensemble_models{iteration}.model_weight_normalized;
 %   end
 
 %   weighted_ensemble_prediction = zeros(1, data_test_count);
@@ -633,9 +633,9 @@ function plotIncrementalEnsemblePerformance(ensemble, experiment_dir)
 %     for iteration = 1:number_of_models_in_ensemble % looping through all trained models
 %        p = test_set_predictions_per_model{iteration}(i);
 %        if p == 2 % if is positive
-%            wt_positive = wt_positive + B(iteration);
+%            wt_positive = wt_positive + model_weight_per_iteration(iteration);
 %        else
-%            wt_negative = wt_negative + B(iteration);
+%            wt_negative = wt_negative + model_weight_per_iteration(iteration);
 %        end
 %     end
 
@@ -655,7 +655,7 @@ function plotIncrementalEnsemblePerformance(ensemble, experiment_dir)
 %   afprintf(sprintf('Model Weights: '), 1);
 %   fprintf('\n');
 %   for i = 1:length(B)
-%     fprintf('%.2f,\t', B(i));
+%     fprintf('%.2f,\t', model_weight_per_iteration(i));
 %   end
 %   [weighted_accuracy, weighted_sensitivity, weighted_specificity] = getAccSensSpec(labels_test, predictions_test, true);
 %   weighted_results.test_accuracy = weighted_accuracy;
