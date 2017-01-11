@@ -336,7 +336,7 @@ function [trained_model, performance_summary] = testEnsemble(input_opts)
     ensemble.(sprintf('iteration_%d', iteration)).test.specificity = test_specificity;
     ensemble.(sprintf('iteration_%d', iteration)).samples.weights.pre_update = W(iteration,:);
     ensemble.(sprintf('iteration_%d', iteration)).samples.weights.post_update = W(iteration + 1,:);
-    % save(opts.paths.ensemble_file_path, 'ensemble');
+    save(opts.paths.ensemble_models_file_path, 'ensemble');
     fprintf('done!\n');
     plotIncrementalEnsemblePerformance(ensemble, opts.paths.experiment_dir);
     % Incrementing loop counter
@@ -345,7 +345,7 @@ function [trained_model, performance_summary] = testEnsemble(input_opts)
   % -------------------------------------------------------------------------
   %         10. All iterations are complete; normalize and save model weights
   % -------------------------------------------------------------------------
-  very_high_number = 10e9;
+  very_high_number = 10e1;
   B(B > very_high_number) = very_high_number; % to replace Inf weight (when model has no loss)
   B = B / sum(B);
   B(B < 1 / very_high_number) = 0; % to replace really small weights with 0
@@ -455,8 +455,8 @@ function plotIncrementalEnsemblePerformance(ensemble, experiment_dir)
   figure(2);
   clf;
   model_fig_path = fullfile(experiment_dir, 'incremental-performance.pdf');
-  xlabel('training epoch'); ylabel('error');
-  title('performance');
+  xlabel('iteration');
+  title('individual model performance');
   grid on;
   hold on;
   plot(1:number_of_models_in_ensemble, ensemble_models_validation_accuracy, 'r.-', 'linewidth', 2);
