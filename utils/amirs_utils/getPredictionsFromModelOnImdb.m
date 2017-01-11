@@ -105,7 +105,8 @@ function [top_predictions, all_predictions] = getPredictionsFromEnsembleOnImdb(e
 
   models = {};
   model_weights = [];
-  number_of_models_in_ensemble = numel(ensemble);
+  keyboard
+  number_of_models_in_ensemble = length(fieldnames(ensemble));
   for iteration = 1:number_of_models_in_ensemble
     models{iteration} = ensemble.(sprintf('iteration_%d', iteration)).trained_model.model;
     model_weights(iteration) = ensemble.(sprintf('iteration_%d', iteration)).trained_model.weight_normalized;
