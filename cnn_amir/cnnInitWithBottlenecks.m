@@ -163,7 +163,7 @@ function output_opts = cnnInitWithBottlenecks(input_opts)
 
       layer_number = layer_number + 2;
       if numel(opts.bottleneck_structure) >= 1
-        bottleneck_width = opts.bottleneck_structure(2);
+        bottleneck_width = opts.bottleneck_structure(1);
         net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 96, bottleneck_width, 5/1000, 2, char(opts.weight_init_sequence{2}), opts.weight_init_source);
         net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, bottleneck_width, 256, 5/1000, 2, char(opts.weight_init_sequence{2}), opts.weight_init_source);
       else
@@ -185,7 +185,7 @@ function output_opts = cnnInitWithBottlenecks(input_opts)
 
       layer_number = layer_number + 3;
       if numel(opts.bottleneck_structure) >= 3
-        bottleneck_width = opts.bottleneck_structure(2);
+        bottleneck_width = opts.bottleneck_structure(3);
         net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 3, 384, bottleneck_width, 5/1000, 1, char(opts.weight_init_sequence{4}), opts.weight_init_source);
         net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 3, bottleneck_width, 384, 5/1000, 1, char(opts.weight_init_sequence{4}), opts.weight_init_source);
       else
@@ -195,7 +195,7 @@ function output_opts = cnnInitWithBottlenecks(input_opts)
 
       layer_number = layer_number + 2;
       if numel(opts.bottleneck_structure) >= 4
-        bottleneck_width = opts.bottleneck_structure(2);
+        bottleneck_width = opts.bottleneck_structure(4);
         net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 3, 384, bottleneck_width, 5/1000, 1, char(opts.weight_init_sequence{5}), opts.weight_init_source);
         net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 3, bottleneck_width, 256, 5/1000, 1, char(opts.weight_init_sequence{5}), opts.weight_init_source);
       else
