@@ -125,7 +125,8 @@ function runAllTests(dataset, posneg_balance, gpus);
   %                                                              ensemble cnn
   % -------------------------------------------------------------------------
   experiment_options.training_method = 'ensemble-cnn';
-  experiment_options.iteration_count = 8;
+  experiment_options.iteration_count = 3;
+  experiment_options.number_of_folds = 3;
   % Exp. 1
   experiment_options.backprop_depth = 4;
   experiment_options.symmetric_weight_updates = true;

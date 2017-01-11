@@ -65,10 +65,11 @@ function folds = testKFold(input_opts)
     'experiment_parent_dir', ...
     fullfile(vl_rootnn, 'experiment_results'));
   opts.paths.experiment_dir = fullfile(opts.paths.experiment_parent_dir, sprintf( ...
-    'k=%d-fold-%s-%s', ...
+    'k=%d-fold-%s-%s-%s', ...
     opts.k_fold_options.number_of_folds, ...
-    opts.k_fold_options.training_method, ...
-    opts.paths.time_string));
+    opts.general.dataset, ...
+    opts.paths.time_string, ...
+    opts.k_fold_options.training_method));
   if ~exist(opts.paths.experiment_dir)
     mkdir(opts.paths.experiment_dir);
   end
@@ -159,18 +160,24 @@ function folds = testKFold(input_opts)
   end
 
   for i = 1:opts.k_fold_options.number_of_folds
+    % -------------------------------------------------------------------------
+    %                                                                train fold
+    % -------------------------------------------------------------------------
     afprintf(sprintf('[INFO] Running `%s` on fold #%d...\n', opts.k_fold_options.training_method, i));
     opts.single_training_method_options.imdb = imdbs{i};
     [ ...
       trained_model, ...
       performance_summary, ...
     ] = trainingMethodFunctionHandle(opts.single_training_method_options);
-    folds.(sprintf('fold_%d', i)).performance_summary = performance_summary;
-    % overwrite and save results so far
     afprintf(sprintf('[INFO] done!\n'));
+
+    % -------------------------------------------------------------------------
+    %                        save / overwrite incremental performance summaries
+    % -------------------------------------------------------------------------
     afprintf(sprintf('[INFO] Saving incremental results...\n'));
-    save(opts.paths.folds_file_path, 'folds');
+    folds.(sprintf('fold_%d', i)).performance_summary = performance_summary;
     saveIncrementalKFoldResults(folds, opts.paths.results_file_path);
+    save(opts.paths.folds_file_path, 'folds');
     afprintf(sprintf('[INFO] done!\n\n'));
   end
 
@@ -178,15 +185,21 @@ function folds = testKFold(input_opts)
 function saveIncrementalKFoldResults(folds, results_file_path)
 % -------------------------------------------------------------------------
   number_of_folds = numel(fields(folds));
+  k_fold_results = {};
   for i = 1:number_of_folds
     performance_summary_for_fold = folds.(sprintf('fold_%d', i)).performance_summary;
     % copy all fields; mandatory fields:
+    %  * train.accuracy
+    %  * train.sensitivity
+    %  * train.specificity
     %  * test.accuracy
     %  * test.sensitivity
     %  * test.specificity
     for fn = fieldnames(performance_summary_for_fold)'
       k_fold_results.(sprintf('fold_%d', i)).(fn{1}) = performance_summary_for_fold.(fn{1});
     end
+    % k_fold_results.(sprintf('fold_%d', i)) = {};
+    % mergeStructs(k_fold_results.(sprintf('fold_%d', i)), performance_summary_for_fold);
   end
 
   for set = {'train', 'test'}
@@ -200,10 +213,12 @@ function saveIncrementalKFoldResults(folds, results_file_path)
       all_folds_specificity(i) = k_fold_results.(sprintf('fold_%d', i)).(set).specificity;
     end
 
+    % sanitize
     all_folds_accuracy = all_folds_accuracy(~isnan(all_folds_accuracy));
     all_folds_sensitivity = all_folds_sensitivity(~isnan(all_folds_sensitivity));
     all_folds_specificity = all_folds_specificity(~isnan(all_folds_specificity));
 
+    % save avg and std
     k_fold_results.k_fold.(set).accuracy_avg = mean(all_folds_accuracy);
     k_fold_results.k_fold.(set).sensitivity_avg = mean(all_folds_sensitivity);
     k_fold_results.k_fold.(set).specificity_avg = mean(all_folds_specificity);

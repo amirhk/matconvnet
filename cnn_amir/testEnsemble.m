@@ -29,7 +29,7 @@ function [trained_model, performance_summary] = testEnsemble(input_opts)
   %                                                              opts.general
   % -------------------------------------------------------------------------
   opts.general.dataset = getValueFromFieldOrDefault(input_opts, 'dataset', 'mnist-two-class-9-4');
-  opts.general.network_arch = getValueFromFieldOrDefault(input_opts, 'network_arch', 'lenet');
+  opts.general.return_performance_summary = getValueFromFieldOrDefault(input_opts, 'return_performance_summary', true);
 
   % -------------------------------------------------------------------------
   %                                                     opts.ensemble_options
@@ -56,11 +56,10 @@ function [trained_model, performance_summary] = testEnsemble(input_opts)
     'experiment_parent_dir', ...
     fullfile(vl_rootnn, 'experiment_results'));
   opts.paths.experiment_dir = fullfile(opts.paths.experiment_parent_dir, sprintf( ...
-    'ensemble-%s-%s-%s-%s-%s-max-iteration-count-%d', ...
+    'ensemble-%s-%s-%s-%s-max-iteration-count-%d', ...
     opts.ensemble_options.boosting_method, ...
-    opts.general.dataset, ...
-    opts.general.network_arch, ...
     opts.paths.time_string, ...
+    opts.general.dataset, ...
     opts.ensemble_options.training_method, ...
     opts.ensemble_options.iteration_count));
   if ~exist(opts.paths.experiment_dir)
@@ -75,15 +74,15 @@ function [trained_model, performance_summary] = testEnsemble(input_opts)
   % -------------------------------------------------------------------------
   opts.single_model_options.dataset = opts.general.dataset;
   opts.single_model_options.experiment_parent_dir = opts.paths.experiment_dir;
+  opts.single_model_options.return_performance_summary = false;
   switch opts.ensemble_options.training_method
     case 'svm'
       % no additional options
     case 'cnn'
-      opts.single_model_options.network_arch = opts.general.network_arch;
+      opts.single_model_options.network_arch = getValueFromFieldOrDefault(input_opts, 'network_arch', 'lenet');
       opts.single_model_options.backprop_depth = getValueFromFieldOrDefault(input_opts, 'backprop_depth', 4);
       opts.single_model_options.gpus = ifNotMacSetGpu(getValueFromFieldOrDefault(input_opts, 'gpus', 1));
       opts.single_model_options.debug_flag = getValueFromFieldOrDefault(input_opts, 'debug_flag', false);
-      opts.single_model_options.return_performance_summary = false;
   end
 
   % -------------------------------------------------------------------------
@@ -142,6 +141,7 @@ function [trained_model, performance_summary] = testEnsemble(input_opts)
   % -------------------------------------------------------------------------
   %                       3. create training (barebones) and validation imdbs
   % -------------------------------------------------------------------------
+  training_initial_imdb = imdb;
   training_resampled_imdb = fh_imdb_utils.constructPartialImdb([], [], 3); % barebones; filled in below
   validation_imdb = fh_imdb_utils.constructPartialImdb(data_train, labels_train, 3);
   test_imdb = fh_imdb_utils.constructPartialImdb(data_test, labels_test, 3);
@@ -150,7 +150,7 @@ function [trained_model, performance_summary] = testEnsemble(input_opts)
   %        4. go through T iterations of *boost, each training a single model
   % -------------------------------------------------------------------------
   printConsoleOutputSeparator();
-  ensemble_models = {};
+  ensemble = {};
   while iteration <= opts.ensemble_options.iteration_count
     afprintf(sprintf('\n'));
     afprintf(sprintf('[INFO] Boosting iteration #%d (attempt %d)...\n', iteration, count));
@@ -199,9 +199,10 @@ function [trained_model, performance_summary] = testEnsemble(input_opts)
     % IMPORTANT NOTE: we randomly undersample when training a model, but then,
     % we use all of the training samples (in their order) to update weights.
     afprintf(sprintf( ...
-      '[INFO] Computing validation set predictions (positive: %d, negative: %d)...\n', ...
+      '[INFO] Computing `validation set` predictions (positive: %d, negative: %d)...\n', ...
       data_train_positive_count, ...
       data_train_negative_count));
+    % NOTE: this asks for predictions on a cnn, whereas below we ask for predicitons on ensemble-{cnn, svm}
     [top_validation_predictions, all_validation_predictions] = ...
       getPredictionsFromModelOnImdb(model, opts.ensemble_options.training_method, validation_imdb, 3);
 
@@ -295,9 +296,10 @@ function [trained_model, performance_summary] = testEnsemble(input_opts)
     % -------------------------------------------------------------------------
     %                            8. Test on test set (single model of ensemble)
     % -------------------------------------------------------------------------
-    afprintf(sprintf('[INFO] Computing test set predictions (positive: %d, negative: %d)...\n', ...
+    afprintf(sprintf('[INFO] Computing `test set` predictions (positive: %d, negative: %d)...\n', ...
       data_test_positive_count, ...
       data_test_negative_count));
+    % NOTE: this asks for predictions on a cnn, whereas below we ask for predicitons on ensemble-{cnn, svm}
     [top_test_predictions, all_test_predictions] = ...
       getPredictionsFromModelOnImdb(model, opts.ensemble_options.training_method, test_imdb, 3);
     [ ...
@@ -310,33 +312,33 @@ function [trained_model, performance_summary] = testEnsemble(input_opts)
     %                                          9. Save single model of ensemble
     % -------------------------------------------------------------------------
     afprintf(sprintf('[INFO] Saving model and info... '));
-    ensemble_models{iteration}.model = H{iteration};
-    ensemble_models{iteration}.model_loss = L(iteration);
-    ensemble_models{iteration}.model_weight_normalized = 0;
-    ensemble_models{iteration}.model_weight_not_normalized = B(iteration);
-    ensemble_models{iteration}.train_positive_count = numel(find(resampled_labels == 2));
-    ensemble_models{iteration}.train_negative_count = numel(find(resampled_labels == 1));
-    ensemble_models{iteration}.validation_positive_count = data_train_positive_count;
-    ensemble_models{iteration}.validation_negative_count = data_train_negative_count;
-    ensemble_models{iteration}.top_validation_predictions = top_validation_predictions;
-    ensemble_models{iteration}.all_validation_predictions = all_validation_predictions;
-    ensemble_models{iteration}.validation_labels = labels_train;
-    ensemble_models{iteration}.validation_accuracy = validation_accuracy;
-    ensemble_models{iteration}.validation_sensitivity = validation_sensitivity;
-    ensemble_models{iteration}.validation_specificity = validation_specificity;
-    ensemble_models{iteration}.validation_weights_pre_update = W(iteration,:);
-    ensemble_models{iteration}.validation_weights_post_update = W(iteration + 1,:);
-    ensemble_models{iteration}.test_positive_count = data_test_positive_count;
-    ensemble_models{iteration}.test_negative_count = data_test_negative_count;
-    ensemble_models{iteration}.top_test_predictions = top_test_predictions;
-    ensemble_models{iteration}.all_test_predictions = all_test_predictions;
-    ensemble_models{iteration}.test_labels = labels_test;
-    ensemble_models{iteration}.test_accuracy = test_accuracy;
-    ensemble_models{iteration}.test_sensitivity = test_sensitivity;
-    ensemble_models{iteration}.test_specificity = test_specificity;
-    save(opts.paths.ensemble_models_file_path, 'ensemble_models');
+    ensemble.(sprintf('iteration_%d', iteration)).trained_model.model = H{iteration};
+    ensemble.(sprintf('iteration_%d', iteration)).trained_model.loss = L(iteration);
+    ensemble.(sprintf('iteration_%d', iteration)).trained_model.weight_normalized = 0;
+    ensemble.(sprintf('iteration_%d', iteration)).trained_model.weight_not_normalized = B(iteration);
+    ensemble.(sprintf('iteration_%d', iteration)).trained_model.positive_count = numel(find(resampled_labels == 2));
+    ensemble.(sprintf('iteration_%d', iteration)).trained_model.negative_count = numel(find(resampled_labels == 1));
+    ensemble.(sprintf('iteration_%d', iteration)).validation.positive_count = data_train_positive_count;
+    ensemble.(sprintf('iteration_%d', iteration)).validation.negative_count = data_train_negative_count;
+    ensemble.(sprintf('iteration_%d', iteration)).validation.top_predictions = top_validation_predictions;
+    ensemble.(sprintf('iteration_%d', iteration)).validation.all_predictions = all_validation_predictions;
+    ensemble.(sprintf('iteration_%d', iteration)).validation.labels = labels_train;
+    ensemble.(sprintf('iteration_%d', iteration)).validation.accuracy = validation_accuracy;
+    ensemble.(sprintf('iteration_%d', iteration)).validation.sensitivity = validation_sensitivity;
+    ensemble.(sprintf('iteration_%d', iteration)).validation.specificity = validation_specificity;
+    ensemble.(sprintf('iteration_%d', iteration)).test.positive_count = data_test_positive_count;
+    ensemble.(sprintf('iteration_%d', iteration)).test.negative_count = data_test_negative_count;
+    ensemble.(sprintf('iteration_%d', iteration)).test.top_predictions = top_test_predictions;
+    ensemble.(sprintf('iteration_%d', iteration)).test.all_predictions = all_test_predictions;
+    ensemble.(sprintf('iteration_%d', iteration)).test.labels = labels_test;
+    ensemble.(sprintf('iteration_%d', iteration)).test.accuracy = test_accuracy;
+    ensemble.(sprintf('iteration_%d', iteration)).test.sensitivity = test_sensitivity;
+    ensemble.(sprintf('iteration_%d', iteration)).test.specificity = test_specificity;
+    ensemble.(sprintf('iteration_%d', iteration)).samples.weights.pre_update = W(iteration,:);
+    ensemble.(sprintf('iteration_%d', iteration)).samples.weights.post_update = W(iteration + 1,:);
+    % save(opts.paths.ensemble_file_path, 'ensemble');
     fprintf('done!\n');
-    plotIncrementalEnsemblePerformance(ensemble_models, opts.paths.experiment_dir);
+    plotIncrementalEnsemblePerformance(ensemble, opts.paths.experiment_dir);
     % Incrementing loop counter
     iteration = iteration + 1;
   end
@@ -345,37 +347,107 @@ function [trained_model, performance_summary] = testEnsemble(input_opts)
   % -------------------------------------------------------------------------
   B = B / sum(B);
   for iteration = 1:length(B)
-    ensemble_models{iteration}.model_weight_normalized = B(iteration);
+    ensemble.(sprintf('iteration_%d', iteration)).trained_model.weight_normalized = B(iteration);
   end
 
   % -------------------------------------------------------------------------
-  %                                      11. Test on test set & assign output
+  %                                               11. Get performance summary
   % -------------------------------------------------------------------------
-  trained_model = ensemble_models;
-  performance_summary = getEnsemblePerformanceSummary(ensemble_models, test_imdb);
+  training_method = sprintf('ensemble-%s', opts.ensemble_options.training_method);
+  if opts.general.return_performance_summary
+    afprintf(sprintf('[INFO] Getting model performance on `train` set...\n'));
+    [top_train_predictions, ~] = getPredictionsFromModelOnImdb(ensemble, training_method, training_initial_imdb, 1);
+    afprintf(sprintf('[INFO] Model performance on `train` set\n'));
+    labels_train = imdb.images.labels(imdb.images.set == 1);
+    [ ...
+      train_accuracy, ...
+      train_sensitivity, ...
+      train_specificity, ...
+    ] = getAccSensSpec(labels_train, top_train_predictions, true);
+    afprintf(sprintf('[INFO] Getting model performance on `test` set...\n'));
+    [top_test_predictions, ~] = getPredictionsFromModelOnImdb(ensemble, training_method, training_initial_imdb, 3);
+    afprintf(sprintf('[INFO] Model performance on `test` set\n'));
+    labels_test = imdb.images.labels(imdb.images.set == 3);
+    [ ...
+      test_accuracy, ...
+      test_sensitivity, ...
+      test_specificity, ...
+    ] = getAccSensSpec(labels_test, top_test_predictions, true);
+    printConsoleOutputSeparator();
+  else
+    train_accuracy = -1;
+    train_sensitivity = -1;
+    train_specificity = -1;
+    test_accuracy = -1;
+    test_sensitivity = -1;
+    test_specificity = -1;
+  end
 
   % -------------------------------------------------------------------------
-  %                                                           12. Save output
+  %                                                         12. Assign output
+  % -------------------------------------------------------------------------
+  trained_model = ensemble;
+  performance_summary.train.accuracy = train_accuracy;
+  performance_summary.train.sensitivity = train_sensitivity;
+  performance_summary.train.specificity = train_specificity;
+  performance_summary.test.accuracy = test_accuracy;
+  performance_summary.test.sensitivity = test_sensitivity;
+  performance_summary.test.specificity = test_specificity;
+
+  summarized_ensemble_info = getSummarizedEnsembleInfo(ensemble);
+  performance_summary = mergeStructs(summarized_ensemble_info, performance_summary);
+
+  % -------------------------------------------------------------------------
+  %                                                           13. Save output
   % -------------------------------------------------------------------------
   saveStruct2File(performance_summary, opts.paths.results_file_path, 0);
 
 % -------------------------------------------------------------------------
-function plotIncrementalEnsemblePerformance(ensemble_models, experiment_dir)
+function summarized_ensemble_info = getSummarizedEnsembleInfo(ensemble)
 % -------------------------------------------------------------------------
-  num_models_in_ensemble = numel(ensemble_models);
-  ensemble_models_validation_accuracy = zeros(1, num_models_in_ensemble);
-  ensemble_models_validation_sensitivity = zeros(1, num_models_in_ensemble);
-  ensemble_models_validation_specificity = zeros(1, num_models_in_ensemble);
-  ensemble_models_test_accuracy = zeros(1, num_models_in_ensemble);
-  ensemble_models_test_sensitivity = zeros(1, num_models_in_ensemble);
-  ensemble_models_test_specificity = zeros(1, num_models_in_ensemble);
-  for i = 1:num_models_in_ensemble
-    ensemble_models_validation_accuracy(i) = ensemble_models{i}.validation_accuracy;
-    ensemble_models_validation_sensitivity(i) = ensemble_models{i}.validation_sensitivity;
-    ensemble_models_validation_specificity(i) = ensemble_models{i}.validation_specificity;
-    ensemble_models_test_accuracy(i) = ensemble_models{i}.test_accuracy;
-    ensemble_models_test_sensitivity(i) = ensemble_models{i}.test_sensitivity;
-    ensemble_models_test_specificity(i) = ensemble_models{i}.test_specificity;
+  if ~length(fieldnames(ensemble))
+    summarized_ensemble_info.model_weight_normalized = -1;
+    summarized_ensemble_info.train_positive_count = -1;
+    summarized_ensemble_info.train_negative_count = -1;
+    summarized_ensemble_info.validation_accuracy = -1;
+    summarized_ensemble_info.validation_sensitivity = -1;
+    summarized_ensemble_info.validation_specificity = -1;
+    summarized_ensemble_info.test_accuracy = -1;
+    summarized_ensemble_info.test_sensitivity = -1;
+    summarized_ensemble_info.test_specificity = -1;
+    return;
+  end
+
+  number_of_models_in_ensemble = length(fieldnames(ensemble));
+  for iteration = 1:number_of_models_in_ensemble
+    summarized_ensemble_info.model_weight_normalized(iteration) = ensemble.(sprintf('iteration_%d', iteration)).trained_model.weight_normalized;
+    summarized_ensemble_info.train_positive_count(iteration) = ensemble.(sprintf('iteration_%d', iteration)).trained_model.positive_count;
+    summarized_ensemble_info.train_negative_count(iteration) = ensemble.(sprintf('iteration_%d', iteration)).trained_model.negative_count;
+    summarized_ensemble_info.validation_accuracy(iteration) = ensemble.(sprintf('iteration_%d', iteration)).validation.accuracy;
+    summarized_ensemble_info.validation_sensitivity(iteration) = ensemble.(sprintf('iteration_%d', iteration)).validation.sensitivity;
+    summarized_ensemble_info.validation_specificity(iteration) = ensemble.(sprintf('iteration_%d', iteration)).validation.specificity;
+    summarized_ensemble_info.test_accuracy(iteration) = ensemble.(sprintf('iteration_%d', iteration)).test.accuracy;
+    summarized_ensemble_info.test_sensitivity(iteration) = ensemble.(sprintf('iteration_%d', iteration)).test.sensitivity;
+    summarized_ensemble_info.test_specificity(iteration) = ensemble.(sprintf('iteration_%d', iteration)).test.specificity;
+  end
+
+% -------------------------------------------------------------------------
+function plotIncrementalEnsemblePerformance(ensemble, experiment_dir)
+% -------------------------------------------------------------------------
+  number_of_models_in_ensemble = length(fieldnames(ensemble));
+  ensemble_models_validation_accuracy = zeros(1, number_of_models_in_ensemble);
+  ensemble_models_validation_sensitivity = zeros(1, number_of_models_in_ensemble);
+  ensemble_models_validation_specificity = zeros(1, number_of_models_in_ensemble);
+  ensemble_models_test_accuracy = zeros(1, number_of_models_in_ensemble);
+  ensemble_models_test_sensitivity = zeros(1, number_of_models_in_ensemble);
+  ensemble_models_test_specificity = zeros(1, number_of_models_in_ensemble);
+  for iteration = 1:number_of_models_in_ensemble
+    ensemble_models_validation_accuracy(iteration) = ensemble.(sprintf('iteration_%d', iteration)).validation.accuracy;
+    ensemble_models_validation_sensitivity(iteration) = ensemble.(sprintf('iteration_%d', iteration)).validation.sensitivity;
+    ensemble_models_validation_specificity(iteration) = ensemble.(sprintf('iteration_%d', iteration)).validation.specificity;
+    ensemble_models_test_accuracy(iteration) = ensemble.(sprintf('iteration_%d', iteration)).test.accuracy;
+    ensemble_models_test_sensitivity(iteration) = ensemble.(sprintf('iteration_%d', iteration)).test.sensitivity;
+    ensemble_models_test_specificity(iteration) = ensemble.(sprintf('iteration_%d', iteration)).test.specificity;
   end
   figure(2);
   clf;
@@ -384,12 +456,12 @@ function plotIncrementalEnsemblePerformance(ensemble_models, experiment_dir)
   title('performance');
   grid on;
   hold on;
-  plot(1:num_models_in_ensemble, ensemble_models_validation_accuracy, 'r.-', 'linewidth', 2);
-  plot(1:num_models_in_ensemble, ensemble_models_validation_sensitivity, 'g.-', 'linewidth', 2);
-  plot(1:num_models_in_ensemble, ensemble_models_validation_specificity, 'b.-', 'linewidth', 2);
-  plot(1:num_models_in_ensemble, ensemble_models_test_accuracy, 'r.--', 'linewidth', 2);
-  plot(1:num_models_in_ensemble, ensemble_models_test_sensitivity, 'g.--', 'linewidth', 2);
-  plot(1:num_models_in_ensemble, ensemble_models_test_specificity, 'b.--', 'linewidth', 2);
+  plot(1:number_of_models_in_ensemble, ensemble_models_validation_accuracy, 'r.-', 'linewidth', 2);
+  plot(1:number_of_models_in_ensemble, ensemble_models_validation_sensitivity, 'g.-', 'linewidth', 2);
+  plot(1:number_of_models_in_ensemble, ensemble_models_validation_specificity, 'b.-', 'linewidth', 2);
+  plot(1:number_of_models_in_ensemble, ensemble_models_test_accuracy, 'r.--', 'linewidth', 2);
+  plot(1:number_of_models_in_ensemble, ensemble_models_test_sensitivity, 'g.--', 'linewidth', 2);
+  plot(1:number_of_models_in_ensemble, ensemble_models_test_specificity, 'b.--', 'linewidth', 2);
   leg = { ...
     'val acc', ...
     'val sens', ...
@@ -402,136 +474,187 @@ function plotIncrementalEnsemblePerformance(ensemble_models, experiment_dir)
   drawnow;
   print(2, model_fig_path, '-dpdf');
 
-% -------------------------------------------------------------------------
-function ensemble_performance_summary = getEnsemblePerformanceSummary(ensemble_models, test_imdb)
-% -------------------------------------------------------------------------
-  if ~numel(ensemble_models)
-    ensemble_performance_summary.model_weight_normalized = 0;
-    ensemble_performance_summary.train_positive_count = 0;
-    ensemble_performance_summary.train_negative_count = 0;
-    ensemble_performance_summary.validation_accuracy = 0;
-    ensemble_performance_summary.validation_sensitivity = 0;
-    ensemble_performance_summary.validation_specificity = 0;
-    ensemble_performance_summary.test_accuracy = 0;
-    ensemble_performance_summary.test_sensitivity = 0;
-    ensemble_performance_summary.test_specificity = 0;
-    ensemble_performance_summary.weighted_test_accuracy = 0;
-    ensemble_performance_summary.weighted_test_sensitivity = 0;
-    ensemble_performance_summary.weighted_test_specificity= 0;
-    return;
-  end
 
-  number_of_models_in_ensemble = numel(ensemble_models);
-  for iteration = 1:number_of_models_in_ensemble
-    ensemble_performance_summary.model_weight_normalized(iteration) = ensemble_models{iteration}.model_weight_normalized;
-    ensemble_performance_summary.train_positive_count(iteration) = ensemble_models{iteration}.train_positive_count;
-    ensemble_performance_summary.train_negative_count(iteration) = ensemble_models{iteration}.train_negative_count;
-    ensemble_performance_summary.validation_accuracy(iteration) = ensemble_models{iteration}.validation_accuracy;
-    ensemble_performance_summary.validation_sensitivity(iteration) = ensemble_models{iteration}.validation_sensitivity;
-    ensemble_performance_summary.validation_specificity(iteration) = ensemble_models{iteration}.validation_specificity;
-    ensemble_performance_summary.test_accuracy(iteration) = ensemble_models{iteration}.test_accuracy;
-    ensemble_performance_summary.test_sensitivity(iteration) = ensemble_models{iteration}.test_sensitivity;
-    ensemble_performance_summary.test_specificity(iteration) = ensemble_models{iteration}.test_specificity;
-  end
 
-  weighted_results = getWeightedEnsembleResultsOnTestSet(ensemble_models, test_imdb);
-  ensemble_performance_summary.weighted_test_accuracy = weighted_results.test_accuracy;
-  ensemble_performance_summary.weighted_test_sensitivity = weighted_results.test_sensitivity;
-  ensemble_performance_summary.weighted_test_specificity = weighted_results.test_specificity;
 
-% -------------------------------------------------------------------------
-function weighted_results = getWeightedEnsembleResultsOnTestSet(ensemble_models, test_imdb)
-% -------------------------------------------------------------------------
-  if ~numel(ensemble_models)
-    weighted_results.test_accuracy = 0;
-    weighted_results.test_sensitivity = 0;
-    weighted_results.test_specificity = 0;
-    return
-  end
 
-  fprintf('\n');
-  afprintf(sprintf('[INFO] ENSEMBLE RESULTS ON TEST SET: \n'));
-  printConsoleOutputSeparator();
 
-  % -------------------------------------------------------------------------
-  % Initial stuff
-  % -------------------------------------------------------------------------
-  fh_imdb_utils = imdbTwoClassUtils;
-  [ ...
-    data, ...
-    data_train, ...
-    data_train_positive, ...
-    data_train_negative, ...
-    data_train_indices, ...
-    data_train_positive_indices, ...
-    data_train_negative_indices, ...
-    data_train_count, ...
-    data_train_positive_count, ...
-    data_train_negative_count, ...
-    labels_train, ...
-    data_test, ...
-    data_test_positive, ...
-    data_test_negative, ...
-    data_test_indices, ...
-    data_test_positive_indices, ...
-    data_test_negative_indices, ...
-    data_test_count, ...
-    data_test_positive_count, ...
-    data_test_negative_count, ...
-    labels_test, ...
-  ] = fh_imdb_utils.getImdbInfo(test_imdb, 1);
 
-  number_of_models_in_ensemble = numel(ensemble_models);
-  B = zeros(1, number_of_models_in_ensemble);
-  for iteration = 1:numel(B)
-    B(iteration) = ensemble_models{iteration}.model_weight_normalized;
-  end
 
-  weighted_ensemble_prediction = zeros(1, data_test_count);
-  test_set_predictions_per_model = {};
-  for iteration = 1:number_of_models_in_ensemble % looping through all trained models
-    afprintf(sprintf('\n'));
-    afprintf(sprintf('[INFO] Getting test set predictions for model #%d (positive: %d, negative: %d)...', ...
-      iteration, ...
-      data_test_positive_count, ...
-      data_test_negative_count));
-    test_set_predictions_per_model{iteration} = ensemble_models{iteration}.top_test_predictions;
-    fprintf('done.\n');
-  end
 
-  for i = 1:data_test_count
-    % Calculating the total weight of the class labels from all the models
-    % produced during boosting
-    wt_positive = 0; % class 2
-    wt_negative = 0; % class 1
-    for iteration = 1:number_of_models_in_ensemble % looping through all trained models
-       p = test_set_predictions_per_model{iteration}(i);
-       if p == 2 % if is positive
-           wt_positive = wt_positive + B(iteration);
-       else
-           wt_negative = wt_negative + B(iteration);
-       end
-    end
 
-    if (wt_positive > wt_negative)
-        weighted_ensemble_prediction(i) = 2;
-    else
-        weighted_ensemble_prediction(i) = 1;
-    end
-  end
 
-  % -------------------------------------------------------------------------
-  % 7. done, go treat yourself to something sugary!
-  % -------------------------------------------------------------------------
-  printConsoleOutputSeparator();
-  predictions_test = weighted_ensemble_prediction;
-  afprintf(sprintf('Weighted results:\n'));
-  afprintf(sprintf('Model Weights: '), 1);
-  fprintf('\n');
-  for i = 1:length(B)
-    fprintf('%.2f,\t', B(i));
-  end
-  [weighted_accuracy, weighted_sensitivity, weighted_specificity] = getAccSensSpec(labels_test, predictions_test, true);
-  weighted_results.test_accuracy = weighted_accuracy;
-  weighted_results.test_sensitivity = weighted_sensitivity;
-  weighted_results.test_specificity = weighted_specificity;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  % % -------------------------------------------------------------------------
+  % %                                      11. Test on test set & assign output
+  % % -------------------------------------------------------------------------
+  % trained_model = ensemble_models;
+  % performance_summary = getEnsemblePerformanceSummary(ensemble_models, test_imdb);
+
+  % % -------------------------------------------------------------------------
+  % %                                                           12. Save output
+  % % -------------------------------------------------------------------------
+  % saveStruct2File(performance_summary, opts.paths.results_file_path, 0);
+
+% % -------------------------------------------------------------------------
+% function ensemble_performance_summary = getEnsemblePerformanceSummary(ensemble_models, test_imdb)
+% % -------------------------------------------------------------------------
+%   if ~numel(ensemble_models)
+%     ensemble_performance_summary.model_weight_normalized = 0;
+%     ensemble_performance_summary.train_positive_count = 0;
+%     ensemble_performance_summary.train_negative_count = 0;
+%     ensemble_performance_summary.validation_accuracy = 0;
+%     ensemble_performance_summary.validation_sensitivity = 0;
+%     ensemble_performance_summary.validation_specificity = 0;
+%     ensemble_performance_summary.test_accuracy = 0;
+%     ensemble_performance_summary.test_sensitivity = 0;
+%     ensemble_performance_summary.test_specificity = 0;
+%     ensemble_performance_summary.weighted_test_accuracy = 0;
+%     ensemble_performance_summary.weighted_test_sensitivity = 0;
+%     ensemble_performance_summary.weighted_test_specificity= 0;
+%     return;
+%   end
+
+%   number_of_models_in_ensemble = numel(ensemble_models);
+%   for iteration = 1:number_of_models_in_ensemble
+%     ensemble_performance_summary.model_weight_normalized(iteration) = ensemble_models{iteration}.model_weight_normalized;
+%     ensemble_performance_summary.train_positive_count(iteration) = ensemble_models{iteration}.train_positive_count;
+%     ensemble_performance_summary.train_negative_count(iteration) = ensemble_models{iteration}.train_negative_count;
+%     ensemble_performance_summary.validation_accuracy(iteration) = ensemble_models{iteration}.validation_accuracy;
+%     ensemble_performance_summary.validation_sensitivity(iteration) = ensemble_models{iteration}.validation_sensitivity;
+%     ensemble_performance_summary.validation_specificity(iteration) = ensemble_models{iteration}.validation_specificity;
+%     ensemble_performance_summary.test_accuracy(iteration) = ensemble_models{iteration}.test_accuracy;
+%     ensemble_performance_summary.test_sensitivity(iteration) = ensemble_models{iteration}.test_sensitivity;
+%     ensemble_performance_summary.test_specificity(iteration) = ensemble_models{iteration}.test_specificity;
+%   end
+
+%   weighted_results = getWeightedEnsembleResultsOnTestSet(ensemble_models, test_imdb);
+%   ensemble_performance_summary.weighted_test_accuracy = weighted_results.test_accuracy;
+%   ensemble_performance_summary.weighted_test_sensitivity = weighted_results.test_sensitivity;
+%   ensemble_performance_summary.weighted_test_specificity = weighted_results.test_specificity;
+
+% % -------------------------------------------------------------------------
+% function weighted_results = getWeightedEnsembleResultsOnTestSet(ensemble_models, test_imdb)
+% % -------------------------------------------------------------------------
+%   if ~numel(ensemble_models)
+%     weighted_results.test_accuracy = 0;
+%     weighted_results.test_sensitivity = 0;
+%     weighted_results.test_specificity = 0;
+%     return
+%   end
+
+%   fprintf('\n');
+%   afprintf(sprintf('[INFO] ENSEMBLE RESULTS ON TEST SET: \n'));
+%   printConsoleOutputSeparator();
+
+%   % -------------------------------------------------------------------------
+%   % Initial stuff
+%   % -------------------------------------------------------------------------
+%   fh_imdb_utils = imdbTwoClassUtils;
+%   [ ...
+%     data, ...
+%     data_train, ...
+%     data_train_positive, ...
+%     data_train_negative, ...
+%     data_train_indices, ...
+%     data_train_positive_indices, ...
+%     data_train_negative_indices, ...
+%     data_train_count, ...
+%     data_train_positive_count, ...
+%     data_train_negative_count, ...
+%     labels_train, ...
+%     data_test, ...
+%     data_test_positive, ...
+%     data_test_negative, ...
+%     data_test_indices, ...
+%     data_test_positive_indices, ...
+%     data_test_negative_indices, ...
+%     data_test_count, ...
+%     data_test_positive_count, ...
+%     data_test_negative_count, ...
+%     labels_test, ...
+%   ] = fh_imdb_utils.getImdbInfo(test_imdb, 1);
+
+%   number_of_models_in_ensemble = numel(ensemble_models);
+%   B = zeros(1, number_of_models_in_ensemble);
+%   for iteration = 1:numel(B)
+%     B(iteration) = ensemble_models{iteration}.model_weight_normalized;
+%   end
+
+%   weighted_ensemble_prediction = zeros(1, data_test_count);
+%   test_set_predictions_per_model = {};
+%   for iteration = 1:number_of_models_in_ensemble % looping through all trained models
+%     afprintf(sprintf('\n'));
+%     afprintf(sprintf('[INFO] Getting test set predictions for model #%d (positive: %d, negative: %d)...', ...
+%       iteration, ...
+%       data_test_positive_count, ...
+%       data_test_negative_count));
+%     test_set_predictions_per_model{iteration} = ensemble_models{iteration}.top_test_predictions;
+%     fprintf('done.\n');
+%   end
+
+%   for i = 1:data_test_count
+%     % Calculating the total weight of the class labels from all the models
+%     % produced during boosting
+%     wt_positive = 0; % class 2
+%     wt_negative = 0; % class 1
+%     for iteration = 1:number_of_models_in_ensemble % looping through all trained models
+%        p = test_set_predictions_per_model{iteration}(i);
+%        if p == 2 % if is positive
+%            wt_positive = wt_positive + B(iteration);
+%        else
+%            wt_negative = wt_negative + B(iteration);
+%        end
+%     end
+
+%     if (wt_positive > wt_negative)
+%         weighted_ensemble_prediction(i) = 2;
+%     else
+%         weighted_ensemble_prediction(i) = 1;
+%     end
+%   end
+
+%   % -------------------------------------------------------------------------
+%   % 7. done, go treat yourself to something sugary!
+%   % -------------------------------------------------------------------------
+%   printConsoleOutputSeparator();
+%   predictions_test = weighted_ensemble_prediction;
+%   afprintf(sprintf('Weighted results:\n'));
+%   afprintf(sprintf('Model Weights: '), 1);
+%   fprintf('\n');
+%   for i = 1:length(B)
+%     fprintf('%.2f,\t', B(i));
+%   end
+%   [weighted_accuracy, weighted_sensitivity, weighted_specificity] = getAccSensSpec(labels_test, predictions_test, true);
+%   weighted_results.test_accuracy = weighted_accuracy;
+%   weighted_results.test_sensitivity = weighted_sensitivity;
+%   weighted_results.test_specificity = weighted_specificity;

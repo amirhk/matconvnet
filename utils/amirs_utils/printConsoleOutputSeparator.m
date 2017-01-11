@@ -26,4 +26,4 @@ function printConsoleOutputSeparator()
 % POSSIBILITY OF SUCH DAMAGE.
 
   % afprintf(sprintf('\n'));
-  afprintf(sprintf('-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- \n'), 1);
+  afprintf(sprintf('-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- \n'), -1);

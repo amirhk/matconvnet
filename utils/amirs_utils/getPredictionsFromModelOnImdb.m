@@ -25,15 +25,22 @@ function [top_predictions, all_predictions] = getPredictionsFromModelOnImdb(mode
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
 
+  printConsoleOutputSeparator();
   afprintf(sprintf('[INFO] Computing predictions from `%s` model on imdb (set `%d`)...\n', training_method, set));
+  fh_imdb_utils = imdbTwoClassUtils;
+  fh_imdb_utils.getImdbInfo(imdb, 1);
   imdb = filterImdbForSet(imdb, set);
   switch training_method
     case 'svm'
       [top_predictions, all_predictions] = getPredictionsFromSvmStructOnImdb(model, imdb);
-    case 'cnn'
-      [top_predictions, all_predictions] = getPredictionsFromNetOnImdb(model, imdb);
     case 'forest'
       [top_predictions, all_predictions] = getPredictionsFromBoostedForestOnImdb(model, imdb);
+    case 'cnn'
+      [top_predictions, all_predictions] = getPredictionsFromNetOnImdb(model, imdb);
+    case 'ensemble-cnn'
+      [top_predictions, all_predictions] = getPredictionsFromEnsembleOnImdb(model, imdb, 'cnn');
+    case 'ensemble-svm'
+      [top_predictions, all_predictions] = getPredictionsFromEnsembleOnImdb(model, imdb, 'svm');
   end
 
 % -------------------------------------------------------------------------
@@ -41,22 +48,14 @@ function [top_predictions, all_predictions] = getPredictionsFromSvmStructOnImdb(
 % -------------------------------------------------------------------------
   vectorized_data = getVectorizedDataFromImdb(imdb);
   top_predictions = svmclassify(svm_struct, vectorized_data);
-  number_of_classes = numel(unique(imdb.images.labels));
-  all_predictions = repmat(top_predictions, [number_of_classes, 1]);
+  all_predictions = getAllPredictionsFromTopPredictions(top_predictions, imdb);
 
 % -------------------------------------------------------------------------
 function [top_predictions, all_predictions] = getPredictionsFromBoostedForestOnImdb(boosted_forest, imdb)
 % -------------------------------------------------------------------------
   vectorized_data = getVectorizedDataFromImdb(imdb);
   top_predictions = predict(boosted_forest, vectorized_data);
-  number_of_classes = numel(unique(imdb.images.labels));
-  all_predictions = repmat(top_predictions, [number_of_classes, 1]);
-
-% -------------------------------------------------------------------------
-function vectorized_data = getVectorizedDataFromImdb(imdb)
-% -------------------------------------------------------------------------
-  number_of_features = prod(size(imdb.images.data(:,:,:,1))); % 32 x 32 x 3 = 3072
-  vectorized_data = reshape(imdb.images.data, number_of_features, [])';
+  all_predictions = getAllPredictionsFromTopPredictions(top_predictions, imdb);
 
 % -------------------------------------------------------------------------
 function [top_predictions, all_predictions] = getPredictionsFromNetOnImdb(net, imdb)
@@ -68,6 +67,88 @@ function [top_predictions, all_predictions] = getPredictionsFromNetOnImdb(net, i
     'val', find(imdb.images.set == 3));
   top_predictions = info.top_predictions;
   all_predictions = info.all_predictions;
+
+% -------------------------------------------------------------------------
+function [top_predictions, all_predictions] = getPredictionsFromEnsembleOnImdb(ensemble, imdb, training_method)
+% -------------------------------------------------------------------------
+  fh_imdb_utils = imdbTwoClassUtils;
+  [ ...
+    data, ...
+    data_train, ...
+    data_train_positive, ...
+    data_train_negative, ...
+    data_train_indices, ...
+    data_train_positive_indices, ...
+    data_train_negative_indices, ...
+    data_train_count, ...
+    data_train_positive_count, ...
+    data_train_negative_count, ...
+    labels_train, ...
+    data_test, ...
+    data_test_positive, ...
+    data_test_negative, ...
+    data_test_indices, ...
+    data_test_positive_indices, ...
+    data_test_negative_indices, ...
+    data_test_count, ...
+    data_test_positive_count, ...
+    data_test_negative_count, ...
+    labels_test, ...
+  ] = fh_imdb_utils.getImdbInfo(imdb, 1);
+  number_of_samples = size(imdb.images.data, 4);
+  number_of_classes = numel(unique(imdb.images.labels));
+  if ~length(fieldnames(ensemble))
+    top_predictions = -1 * ones(1, number_of_samples);
+    all_predictions = repmat(top_predictions, [number_of_classes, 1]);
+    return
+  end
+
+  models = {};
+  model_weights = [];
+  number_of_models_in_ensemble = numel(ensemble);
+  for iteration = 1:number_of_models_in_ensemble
+    models{iteration} = ensemble.(sprintf('iteration_%d', iteration)).trained_model.model;
+    model_weights(iteration) = ensemble.(sprintf('iteration_%d', iteration)).trained_model.weight_normalized;
+  end
+
+  test_set_predictions_per_model = {};
+  for iteration = 1:number_of_models_in_ensemble % looping through all trained models
+    afprintf(sprintf('\n'));
+    afprintf(sprintf('[INFO] Getting predictions for model #%d (positive: %d, negative: %d)...\n', ...
+      iteration, ...
+      data_test_positive_count, ...
+      data_test_negative_count));
+    % works for both `svm` and `cnn`
+    model = models{iteration};
+    [top_train_predictions, ~] = getPredictionsFromModelOnImdb(model, training_method, imdb, 3);
+    test_set_predictions_per_model{iteration} = top_train_predictions;
+    afprintf(sprintf('done.\n'));
+  end
+
+  weighted_ensemble_prediction = zeros(1, number_of_samples);
+  for i = 1:number_of_samples
+    % Calculating the total weight of the class labels from all the models
+    % produced during boosting
+    wt_positive = 0; % class 2
+    wt_negative = 0; % class 1
+    for iteration = 1:number_of_models_in_ensemble % looping through all trained models
+       p = test_set_predictions_per_model{iteration}(i);
+       if p == 2 % if is positive
+           wt_positive = wt_positive + model_weights(iteration);
+       else
+           wt_negative = wt_negative + model_weights(iteration);
+       end
+    end
+
+    if (wt_positive > wt_negative)
+        weighted_ensemble_prediction(i) = 2;
+    else
+        weighted_ensemble_prediction(i) = 1;
+    end
+  end
+
+  top_predictions = weighted_ensemble_prediction;
+  all_predictions = getAllPredictionsFromTopPredictions(top_predictions, imdb);
 
 % -------------------------------------------------------------------------
 function imdb = filterImdbForSet(imdb, set)
@@ -91,3 +172,24 @@ function [images, labels] = getSimpleNNBatch(imdb, batch)
   images = imdb.images.data(:,:,:,batch);
   labels = imdb.images.labels(1,batch);
   if rand > 0.5, images=fliplr(images); end
+
+% -------------------------------------------------------------------------
+function vectorized_data = getVectorizedDataFromImdb(imdb)
+% -------------------------------------------------------------------------
+  number_of_features = prod(size(imdb.images.data(:,:,:,1))); % 32 x 32 x 3 = 3072
+  vectorized_data = reshape(imdb.images.data, number_of_features, [])';
+
+% -------------------------------------------------------------------------
+function all_predictions = getAllPredictionsFromTopPredictions(top_predictions, imdb)
+% -------------------------------------------------------------------------
+  % NOT repmat... find the index of the top predicted class
+  % for each sample (in each column) and set that to 1.
+  number_of_samples = size(imdb.images.data, 4);
+  number_of_classes = numel(unique(imdb.images.labels));
+  all_predictions = zeros(number_of_classes, number_of_samples);
+  for i = 1:number_of_samples
+    top_class_prediction = top_predictions(i);
+    all_predictions(top_class_prediction, i) = 1;
+  end
+
+
