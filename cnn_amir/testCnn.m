@@ -177,23 +177,32 @@ function [trained_model, performance_summary] = testCnn(input_opts)
   %                                                   get performance summary
   % -------------------------------------------------------------------------
   if opts.general.return_performance_summary
-    [top_train_predictions, ~] = getPredictionsFromModelOnImdb(net, 'cnn', imdb, 1);
-    labels_train = imdb.images.labels(imdb.images.set == 1);
-    afprintf(sprintf('[INFO] Model performance on `train` set\n'));
-    [ ...
-      train_accuracy, ...
-      train_sensitivity, ...
-      train_specificity, ...
-    ] = getAccSensSpec(labels_train, top_train_predictions, true);
-    [top_test_predictions, ~] = getPredictionsFromModelOnImdb(net, 'cnn', imdb, 3);
-    afprintf(sprintf('[INFO] Model performance on `test` set\n'));
-    labels_test = imdb.images.labels(imdb.images.set == 3);
-    [ ...
-      test_accuracy, ...
-      test_sensitivity, ...
-      test_specificity, ...
-    ] = getAccSensSpec(labels_test, top_test_predictions, true);
-    printConsoleOutputSeparator();
+    if isTwoClassImdb(opts.general.dataset)
+      [top_train_predictions, ~] = getPredictionsFromModelOnImdb(net, 'cnn', imdb, 1);
+      labels_train = imdb.images.labels(imdb.images.set == 1);
+      afprintf(sprintf('[INFO] Model performance on `train` set\n'));
+      [ ...
+        train_accuracy, ...
+        train_sensitivity, ...
+        train_specificity, ...
+      ] = getAccSensSpec(labels_train, top_train_predictions, true);
+      [top_test_predictions, ~] = getPredictionsFromModelOnImdb(net, 'cnn', imdb, 3);
+      afprintf(sprintf('[INFO] Model performance on `test` set\n'));
+      labels_test = imdb.images.labels(imdb.images.set == 3);
+      [ ...
+        test_accuracy, ...
+        test_sensitivity, ...
+        test_specificity, ...
+      ] = getAccSensSpec(labels_test, top_test_predictions, true);
+      printConsoleOutputSeparator();
+    else
+      train_accuracy = 1 - info.train.error(1,end);
+      train_sensitivity = -1;
+      train_specificity = -1;
+      test_accuracy = 1 - info.val.error(1,end);
+      test_sensitivity = -1;
+      test_specificity = -1;
+    end
   else
     train_accuracy = -1;
     train_sensitivity = -1;
@@ -207,7 +216,7 @@ function [trained_model, performance_summary] = testCnn(input_opts)
   %                                                             assign output
   % -------------------------------------------------------------------------
   trained_model = net;
-  performance_summary.info = info;
+  % performance_summary.info = info;
   performance_summary.train.accuracy = train_accuracy;
   performance_summary.train.sensitivity = train_sensitivity;
   performance_summary.train.specificity = train_specificity;
