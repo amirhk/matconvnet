@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function runBottleneckTests(dataset, network_arch, gpus);
+function runBottleneckTests(dataset, network_arch, gpus)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
