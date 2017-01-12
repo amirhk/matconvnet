@@ -223,32 +223,32 @@ function [trained_model, performance_summary] = testEnsemble(input_opts)
     afprintf(sprintf('[INFO] Computing pseudo loss... '));
     negative_to_positive_ratio = data_train_negative_count / data_train_positive_count;
     loss = 0;
-    sum_sample_weights_positive = sum(sample_weights(data_train_positive_indices));
-    sum_sample_weights_negative = sum(sample_weights(data_train_negative_indices));
-    per_class_normalized_sample_weights = sample_weights;
-    per_class_normalized_sample_weights(data_train_positive_indices) = ...
-      0.5 * ...
-      per_class_normalized_sample_weights(data_train_positive_indices) / ...
-      sum_sample_weights_positive;
-    per_class_normalized_sample_weights(data_train_negative_indices) = ...
-      0.5 * ...
-      per_class_normalized_sample_weights(data_train_negative_indices) / ...
-      sum_sample_weights_negative;
-    for i = 1:data_train_count
-      if labels_train(i) == top_validation_predictions(i)
-        continue;
-      else
-        if labels_train(i) == 2
-          if opts.ensemble_options.symmetric_loss_updates
-            loss = loss + per_class_normalized_sample_weights(iteration, i);
-          else
-            loss = loss + per_class_normalized_sample_weights(iteration, i) * min(negative_to_positive_ratio, 2);
-          end
-        else
-          loss = loss + per_class_normalized_sample_weights(iteration, i);
-        end
-      end
-    end
+    % sum_sample_weights_positive = sum(sample_weights(data_train_positive_indices));
+    % sum_sample_weights_negative = sum(sample_weights(data_train_negative_indices));
+    % per_class_normalized_sample_weights = sample_weights;
+    % per_class_normalized_sample_weights(data_train_positive_indices) = ...
+    %   0.5 * ...
+    %   per_class_normalized_sample_weights(data_train_positive_indices) / ...
+    %   sum_sample_weights_positive;
+    % per_class_normalized_sample_weights(data_train_negative_indices) = ...
+    %   0.5 * ...
+    %   per_class_normalized_sample_weights(data_train_negative_indices) / ...
+    %   sum_sample_weights_negative;
+    % for i = 1:data_train_count
+    %   if labels_train(i) == top_validation_predictions(i)
+    %     continue;
+    %   else
+    %     if labels_train(i) == 2
+    %       if opts.ensemble_options.symmetric_loss_updates
+    %         loss = loss + per_class_normalized_sample_weights(iteration, i);
+    %       else
+    %         loss = loss + per_class_normalized_sample_weights(iteration, i) * min(negative_to_positive_ratio, 2);
+    %       end
+    %     else
+    %       loss = loss + per_class_normalized_sample_weights(iteration, i);
+    %     end
+    %   end
+    % end
     loss = 0.5 * (1 - validation_sensitivity) + 0.5 * (1 - validation_specificity);
     fprintf('Loss: %6.5f\n', loss);
 
