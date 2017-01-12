@@ -126,7 +126,7 @@ function runAllTests(dataset, posneg_balance, gpus);
   %                                                              ensemble cnn
   % -------------------------------------------------------------------------
   experiment_options.training_method = 'ensemble-cnn';
-  experiment_options.ensemble_cnn_version = '1';
+  experiment_options.ensemble_cnn_version = 'v1';
   experiment_options.iteration_count = 8;
 
   % % Exp. 1
