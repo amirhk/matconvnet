@@ -138,19 +138,19 @@ function runAllTests(dataset, posneg_balance, gpus);
   experiment_options.symmetric_loss_updates = true;
   testKFold(experiment_options);
 
-  experiment_options.training_method = 'ensemble-cnn-2';
-  experiment_options.iteration_count = 7;
+  % experiment_options.training_method = 'ensemble-cnn-2';
+  % experiment_options.iteration_count = 7;
 
-  % Exp. 1
-  experiment_options.backprop_depth = 4;
-  experiment_options.symmetric_weight_updates = true;
-  experiment_options.symmetric_loss_updates = true;
-  testKFold(experiment_options);
-  % Exp. 5
-  experiment_options.backprop_depth = 13;
-  experiment_options.symmetric_weight_updates = true;
-  experiment_options.symmetric_loss_updates = true;
-  testKFold(experiment_options);
+  % % Exp. 1
+  % experiment_options.backprop_depth = 4;
+  % experiment_options.symmetric_weight_updates = true;
+  % experiment_options.symmetric_loss_updates = true;
+  % testKFold(experiment_options);
+  % % Exp. 5
+  % experiment_options.backprop_depth = 13;
+  % experiment_options.symmetric_weight_updates = true;
+  % experiment_options.symmetric_loss_updates = true;
+  % testKFold(experiment_options);
 
   % % Exp. 1
   % experiment_options.backprop_depth = 4;
