@@ -146,6 +146,84 @@ function [resampled_data, resampled_labels] = resampleData1(data, labels, weight
   % -------------------------------------------------------------------------
   normalized_weights = weights / min(weights);
   repeat_counts = ceil(normalized_weights);
+  % max_repeat_positive = 200;
+  % max_repeat_negative = 25;
+  max_repeat_positive = 100000000;
+  max_repeat_negative = 100000000;
+  for j = data_positive_indices
+    if repeat_counts(j) > max_repeat_positive
+      repeat_counts(j) = max_repeat_positive;
+    end
+  end
+  for j = data_negative_indices
+    if repeat_counts(j) > max_repeat_negative
+      repeat_counts(j) = max_repeat_negative;
+    end
+  end
+
+  positive_repeat_counts = repeat_counts(data_positive_indices);
+  negative_repeat_counts = repeat_counts(downsampled_data_negative_indices);
+
+  upsampled_data_positive = upsample(data_positive, positive_repeat_counts);
+  upsampled_data_negative = upsample(downsampled_data_negative, negative_repeat_counts);
+
+  % -------------------------------------------------------------------------
+  % Putting it all together
+  % -------------------------------------------------------------------------
+  resampled_data_positive_count = size(upsampled_data_positive, 4);
+  resampled_data_negative_count = size(upsampled_data_negative, 4);
+  resampled_data_all = cat(4, upsampled_data_positive, upsampled_data_negative);
+  resampled_labels_all = cat( ...
+    2, ...
+    2 * ones(1, resampled_data_positive_count), ...
+    1 * ones(1, resampled_data_negative_count));
+
+  % -------------------------------------------------------------------------
+  % Shuffle this to mixup order of negative and positive in imdb so we don't
+  % have the CNN overtrain in 1 particular direction. Only shuffling for
+  % training; later weights are calculated and updated for all training data.
+  % -------------------------------------------------------------------------
+  ix = randperm(size(resampled_data_all, 4));
+  resampled_data = resampled_data_all(:,:,:,ix);
+  resampled_labels = resampled_labels_all(ix);
+
+% TODO: this should really be resampleImdb w/ a bunch of options to resample
+% an input class {pos, neg} in an input set {1,3}....
+% -------------------------------------------------------------------------
+function [resampled_data, resampled_labels] = resampleData2(data, labels, weights, ratio)
+% -------------------------------------------------------------------------
+  % -------------------------------------------------------------------------
+  % Initial stuff
+  % -------------------------------------------------------------------------
+  data_positive = data(:,:,:,labels == 2);
+  data_negative = data(:,:,:,labels == 1);
+  data_count = size(data, 4);
+  data_positive_count = size(data_positive, 4);
+  data_negative_count = size(data_negative, 4);
+  data_positive_indices = find(labels == 2);
+  data_negative_indices = find(labels == 1);
+
+  % -------------------------------------------------------------------------
+  % Random Under-sampling (RUS): Negative Data
+  % -------------------------------------------------------------------------
+  weights_negative_indices = weights(1, data_negative_indices);
+  downsampled_data_negative_count = round(data_positive_count * ratio);
+  % just random sampling.... horrendously wrong
+  % downsampled_data_negative_indices = randsample(data_negative_indices, downsampled_data_negative_count, false);
+  % TODO: the line below is weighted sampling w/ replacement; the most accurate
+  % way is to weighted randsample w/o replacement
+  downsampled_data_negative_indices = randsample( ...
+    data_negative_indices, ...
+    downsampled_data_negative_count, ...
+    true, ...
+    weights_negative_indices);
+  downsampled_data_negative = data(:,:,:, downsampled_data_negative_indices);
+
+  % -------------------------------------------------------------------------
+  % Weighted Upsampling (more weight -> more repeat): Negative & Positive Data
+  % -------------------------------------------------------------------------
+  normalized_weights = weights / min(weights);
+  repeat_counts = ceil(normalized_weights);
   % % max_repeat_positive = 200;
   % % max_repeat_negative = 25;
   % max_repeat_positive = 100000000;
@@ -193,7 +271,7 @@ function [resampled_data, resampled_labels] = resampleData1(data, labels, weight
 % TODO: this should really be resampleImdb w/ a bunch of options to resample
 % an input class {pos, neg} in an input set {1,3}....
 % -------------------------------------------------------------------------
-function [resampled_data, resampled_labels] = resampleData2( ...
+function [resampled_data, resampled_labels] = resampleData3( ...
   data_positive, ...
   data_negative, ...
   labels_positive, ...

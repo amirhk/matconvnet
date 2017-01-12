@@ -92,21 +92,9 @@ function folds = testKFold(input_opts)
       opts.single_training_method_options.backprop_depth = getValueFromFieldOrDefault(input_opts, 'backprop_depth', 4);
       opts.single_training_method_options.gpus = ifNotMacSetGpu(getValueFromFieldOrDefault(input_opts, 'gpus', 1));
       opts.single_training_method_options.debug_flag = getValueFromFieldOrDefault(input_opts, 'debug_flag', false);
-    case 'ensemble-cnn-1'
+    case 'ensemble-cnn'
       % ensemble options
-      opts.ensemble_options.boosting_method = getValueFromFieldOrDefault(input_opts, 'boosting_method', 'rusboost');
-      opts.single_training_method_options.training_method = getValueFromFieldOrDefault(input_opts, 'single_training_method_options', 'cnn');
-      opts.single_training_method_options.iteration_count = getValueFromFieldOrDefault(input_opts, 'iteration_count', 5);
-      opts.single_training_method_options.symmetric_weight_updates = getValueFromFieldOrDefault(input_opts, 'symmetric_weight_updates', false);
-      opts.single_training_method_options.symmetric_loss_updates = getValueFromFieldOrDefault(input_opts, 'symmetric_loss_updates', false);
-      % cnn options
-      opts.single_training_method_options.network_arch = getValueFromFieldOrDefault(input_opts, 'network_arch', 'lenet');
-      opts.single_training_method_options.backprop_depth = getValueFromFieldOrDefault(input_opts, 'backprop_depth', 4);
-      opts.single_training_method_options.gpus = ifNotMacSetGpu(getValueFromFieldOrDefault(input_opts, 'gpus', 1));
-      opts.single_training_method_options.debug_flag = getValueFromFieldOrDefault(input_opts, 'debug_flag', false);
-    case 'ensemble-cnn-2'
-      % ensemble options
-      opts.ensemble_options.boosting_method = getValueFromFieldOrDefault(input_opts, 'boosting_method', 'rusboost');
+      opts.single_training_method_options.boosting_method = getValueFromFieldOrDefault(input_opts, 'boosting_method', 'rusboost');
       opts.single_training_method_options.training_method = getValueFromFieldOrDefault(input_opts, 'single_training_method_options', 'cnn');
       opts.single_training_method_options.iteration_count = getValueFromFieldOrDefault(input_opts, 'iteration_count', 5);
       opts.single_training_method_options.symmetric_weight_updates = getValueFromFieldOrDefault(input_opts, 'symmetric_weight_updates', false);
@@ -118,7 +106,7 @@ function folds = testKFold(input_opts)
       opts.single_training_method_options.debug_flag = getValueFromFieldOrDefault(input_opts, 'debug_flag', false);
     case 'ensemble-svm'
       % ensemble options
-      opts.ensemble_options.boosting_method = getValueFromFieldOrDefault(input_opts, 'boosting_method', 'rusboost');
+      opts.single_training_method_options.boosting_method = getValueFromFieldOrDefault(input_opts, 'boosting_method', 'rusboost');
       opts.single_training_method_options.training_method = getValueFromFieldOrDefault(input_opts, 'single_training_method_options', 'svm');
       opts.single_training_method_options.iteration_count = getValueFromFieldOrDefault(input_opts, 'iteration_count', 5);
       opts.single_training_method_options.symmetric_weight_updates = getValueFromFieldOrDefault(input_opts, 'symmetric_weight_updates', false);
@@ -165,10 +153,15 @@ function folds = testKFold(input_opts)
       trainingMethodFunctionHandle = @testForest;
     case 'single-cnn'
       trainingMethodFunctionHandle = @testCnn;
-    case 'ensemble-cnn-1'
-      trainingMethodFunctionHandle = @testEnsemble1;
-    case 'ensemble-cnn-2'
-      trainingMethodFunctionHandle = @testEnsemble2;
+    case 'ensemble-cnn'
+      switch getValueFromFieldOrDefault(input_opts, 'ensemble_cnn_version', 'v1');
+        case 'v1'
+          trainingMethodFunctionHandle = @testEnsemble1;
+        case 'v2'
+          trainingMethodFunctionHandle = @testEnsemble2;
+        case 'v3'
+          trainingMethodFunctionHandle = @testEnsemble3;
+      end
     case 'ensemble-svm'
       trainingMethodFunctionHandle = @testEnsemble1;
   end
