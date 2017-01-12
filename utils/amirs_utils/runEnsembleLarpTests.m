@@ -89,10 +89,10 @@ function runAllTests(dataset, posneg_balance, gpus);
   % -------------------------------------------------------------------------
   %                                                              ensemble svm
   % -------------------------------------------------------------------------
-  % experiment_options.training_method = 'ensemble-svm';
-  % experiment_options.iteration_count = 7;
-  % % Exp. 1
-  % testKFold(experiment_options);
+  experiment_options.training_method = 'ensemble-svm';
+  experiment_options.iteration_count = 7;
+  % Exp. 1
+  testKFold(experiment_options);
 
   % -------------------------------------------------------------------------
   %                                                               single tree

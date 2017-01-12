@@ -157,9 +157,13 @@ function [trained_model, performance_summary] = testEnsemble(input_opts)
   ensemble = {};
   while iteration <= opts.ensemble_options.iteration_count
     afprintf(sprintf('\n'));
-    afprintf(sprintf('[INFO] Boosting iteration #%d (attempt %d)...\n', iteration, count));
+    printConsoleOutputSeparator();
+    afprintf(sprintf('[INFO] Boosting iteration #%d (attempt %d)...\n', iteration, count), 1);
+    printConsoleOutputSeparator();
 
-    % Resampling NEG_DATA with weights of positive example
+    % -------------------------------------------------------------------------
+    %                                       4.5. Resample data based on weights
+    % -------------------------------------------------------------------------
     afprintf(sprintf(...
       '[INFO] Resampling positive and negative data (ratio = %3.6f)... ', ...
       opts.ensemble_options.random_undersampling_ratio));
@@ -185,7 +189,7 @@ function [trained_model, performance_summary] = testEnsemble(input_opts)
     % -------------------------------------------------------------------------
     %                                                            5. Train model
     % -------------------------------------------------------------------------
-    afprintf(sprintf('[INFO] Training model (positive: %d, negative: %d)...\n', ...
+    afprintf(sprintf('[INFO] Training model on `resampled train set` (positive: %d, negative: %d)...\n', ...
       numel(find(resampled_labels == 2)), ...
       numel(find(resampled_labels == 1))));
     opts.single_model_options.imdb = training_resampled_imdb;
@@ -245,6 +249,7 @@ function [trained_model, performance_summary] = testEnsemble(input_opts)
         end
       end
     end
+    loss = 0.5 * (1 - validation_sensitivity) + 0.5 * (1 - validation_specificity);
     fprintf('Loss: %6.5f\n', loss);
 
     % If count exceeds a pre-defined threshold (5 in the current implementation)

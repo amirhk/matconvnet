@@ -184,6 +184,9 @@ function [resampled_data, resampled_labels] = resampleData1(data, labels, weight
   % training; later weights are calculated and updated for all training data.
   % -------------------------------------------------------------------------
   ix = randperm(size(resampled_data_all, 4));
+  if length(ix) >= 250
+    ix = ix(1:250);
+  end
   resampled_data = resampled_data_all(:,:,:,ix);
   resampled_labels = resampled_labels_all(ix);
 
@@ -252,6 +255,9 @@ function [resampled_data, resampled_labels] = resampleData2( ...
   % training; later weights are calculated and updated for all training data.
   % -------------------------------------------------------------------------
   ix = randperm(size(resampled_data_all, 4));
+  if length(ix) >= 100
+    ix = ix(1:100);
+  end
   resampled_data = resampled_data_all(:,:,:,ix);
   resampled_labels = resampled_labels_all(ix);
 
