@@ -73,6 +73,7 @@ function runAllTests(dataset, posneg_balance, gpus);
   % -------------------------------------------------------------------------
   %                                                            shared options
   % -------------------------------------------------------------------------
+  experiment_options.number_of_folds = 10;
   experiment_options.experiment_parent_dir = opts.paths.experiment_dir;
   experiment_options.dataset = opts.general.dataset;
   experiment_options.network_arch = opts.general.network_arch;
@@ -90,7 +91,7 @@ function runAllTests(dataset, posneg_balance, gpus);
   %                                                              ensemble svm
   % -------------------------------------------------------------------------
   experiment_options.training_method = 'ensemble-svm';
-  experiment_options.ensemble_cnn_version = 'v2';
+  experiment_options.ensemble_cnn_version = 'v1';
   experiment_options.iteration_count = 8;
   % Exp. 1
   testKFold(experiment_options);
@@ -126,7 +127,7 @@ function runAllTests(dataset, posneg_balance, gpus);
   %                                                              ensemble cnn
   % -------------------------------------------------------------------------
   experiment_options.training_method = 'ensemble-cnn';
-  experiment_options.ensemble_cnn_version = 'v2';
+  experiment_options.ensemble_cnn_version = 'v1';
   experiment_options.iteration_count = 8;
 
   % Exp. 1
