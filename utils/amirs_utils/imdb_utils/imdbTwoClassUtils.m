@@ -29,7 +29,8 @@ function fh = imdbTwoClassUtils()
   fh.saveImdb = @saveImdb;
   fh.getImdbInfo = @getImdbInfo;
   fh.balanceImdb = @balanceImdb;
-  fh.resampleData = @resampleData;
+  fh.resampleData1 = @resampleData1;
+  fh.resampleData2 = @resampleData2;
   fh.constructPartialImdb = @constructPartialImdb;
   fh.constructTwoClassUnbalancedImdb = @constructTwoClassUnbalancedImdb;
 
@@ -46,6 +47,8 @@ function [ ...
   data_train_positive_count, ...
   data_train_negative_count, ...
   labels_train, ...
+  labels_train_positive, ...
+  labels_train_negative, ...
   data_test, ...
   data_test_positive, ...
   data_test_negative, ...
@@ -55,7 +58,9 @@ function [ ...
   data_test_count, ...
   data_test_positive_count, ...
   data_test_negative_count, ...
-  labels_test] = getImdbInfo(imdb, debug_flag)
+  labels_test, ...
+  labels_test_positive, ...
+  labels_test_negative] = getImdbInfo(imdb, debug_flag)
 % -------------------------------------------------------------------------
   % enforce row vector before doing bsxfun
   imdb.images.labels = reshape(imdb.images.labels, 1, prod(size(imdb.images.labels)));
@@ -78,6 +83,8 @@ function [ ...
   data_train_positive_count = size(data_train_positive, 4);
   data_train_negative_count = size(data_train_negative, 4);
   labels_train = imdb.images.labels(data_train_indices);
+  labels_train_positive = imdb.images.labels(data_train_positive_indices);
+  labels_train_negative = imdb.images.labels(data_train_negative_indices);
 
   % test set
   data_test = imdb.images.data(:,:,:,data_test_indices);
@@ -87,6 +94,8 @@ function [ ...
   data_test_positive_count = size(data_test_positive, 4);
   data_test_negative_count = size(data_test_negative, 4);
   labels_test = imdb.images.labels(data_test_indices);
+  labels_test_positive = imdb.images.labels(data_test_positive_indices);
+  labels_test_negative = imdb.images.labels(data_test_negative_indices);
 
   if debug_flag
     afprintf(sprintf('[INFO] imdb info:\n'));
@@ -103,7 +112,7 @@ function [ ...
 % TODO: this should really be resampleImdb w/ a bunch of options to resample
 % an input class {pos, neg} in an input set {1,3}....
 % -------------------------------------------------------------------------
-function [resampled_data, resampled_labels] = resampleData(data, labels, weights, ratio)
+function [resampled_data, resampled_labels] = resampleData1(data, labels, weights, ratio)
 % -------------------------------------------------------------------------
   % -------------------------------------------------------------------------
   % Initial stuff
@@ -135,28 +144,96 @@ function [resampled_data, resampled_labels] = resampleData(data, labels, weights
   % -------------------------------------------------------------------------
   % Weighted Upsampling (more weight -> more repeat): Negative & Positive Data
   % -------------------------------------------------------------------------
-  % max_repeat_positive = 200;
-  % max_repeat_negative = 25;
-  max_repeat_positive = 100000000;
-  max_repeat_negative = 100000000;
   normalized_weights = weights / min(weights);
   repeat_counts = ceil(normalized_weights);
-  for j = data_positive_indices
-    if repeat_counts(j) > max_repeat_positive
-      repeat_counts(j) = max_repeat_positive;
-    end
-  end
-  for j = data_negative_indices
-    if repeat_counts(j) > max_repeat_negative
-      repeat_counts(j) = max_repeat_negative;
-    end
-  end
+  % % max_repeat_positive = 200;
+  % % max_repeat_negative = 25;
+  % max_repeat_positive = 100000000;
+  % max_repeat_negative = 100000000;
+  % for j = data_positive_indices
+  %   if repeat_counts(j) > max_repeat_positive
+  %     repeat_counts(j) = max_repeat_positive;
+  %   end
+  % end
+  % for j = data_negative_indices
+  %   if repeat_counts(j) > max_repeat_negative
+  %     repeat_counts(j) = max_repeat_negative;
+  %   end
+  % end
 
   positive_repeat_counts = repeat_counts(data_positive_indices);
   negative_repeat_counts = repeat_counts(downsampled_data_negative_indices);
 
   upsampled_data_positive = upsample(data_positive, positive_repeat_counts);
   upsampled_data_negative = upsample(downsampled_data_negative, negative_repeat_counts);
+
+  % -------------------------------------------------------------------------
+  % Putting it all together
+  % -------------------------------------------------------------------------
+  resampled_data_positive_count = size(upsampled_data_positive, 4);
+  resampled_data_negative_count = size(upsampled_data_negative, 4);
+  resampled_data_all = cat(4, upsampled_data_positive, upsampled_data_negative);
+  resampled_labels_all = cat( ...
+    2, ...
+    2 * ones(1, resampled_data_positive_count), ...
+    1 * ones(1, resampled_data_negative_count));
+
+  % -------------------------------------------------------------------------
+  % Shuffle this to mixup order of negative and positive in imdb so we don't
+  % have the CNN overtrain in 1 particular direction. Only shuffling for
+  % training; later weights are calculated and updated for all training data.
+  % -------------------------------------------------------------------------
+  ix = randperm(size(resampled_data_all, 4));
+  resampled_data = resampled_data_all(:,:,:,ix);
+  resampled_labels = resampled_labels_all(ix);
+
+% TODO: this should really be resampleImdb w/ a bunch of options to resample
+% an input class {pos, neg} in an input set {1,3}....
+% -------------------------------------------------------------------------
+function [resampled_data, resampled_labels] = resampleData2( ...
+  data_positive, ...
+  data_negative, ...
+  labels_positive, ...
+  labels_negative, ...
+  weights_positive, ...
+  weights_negative, ...
+  cross_class_balance_ratio)
+% -------------------------------------------------------------------------
+  % -------------------------------------------------------------------------
+  % Initial stuff
+  % -------------------------------------------------------------------------
+  data_positive_count = size(data_positive, 4);
+  data_negative_indices = 1:size(data_negative, 4);
+
+  % -------------------------------------------------------------------------
+  % Random Under-sampling (RUS): Negative Data
+  % -------------------------------------------------------------------------
+  downsampled_data_negative_count = round(data_positive_count * cross_class_balance_ratio);
+  downsampled_data_negative_indices = randsample( ...
+    data_negative_indices, ...
+    downsampled_data_negative_count, ...
+    true, ...
+    weights_negative);
+  downsampled_data_negative = data_negative(:,:,:, downsampled_data_negative_indices);
+  downsampled_weights_negative = weights_negative(downsampled_data_negative_indices);
+
+  assert(data_positive_count == numel(downsampled_weights_negative));
+
+  % -------------------------------------------------------------------------
+  % Weighted Upsampling (more weight -> more repeat): Negative & Positive Data
+  % -------------------------------------------------------------------------
+  % want the rebalanced data to contain
+  %   * 50% positive class
+  %   * 50% negative class
+  normalized_weights_positive = 0.5 * weights_positive / min(weights_positive);
+  normalized_weights_negative = 0.5 * downsampled_weights_negative / min(downsampled_weights_negative);
+  assert(numel(normalized_weights_positive) == numel(normalized_weights_negative));
+
+  repeat_counts_positive = ceil(normalized_weights_positive);
+  repeat_counts_negative = ceil(normalized_weights_negative);
+
+  upsampled_data_positive = upsample(data_positive, repeat_counts_positive);
+  upsampled_data_negative = upsample(downsampled_data_negative, repeat_counts_negative);
 
   % -------------------------------------------------------------------------
   % Putting it all together
@@ -257,6 +334,8 @@ function imdb = balanceImdb(imdb, set_name, balance_type)
     data_train_positive_count, ...
     data_train_negative_count, ...
     labels_train, ...
+    labels_train_positive, ...
+    labels_train_negative, ...
     data_test, ...
     data_test_positive, ...
     data_test_negative, ...
@@ -267,6 +346,8 @@ function imdb = balanceImdb(imdb, set_name, balance_type)
     data_test_positive_count, ...
     data_test_negative_count, ...
     labels_test, ...
+    labels_test_positive, ...
+    labels_test_negative, ...
   ] = getImdbInfo(imdb, true);
 
   switch set_name
@@ -429,6 +510,8 @@ function saveImdb(imdb, dataset, posneg_balance, positive_class_number, negative
     data_train_positive_count, ...
     data_train_negative_count, ...
     labels_train, ...
+    labels_train_positive, ...
+    labels_train_negative, ...
     data_test, ...
     data_test_positive, ...
     data_test_negative, ...
@@ -439,6 +522,8 @@ function saveImdb(imdb, dataset, posneg_balance, positive_class_number, negative
     data_test_positive_count, ...
     data_test_negative_count, ...
     labels_test, ...
+    labels_test_positive, ...
+    labels_test_negative, ...
   ] = getImdbInfo(imdb, true);
   printConsoleOutputSeparator();
   save(...
