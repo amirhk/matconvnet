@@ -167,7 +167,6 @@ function folds = testKFold(input_opts)
         case 'v1'
           trainingMethodFunctionHandle = @testEnsemble1;
         case 'v2'
-          keyboard
           trainingMethodFunctionHandle = @testEnsemble2;
         case 'v3'
           trainingMethodFunctionHandle = @testEnsemble3;
