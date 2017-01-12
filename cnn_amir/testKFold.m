@@ -163,7 +163,15 @@ function folds = testKFold(input_opts)
           trainingMethodFunctionHandle = @testEnsemble3;
       end
     case 'ensemble-svm'
-      trainingMethodFunctionHandle = @testEnsemble1;
+      switch getValueFromFieldOrDefault(input_opts, 'ensemble_cnn_version', 'v1');
+        case 'v1'
+          trainingMethodFunctionHandle = @testEnsemble1;
+        case 'v2'
+          keyboard
+          trainingMethodFunctionHandle = @testEnsemble2;
+        case 'v3'
+          trainingMethodFunctionHandle = @testEnsemble3;
+      end
   end
 
   for i = 1:opts.k_fold_options.number_of_folds
