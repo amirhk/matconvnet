@@ -83,18 +83,18 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   % -------------------------------------------------------------------------
   %                                                                single svm
   % -------------------------------------------------------------------------
-  experiment_options.training_method = 'svm';
-  % Exp. 1
-  testKFold(experiment_options);
+  % experiment_options.training_method = 'svm';
+  % % Exp. 1
+  % testKFold(experiment_options);
 
   % -------------------------------------------------------------------------
   %                                                              ensemble svm
   % -------------------------------------------------------------------------
-  % experiment_options.training_method = 'ensemble-svm';
-  % experiment_options.ensemble_cnn_version = 'v1';
-  % experiment_options.iteration_count = 8;
-  % % Exp. 1
-  % testKFold(experiment_options);
+  experiment_options.training_method = 'ensemble-svm';
+  experiment_options.ensemble_cnn_version = 'v1';
+  experiment_options.iteration_count = 8;
+  % Exp. 1
+  testKFold(experiment_options);
 
   % -------------------------------------------------------------------------
   %                                                               single tree
@@ -115,31 +115,31 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   % -------------------------------------------------------------------------
   %                                                                single cnn
   % -------------------------------------------------------------------------
-  experiment_options.training_method = 'single-cnn';
-  % Exp. 1
-  experiment_options.backprop_depth = 4;
-  testKFold(experiment_options);
-  % Exp. 2
-  experiment_options.backprop_depth = 13;
-  testKFold(experiment_options);
+  % experiment_options.training_method = 'single-cnn';
+  % % Exp. 1
+  % experiment_options.backprop_depth = 4;
+  % testKFold(experiment_options);
+  % % Exp. 2
+  % experiment_options.backprop_depth = 13;
+  % testKFold(experiment_options);
 
   % -------------------------------------------------------------------------
   %                                                              ensemble cnn
   % -------------------------------------------------------------------------
-  % experiment_options.training_method = 'ensemble-cnn';
-  % experiment_options.ensemble_cnn_version = 'v1';
-  % experiment_options.iteration_count = 8;
+  experiment_options.training_method = 'ensemble-cnn';
+  experiment_options.ensemble_cnn_version = 'v1';
+  experiment_options.iteration_count = 8;
 
-  % % Exp. 1
-  % experiment_options.backprop_depth = 4;
-  % experiment_options.symmetric_weight_updates = true;
-  % experiment_options.symmetric_loss_updates = true;
-  % testKFold(experiment_options);
-  % % Exp. 5
-  % experiment_options.backprop_depth = 13;
-  % experiment_options.symmetric_weight_updates = true;
-  % experiment_options.symmetric_loss_updates = true;
-  % testKFold(experiment_options);
+  % Exp. 1
+  experiment_options.backprop_depth = 4;
+  experiment_options.symmetric_weight_updates = true;
+  experiment_options.symmetric_loss_updates = true;
+  testKFold(experiment_options);
+  % Exp. 5
+  experiment_options.backprop_depth = 13;
+  experiment_options.symmetric_weight_updates = true;
+  experiment_options.symmetric_loss_updates = true;
+  testKFold(experiment_options);
 
   % % Exp. 1
   % experiment_options.backprop_depth = 4;
