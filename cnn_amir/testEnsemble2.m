@@ -154,7 +154,7 @@ function [trained_model, performance_summary] = testEnsemble(input_opts)
   %        4. go through T iterations of *boost, each training a single model
   % -------------------------------------------------------------------------
   printConsoleOutputSeparator();
-  ensemble = {};
+  ensemble = struct();
   while iteration <= opts.ensemble_options.iteration_count
     afprintf(sprintf('\n'));
     printConsoleOutputSeparator();

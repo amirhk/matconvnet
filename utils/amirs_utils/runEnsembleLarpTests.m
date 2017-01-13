@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function runEnsembleLarpTests(dataset, posneg_balance, gpus)
+function runEnsembleLarpTests(dataset, posneg_balance, gpus, ensemble_version)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -79,6 +79,7 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   experiment_options.network_arch = opts.general.network_arch;
   experiment_options.posneg_balance = opts.imdb.posneg_balance;
   experiment_options.gpus = opts.train.gpus;
+  experiment_options.ensemble_cnn_version = ensemble_version;
 
   % -------------------------------------------------------------------------
   %                                                                single svm
@@ -91,7 +92,6 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   %                                                              ensemble svm
   % -------------------------------------------------------------------------
   experiment_options.training_method = 'ensemble-svm';
-  experiment_options.ensemble_cnn_version = 'v2';
   experiment_options.iteration_count = 8;
   % Exp. 1
   testKFold(experiment_options);
@@ -127,7 +127,6 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   %                                                              ensemble cnn
   % -------------------------------------------------------------------------
   experiment_options.training_method = 'ensemble-cnn';
-  experiment_options.ensemble_cnn_version = 'v2';
   experiment_options.iteration_count = 8;
 
   % Exp. 1
