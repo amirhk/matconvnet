@@ -31,10 +31,10 @@ function constructProstateImdbs(input_opts)
   switch imdb_opts.dataset_version
     case 'v2-20-patients'
       number_of_patients = 20;
-      imdb_opts.dataDir            = getValueFromFieldOrDefault(input_opts, 'dataDir', '/Users/a6karimi/dev/data/source/prostate/v2-20-patients');
+      imdb_opts.dataDir            = getValueFromFieldOrDefault(input_opts, 'dataDir', fullfile(getDevPath(), 'data/source/prostate/v2-20-patients'));
     case 'v3-104-patients'
       number_of_patients = 104;
-      imdb_opts.dataDir            = getValueFromFieldOrDefault(input_opts, 'dataDir', '/Users/a6karimi/dev/data/source/prostate/v3-104-patients');
+      imdb_opts.dataDir            = getValueFromFieldOrDefault(input_opts, 'dataDir', fullfile(getDevPath(), 'data/source/prostate/v3-104-patients'));
   end
 
   imdb_opts.leave_out_type         = getValueFromFieldOrDefault(input_opts, 'leave_out_type', 'special');
