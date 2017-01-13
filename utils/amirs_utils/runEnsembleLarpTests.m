@@ -91,7 +91,7 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   %                                                              ensemble svm
   % -------------------------------------------------------------------------
   experiment_options.training_method = 'ensemble-svm';
-  experiment_options.ensemble_cnn_version = 'v1';
+  experiment_options.ensemble_cnn_version = 'v2';
   experiment_options.iteration_count = 8;
   % Exp. 1
   testKFold(experiment_options);
@@ -127,7 +127,7 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   %                                                              ensemble cnn
   % -------------------------------------------------------------------------
   experiment_options.training_method = 'ensemble-cnn';
-  experiment_options.ensemble_cnn_version = 'v1';
+  experiment_options.ensemble_cnn_version = 'v2';
   experiment_options.iteration_count = 8;
 
   % Exp. 1
