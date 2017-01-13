@@ -81,6 +81,18 @@ function [trained_model, performance_summary] = testSvm(input_opts)
   %                                                                     train
   % -------------------------------------------------------------------------
   svm_struct = svmtrain(vectorized_data_train, labels_train);
+  % has_convered = false;
+  % while ~has_convered
+  %   try
+  %     % svm_train_options.MaxIter = 1000000000;
+  %     svm_struct = svmtrain(vectorized_data_train, labels_train);
+  %     disp('jigar');
+  %     has_convered = true
+  %   catch
+  %     disp('tala');
+  %   end
+  % end
+
 
   % -------------------------------------------------------------------------
   %                                                   get performance summary

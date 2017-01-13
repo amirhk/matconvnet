@@ -54,6 +54,13 @@ function folds = testKFold(input_opts)
       otherwise
         assert(false);
     end
+  elseif strcmp(opts.general.dataset, 'prostate-v3-104-patients')
+    switch opts.imdb.posneg_balance
+      case 'leave-one-out-unbalanced'
+        opts.k_fold_options.number_of_folds = 104;
+      % case 'leave-one-out-balanced-high'
+        % TODO
+    end
   end
 
   % -------------------------------------------------------------------------
@@ -95,10 +102,8 @@ function folds = testKFold(input_opts)
     case 'ensemble-cnn'
       % ensemble options
       opts.single_training_method_options.boosting_method = getValueFromFieldOrDefault(input_opts, 'boosting_method', 'rusboost');
-      opts.single_training_method_options.training_method = getValueFromFieldOrDefault(input_opts, 'single_training_method_options', 'cnn');
       opts.single_training_method_options.iteration_count = getValueFromFieldOrDefault(input_opts, 'iteration_count', 5);
-      opts.single_training_method_options.symmetric_weight_updates = getValueFromFieldOrDefault(input_opts, 'symmetric_weight_updates', false);
-      opts.single_training_method_options.symmetric_loss_updates = getValueFromFieldOrDefault(input_opts, 'symmetric_loss_updates', false);
+      opts.single_training_method_options.training_method = 'cnn';
       % cnn options
       opts.single_training_method_options.network_arch = getValueFromFieldOrDefault(input_opts, 'network_arch', 'lenet');
       opts.single_training_method_options.backprop_depth = getValueFromFieldOrDefault(input_opts, 'backprop_depth', 4);
@@ -107,10 +112,8 @@ function folds = testKFold(input_opts)
     case 'ensemble-svm'
       % ensemble options
       opts.single_training_method_options.boosting_method = getValueFromFieldOrDefault(input_opts, 'boosting_method', 'rusboost');
-      opts.single_training_method_options.training_method = getValueFromFieldOrDefault(input_opts, 'single_training_method_options', 'svm');
       opts.single_training_method_options.iteration_count = getValueFromFieldOrDefault(input_opts, 'iteration_count', 5);
-      opts.single_training_method_options.symmetric_weight_updates = getValueFromFieldOrDefault(input_opts, 'symmetric_weight_updates', false);
-      opts.single_training_method_options.symmetric_loss_updates = getValueFromFieldOrDefault(input_opts, 'symmetric_loss_updates', false);
+      opts.single_training_method_options.training_method = 'svm';
       % svm options
       % no additional options
   end
@@ -154,7 +157,7 @@ function folds = testKFold(input_opts)
     case 'single-cnn'
       trainingMethodFunctionHandle = @testCnn;
     case 'ensemble-cnn'
-      switch getValueFromFieldOrDefault(input_opts, 'ensemble_cnn_version', 'v1');
+      switch getValueFromFieldOrDefault(input_opts, 'ensemble_version', 'v1');
         case 'v1'
           trainingMethodFunctionHandle = @testEnsemble1;
         case 'v2'
@@ -163,7 +166,7 @@ function folds = testKFold(input_opts)
           trainingMethodFunctionHandle = @testEnsemble3;
       end
     case 'ensemble-svm'
-      switch getValueFromFieldOrDefault(input_opts, 'ensemble_cnn_version', 'v1');
+      switch getValueFromFieldOrDefault(input_opts, 'ensemble_version', 'v1');
         case 'v1'
           trainingMethodFunctionHandle = @testEnsemble1;
         case 'v2'

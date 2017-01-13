@@ -38,8 +38,8 @@ function [trained_model, performance_summary] = testEnsemble(input_opts)
   opts.ensemble_options.boosting_method = getValueFromFieldOrDefault(input_opts, 'boosting_method', 'rusboost');
   opts.ensemble_options.training_method = getValueFromFieldOrDefault(input_opts, 'training_method', 'cnn');
   opts.ensemble_options.iteration_count = getValueFromFieldOrDefault(input_opts, 'iteration_count', 5);
-  opts.ensemble_options.symmetric_weight_updates = getValueFromFieldOrDefault(input_opts, 'symmetric_weight_updates', false);
-  opts.ensemble_options.symmetric_loss_updates = getValueFromFieldOrDefault(input_opts, 'symmetric_loss_updates', false);
+  opts.ensemble_options.symmetric_weight_updates = getValueFromFieldOrDefault(input_opts, 'symmetric_weight_updates', true);
+  opts.ensemble_options.symmetric_loss_updates = getValueFromFieldOrDefault(input_opts, 'symmetric_loss_updates', true);
   opts.ensemble_options.random_undersampling_ratio = (50/50);
 
   % -------------------------------------------------------------------------

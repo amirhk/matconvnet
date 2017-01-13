@@ -40,64 +40,7 @@ function output_opts = cnnInit(input_opts)
   s = rng;
   rng(0);
   net.layers = {};
-  % Meta parameters
-  switch opts.network_arch
-    case 'lenet'
-      switch opts.dataset
-        case 'cifar'
-          output_opts.train.learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];
-        case 'coil-100'
-          output_opts.train.learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];
-        case 'mnist'
-          output_opts.train.learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];
-        case 'stl-10'
-          output_opts.train.learning_rate = [0.5*ones(1,20) 0.05*ones(1,15)  0.1:-0.01:0.06 0.05*ones(1,10)];
-        case 'svhn'
-          output_opts.train.learning_rate = [0.05*ones(1,30) 0.005*ones(1,10) 0.0005*ones(1,10)];
-        case 'cifar-two-class-deer-horse'
-          output_opts.train.learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];
-        case 'cifar-two-class-deer-truck'
-          output_opts.train.learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];
-        case 'mnist-two-class-9-4'
-          output_opts.train.learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];
-          % output_opts.train.learning_rate = [0.05*ones(1,10)];
-        case 'svhn-two-class-9-4'
-          output_opts.train.learning_rate = [0.05*ones(1,30) 0.005*ones(1,10) 0.0005*ones(1,10)];
-        case 'prostate-v2-20-patients'
-          output_opts.train.learning_rate = [0.05*ones(1,10) 0.005*ones(1,20) 0.001*ones(1,20)];
-      end
-    case 'alexnet'
-      switch opts.dataset
-        case 'cifar'
-          output_opts.train.learning_rate = [0.01*ones(1,5) 0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)]; % amir-LR
-        case 'coil-100'
-          % still testing ...
-          output_opts.train.learning_rate = [0.01*ones(1,5) 0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)]; % amir-LR
-        case 'mnist'
-          % still testing ...
-          output_opts.train.learning_rate = [0.01*ones(1,5) 0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)]; % amir-LR
-        case 'stl-10'
-          output_opts.train.learning_rate = [0.5*ones(1,20) 0.05*ones(1,15)  0.1:-0.01:0.06 0.05*ones(1,10)];
-        case 'svhn'
-          output_opts.train.learning_rate = [0.05*ones(1,30) 0.005*ones(1,10) 0.0005*ones(1,10)];
-        case 'cifar-two-class-deer-horse'
-          % still testing ...
-          output_opts.train.learning_rate = [0.01*ones(1,5) 0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)]; % amir-LR
-        case 'cifar-two-class-deer-truck'
-          % still testing ...
-          output_opts.train.learning_rate = [0.01*ones(1,5) 0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)]; % amir-LR
-        case 'mnist-two-class-9-4'
-          % still testing ...
-          output_opts.train.learning_rate = [0.01*ones(1,5) 0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)]; % amir-LR
-        case 'svhn-two-class-9-4'
-          % still testing ...
-          output_opts.train.learning_rate = [0.01*ones(1,5) 0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)]; % amir-LR
-        case 'prostate-v2-20-patients'
-          % still testing ...
-          output_opts.train.learning_rate = [0.01*ones(1,5) 0.005*ones(1,25) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,5)]; % amir-LR
-      end
-  end
-
+  output_opts.train.learning_rate = getLearningRate(opts.dataset, opts.network_arch);
   output_opts.train.num_epochs = numel(output_opts.train.learning_rate);
 
   fh = networkInitializationUtils;
