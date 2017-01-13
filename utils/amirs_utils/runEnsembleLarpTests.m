@@ -84,9 +84,9 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus, ensemble_version)
   % -------------------------------------------------------------------------
   %                                                                single svm
   % -------------------------------------------------------------------------
-  experiment_options.training_method = 'svm';
-  % Exp. 1
-  testKFold(experiment_options);
+  % experiment_options.training_method = 'svm';
+  % % Exp. 1
+  % testKFold(experiment_options);
 
   % -------------------------------------------------------------------------
   %                                                              ensemble svm
@@ -104,13 +104,13 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus, ensemble_version)
   % -------------------------------------------------------------------------
   %                                                                    forest
   % -------------------------------------------------------------------------
-  % experiment_options.training_method = 'forest';
+  experiment_options.training_method = 'forest';
   % % Exp. 1
   % experiment_options.boosting_method = 'AdaBoostM1';
   % testKFold(experiment_options);
-  % % Exp. 2
-  % experiment_options.boosting_method = 'RUSBoost';
-  % testKFold(experiment_options);
+  % Exp. 2
+  experiment_options.boosting_method = 'RUSBoost';
+  testKFold(experiment_options);
 
   % -------------------------------------------------------------------------
   %                                                                single cnn
