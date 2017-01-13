@@ -90,11 +90,11 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   % -------------------------------------------------------------------------
   %                                                              ensemble svm
   % -------------------------------------------------------------------------
-  experiment_options.training_method = 'ensemble-svm';
-  experiment_options.ensemble_cnn_version = 'v1';
-  experiment_options.iteration_count = 8;
-  % Exp. 1
-  testKFold(experiment_options);
+  % experiment_options.training_method = 'ensemble-svm';
+  % experiment_options.ensemble_cnn_version = 'v1';
+  % experiment_options.iteration_count = 8;
+  % % Exp. 1
+  % testKFold(experiment_options);
 
   % -------------------------------------------------------------------------
   %                                                               single tree
