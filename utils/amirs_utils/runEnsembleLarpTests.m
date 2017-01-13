@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function runEnsembleLarpTests(dataset, posneg_balance, gpus, ensemble_version)
+function runEnsembleLarpTests(dataset, posneg_balance, gpus)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -79,7 +79,7 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus, ensemble_version)
   experiment_options.network_arch = opts.general.network_arch;
   experiment_options.posneg_balance = opts.imdb.posneg_balance;
   experiment_options.gpus = opts.train.gpus;
-  experiment_options.ensemble_cnn_version = ensemble_version;
+
 
   % -------------------------------------------------------------------------
   %                                                                single svm
@@ -93,7 +93,13 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus, ensemble_version)
   % -------------------------------------------------------------------------
   % experiment_options.training_method = 'ensemble-svm';
   % experiment_options.iteration_count = 8;
+
   % % Exp. 1
+  % experiment_options.ensemble_cnn_version = 'v1';
+  % testKFold(experiment_options);
+
+  % % Exp. 2
+  % experiment_options.ensemble_cnn_version = 'v2';
   % testKFold(experiment_options);
 
   % -------------------------------------------------------------------------
@@ -130,53 +136,41 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus, ensemble_version)
   experiment_options.iteration_count = 8;
 
   % Exp. 1
+  experiment_options.ensemble_cnn_version = 'v1';
   experiment_options.backprop_depth = 4;
-  experiment_options.symmetric_weight_updates = true;
-  experiment_options.symmetric_loss_updates = true;
-  testKFold(experiment_options);
-  % Exp. 5
-  experiment_options.backprop_depth = 13;
-  experiment_options.symmetric_weight_updates = true;
-  experiment_options.symmetric_loss_updates = true;
   testKFold(experiment_options);
 
-  % % Exp. 1
-  % experiment_options.backprop_depth = 4;
-  % experiment_options.symmetric_weight_updates = true;
-  % experiment_options.symmetric_loss_updates = true;
-  % testKFold(experiment_options);
-  % % Exp. 2
-  % experiment_options.backprop_depth = 4;
-  % experiment_options.symmetric_weight_updates = true;
-  % experiment_options.symmetric_loss_updates = false;
-  % testKFold(experiment_options);
-  % % Exp. 3
-  % experiment_options.backprop_depth = 4;
-  % experiment_options.symmetric_weight_updates = false;
-  % experiment_options.symmetric_loss_updates = true;
-  % testKFold(experiment_options);
-  % % Exp. 4
-  % experiment_options.backprop_depth = 4;
-  % experiment_options.symmetric_weight_updates = false;
-  % experiment_options.symmetric_loss_updates = false;
-  % testKFold(experiment_options);
-  % % Exp. 5
-  % experiment_options.backprop_depth = 13;
-  % experiment_options.symmetric_weight_updates = true;
-  % experiment_options.symmetric_loss_updates = true;
-  % testKFold(experiment_options);
-  % % Exp. 6
-  % experiment_options.backprop_depth = 13;
-  % experiment_options.symmetric_weight_updates = true;
-  % experiment_options.symmetric_loss_updates = false;
-  % testKFold(experiment_options);
-  % % Exp. 7
-  % experiment_options.backprop_depth = 13;
-  % experiment_options.symmetric_weight_updates = false;
-  % experiment_options.symmetric_loss_updates = true;
-  % testKFold(experiment_options);
-  % % Exp. 8
-  % experiment_options.backprop_depth = 13;
-  % experiment_options.symmetric_weight_updates = false;
-  % experiment_options.symmetric_loss_updates = false;
-  % testKFold(experiment_options);
+  % Exp. 2
+  experiment_options.backprop_depth = 13;
+  testKFold(experiment_options);
+
+  % Exp. 3
+  experiment_options.ensemble_cnn_version = 'v2';
+  experiment_options.backprop_depth = 4;
+  testKFold(experiment_options);
+
+  % Exp. 4
+  experiment_options.backprop_depth = 13;
+  testKFold(experiment_options);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
