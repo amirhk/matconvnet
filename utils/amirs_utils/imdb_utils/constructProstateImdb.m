@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function imdb = constructProstateImdb(opts)
+function imdb = constructProstateImdb(input_opts)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -26,26 +26,26 @@ function imdb = constructProstateImdb(opts)
 % POSSIBILITY OF SUCH DAMAGE.
 
   afprintf(sprintf('[INFO] Constructing / loading Prostate imdb.\n'));
-  switch opts.dataset
-    case 'prostate-v2-20-patients'
+  switch input_opts.dataset_version
+    case 'v2-20-patients'
       all_patient_indices = 1:1:20;
-    case 'prostate-v3-104-patients'
+    case 'v3-104-patients'
       all_patient_indices = 1:1:104;
   end
 
-  switch opts.leave_out_type
+  switch input_opts.leave_out_type
     case 'special'
-      train_patient_indices = setdiff(all_patient_indices, opts.leave_out_indices);
-      test_patient_indices  = opts.leave_out_indices;
-      train_balance         = getValueFromFieldOrDefault(opts, 'train_balance', false);
-      train_augment_healthy = getValueFromFieldOrDefault(opts, 'train_augment_healthy', 'none');
-      train_augment_cancer  = getValueFromFieldOrDefault(opts, 'train_augment_cancer', 'none');
-      test_balance          = getValueFromFieldOrDefault(opts, 'test_balance', false);
-      test_augment_healthy  = getValueFromFieldOrDefault(opts, 'test_augment_healthy', 'none');
-      test_augment_cancer   = getValueFromFieldOrDefault(opts, 'test_augment_cancer', 'none');
+      train_patient_indices = setdiff(all_patient_indices, input_opts.leave_out_indices);
+      test_patient_indices  = input_opts.leave_out_indices;
+      train_balance         = getValueFromFieldOrDefault(input_opts, 'train_balance', false);
+      train_augment_healthy = getValueFromFieldOrDefault(input_opts, 'train_augment_healthy', 'none');
+      train_augment_cancer  = getValueFromFieldOrDefault(input_opts, 'train_augment_cancer', 'none');
+      test_balance          = getValueFromFieldOrDefault(input_opts, 'test_balance', false);
+      test_augment_healthy  = getValueFromFieldOrDefault(input_opts, 'test_augment_healthy', 'none');
+      test_augment_cancer   = getValueFromFieldOrDefault(input_opts, 'test_augment_cancer', 'none');
       % just use the helper with the indices above.
       imdb = constructProstateImdbHelper( ...
-        opts, ...
+        input_opts, ...
         train_patient_indices, ...
         train_balance, ...
         train_augment_healthy, ...
@@ -55,17 +55,17 @@ function imdb = constructProstateImdb(opts)
         test_augment_healthy, ...
         test_augment_cancer);
     case 'patient'
-      train_patient_indices = all_patient_indices(all_patient_indices ~= opts.leave_out_index);
+      train_patient_indices = all_patient_indices(all_patient_indices ~= input_opts.leave_out_index);
       train_balance = true;
       train_augment_healthy = 'none';
       train_augment_cancer = 'none';
-      test_patient_indices = opts.leave_out_index;
+      test_patient_indices = input_opts.leave_out_index;
       test_balance = true;
       test_augment_healthy = 'rotate-flip';
       test_augment_cancer = 'rotate-flip';
       % just use the helper with the indices above.
       imdb = constructProstateImdbHelper( ...
-        opts, ...
+        input_opts, ...
         train_patient_indices, ...
         train_balance, ...
         train_augment_healthy, ...
@@ -77,12 +77,12 @@ function imdb = constructProstateImdb(opts)
     case 'sample'
       % 1. check for the existence of a consistent / saved (!) balanaced,
       %    non-augmented imdb (both train and test)
-      if ~exist(opts.imdb_balanced_dir)
-        mkdir(opts.imdb_balanced_dir);
+      if ~exist(input_opts.imdb_balanced_dir)
+        mkdir(input_opts.imdb_balanced_dir);
       end
-      if exist(opts.imdb_balanced_path, 'file')
+      if exist(input_opts.imdb_balanced_path, 'file')
         afprintf(sprintf('[INFO] Loading Prostate imdb...\n'));
-        imdb = load(opts.imdb_balanced_path);
+        imdb = load(input_opts.imdb_balanced_path);
       else
         afprintf(sprintf('[INFO] No saved Prostate imdb found, creating new one...\n'));
         % 1.5. if not saved, create it
@@ -95,7 +95,7 @@ function imdb = constructProstateImdb(opts)
         test_augment_healthy = 'none';
         test_augment_cancer = 'none';
         imdb = constructProstateImdbHelper( ...
-          opts, ...
+          input_opts, ...
           train_patient_indices, ...
           train_balance, ...
           train_augment_healthy, ...
@@ -104,14 +104,14 @@ function imdb = constructProstateImdb(opts)
           test_balance, ...
           test_augment_healthy, ...
           test_augment_cancer);
-        save(opts.imdb_balanced_path, '-struct', 'imdb');
+        save(input_opts.imdb_balanced_path, '-struct', 'imdb');
       end;
       % 2. then from the imdb, choose indices from there for train and test set.
-      imdb.images.set(opts.leave_out_index) = 3;
+      imdb.images.set(input_opts.leave_out_index) = 3;
       % A) find all tumors / non-tumors (other class of index i)
         % B) choose one at random
         % C) assign it as part of the test set as well
-      switch imdb.images.labels(opts.leave_out_index)
+      switch imdb.images.labels(input_opts.leave_out_index)
         case 1
           other_class_index = 2;
         case 2
@@ -129,7 +129,7 @@ function imdb = constructProstateImdb(opts)
 
 % -------------------------------------------------------------------------
 function imdb = constructProstateImdbHelper( ...
-  opts, ...
+  input_opts, ...
   train_patient_indices, ...
   train_balance, ...
   train_augment_healthy, ...
@@ -152,24 +152,24 @@ function imdb = constructProstateImdbHelper( ...
     % 'I_b3_crop', ...
   };
 
-  switch opts.dataset
-    case 'prostate-v2-20-patients'
+  switch input_opts.dataset_version
+    case 'v2-20-patients'
       loadSamples = @loadSamplesV2;
-    case 'prostate-v3-104-patients'
+    case 'v3-104-patients'
       % TODO: haven't written the code to support this yet...
-      opts.label_class = label_class;
+      input_opts.label_class = label_class;
       loadSamples = @loadSamplesV3;
   end
 
   % TRAIN
   afprintf(sprintf('== == == == == == == == == == == == ==  TRAIN  == == == == == == == == == == == == == == == == == == == == ==\n\n'));
-  [data_train, labels_train] = loadSamples(opts, train_patient_indices, modalitites_in_use);
+  [data_train, labels_train] = loadSamples(input_opts, train_patient_indices, modalitites_in_use);
   [data_train, labels_train] = balanceData(data_train, labels_train, train_balance);
   [data_train, labels_train] = augmentData(data_train, labels_train, train_augment_healthy, train_augment_cancer);
 
   % TEST
   afprintf(sprintf('== == == == == == == == == == == == ==  TEST  == == == == == == == == == == == == == == == == == == == == ==\n\n'));
-  [data_test, labels_test] = loadSamples(opts, test_patient_indices, modalitites_in_use);
+  [data_test, labels_test] = loadSamples(input_opts, test_patient_indices, modalitites_in_use);
   [data_test, labels_test] = balanceData(data_test, labels_test, test_balance);
   [data_test, labels_test] = augmentData(data_test, labels_test, test_augment_healthy, test_augment_cancer);
 
@@ -197,7 +197,7 @@ function imdb = constructProstateImdbHelper( ...
 
   afprintf(sprintf('== == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == == ==\n\n'));
 
-  if opts.contrast_normalization
+  if input_opts.contrast_normalization
     afprintf(sprintf('[INFO] contrast-normalizing data... '));
     z = reshape(data,[],total_number_of_samples);
     z = bsxfun(@minus, z, mean(z,1));
@@ -218,7 +218,7 @@ function imdb = constructProstateImdbHelper( ...
   fh_imdb_utils.getImdbInfo(imdb, true);
 
 % --------------------------------------------------------------------
-function [data, labels] = loadSamplesV2(opts, patient_indices_in_set, modalitites_in_use)
+function [data, labels] = loadSamplesV2(input_opts, patient_indices_in_set, modalitites_in_use)
 % --------------------------------------------------------------------
   data = [];
   labels = [];
@@ -234,10 +234,10 @@ function [data, labels] = loadSamplesV2(opts, patient_indices_in_set, modalitite
   modality_count = numel(modalitites_in_use);
 
   total_suspicious_tissue_count_in_set = 0;
-  all_patients_list = dir(fullfile(opts.dataDir, '1*'));
+  all_patients_list = dir(fullfile(input_opts.dataDir, '1*'));
   for i = patient_indices_in_set
     single_patient_directory = char(all_patients_list(i).name);
-    suspicious_tissues_for_patient = dir(fullfile(opts.dataDir, char(single_patient_directory), '*_Candidate*'));
+    suspicious_tissues_for_patient = dir(fullfile(input_opts.dataDir, char(single_patient_directory), '*_Candidate*'));
     for j = 1:length(suspicious_tissues_for_patient)
       total_suspicious_tissue_count_in_set = total_suspicious_tissue_count_in_set + 1;
     end
@@ -266,11 +266,11 @@ function [data, labels] = loadSamplesV2(opts, patient_indices_in_set, modalitite
 
     % afprintf(sprintf('[INFO] Loading up suspicious tissues from patient #%03d (%03d of %03d)... ', i, patient_count, total_patient_count_in_set));
     single_patient_directory = char(all_patients_list(i).name);
-    suspicious_tissues_for_patient = dir(fullfile(opts.dataDir, single_patient_directory, '*_Candidate*'));
+    suspicious_tissues_for_patient = dir(fullfile(input_opts.dataDir, single_patient_directory, '*_Candidate*'));
     for j = 1:length(suspicious_tissues_for_patient)
       sample_count = sample_count + 1;
       suspicious_tissue_file = char(suspicious_tissues_for_patient(j).name);
-      suspicious_tissue = load(fullfile(opts.dataDir, single_patient_directory, suspicious_tissue_file));
+      suspicious_tissue = load(fullfile(input_opts.dataDir, single_patient_directory, suspicious_tissue_file));
       % tmp = zeros(32, 32, modality_count);
       tmp = [];
       for k = 1:modality_count
@@ -285,7 +285,7 @@ function [data, labels] = loadSamplesV2(opts, patient_indices_in_set, modalitite
     end
     fprintf('done.\n');
   end
-  % switch opts.label_class
+  % switch input_opts.label_class
   %   case 'Gleason'
   %     labels = labels_gleason >= 6;
   %   case 'PIRAD'
@@ -296,7 +296,7 @@ function [data, labels] = loadSamplesV2(opts, patient_indices_in_set, modalitite
   afprintf(sprintf('done.\n'));
 
 % --------------------------------------------------------------------
-function [data, labels] = loadSamplesV3(opts, patient_indices_in_set, modalitites_in_use)
+function [data, labels] = loadSamplesV3(input_opts, patient_indices_in_set, modalitites_in_use)
 % --------------------------------------------------------------------
   data = [];
   labels = [];
@@ -312,10 +312,10 @@ function [data, labels] = loadSamplesV3(opts, patient_indices_in_set, modalitite
   modality_count = numel(modalitites_in_use);
 
   total_suspicious_tissue_count_in_set = 0;
-  all_patients_list = dir(fullfile(opts.dataDir, 'P0*'));
+  all_patients_list = dir(fullfile(input_opts.dataDir, 'P0*'));
   for i = patient_indices_in_set
     single_patient_directory = char(all_patients_list(i).name);
-    suspicious_tissues_for_patient = dir(fullfile(opts.dataDir, char(single_patient_directory), '*_Candidate*'));
+    suspicious_tissues_for_patient = dir(fullfile(input_opts.dataDir, char(single_patient_directory), '*_Candidate*'));
     for j = 1:length(suspicious_tissues_for_patient)
       total_suspicious_tissue_count_in_set = total_suspicious_tissue_count_in_set + 1;
     end
@@ -344,11 +344,11 @@ function [data, labels] = loadSamplesV3(opts, patient_indices_in_set, modalitite
 
     % afprintf(sprintf('[INFO] Loading up suspicious tissues from patient #%03d (%03d of %03d)... ', i, patient_count, total_patient_count_in_set));
     single_patient_directory = char(all_patients_list(i).name);
-    suspicious_tissues_for_patient = dir(fullfile(opts.dataDir, single_patient_directory, '*_Candidate*'));
+    suspicious_tissues_for_patient = dir(fullfile(input_opts.dataDir, single_patient_directory, '*_Candidate*'));
     for j = 1:length(suspicious_tissues_for_patient)
       sample_count = sample_count + 1;
       suspicious_tissue_file = char(suspicious_tissues_for_patient(j).name);
-      suspicious_tissue = load(fullfile(opts.dataDir, single_patient_directory, suspicious_tissue_file));
+      suspicious_tissue = load(fullfile(input_opts.dataDir, single_patient_directory, suspicious_tissue_file));
       tmp = zeros(32, 32, modality_count);
       for k = 1:modality_count
         tmp(:,:,k) = suspicious_tissue.(modalitites_in_use{k});
@@ -359,7 +359,7 @@ function [data, labels] = loadSamplesV3(opts, patient_indices_in_set, modalitite
     end
     % afprintf(sprintf('done.\n'));
   end
-  switch opts.label_class
+  switch input_opts.label_class
     case 'Gleason'
       labels = labels_gleason >= 6;
     case 'PIRAD'
@@ -515,11 +515,11 @@ function [new_data] = augmentDataHelper(data_class, data, augment_type)
 % --------------------------------------------------------------------
 function imdb = testProstateImdbConstructor()
 % --------------------------------------------------------------------
-  opts.dataDir = '/Users/a6karimi/dev/matconvnet/data_1/_prostate';
-  opts.imdb_balanced_dir = '/Users/a6karimi/dev/matconvnet/data_1/balanced-prostate-prostatenet';
-  opts.imdb_balanced_path = '/Users/a6karimi/dev/matconvnet/data_1/balanced-prostate-prostatenet/imdb.mat';
-  opts.leave_out_type = 'none';
-  opts.leave_out_index = 1;
-  opts.contrast_normalization = true;
-  % opts.whiten_data = true;
-  imdb = constructProstateImdb(opts);
+  input_opts.dataDir = '/Users/a6karimi/dev/matconvnet/data_1/_prostate';
+  input_opts.imdb_balanced_dir = '/Users/a6karimi/dev/matconvnet/data_1/balanced-prostate-prostatenet';
+  input_opts.imdb_balanced_path = '/Users/a6karimi/dev/matconvnet/data_1/balanced-prostate-prostatenet/imdb.mat';
+  input_opts.leave_out_type = 'none';
+  input_opts.leave_out_index = 1;
+  input_opts.contrast_normalization = true;
+  % input_opts.whiten_data = true;
+  imdb = constructProstateImdb(input_opts);

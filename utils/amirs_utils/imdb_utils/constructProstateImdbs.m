@@ -27,8 +27,16 @@ function constructProstateImdbs(input_opts)
 % POSSIBILITY OF SUCH DAMAGE.
 
   posneg_balance                   = getValueFromFieldOrDefault(input_opts, 'posneg_balance', 'unbalanced');
-  imdb_opts.dataset                = getValueFromFieldOrDefault(input_opts, 'dataset', 'prostate-v2-20-patients');
-  imdb_opts.dataDir                = getValueFromFieldOrDefault(input_opts, 'dataDir', '/Users/a6karimi/dev/data/source/prostate/v2 - 20 patients');
+  imdb_opts.dataset_version        = getValueFromFieldOrDefault(input_opts, 'dataset_version', 'v2-20-patients');
+  switch imdb_opts.dataset_version
+    case 'v2-20-patients'
+      number_of_patients = 20;
+      imdb_opts.dataDir            = getValueFromFieldOrDefault(input_opts, 'dataDir', '/Users/a6karimi/dev/data/source/prostate/v2-20-patients');
+    case 'v3-104-patients'
+      number_of_patients = 104;
+      imdb_opts.dataDir            = getValueFromFieldOrDefault(input_opts, 'dataDir', '/Users/a6karimi/dev/data/source/prostate/v3-104-patients');
+  end
+
   imdb_opts.leave_out_type         = getValueFromFieldOrDefault(input_opts, 'leave_out_type', 'special');
   imdb_opts.train_balance          = getValueFromFieldOrDefault(input_opts, 'train_balance', false);
   imdb_opts.train_augment_healthy  = getValueFromFieldOrDefault(input_opts, 'train_augment_healthy', 'none');
@@ -45,18 +53,11 @@ function constructProstateImdbs(input_opts)
   imdb_opts.test_augment_cancer    = getValueFromFieldOrDefault(input_opts, 'test_augment_cancer', 'none');
   imdb_opts.contrast_normalization = getValueFromFieldOrDefault(input_opts, 'contrast_normalization', true);
 
-  switch imdb_opts.dataset
-    case 'prostate-v2-20-patients'
-      number_of_patients = 20;
-    case 'prostate-v3-104-patients'
-      number_of_patients = 104;
-  end
-
   leave_one_out = true;
   if leave_one_out
-    number_of_folds = 20;
+    number_of_folds = number_of_patients;
   else
-    number_of_folds = 5;
+    number_of_folds = 10;
   end
   patients_per_fold = ceil(number_of_patients / number_of_folds);
   fh_imdb_utils = imdbTwoClassUtils;
@@ -73,8 +74,8 @@ function constructProstateImdbs(input_opts)
     imdb = constructProstateImdb(imdb_opts);
     if leave_one_out
       single_patient_index = start_index;
-      fh_imdb_utils.saveImdb(imdb, imdb_opts.dataset, sprintf('patient-%02d-%s', single_patient_index, posneg_balance), 2, 1);
+      fh_imdb_utils.saveImdb(imdb, sprintf('prostate-%s', imdb_opts.dataset_version), sprintf('patient-%02d-%s', single_patient_index, posneg_balance), 2, 1);
     else
-      fh_imdb_utils.saveImdb(imdb, imdb_opts.dataset, posneg_balance, 2, 1);
+      fh_imdb_utils.saveImdb(imdb, sprintf('prostate-%s', imdb_opts.dataset_version), posneg_balance, 2, 1);
     end
   end
