@@ -84,9 +84,9 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus, ensemble_version)
   % -------------------------------------------------------------------------
   %                                                                single svm
   % -------------------------------------------------------------------------
-  % experiment_options.training_method = 'svm';
-  % % Exp. 1
-  % testKFold(experiment_options);
+  experiment_options.training_method = 'svm';
+  % Exp. 1
+  testKFold(experiment_options);
 
   % -------------------------------------------------------------------------
   %                                                              ensemble svm
@@ -115,13 +115,13 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus, ensemble_version)
   % -------------------------------------------------------------------------
   %                                                                single cnn
   % -------------------------------------------------------------------------
-  experiment_options.training_method = 'single-cnn';
-  % Exp. 1
-  experiment_options.backprop_depth = 4;
-  testKFold(experiment_options);
-  % Exp. 2
-  experiment_options.backprop_depth = 13;
-  testKFold(experiment_options);
+  % experiment_options.training_method = 'single-cnn';
+  % % Exp. 1
+  % experiment_options.backprop_depth = 4;
+  % testKFold(experiment_options);
+  % % Exp. 2
+  % experiment_options.backprop_depth = 13;
+  % testKFold(experiment_options);
 
   % -------------------------------------------------------------------------
   %                                                              ensemble cnn
