@@ -413,9 +413,8 @@ function imdb = loadSavedImdb(input_opts)
       otherwise
         fprintf('TODO: implement!');
       end
-    end
-    imdb = tmp.imdb;
   end
+  imdb = tmp.imdb;
   afprintf(sprintf('[INFO] done!\n'));
 
   % print info
