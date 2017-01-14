@@ -191,7 +191,7 @@ function folds = testKFold(input_opts)
     % -------------------------------------------------------------------------
     %                        save / overwrite incremental performance summaries
     % -------------------------------------------------------------------------
-    afprintf(sprintf('[INFO] Saving incremental results...\n'));
+    afprintf(sprintf('[INFO] Saving incremental k-fold results...\n'));
     folds.(sprintf('fold_%d', i)).performance_summary = performance_summary;
     saveIncrementalKFoldResults(folds, opts.paths.results_file_path);
     save(opts.paths.folds_file_path, 'folds');
