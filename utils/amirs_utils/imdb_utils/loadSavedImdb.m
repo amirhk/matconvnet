@@ -620,7 +620,7 @@ function imdb = loadSavedImdb(input_opts)
               case 104
                 tmp = load(fullfile(path_to_imdbs, dataset, posneg_balance, 'saved-two-class-prostate-v3-104-patients-pos2-neg1-patient-104-unbalanced-train-133-12467.mat'));
             end
-          case 'leave-one-out-unbalanced'
+          case 'leave-one-out-balanced-high'
             switch fold_number
               case 01
                 tmp = load(fullfile(path_to_imdbs, dataset, posneg_balance, 'saved-two-class-prostate-v3-104-patients-pos2-neg1-patient-01-balanced-high-train-1064-1064.mat'));
