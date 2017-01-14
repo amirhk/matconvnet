@@ -194,6 +194,7 @@ function imdb = loadSavedImdb(input_opts)
                 tmp = load(fullfile(path_to_imdbs, dataset, posneg_balance, 'saved-two-class-prostate-v2-20-patients-pos2-neg1-patient-19-balanced-high-train-632-671.mat'));
               case 20
                 tmp = load(fullfile(path_to_imdbs, dataset, posneg_balance, 'saved-two-class-prostate-v2-20-patients-pos2-neg1-patient-20-balanced-high-train-616-677.mat'));
+            end
         end
       case 'prostate-v3-104-patients'
         switch posneg_balance
