@@ -30,7 +30,7 @@ function [acc, sens, spec] = getAccSensSpec(labels, predictions, debug_flag)
   labels = reshape(labels, 1, prod(size(labels)));
   predictions = reshape(predictions, 1, prod(size(predictions)));
   assert(length(labels) == length(predictions));
-  assert(numel(unique(labels)) == 2); % only to be used for two-class imdbs
+  assert(numel(unique(labels)) <= 2); % only to be used for two-class imdbs
 
   positive_class_num = 2;
   negative_class_num = 1;
