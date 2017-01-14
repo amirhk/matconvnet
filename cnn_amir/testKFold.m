@@ -47,6 +47,8 @@ function folds = testKFold(input_opts)
         opts.k_fold_options.number_of_folds == 5;
       case 'k=5-fold-balanced-high'
         opts.k_fold_options.number_of_folds == 5;
+      case 'leave-one-out-balanced-low'
+        opts.k_fold_options.number_of_folds = 20;
       case 'leave-one-out-unbalanced'
         opts.k_fold_options.number_of_folds = 20;
       case 'leave-one-out-balanced-high'
