@@ -56,10 +56,12 @@ function folds = testKFold(input_opts)
     end
   elseif strcmp(opts.general.dataset, 'prostate-v3-104-patients')
     switch opts.imdb.posneg_balance
+      case 'leave-one-out-balanced-low'
+        opts.k_fold_options.number_of_folds = 104;
       case 'leave-one-out-unbalanced'
         opts.k_fold_options.number_of_folds = 104;
-      % case 'leave-one-out-balanced-high'
-        % TODO
+      case 'leave-one-out-balanced-high'
+        opts.k_fold_options.number_of_folds = 104;
     end
   end
 
