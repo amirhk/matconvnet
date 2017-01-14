@@ -38,13 +38,22 @@ function constructProstateImdbs(input_opts)
   end
 
   imdb_opts.leave_out_type         = getValueFromFieldOrDefault(input_opts, 'leave_out_type', 'special');
-  imdb_opts.train_balance          = getValueFromFieldOrDefault(input_opts, 'train_balance', false);
-  imdb_opts.train_augment_healthy  = getValueFromFieldOrDefault(input_opts, 'train_augment_healthy', 'none');
+
   switch posneg_balance
-    case 'unbalanced'
+    case 'balanced-low'
+      % no augment, just balance
+      imdb_opts.train_augment_healthy  = getValueFromFieldOrDefault(input_opts, 'train_augment_healthy', 'none');
       imdb_opts.train_augment_cancer   = getValueFromFieldOrDefault(input_opts, 'train_augment_cancer', 'none');
+      imdb_opts.train_balance          = getValueFromFieldOrDefault(input_opts, 'train_balance', true);
+    case 'unbalanced'
+      imdb_opts.train_augment_healthy  = getValueFromFieldOrDefault(input_opts, 'train_augment_healthy', 'none');
+      imdb_opts.train_augment_cancer   = getValueFromFieldOrDefault(input_opts, 'train_augment_cancer', 'none');
+      imdb_opts.train_balance          = getValueFromFieldOrDefault(input_opts, 'train_balance', false);
     case 'balanced-high'
+      % first augment then balance
+      imdb_opts.train_augment_healthy  = getValueFromFieldOrDefault(input_opts, 'train_augment_healthy', 'none');
       imdb_opts.train_augment_cancer   = getValueFromFieldOrDefault(input_opts, 'train_augment_cancer', 'rotate');
+      imdb_opts.train_balance          = getValueFromFieldOrDefault(input_opts, 'train_balance', true);
     otherwise
       fprintf('TODO: implement!');
   end

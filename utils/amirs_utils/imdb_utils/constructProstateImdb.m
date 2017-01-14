@@ -164,17 +164,15 @@ function imdb = constructProstateImdbHelper( ...
   % TRAIN
   afprintf(sprintf('== == == == == == == == == == == == ==  TRAIN  == == == == == == == == == == == == == == == == == == == == ==\n\n'));
   [data_train, labels_train] = loadSamples(input_opts, train_patient_indices, modalitites_in_use);
-  [data_train, labels_train] = balanceData(data_train, labels_train, train_balance);
   [data_train, labels_train] = augmentData(data_train, labels_train, train_augment_healthy, train_augment_cancer);
+  [data_train, labels_train] = balanceData(data_train, labels_train, train_balance);
 
-
-  [data_train, labels_train] = balanceData(data_train, labels_train, true);
 
   % TEST
   afprintf(sprintf('== == == == == == == == == == == == ==  TEST  == == == == == == == == == == == == == == == == == == == == ==\n\n'));
   [data_test, labels_test] = loadSamples(input_opts, test_patient_indices, modalitites_in_use);
-  [data_test, labels_test] = balanceData(data_test, labels_test, test_balance);
   [data_test, labels_test] = augmentData(data_test, labels_test, test_augment_healthy, test_augment_cancer);
+  [data_test, labels_test] = balanceData(data_test, labels_test, test_balance);
 
   set_train = [1 * ones(1, length(labels_train))];
   set_test = [3 * ones(1, length(labels_test))];
