@@ -167,6 +167,9 @@ function imdb = constructProstateImdbHelper( ...
   [data_train, labels_train] = balanceData(data_train, labels_train, train_balance);
   [data_train, labels_train] = augmentData(data_train, labels_train, train_augment_healthy, train_augment_cancer);
 
+
+  [data_train, labels_train] = balanceData(data_train, labels_train, true);
+
   % TEST
   afprintf(sprintf('== == == == == == == == == == == == ==  TEST  == == == == == == == == == == == == == == == == == == == == ==\n\n'));
   [data_test, labels_test] = loadSamples(input_opts, test_patient_indices, modalitites_in_use);
