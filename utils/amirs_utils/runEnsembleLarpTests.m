@@ -95,11 +95,11 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   % experiment_options.iteration_count = 8;
 
   % % Exp. 1
-  % experiment_options.ensemble_cnn_version = 'v1';
+  % experiment_options.ensemble_version = 'v1';
   % testKFold(experiment_options);
 
   % % Exp. 2
-  % experiment_options.ensemble_cnn_version = 'v2';
+  % experiment_options.ensemble_version = 'v2';
   % testKFold(experiment_options);
 
   % -------------------------------------------------------------------------
@@ -121,13 +121,13 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   % -------------------------------------------------------------------------
   %                                                                single cnn
   % -------------------------------------------------------------------------
-  experiment_options.training_method = 'single-cnn';
-  % Exp. 1
-  experiment_options.backprop_depth = 4;
-  testKFold(experiment_options);
-  % Exp. 2
-  experiment_options.backprop_depth = 13;
-  testKFold(experiment_options);
+  % experiment_options.training_method = 'single-cnn';
+  % % Exp. 1
+  % experiment_options.backprop_depth = 4;
+  % testKFold(experiment_options);
+  % % Exp. 2
+  % experiment_options.backprop_depth = 13;
+  % testKFold(experiment_options);
 
   % -------------------------------------------------------------------------
   %                                                              ensemble cnn
@@ -135,17 +135,17 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   experiment_options.training_method = 'ensemble-cnn';
   experiment_options.iteration_count = 8;
 
-  % Exp. 1
-  experiment_options.ensemble_cnn_version = 'v1';
-  experiment_options.backprop_depth = 4;
-  testKFold(experiment_options);
+  % % Exp. 1
+  % experiment_options.ensemble_version = 'v1';
+  % experiment_options.backprop_depth = 4;
+  % testKFold(experiment_options);
 
-  % Exp. 2
-  experiment_options.backprop_depth = 13;
-  testKFold(experiment_options);
+  % % Exp. 2
+  % experiment_options.backprop_depth = 13;
+  % testKFold(experiment_options);
 
   % Exp. 3
-  experiment_options.ensemble_cnn_version = 'v2';
+  experiment_options.ensemble_version = 'v2';
   experiment_options.backprop_depth = 4;
   testKFold(experiment_options);
 
