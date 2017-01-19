@@ -122,6 +122,7 @@ function folds = testKFold(input_opts)
       % ensemble options
       opts.single_training_method_options.boosting_method = getValueFromFieldOrDefault(input_opts, 'boosting_method', 'rusboost');
       opts.single_training_method_options.iteration_count = getValueFromFieldOrDefault(input_opts, 'iteration_count', 5);
+      opts.single_training_method_options.loss_calculation_method = getValueFromFieldOrDefault(input_opts, 'loss_calculation_method', 'default_in_literature');
       opts.single_training_method_options.training_method = 'svm';
       % svm options
       % no additional options

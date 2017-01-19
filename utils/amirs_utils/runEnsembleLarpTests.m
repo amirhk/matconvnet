@@ -92,7 +92,7 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   %                                                              ensemble svm
   % -------------------------------------------------------------------------
   % experiment_options.training_method = 'ensemble-svm';
-  % experiment_options.boosting_method = 'rusboost';
+  % experiment_options.boosting_method = 'adaboost.m1';
   % experiment_options.iteration_count = 8;
 
   % % Exp. 1
