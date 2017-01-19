@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function [trained_model, performance_summary] = testEnsemble1(input_opts)
+function [trained_model, performance_summary] = testEnsemble(input_opts)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -35,10 +35,10 @@ function [trained_model, performance_summary] = testEnsemble1(input_opts)
   %                                                     opts.ensemble_options
   % -------------------------------------------------------------------------
   % TODO... implement boosting methods in addition to RUSBoost
-  opts.ensemble_options.boosting_method = getValueFromFieldOrDefault(input_opts, 'boosting_method', 'rusboost');
+  opts.ensemble_options.boosting_method = getValueFromFieldOrDefault(input_opts, 'boosting_method', 'rusboost'); % {'adaboost.m1', 'rusboost', ...}
   opts.ensemble_options.training_method = getValueFromFieldOrDefault(input_opts, 'training_method', 'cnn');
+  opts.ensemble_options.loss_calculation_method = getValueFromFieldOrDefault(input_opts, 'loss_calculation_method', 'default_in_literature');
   opts.ensemble_options.iteration_count = getValueFromFieldOrDefault(input_opts, 'iteration_count', 5);
-  opts.ensemble_options.random_undersampling_ratio = (50/50);
 
   % -------------------------------------------------------------------------
   %                                                                 opts.imdb
@@ -143,9 +143,8 @@ function [trained_model, performance_summary] = testEnsemble1(input_opts)
   % -------------------------------------------------------------------------
   %                       3. create training (barebones) and validation imdbs
   % -------------------------------------------------------------------------
-  training_initial_imdb = imdb;
+  initial_imdb_with_all_train_and_all_test = imdb;
   training_resampled_imdb = fh_imdb_utils.constructPartialImdb([], [], 3); % barebones; filled in below
-  validation_imdb = fh_imdb_utils.constructPartialImdb(data_train, labels_train, 3);
   test_imdb = fh_imdb_utils.constructPartialImdb(data_test, labels_test, 3);
 
   % -------------------------------------------------------------------------
@@ -163,16 +162,21 @@ function [trained_model, performance_summary] = testEnsemble1(input_opts)
     %                                       4.5. Resample data based on weights
     % -------------------------------------------------------------------------
     afprintf(sprintf(...
-      '[INFO] Resampling positive and negative data (ratio = %3.6f)... ', ...
-      opts.ensemble_options.random_undersampling_ratio));
+      '[INFO] Resampling positive and negative data (strategy: %s)... ', ...
+      opts.ensemble_options.boosting_method));
 
-    try
-      [resampled_data, resampled_labels] = fh_imdb_utils.resampleData1( ...
+    [resampled_data, resampled_labels] = fh_imdb_utils.resampleTrainData( ...
+        opts.ensemble_options.boosting_method, ...
         data_train, ...
         labels_train, ...
-        sample_weights(iteration, :), ...
-        opts.ensemble_options.random_undersampling_ratio);
-      flag = true;
+        sample_weights(iteration, :));
+
+    try
+      [resampled_data, resampled_labels] = fh_imdb_utils.resampleTrainData( ...
+        opts.ensemble_options.boosting_method, ...
+        data_train, ...
+        labels_train, ...
+        sample_weights(iteration, :));
     catch
       fprintf('\n');
       afprintf(sprintf('[INFO] Weights no longer large enough to take sample from; terminating!\n'));
@@ -210,7 +214,7 @@ function [trained_model, performance_summary] = testEnsemble1(input_opts)
       data_train_negative_count));
     % NOTE: this asks for predictions on a cnn, whereas below we ask for predicitons on ensemble-{cnn, svm}
     [top_validation_predictions, all_validation_predictions] = ...
-      getPredictionsFromModelOnImdb(model, opts.ensemble_options.training_method, validation_imdb, 3);
+      getPredictionsFromModelOnImdb(model, opts.ensemble_options.training_method, initial_imdb_with_all_train_and_all_test, 1);
 
     [ ...
       validation_accuracy, ...
@@ -220,12 +224,17 @@ function [trained_model, performance_summary] = testEnsemble1(input_opts)
 
     afprintf(sprintf('[INFO] Computing pseudo loss... '));
     loss = 0;
-    for i = 1:data_train_count
-      if labels_train(i) == top_validation_predictions(i)
-        continue;
-      else
-        loss = loss + sample_weights(iteration, i);
-      end
+    switch opts.ensemble_options.loss_calculation_method
+      case 'default_in_literature'
+        for i = 1:data_train_count
+          if labels_train(i) == top_validation_predictions(i)
+            continue;
+          else
+            loss = loss + sample_weights(iteration, i);
+          end
+        end
+      case 'class_normalized'
+        loss = 0.5 * (1 - validation_sensitivity) + 0.5 * (1 - validation_specificity);
     end
     fprintf('Loss: %6.5f\n', loss);
 
@@ -348,7 +357,7 @@ function [trained_model, performance_summary] = testEnsemble1(input_opts)
   training_method = sprintf('ensemble-%s', opts.ensemble_options.training_method);
   if opts.general.return_performance_summary
     afprintf(sprintf('[INFO] Getting model performance on `train` set...\n'));
-    [top_train_predictions, ~] = getPredictionsFromModelOnImdb(ensemble, training_method, training_initial_imdb, 1);
+    [top_train_predictions, ~] = getPredictionsFromModelOnImdb(ensemble, training_method, initial_imdb_with_all_train_and_all_test, 1);
     afprintf(sprintf('[INFO] Model performance on `train` set\n'));
     labels_train = imdb.images.labels(imdb.images.set == 1);
     [ ...
@@ -357,7 +366,7 @@ function [trained_model, performance_summary] = testEnsemble1(input_opts)
       train_specificity, ...
     ] = getAccSensSpec(labels_train, top_train_predictions, true);
     afprintf(sprintf('[INFO] Getting model performance on `test` set...\n'));
-    [top_test_predictions, ~] = getPredictionsFromModelOnImdb(ensemble, training_method, training_initial_imdb, 3);
+    [top_test_predictions, ~] = getPredictionsFromModelOnImdb(ensemble, training_method, initial_imdb_with_all_train_and_all_test, 3);
     afprintf(sprintf('[INFO] Model performance on `test` set\n'));
     labels_test = imdb.images.labels(imdb.images.set == 3);
     [ ...

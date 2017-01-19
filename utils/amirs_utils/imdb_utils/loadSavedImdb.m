@@ -195,6 +195,92 @@ function imdb = loadSavedImdb(input_opts)
               case 20
                 tmp = load(fullfile(path_to_imdbs, dataset, posneg_balance, 'saved-two-class-prostate-v2-20-patients-pos2-neg1-patient-20-balanced-high-train-616-677.mat'));
             end
+          case 'leave-one-out-balanced-640-640'
+            switch fold_number
+              case 1
+                tmp = load(fullfile(path_to_imdbs, dataset, posneg_balance, 'saved-two-class-prostate-v2-20-patients-pos2-neg1-patient-01-balanced-640-640-train-616-616.mat'));
+              case 2
+                tmp = load(fullfile(path_to_imdbs, dataset, posneg_balance, 'saved-two-class-prostate-v2-20-patients-pos2-neg1-patient-02-balanced-640-640-train-624-624.mat'));
+              case 3
+                tmp = load(fullfile(path_to_imdbs, dataset, posneg_balance, 'saved-two-class-prostate-v2-20-patients-pos2-neg1-patient-03-balanced-640-640-train-616-616.mat'));
+              case 4
+                tmp = load(fullfile(path_to_imdbs, dataset, posneg_balance, 'saved-two-class-prostate-v2-20-patients-pos2-neg1-patient-04-balanced-640-640-train-608-608.mat'));
+              case 5
+                tmp = load(fullfile(path_to_imdbs, dataset, posneg_balance, 'saved-two-class-prostate-v2-20-patients-pos2-neg1-patient-05-balanced-640-640-train-624-624.mat'));
+              case 6
+                tmp = load(fullfile(path_to_imdbs, dataset, posneg_balance, 'saved-two-class-prostate-v2-20-patients-pos2-neg1-patient-06-balanced-640-640-train-616-616.mat'));
+              case 7
+                tmp = load(fullfile(path_to_imdbs, dataset, posneg_balance, 'saved-two-class-prostate-v2-20-patients-pos2-neg1-patient-07-balanced-640-640-train-640-640.mat'));
+              case 8
+                tmp = load(fullfile(path_to_imdbs, dataset, posneg_balance, 'saved-two-class-prostate-v2-20-patients-pos2-neg1-patient-08-balanced-640-640-train-560-560.mat'));
+              case 9
+                tmp = load(fullfile(path_to_imdbs, dataset, posneg_balance, 'saved-two-class-prostate-v2-20-patients-pos2-neg1-patient-09-balanced-640-640-train-568-568.mat'));
+              case 10
+                tmp = load(fullfile(path_to_imdbs, dataset, posneg_balance, 'saved-two-class-prostate-v2-20-patients-pos2-neg1-patient-10-balanced-640-640-train-616-616.mat'));
+              case 11
+                tmp = load(fullfile(path_to_imdbs, dataset, posneg_balance, 'saved-two-class-prostate-v2-20-patients-pos2-neg1-patient-11-balanced-640-640-train-616-616.mat'));
+              case 12
+                tmp = load(fullfile(path_to_imdbs, dataset, posneg_balance, 'saved-two-class-prostate-v2-20-patients-pos2-neg1-patient-12-balanced-640-640-train-552-552.mat'));
+              case 13
+                tmp = load(fullfile(path_to_imdbs, dataset, posneg_balance, 'saved-two-class-prostate-v2-20-patients-pos2-neg1-patient-13-balanced-640-640-train-600-600.mat'));
+              case 14
+                tmp = load(fullfile(path_to_imdbs, dataset, posneg_balance, 'saved-two-class-prostate-v2-20-patients-pos2-neg1-patient-14-balanced-640-640-train-640-640.mat'));
+              case 15
+                tmp = load(fullfile(path_to_imdbs, dataset, posneg_balance, 'saved-two-class-prostate-v2-20-patients-pos2-neg1-patient-15-balanced-640-640-train-600-600.mat'));
+              case 16
+                tmp = load(fullfile(path_to_imdbs, dataset, posneg_balance, 'saved-two-class-prostate-v2-20-patients-pos2-neg1-patient-16-balanced-640-640-train-640-640.mat'));
+              case 17
+                tmp = load(fullfile(path_to_imdbs, dataset, posneg_balance, 'saved-two-class-prostate-v2-20-patients-pos2-neg1-patient-17-balanced-640-640-train-600-600.mat'));
+              case 18
+                tmp = load(fullfile(path_to_imdbs, dataset, posneg_balance, 'saved-two-class-prostate-v2-20-patients-pos2-neg1-patient-18-balanced-640-640-train-592-592.mat'));
+              case 19
+                tmp = load(fullfile(path_to_imdbs, dataset, posneg_balance, 'saved-two-class-prostate-v2-20-patients-pos2-neg1-patient-19-balanced-640-640-train-600-600.mat'));
+              case 20
+                tmp = load(fullfile(path_to_imdbs, dataset, posneg_balance, 'saved-two-class-prostate-v2-20-patients-pos2-neg1-patient-20-balanced-640-640-train-632-632.mat'));
+            end
+          case 'leave-one-out-balanced-1280-1280'
+            switch fold_number
+              case 1
+                tmp = load(fullfile(path_to_imdbs, dataset, posneg_balance, 'saved-two-class-prostate-v2-20-patients-pos2-neg1-patient-01-balanced-1280-1280-train-1216-1216.mat'));
+              case 2
+                tmp = load(fullfile(path_to_imdbs, dataset, posneg_balance, 'saved-two-class-prostate-v2-20-patients-pos2-neg1-patient-02-balanced-1280-1280-train-1200-1200.mat'));
+              case 3
+                tmp = load(fullfile(path_to_imdbs, dataset, posneg_balance, 'saved-two-class-prostate-v2-20-patients-pos2-neg1-patient-03-balanced-1280-1280-train-1232-1232.mat'));
+              case 4
+                tmp = load(fullfile(path_to_imdbs, dataset, posneg_balance, 'saved-two-class-prostate-v2-20-patients-pos2-neg1-patient-04-balanced-1280-1280-train-1232-1232.mat'));
+              case 5
+                tmp = load(fullfile(path_to_imdbs, dataset, posneg_balance, 'saved-two-class-prostate-v2-20-patients-pos2-neg1-patient-05-balanced-1280-1280-train-1264-1264.mat'));
+              case 6
+                tmp = load(fullfile(path_to_imdbs, dataset, posneg_balance, 'saved-two-class-prostate-v2-20-patients-pos2-neg1-patient-06-balanced-1280-1280-train-1136-1136.mat'));
+              case 7
+                tmp = load(fullfile(path_to_imdbs, dataset, posneg_balance, 'saved-two-class-prostate-v2-20-patients-pos2-neg1-patient-07-balanced-1280-1280-train-1200-1200.mat'));
+              case 8
+                tmp = load(fullfile(path_to_imdbs, dataset, posneg_balance, 'saved-two-class-prostate-v2-20-patients-pos2-neg1-patient-08-balanced-1280-1280-train-1280-1280.mat'));
+              case 9
+                tmp = load(fullfile(path_to_imdbs, dataset, posneg_balance, 'saved-two-class-prostate-v2-20-patients-pos2-neg1-patient-09-balanced-1280-1280-train-1280-1280.mat'));
+              case 10
+                tmp = load(fullfile(path_to_imdbs, dataset, posneg_balance, 'saved-two-class-prostate-v2-20-patients-pos2-neg1-patient-10-balanced-1280-1280-train-1120-1120.mat'));
+              case 11
+                tmp = load(fullfile(path_to_imdbs, dataset, posneg_balance, 'saved-two-class-prostate-v2-20-patients-pos2-neg1-patient-11-balanced-1280-1280-train-1248-1248.mat'));
+              case 12
+                tmp = load(fullfile(path_to_imdbs, dataset, posneg_balance, 'saved-two-class-prostate-v2-20-patients-pos2-neg1-patient-12-balanced-1280-1280-train-1200-1200.mat'));
+              case 13
+                tmp = load(fullfile(path_to_imdbs, dataset, posneg_balance, 'saved-two-class-prostate-v2-20-patients-pos2-neg1-patient-13-balanced-1280-1280-train-1104-1104.mat'));
+              case 14
+                tmp = load(fullfile(path_to_imdbs, dataset, posneg_balance, 'saved-two-class-prostate-v2-20-patients-pos2-neg1-patient-14-balanced-1280-1280-train-1232-1232.mat'));
+              case 15
+                tmp = load(fullfile(path_to_imdbs, dataset, posneg_balance, 'saved-two-class-prostate-v2-20-patients-pos2-neg1-patient-15-balanced-1280-1280-train-1232-1232.mat'));
+              case 16
+                tmp = load(fullfile(path_to_imdbs, dataset, posneg_balance, 'saved-two-class-prostate-v2-20-patients-pos2-neg1-patient-16-balanced-1280-1280-train-1200-1200.mat'));
+              case 17
+                tmp = load(fullfile(path_to_imdbs, dataset, posneg_balance, 'saved-two-class-prostate-v2-20-patients-pos2-neg1-patient-17-balanced-1280-1280-train-1232-1232.mat'));
+              case 18
+                tmp = load(fullfile(path_to_imdbs, dataset, posneg_balance, 'saved-two-class-prostate-v2-20-patients-pos2-neg1-patient-18-balanced-1280-1280-train-1184-1184.mat'));
+              case 19
+                tmp = load(fullfile(path_to_imdbs, dataset, posneg_balance, 'saved-two-class-prostate-v2-20-patients-pos2-neg1-patient-19-balanced-1280-1280-train-1248-1248.mat'));
+              case 20
+                tmp = load(fullfile(path_to_imdbs, dataset, posneg_balance, 'saved-two-class-prostate-v2-20-patients-pos2-neg1-patient-20-balanced-1280-1280-train-1280-1280.mat'));
+            end
         end
       case 'prostate-v3-104-patients'
         switch posneg_balance

@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function [trained_model, performance_summary] = testEnsemble(input_opts)
+function [trained_model, performance_summary] = testEnsemble2(input_opts)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -38,8 +38,6 @@ function [trained_model, performance_summary] = testEnsemble(input_opts)
   opts.ensemble_options.boosting_method = getValueFromFieldOrDefault(input_opts, 'boosting_method', 'rusboost');
   opts.ensemble_options.training_method = getValueFromFieldOrDefault(input_opts, 'training_method', 'cnn');
   opts.ensemble_options.iteration_count = getValueFromFieldOrDefault(input_opts, 'iteration_count', 5);
-  opts.ensemble_options.symmetric_weight_updates = getValueFromFieldOrDefault(input_opts, 'symmetric_weight_updates', true);
-  opts.ensemble_options.symmetric_loss_updates = getValueFromFieldOrDefault(input_opts, 'symmetric_loss_updates', true);
   opts.ensemble_options.random_undersampling_ratio = (50/50);
 
   % -------------------------------------------------------------------------
@@ -221,7 +219,6 @@ function [trained_model, performance_summary] = testEnsemble(input_opts)
     ] = getAccSensSpec(labels_train, top_validation_predictions, true);
 
     afprintf(sprintf('[INFO] Computing pseudo loss... '));
-    negative_to_positive_ratio = data_train_negative_count / data_train_positive_count;
     loss = 0;
     % sum_sample_weights_positive = sum(sample_weights(data_train_positive_indices));
     % sum_sample_weights_negative = sum(sample_weights(data_train_negative_indices));
@@ -238,15 +235,7 @@ function [trained_model, performance_summary] = testEnsemble(input_opts)
     %   if labels_train(i) == top_validation_predictions(i)
     %     continue;
     %   else
-    %     if labels_train(i) == 2
-    %       if opts.ensemble_options.symmetric_loss_updates
-    %         loss = loss + per_class_normalized_sample_weights(iteration, i);
-    %       else
-    %         loss = loss + per_class_normalized_sample_weights(iteration, i) * min(negative_to_positive_ratio, 2);
-    %       end
-    %     else
-    %       loss = loss + per_class_normalized_sample_weights(iteration, i);
-    %     end
+    %     loss = loss + per_class_normalized_sample_weights(iteration, i);
     %   end
     % end
     loss = 0.5 * (1 - validation_sensitivity) + 0.5 * (1 - validation_specificity);
@@ -294,15 +283,7 @@ function [trained_model, performance_summary] = testEnsemble(input_opts)
       if labels_train(i) == top_validation_predictions(i)
         sample_weights(iteration + 1, i) = sample_weights(iteration, i) * beta;
       else
-        if labels_train(i) == 2
-          if opts.ensemble_options.symmetric_weight_updates
-            sample_weights(iteration + 1, i) = sample_weights(iteration, i);
-          else
-            sample_weights(iteration + 1, i) = sample_weights(iteration, i) * min(negative_to_positive_ratio, 2);
-          end
-        else
-          sample_weights(iteration + 1, i) = sample_weights(iteration, i);
-        end
+        sample_weights(iteration + 1, i) = sample_weights(iteration, i);
       end
     end
     fprintf('done!\n');

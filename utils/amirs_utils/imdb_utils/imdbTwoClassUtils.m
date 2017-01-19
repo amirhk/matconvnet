@@ -29,6 +29,7 @@ function fh = imdbTwoClassUtils()
   fh.saveImdb = @saveImdb;
   fh.getImdbInfo = @getImdbInfo;
   fh.balanceImdb = @balanceImdb;
+  fh.resampleTrainData = @resampleTrainData;
   fh.resampleData1 = @resampleData1;
   fh.resampleData2 = @resampleData2;
   fh.constructPartialImdb = @constructPartialImdb;
@@ -109,6 +110,111 @@ function [ ...
       data_test_negative_count));
   end
 
+
+
+% -------------------------------------------------------------------------
+function [resampled_data, resampled_labels] = resampleTrainData(boosting_method, data, labels, weights, ratio)
+% -------------------------------------------------------------------------
+  % -------------------------------------------------------------------------
+  % Initial stuff
+  % -------------------------------------------------------------------------
+  data_positive = data(:,:,:,labels == 2);
+  data_negative = data(:,:,:,labels == 1);
+  data_count = size(data, 4);
+  data_positive_count = size(data_positive, 4);
+  data_negative_count = size(data_negative, 4);
+  data_positive_indices = find(labels == 2);
+  data_negative_indices = find(labels == 1);
+
+  assert(size(weights, 1) == 1);
+  assert(length(weights) == data_count)
+  weights_positive = weights(data_positive_indices);
+  weights_negative = weights(data_negative_indices);
+
+  if strcmp(boosting_method, 'adaboost.m1')
+    % -------------------------------------------------------------------------
+    % Nothing.
+    % -------------------------------------------------------------------------
+    new_data_positive = data_positive;
+    new_data_negative = data_negative;
+    new_weights_positive = weights_positive;
+    new_weights_negative = weights_negative;
+  elseif strcmp(boosting_method, 'rusboost')
+    % -------------------------------------------------------------------------
+    % Random Under-sampling (RUS): Negative Data.
+    % -------------------------------------------------------------------------
+    downsampling_ratio = 50 / 50;
+    % just random sampling.... horrendously wrong because the line below is
+    % weighted sampling w/ replacement; the most accurate way is to do weighted
+    % randsample w/o replacement
+    downsampled_data_negative_indices = randsample( ...
+      data_negative_indices, ...
+      round(data_positive_count * downsampling_ratio), ...
+      true, ...
+      weights_negative);
+    % the 2 lines below are very delicate... wish this code wasn't so horrible!
+    downsampled_data_negative = data(:,:,:, downsampled_data_negative_indices);
+    downsampled_weights_negative = weights(downsampled_data_negative_indices);
+
+    new_data_positive = data_positive;
+    new_data_negative = downsampled_data_negative;
+    new_weights_positive = weights_positive;
+    new_weights_negative = downsampled_weights_negative;
+  end
+
+  assert(size(new_data_positive, 4) == length(new_weights_positive));
+  assert(size(new_data_negative, 4) == length(new_weights_negative));
+
+  new_data_all = cat(4, new_data_positive, new_data_negative);
+  new_labels_all = cat( ...
+    2, ...
+    2 * ones(1, size(new_data_positive, 4)), ...
+    1 * ones(1, size(new_data_negative, 4)));
+  new_weights_all = cat(2, new_weights_positive, new_weights_negative);
+
+  output_cap = 250;
+  weighted_resample_indices = randsample( ...
+    1:1:size(new_data_all, 4), ...
+    output_cap, ...
+    true, ...
+    new_weights_all);
+
+  resampled_data = new_data_all(:,:,:, weighted_resample_indices);
+  resampled_labels = new_labels_all(weighted_resample_indices);
+
+  % % -------------------------------------------------------------------------
+  % % Weighted Upsampling (more weight -> more repeat): Negative & Positive Data
+  % % -------------------------------------------------------------------------
+  % smallest_weight = min(min(new_weights_positive), min(new_weights_negative));
+
+  % repeat_counts_positive = ceil(new_weights_positive / smallest_weight);
+  % repeat_counts_negative = ceil(new_weights_negative / smallest_weight);
+
+  % upsampled_data_positive = upsample(new_data_positive, repeat_counts_positive);
+  % upsampled_data_negative = upsample(new_data_negative, repeat_counts_negative);
+
+  % % -------------------------------------------------------------------------
+  % % Putting it all together
+  % % -------------------------------------------------------------------------
+  % resampled_data_positive_count = size(upsampled_data_positive, 4);
+  % resampled_data_negative_count = size(upsampled_data_negative, 4);
+  % resampled_data_all = cat(4, upsampled_data_positive, upsampled_data_negative);
+  % resampled_labels_all = cat( ...
+  %   2, ...
+  %   2 * ones(1, resampled_data_positive_count), ...
+  %   1 * ones(1, resampled_data_negative_count));
+
+  % % -------------------------------------------------------------------------
+  % % Shuffle this to mixup order of negative and positive in imdb so we don't
+  % % have the CNN overtrain in 1 particular direction. Also a cap is applied.
+  % % -------------------------------------------------------------------------
+  % ix = randperm(size(resampled_data_all, 4));
+  % if length(ix) >= 250
+  %   ix = ix(1:250);
+  % end
+  % resampled_data = resampled_data_all(:,:,:,ix);
+  % resampled_labels = resampled_labels_all(ix);
+
 % TODO: this should really be resampleImdb w/ a bunch of options to resample
 % an input class {pos, neg} in an input set {1,3}....
 % -------------------------------------------------------------------------
@@ -148,18 +254,18 @@ function [resampled_data, resampled_labels] = resampleData1(data, labels, weight
   repeat_counts = ceil(normalized_weights);
   % max_repeat_positive = 200;
   % max_repeat_negative = 25;
-  max_repeat_positive = 100000000;
-  max_repeat_negative = 100000000;
-  for j = data_positive_indices
-    if repeat_counts(j) > max_repeat_positive
-      repeat_counts(j) = max_repeat_positive;
-    end
-  end
-  for j = data_negative_indices
-    if repeat_counts(j) > max_repeat_negative
-      repeat_counts(j) = max_repeat_negative;
-    end
-  end
+  % max_repeat_positive = 100000000;
+  % max_repeat_negative = 100000000;
+  % for j = data_positive_indices
+  %   if repeat_counts(j) > max_repeat_positive
+  %     repeat_counts(j) = max_repeat_positive;
+  %   end
+  % end
+  % for j = data_negative_indices
+  %   if repeat_counts(j) > max_repeat_negative
+  %     repeat_counts(j) = max_repeat_negative;
+  %   end
+  % end
 
   positive_repeat_counts = repeat_counts(data_positive_indices);
   negative_repeat_counts = repeat_counts(downsampled_data_negative_indices);
