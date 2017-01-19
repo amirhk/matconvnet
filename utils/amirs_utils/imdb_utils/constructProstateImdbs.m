@@ -54,6 +54,16 @@ function constructProstateImdbs(input_opts)
       imdb_opts.train_augment_healthy  = getValueFromFieldOrDefault(input_opts, 'train_augment_healthy', 'none');
       imdb_opts.train_augment_cancer   = getValueFromFieldOrDefault(input_opts, 'train_augment_cancer', 'rotate');
       imdb_opts.train_balance          = getValueFromFieldOrDefault(input_opts, 'train_balance', true);
+    case 'balanced-640-640'
+      % augment both classes with same method, then balance to 640-640
+      imdb_opts.train_augment_healthy  = getValueFromFieldOrDefault(input_opts, 'train_augment_healthy', 'rotate');
+      imdb_opts.train_augment_cancer   = getValueFromFieldOrDefault(input_opts, 'train_augment_cancer', 'rotate');
+      imdb_opts.train_balance          = getValueFromFieldOrDefault(input_opts, 'train_balance', true);
+    case 'balanced-1280-1280'
+      % augment both classes with same method, then balance to 1280-1280
+      imdb_opts.train_augment_healthy  = getValueFromFieldOrDefault(input_opts, 'train_augment_healthy', 'rotate-flip');
+      imdb_opts.train_augment_cancer   = getValueFromFieldOrDefault(input_opts, 'train_augment_cancer', 'rotate-flip');
+      imdb_opts.train_balance          = getValueFromFieldOrDefault(input_opts, 'train_balance', true);
     otherwise
       fprintf('TODO: implement!');
   end
