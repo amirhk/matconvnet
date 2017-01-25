@@ -113,7 +113,7 @@ function [ ...
 
 
 % -------------------------------------------------------------------------
-function [resampled_data, resampled_labels] = resampleTrainData(boosting_method, data, labels, weights, ratio)
+function [resampled_data, resampled_labels] = resampleTrainData(resampling_method, number_of_samples_per_model, data, labels, weights)
 % -------------------------------------------------------------------------
   % -------------------------------------------------------------------------
   % Initial stuff
@@ -131,7 +131,7 @@ function [resampled_data, resampled_labels] = resampleTrainData(boosting_method,
   weights_positive = weights(data_positive_indices);
   weights_negative = weights(data_negative_indices);
 
-  if strcmp(boosting_method, 'adaboost.m1')
+  if strcmp(resampling_method, 'ada')
     % -------------------------------------------------------------------------
     % Nothing.
     % -------------------------------------------------------------------------
@@ -139,7 +139,7 @@ function [resampled_data, resampled_labels] = resampleTrainData(boosting_method,
     new_data_negative = data_negative;
     new_weights_positive = weights_positive;
     new_weights_negative = weights_negative;
-  elseif strcmp(boosting_method, 'rusboost')
+  elseif strcmp(resampling_method, 'rus')
     % -------------------------------------------------------------------------
     % Random Under-sampling (RUS): Negative Data.
     % -------------------------------------------------------------------------
@@ -172,7 +172,9 @@ function [resampled_data, resampled_labels] = resampleTrainData(boosting_method,
     1 * ones(1, size(new_data_negative, 4)));
   new_weights_all = cat(2, new_weights_positive, new_weights_negative);
 
-  output_cap = round(1.2 * data_positive_count);
+  % output_cap = round(1.2 * data_positive_count);
+  % output_cap = 1000;
+  output_cap = number_of_samples_per_model;
   weighted_resample_indices = randsample( ...
     1:1:size(new_data_all, 4), ...
     output_cap, ...
