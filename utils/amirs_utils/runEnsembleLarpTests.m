@@ -73,7 +73,7 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   % -------------------------------------------------------------------------
   %                                                            shared options
   % -------------------------------------------------------------------------
-  experiment_options.number_of_folds = 2;
+  experiment_options.number_of_folds = 10;
   experiment_options.experiment_parent_dir = opts.paths.experiment_dir;
   experiment_options.dataset = opts.general.dataset;
   experiment_options.network_arch = opts.general.network_arch;
@@ -123,7 +123,6 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   %                                                                single cnn
   % -------------------------------------------------------------------------
   experiment_options.training_method = 'single-cnn';
-  experiment_options.learning_rate = [0.05*ones(1,20) 0.005*ones(1,40) 0.001*ones(1,90)];
   % Exp. 1
   experiment_options.backprop_depth = 4;
   testKFold(experiment_options);
@@ -131,123 +130,60 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   experiment_options.backprop_depth = 13;
   testKFold(experiment_options);
 
-  experiment_options.learning_rate = [0.05*ones(1,10) 0.005*ones(1,20) 0.001*ones(1,120)];
+  % -------------------------------------------------------------------------
+  %                                                              ensemble cnn
+  % -------------------------------------------------------------------------
+  experiment_options.training_method = 'ensemble-cnn';
+  experiment_options.iteration_count = 8;
+
+  experiment_options.number_of_samples_per_model = 1000;
+  % -------------------------------------------------------------------------
+  experiment_options.boosting_method = 'rusboost';
+  % -------------------------------------------------------------------------
+
   % Exp. 1
+  experiment_options.loss_calculation_method = 'default_in_literature';
   experiment_options.backprop_depth = 4;
   testKFold(experiment_options);
+
   % Exp. 2
+  experiment_options.loss_calculation_method = 'default_in_literature';
   experiment_options.backprop_depth = 13;
   testKFold(experiment_options);
 
-  % % -------------------------------------------------------------------------
-  % %                                                              ensemble cnn
-  % % -------------------------------------------------------------------------
-  % experiment_options.training_method = 'ensemble-cnn';
-  % experiment_options.iteration_count = 8;
+  % Exp. 3
+  experiment_options.loss_calculation_method = 'class_normalized';
+  experiment_options.backprop_depth = 4;
+  testKFold(experiment_options);
 
+  % Exp. 4
+  experiment_options.loss_calculation_method = 'class_normalized';
+  experiment_options.backprop_depth = 13;
+  testKFold(experiment_options);
 
-  % experiment_options.number_of_samples_per_model = 35;
-  % % -------------------------------------------------------------------------
-  % experiment_options.boosting_method = 'rusboost';
-  % % -------------------------------------------------------------------------
+  % -------------------------------------------------------------------------
+  experiment_options.boosting_method = 'adaboost.m1';
+  % -------------------------------------------------------------------------
 
-  % % Exp. 1
-  % experiment_options.loss_calculation_method = 'default_in_literature';
-  % experiment_options.backprop_depth = 4;
-  % testKFold(experiment_options);
+  % Exp. 1
+  experiment_options.loss_calculation_method = 'default_in_literature';
+  experiment_options.backprop_depth = 4;
+  testKFold(experiment_options);
 
-  % % Exp. 2
-  % experiment_options.loss_calculation_method = 'default_in_literature';
-  % experiment_options.backprop_depth = 13;
-  % testKFold(experiment_options);
+  % Exp. 2
+  experiment_options.loss_calculation_method = 'default_in_literature';
+  experiment_options.backprop_depth = 13;
+  testKFold(experiment_options);
 
-  % % Exp. 3
-  % experiment_options.loss_calculation_method = 'class_normalized';
-  % experiment_options.backprop_depth = 4;
-  % testKFold(experiment_options);
+  % Exp. 3
+  experiment_options.loss_calculation_method = 'class_normalized';
+  experiment_options.backprop_depth = 4;
+  testKFold(experiment_options);
 
-  % % Exp. 4
-  % experiment_options.loss_calculation_method = 'class_normalized';
-  % experiment_options.backprop_depth = 13;
-  % testKFold(experiment_options);
-
-  % % -------------------------------------------------------------------------
-  % experiment_options.boosting_method = 'adaboost.m1';
-  % % -------------------------------------------------------------------------
-
-  % % Exp. 1
-  % experiment_options.loss_calculation_method = 'default_in_literature';
-  % experiment_options.backprop_depth = 4;
-  % testKFold(experiment_options);
-
-  % % Exp. 2
-  % experiment_options.loss_calculation_method = 'default_in_literature';
-  % experiment_options.backprop_depth = 13;
-  % testKFold(experiment_options);
-
-  % % Exp. 3
-  % experiment_options.loss_calculation_method = 'class_normalized';
-  % experiment_options.backprop_depth = 4;
-  % testKFold(experiment_options);
-
-  % % Exp. 4
-  % experiment_options.loss_calculation_method = 'class_normalized';
-  % experiment_options.backprop_depth = 13;
-  % testKFold(experiment_options);
-
-
-
-
-
-
-  % experiment_options.number_of_samples_per_model = 1000;
-  % % -------------------------------------------------------------------------
-  % experiment_options.boosting_method = 'rusboost';
-  % % -------------------------------------------------------------------------
-
-  % % Exp. 1
-  % experiment_options.loss_calculation_method = 'default_in_literature';
-  % experiment_options.backprop_depth = 4;
-  % testKFold(experiment_options);
-
-  % % Exp. 2
-  % experiment_options.loss_calculation_method = 'default_in_literature';
-  % experiment_options.backprop_depth = 13;
-  % testKFold(experiment_options);
-
-  % % Exp. 3
-  % experiment_options.loss_calculation_method = 'class_normalized';
-  % experiment_options.backprop_depth = 4;
-  % testKFold(experiment_options);
-
-  % % Exp. 4
-  % experiment_options.loss_calculation_method = 'class_normalized';
-  % experiment_options.backprop_depth = 13;
-  % testKFold(experiment_options);
-
-  % % -------------------------------------------------------------------------
-  % experiment_options.boosting_method = 'adaboost.m1';
-  % % -------------------------------------------------------------------------
-
-  % % Exp. 1
-  % experiment_options.loss_calculation_method = 'default_in_literature';
-  % experiment_options.backprop_depth = 4;
-  % testKFold(experiment_options);
-
-  % % Exp. 2
-  % experiment_options.loss_calculation_method = 'default_in_literature';
-  % experiment_options.backprop_depth = 13;
-  % testKFold(experiment_options);
-
-  % % Exp. 3
-  % experiment_options.loss_calculation_method = 'class_normalized';
-  % experiment_options.backprop_depth = 4;
-  % testKFold(experiment_options);
-
-  % % Exp. 4
-  % experiment_options.loss_calculation_method = 'class_normalized';
-  % experiment_options.backprop_depth = 13;
-  % testKFold(experiment_options);
+  % Exp. 4
+  experiment_options.loss_calculation_method = 'class_normalized';
+  experiment_options.backprop_depth = 13;
+  testKFold(experiment_options);
 
 
 

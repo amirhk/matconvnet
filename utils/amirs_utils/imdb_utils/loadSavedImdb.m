@@ -30,11 +30,7 @@ function imdb = loadSavedImdb(input_opts)
   posneg_balance = getValueFromFieldOrDefault(input_opts, 'posneg_balance', 'balanced-low');
   fold_number = getValueFromFieldOrDefault(input_opts, 'fold_number', 1); % currently only implemented for prostate data
 
-  if strcmp(dataset, 'cifar') || ...
-    strcmp(dataset, 'coil-100') || ...
-    strcmp(dataset, 'mnist') || ...
-    strcmp(dataset, 'stl-10') || ...
-    strcmp(dataset, 'svhn')
+  if ~isTwoClassImdb(dataset)
     afprintf(sprintf('[INFO] Loading all-class imdb (dataset: %s, network_arch: %s)\n', dataset, network_arch));
     imdb = load(fullfile(getDevPath(), 'data', 'imdb', sprintf('%s-%s', dataset, network_arch), 'imdb.mat'));
   else
@@ -45,11 +41,11 @@ function imdb = loadSavedImdb(input_opts)
         % currently fold number is not implemented.
         switch posneg_balance
           case 'balanced-low'
-            tmp = load(fullfile(path_to_imdbs, 'mnist', 'saved-two-class-mnist-pos9-neg4-balanced-low-train-30-30.mat'));
+            tmp = load(fullfile(path_to_imdbs, 'mnist', 'saved-two-class-mnist-pos9-neg4-balanced-low-train-29-29.mat'));
           case 'unbalanced'
-            tmp = load(fullfile(path_to_imdbs, 'mnist', 'saved-two-class-mnist-pos9-neg4-unbalanced-train-30-6000.mat'));
+            tmp = load(fullfile(path_to_imdbs, 'mnist', 'saved-two-class-mnist-pos9-neg4-unbalanced-train-29-6131.mat'));
           case 'balanced-high'
-            tmp = load(fullfile(path_to_imdbs, 'mnist', 'saved-two-class-mnist-pos9-neg4-balanced-high-train-6000-6000.mat'));
+            tmp = load(fullfile(path_to_imdbs, 'mnist', 'saved-two-class-mnist-pos9-neg4-balanced-high-train-5851-6131.mat'));
         end
       case 'cifar-two-class-deer-horse'
         % currently fold number is not implemented.

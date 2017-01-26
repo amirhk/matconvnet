@@ -50,6 +50,7 @@ function constructTwoClassImdbs(dataset, network_arch, positive_class_number, ne
   afprintf(sprintf('[INFO] `%s`...\n', posneg_balance));
   imdb = fh_imdb_utils.constructTwoClassUnbalancedImdb(all_class_imdb, positive_class_number, negative_class_number, 200);
   imdb = fh_imdb_utils.balanceImdb(imdb, 'train', 'downsample');
+  imdb = fh_imdb_utils.balanceImdb(imdb, 'test', 'downsample'); % all test sets should be balanced so acc = avg(sens, spec)
   fh_imdb_utils.saveImdb(imdb, dataset, posneg_balance, positive_class_number, negative_class_number)
   afprintf(sprintf('done!\n\n'));
 
@@ -59,6 +60,7 @@ function constructTwoClassImdbs(dataset, network_arch, positive_class_number, ne
   posneg_balance = 'unbalanced';
   afprintf(sprintf('[INFO] `%s`...\n', posneg_balance));
   imdb = fh_imdb_utils.constructTwoClassUnbalancedImdb(all_class_imdb, positive_class_number, negative_class_number, 200);
+  imdb = fh_imdb_utils.balanceImdb(imdb, 'test', 'downsample'); % all test sets should be balanced so acc = avg(sens, spec)
   fh_imdb_utils.saveImdb(imdb, dataset, posneg_balance, positive_class_number, negative_class_number)
   afprintf(sprintf('done!\n\n'));
 
@@ -68,5 +70,6 @@ function constructTwoClassImdbs(dataset, network_arch, positive_class_number, ne
   posneg_balance = 'balanced-high';
   afprintf(sprintf('[INFO] `%s`...\n', posneg_balance));
   imdb = fh_imdb_utils.constructTwoClassUnbalancedImdb(all_class_imdb, positive_class_number, negative_class_number, 1);
+  imdb = fh_imdb_utils.balanceImdb(imdb, 'test', 'downsample'); % all test sets should be balanced so acc = avg(sens, spec)
   fh_imdb_utils.saveImdb(imdb, dataset, posneg_balance, positive_class_number, negative_class_number)
   afprintf(sprintf('done!\n\n'));
