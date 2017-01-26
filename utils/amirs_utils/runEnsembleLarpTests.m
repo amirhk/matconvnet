@@ -123,7 +123,15 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   %                                                                single cnn
   % -------------------------------------------------------------------------
   experiment_options.training_method = 'single-cnn';
-  experiment_options.learning rate = [0.05*ones(1,20) 0.005*ones(1,40) 0.001*ones(1,90)];
+  experiment_options.learning_rate = [0.05*ones(1,20) 0.005*ones(1,40) 0.001*ones(1,90)];
+  % Exp. 1
+  experiment_options.backprop_depth = 4;
+  testKFold(experiment_options);
+  % Exp. 2
+  experiment_options.backprop_depth = 13;
+  testKFold(experiment_options);
+
+  experiment_options.learning_rate = [0.05*ones(1,10) 0.005*ones(1,20) 0.001*ones(1,120)];
   % Exp. 1
   experiment_options.backprop_depth = 4;
   testKFold(experiment_options);
