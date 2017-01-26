@@ -40,7 +40,11 @@ function output_opts = cnnInit(input_opts)
   s = rng;
   rng(0);
   net.layers = {};
-  output_opts.train.learning_rate = getLearningRate(opts.dataset, opts.network_arch);
+  if strcmp(input_opts.learning_rate, 'default_keyword')
+    output_opts.train.learning_rate = getLearningRate(opts.dataset, opts.network_arch);
+  else
+    output_opts.train.learning_rate = input_opts.learning_rate;
+  end
   output_opts.train.num_epochs = numel(output_opts.train.learning_rate);
 
   fh = networkInitializationUtils;

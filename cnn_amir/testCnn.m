@@ -59,7 +59,7 @@ function [trained_model, performance_summary] = testCnn(input_opts)
   opts.train.backprop_depth = getValueFromFieldOrDefault(input_opts, 'backprop_depth', 4);
   opts.train.batch_size = getValueFromFieldOrDefault(input_opts, 'batch_size', 100);
   opts.train.error_function = getErrorFunctionForDataset(opts.general.dataset);
-  opts.train.learning_rate = getValueFromFieldOrDefault(input_opts, 'learning_rate', [0.05*ones(1,10) 0.005*ones(1,20) 0.001*ones(1,20)]);
+  opts.train.learning_rate = getValueFromFieldOrDefault(input_opts, 'learning_rate', 'default_keyword');
   opts.train.num_epochs = getValueFromFieldOrDefault(input_opts, 'num_epochs', numel(opts.train.learning_rate));
   opts.train.weight_decay = getValueFromFieldOrDefault(input_opts, 'weight_decay', 0.0001);
 

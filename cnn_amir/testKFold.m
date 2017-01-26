@@ -107,7 +107,7 @@ function folds = testKFold(input_opts)
       opts.single_training_method_options.backprop_depth = getValueFromFieldOrDefault(input_opts, 'backprop_depth', 4);
       opts.single_training_method_options.gpus = ifNotMacSetGpu(getValueFromFieldOrDefault(input_opts, 'gpus', 1));
       opts.single_training_method_options.debug_flag = getValueFromFieldOrDefault(input_opts, 'debug_flag', false);
-      opts.single_training_method_options.learning_rate = getValueFromFieldOrDefault(input_opts, 'learning_rate', [0.05*ones(1,10) 0.005*ones(1,20) 0.001*ones(1,20)]);
+      opts.single_training_method_options.learning_rate = getValueFromFieldOrDefault(input_opts, 'learning_rate', 'default_keyword');
     case 'ensemble-cnn'
       % ensemble options
       opts.single_training_method_options.boosting_method = getValueFromFieldOrDefault(input_opts, 'boosting_method', 'rusboost');
