@@ -554,7 +554,6 @@ function imdb = balanceImdb(imdb, set_name, balance_type)
       end
       assert(data_test_positive_count < data_test_negative_count);
   end
-  keyboard
 
   data_train_indices = find(data_train_indices);
   data_train_positive_indices = find(data_train_positive_indices);

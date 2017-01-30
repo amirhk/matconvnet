@@ -67,6 +67,16 @@ function imdb = loadSavedImdb(input_opts)
           case 'balanced-high'
             tmp = load(fullfile(path_to_imdbs, 'cifar', 'saved-two-class-cifar-pos5-neg10-balanced-high-train-5000-5000.mat'));
         end
+      case 'cifar-no-white-two-class-deer-truck'
+        % currently fold number is not implemented.
+        switch posneg_balance
+          case 'balanced-low'
+            tmp = load(fullfile(path_to_imdbs, 'cifar-no-white', 'saved-two-class-cifar-pos5-neg10-balanced-low-train-25-25.mat'));
+          case 'unbalanced'
+            tmp = load(fullfile(path_to_imdbs, 'cifar-no-white', 'saved-two-class-cifar-pos5-neg10-unbalanced-train-25-5000.mat'));
+          case 'balanced-high'
+            tmp = load(fullfile(path_to_imdbs, 'cifar-no-white', 'saved-two-class-cifar-pos5-neg10-balanced-high-train-5000-5000.mat'));
+        end
       case 'svhn-two-class-9-4'
         % currently fold number is not implemented.
         switch posneg_balance
