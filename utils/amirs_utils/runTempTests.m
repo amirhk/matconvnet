@@ -25,13 +25,16 @@ function runTempTests()
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
 
-  % runEnsembleLarpTests('mnist-two-class-9-4',        'balanced-low', 1);
-  % runEnsembleLarpTests('svhn-two-class-9-4',         'balanced-low', 1);
-  % runEnsembleLarpTests('cifar-two-class-deer-truck', 'balanced-low', 1);
-  % runEnsembleLarpTests('mnist-two-class-9-4',        'unbalanced', 1);
-  % runEnsembleLarpTests('svhn-two-class-9-4',         'unbalanced', 1);
-  % runEnsembleLarpTests('cifar-two-class-deer-truck', 'unbalanced', 1);
-%
-  runEnsembleLarpTests('mnist-two-class-9-4',        'balanced-high', 3);
-  runEnsembleLarpTests('svhn-two-class-9-4',         'balanced-high', 3);
-  runEnsembleLarpTests('cifar-two-class-deer-truck', 'balanced-high', 3);
+
+  runEnsembleLarpTests('mnist-two-class-9-4',                 'balanced-low', 2);
+  runEnsembleLarpTests('svhn-two-class-9-4',                  'balanced-low', 2);
+  runEnsembleLarpTests('cifar-two-class-deer-truck',          'balanced-low', 2);
+  runEnsembleLarpTests('cifar-no-white-two-class-deer-truck', 'balanced-low', 2);
+  runEnsembleLarpTests('cifar-two-class-deer-horse',          'balanced-low', 2);
+
+
+  runEnsembleLarpTests('mnist-two-class-9-4',                 'unbalanced', 2);
+  runEnsembleLarpTests('svhn-two-class-9-4',                  'unbalanced', 2);
+  runEnsembleLarpTests('cifar-two-class-deer-truck',          'unbalanced', 2);
+  runEnsembleLarpTests('cifar-no-white-two-class-deer-truck', 'unbalanced', 2);
+  runEnsembleLarpTests('cifar-two-class-deer-horse',          'unbalanced', 2);
