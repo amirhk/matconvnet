@@ -53,6 +53,7 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
         case 'compRand'
           layerWeights{1} = init_multiplier * randn(k, k, m, n, 'single');
           % disp(mean(mean(mean(mean(layerWeights{1})))));
+          % keyboard
           layerWeights{2} = zeros(1, n, 'single');
         % case 'quasiRandSobol'
         %   q = sobolset(1);
@@ -66,6 +67,7 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
           tmp = net(q, k * k * m * n) .* sign(randn(k * k * m * n, 1));
           layerWeights{1} = single(init_multiplier * reshape(tmp, [k, k, m, n]) * 0.2);
           % disp(mean(mean(mean(mean(layerWeights{1})))));
+          % keyboard
           layerWeights{2} = zeros(1, n, 'single');
         otherwise
           throwException('[ERROR] Generating non-compRand weights not supported from this code.');
