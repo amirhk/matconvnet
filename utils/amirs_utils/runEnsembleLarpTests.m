@@ -124,24 +124,8 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   % -------------------------------------------------------------------------
   experiment_options.training_method = 'single-cnn';
 
-  % % -------------------------------------------------------------------------
-  % experiment_options.weight_init_sequence = {'compRand', 'compRand', 'compRand'};
-  % % -------------------------------------------------------------------------
-
-  % % Exp. 1
-  % experiment_options.backprop_depth = 4;
-  % testKFold(experiment_options);
-
-  % % % Exp. 2
-  % % experiment_options.backprop_depth = 7;
-  % % testKFold(experiment_options);
-
-  % % Exp. 3
-  % experiment_options.backprop_depth = 13;
-  % testKFold(experiment_options);
-
   % -------------------------------------------------------------------------
-  experiment_options.weight_init_sequence = {'quasiRandSobol', 'quasiRandSobol', 'quasiRandSobol'};
+  experiment_options.weight_init_sequence = {'compRand', 'compRand', 'compRand'};
   % -------------------------------------------------------------------------
 
   % Exp. 1
@@ -155,6 +139,22 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   % Exp. 3
   experiment_options.backprop_depth = 13;
   testKFold(experiment_options);
+
+  % % -------------------------------------------------------------------------
+  % experiment_options.weight_init_sequence = {'quasiRandSobol', 'quasiRandSobol', 'quasiRandSobol'};
+  % % -------------------------------------------------------------------------
+
+  % % Exp. 1
+  % experiment_options.backprop_depth = 4;
+  % testKFold(experiment_options);
+
+  % % % Exp. 2
+  % % experiment_options.backprop_depth = 7;
+  % % testKFold(experiment_options);
+
+  % % Exp. 3
+  % experiment_options.backprop_depth = 13;
+  % testKFold(experiment_options);
 
   % -------------------------------------------------------------------------
   experiment_options.weight_init_sequence = {'quasiRandSobolSkip', 'quasiRandSobolSkip', 'quasiRandSobolSkip'};
