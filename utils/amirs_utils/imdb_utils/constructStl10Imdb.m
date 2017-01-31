@@ -5,7 +5,7 @@
 % 2) Subtract the mean of the training data from both the training and test data
 % 3) STL-10 does NOT require contrast normalization or whitening
 % -------------------------------------------------------------------------
-function imdb = constructSTL10Imdb(opts)
+function imdb = constructStl10Imdb(opts)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.

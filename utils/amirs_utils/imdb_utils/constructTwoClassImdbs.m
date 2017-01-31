@@ -36,6 +36,8 @@ function constructTwoClassImdbs(dataset, network_arch, positive_class_number, ne
       opts.imdb.contrast_normalization = true;
       opts.imdb.whiten_data = false;
       all_class_imdb = constructCifarImdb(opts);
+    case 'stl-10'
+      all_class_imdb = constructStl10Imdb(opts);
     case 'svhn'
       opts.imdb.contrast_normalization = true;
       all_class_imdb = constructSvhnImdb(opts);
