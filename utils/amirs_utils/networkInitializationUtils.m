@@ -61,7 +61,7 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
         case 'quasiRandSobolSkip'
           q = sobolset(1);
           q = scramble(q, 'MatousekAffineOwen');
-          layerWeights{1} = single(init_multiplier * reshape(net(q, k * k * m * n), [k, k, m, n]));
+          layerWeights{1} = single(init_multiplier * reshape(net(q, k * k * m * n), [k, k, m, n]) * 10);
           layerWeights{2} = zeros(1, n, 'single');
         otherwise
           throwException('[ERROR] Generating non-compRand weights not supported from this code.');
