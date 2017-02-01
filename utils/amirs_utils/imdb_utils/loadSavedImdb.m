@@ -83,9 +83,9 @@ function imdb = loadSavedImdb(input_opts)
           case 'balanced-low'
             tmp = load(fullfile(path_to_imdbs, 'stl-10', 'saved-two-class-stl-10-pos1-neg2-balanced-low-train-25-25.mat'));
           case 'unbalanced'
-            tmp = load(fullfile(path_to_imdbs, 'stl-10', 'saved-two-class-stl-10-pos1-neg2-unbalanced-train-25-500.mat.mat'));
+            tmp = load(fullfile(path_to_imdbs, 'stl-10', 'saved-two-class-stl-10-pos1-neg2-unbalanced-train-25-500.mat'));
           case 'balanced-high'
-            tmp = load(fullfile(path_to_imdbs, 'stl-10', 'saved-two-class-stl-10-pos1-neg2-balanced-high-train-500-500.mat.mat'));
+            tmp = load(fullfile(path_to_imdbs, 'stl-10', 'saved-two-class-stl-10-pos1-neg2-balanced-high-train-500-500.mat'));
         end
       case 'svhn-two-class-9-4'
         % currently fold number is not implemented.
