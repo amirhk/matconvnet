@@ -527,7 +527,7 @@ function [all_samples_top_class_predictions, all_samples_all_class_predictions, 
   [all_samples_top_class_predictions, ~, all_labels_1] = tmpBeef(opts, getBatch, epoch, subset, learning_rate, imdb, net_1, 'softmaxloss');
   afprintf(sprintf('Extracting `all`-class predictions based on `softmax`\n'));
   [~, all_samples_all_class_predictions, all_labels_2] = tmpBeef(opts, getBatch, epoch, subset, learning_rate, imdb, net_2, 'softmax');
-  assert(isequal(all_labels_1, all_labels_1))
+  assert(isequal(all_labels_1, all_labels_2));
   all_labels = all_labels_1;
 
 % -------------------------------------------------------------------------
@@ -596,7 +596,6 @@ function [all_samples_top_class_predictions, all_samples_all_class_predictions, 
                         'backprop_depth', opts.backprop_depth, ...
                         'sync', opts.sync, ...
                         'cudnn', opts.cudnn);
-
       switch loss_layer_type
         case 'softmaxloss'
           batch_samples_all_class_predictions = gather(res(end-1).x);
@@ -607,11 +606,10 @@ function [all_samples_top_class_predictions, all_samples_all_class_predictions, 
             all_samples_top_class_predictions, ...
             reshape(batch_samples_top_class_predictions(:,:,1,:), 1, []));
         case 'softmax'
-
           batch_samples_all_class_predictions = gather(res(end).x);
           all_samples_all_class_predictions = cat( ...
             2, ...
-            all_samples_top_class_predictions, ...
+            all_samples_all_class_predictions, ...
             reshape(batch_samples_all_class_predictions(:,:,:,:), 2, []));
       end
       all_labels  = cat( ...
@@ -636,3 +634,14 @@ function [all_samples_top_class_predictions, all_samples_all_class_predictions, 
   else
     net_cpu = net;
   end
+
+
+
+
+
+
+
+
+
+
+

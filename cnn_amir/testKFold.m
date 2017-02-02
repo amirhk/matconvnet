@@ -108,7 +108,24 @@ function folds = testKFold(input_opts)
       opts.single_training_method_options.gpus = ifNotMacSetGpu(getValueFromFieldOrDefault(input_opts, 'gpus', 1));
       opts.single_training_method_options.debug_flag = getValueFromFieldOrDefault(input_opts, 'debug_flag', false);
       opts.single_training_method_options.learning_rate = getValueFromFieldOrDefault(input_opts, 'learning_rate', 'default_keyword');
-      opts.single_training_method_options.weight_init_sequence = getValueFromFieldOrDefault(input_opts, 'weight_init_sequence', {'compRand', 'compRand', 'compRand', 'compRand', 'compRand'});
+      opts.single_training_method_options.weight_init_sequence = getValueFromFieldOrDefault(input_opts, 'weight_init_sequence', {'compRand', 'compRand', 'compRand'});
+    case 'committee-cnn'
+      % committee options
+      opts.single_training_method_options.number_of_committee_members = getValueFromFieldOrDefault(input_opts, 'number_of_committee_members', 3);
+      opts.single_training_method_options.training_method = 'cnn';
+      % cnn options
+      opts.single_training_method_options.network_arch = getValueFromFieldOrDefault(input_opts, 'network_arch', 'lenet');
+      opts.single_training_method_options.backprop_depth = getValueFromFieldOrDefault(input_opts, 'backprop_depth', 4);
+      opts.single_training_method_options.gpus = ifNotMacSetGpu(getValueFromFieldOrDefault(input_opts, 'gpus', 1));
+      opts.single_training_method_options.debug_flag = getValueFromFieldOrDefault(input_opts, 'debug_flag', false);
+      opts.single_training_method_options.learning_rate = getValueFromFieldOrDefault(input_opts, 'learning_rate', 'default_keyword');
+      opts.single_training_method_options.weight_init_sequence = getValueFromFieldOrDefault(input_opts, 'weight_init_sequence', {'compRand', 'compRand', 'compRand'});
+    case 'committee-svm'
+      % committee options
+      opts.single_training_method_options.number_of_committee_members = getValueFromFieldOrDefault(input_opts, 'number_of_committee_members', 3);
+      opts.single_training_method_options.training_method = 'svm';
+      % svm options
+      % no additional options
     case 'ensemble-cnn'
       % ensemble options
       opts.single_training_method_options.boosting_method = getValueFromFieldOrDefault(input_opts, 'boosting_method', 'rusboost');
@@ -121,6 +138,8 @@ function folds = testKFold(input_opts)
       opts.single_training_method_options.backprop_depth = getValueFromFieldOrDefault(input_opts, 'backprop_depth', 4);
       opts.single_training_method_options.gpus = ifNotMacSetGpu(getValueFromFieldOrDefault(input_opts, 'gpus', 1));
       opts.single_training_method_options.debug_flag = getValueFromFieldOrDefault(input_opts, 'debug_flag', false);
+      opts.single_training_method_options.learning_rate = getValueFromFieldOrDefault(input_opts, 'learning_rate', 'default_keyword');
+      opts.single_training_method_options.weight_init_sequence = getValueFromFieldOrDefault(input_opts, 'weight_init_sequence', {'compRand', 'compRand', 'compRand'});
     case 'ensemble-svm'
       % ensemble options
       opts.single_training_method_options.boosting_method = getValueFromFieldOrDefault(input_opts, 'boosting_method', 'rusboost');
@@ -170,26 +189,14 @@ function folds = testKFold(input_opts)
       trainingMethodFunctionHandle = @testForest;
     case 'single-cnn'
       trainingMethodFunctionHandle = @testCnn;
+    case 'committee-cnn'
+      trainingMethodFunctionHandle = @testCommittee;
+    case 'committee-svm'
+      trainingMethodFunctionHandle = @testCommittee;
     case 'ensemble-cnn'
       trainingMethodFunctionHandle = @testEnsemble;
-      % switch getValueFromFieldOrDefault(input_opts, 'ensemble_version', 'v1');
-      %   case 'v1'
-      %     trainingMethodFunctionHandle = @testEnsemble1;
-      %   case 'v2'
-      %     trainingMethodFunctionHandle = @testEnsemble2;
-      %   case 'v3'
-      %     trainingMethodFunctionHandle = @testEnsemble3;
-      % end
     case 'ensemble-svm'
       trainingMethodFunctionHandle = @testEnsemble;
-      % switch getValueFromFieldOrDefault(input_opts, 'ensemble_version', 'v1');
-      %   case 'v1'
-      %     trainingMethodFunctionHandle = @testEnsemble1;
-      %   case 'v2'
-      %     trainingMethodFunctionHandle = @testEnsemble2;
-      %   case 'v3'
-      %     trainingMethodFunctionHandle = @testEnsemble3;
-      % end
   end
 
   for i = 1:opts.k_fold_options.number_of_folds

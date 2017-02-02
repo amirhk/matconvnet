@@ -1,4 +1,6 @@
+% -------------------------------------------------------------------------
 function [trained_model, performance_summary] = testCnn(input_opts)
+% -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
 
@@ -179,6 +181,7 @@ function [trained_model, performance_summary] = testCnn(input_opts)
   if opts.general.return_performance_summary
     if isTwoClassImdb(opts.general.dataset)
       [top_train_predictions, ~] = getPredictionsFromModelOnImdb(net, 'cnn', imdb, 1);
+      afprintf(sprintf('[INFO] Getting model performance on `train` set...\n'));
       labels_train = imdb.images.labels(imdb.images.set == 1);
       afprintf(sprintf('[INFO] Model performance on `train` set\n'));
       [ ...
@@ -187,6 +190,7 @@ function [trained_model, performance_summary] = testCnn(input_opts)
         train_specificity, ...
       ] = getAccSensSpec(labels_train, top_train_predictions, true);
       [top_test_predictions, ~] = getPredictionsFromModelOnImdb(net, 'cnn', imdb, 3);
+      afprintf(sprintf('[INFO] Getting model performance on `test` set...\n'));
       afprintf(sprintf('[INFO] Model performance on `test` set\n'));
       labels_test = imdb.images.labels(imdb.images.set == 3);
       [ ...

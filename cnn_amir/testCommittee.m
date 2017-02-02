@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function [trained_model, performance_summary] = testForest(input_opts)
+function [trained_model, performance_summary] = testCommittee(input_opts)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -37,11 +37,10 @@ function [trained_model, performance_summary] = testForest(input_opts)
   imdb = getValueFromFieldOrDefault(input_opts, 'imdb', struct());
 
   % -------------------------------------------------------------------------
-  %                                                                opts.train
+  %                                                    opts.committee_options
   % -------------------------------------------------------------------------
-  opts.train.number_of_features = prod(size(imdb.images.data(:,:,:,1))); % 32 x 32 x 3 = 3072
-  opts.train.number_of_trees = getValueFromFieldOrDefault(input_opts, 'number_of_trees', 1000);
-  opts.train.boosting_method = getValueFromFieldOrDefault(input_opts, 'boosting_method', 'RUSBoost'); % {'AdaBoostM1', 'RUSBoost'}
+  opts.committee_options.number_of_committee_members = getValueFromFieldOrDefault(input_opts, 'number_of_committee_members', 3);
+  opts.committee_options.training_method = getValueFromFieldOrDefault(input_opts, 'training_method', 'cnn');
 
   % -------------------------------------------------------------------------
   %                                                                opts.paths
@@ -52,10 +51,10 @@ function [trained_model, performance_summary] = testForest(input_opts)
     'experiment_parent_dir', ...
     fullfile(vl_rootnn, 'experiment_results'));
   opts.paths.experiment_dir = fullfile(opts.paths.experiment_parent_dir, sprintf( ...
-    'forest-%s-%s-%s', ...
+    'committee-%s-%s-%s', ...
+    opts.committee_options.training_method, ...
     opts.paths.time_string, ...
-    opts.general.dataset, ...
-    opts.train.boosting_method));
+    opts.general.dataset));
   if ~exist(opts.paths.experiment_dir)
     mkdir(opts.paths.experiment_dir);
   end
@@ -63,58 +62,64 @@ function [trained_model, performance_summary] = testForest(input_opts)
   opts.paths.results_file_path = fullfile(opts.paths.experiment_dir, 'results.txt');
 
   % -------------------------------------------------------------------------
+  %                                                 opts.single_model_options
+  % -------------------------------------------------------------------------
+  opts.single_model_options.dataset = opts.general.dataset;
+  opts.single_model_options.experiment_parent_dir = opts.paths.experiment_dir;
+  opts.single_model_options.return_performance_summary = true;
+  switch opts.committee_options.training_method
+    case 'svm'
+      % no additional options
+    case 'cnn'
+      opts.single_model_options.network_arch = getValueFromFieldOrDefault(input_opts, 'network_arch', 'lenet');
+      opts.single_model_options.backprop_depth = getValueFromFieldOrDefault(input_opts, 'backprop_depth', 4);
+      opts.single_model_options.gpus = ifNotMacSetGpu(getValueFromFieldOrDefault(input_opts, 'gpus', 1));
+      opts.single_model_options.debug_flag = getValueFromFieldOrDefault(input_opts, 'debug_flag', false);
+      opts.single_model_options.learning_rate = getValueFromFieldOrDefault(input_opts, 'learning_rate', 'default_keyword');
+      opts.single_model_options.weight_init_sequence = getValueFromFieldOrDefault(input_opts, 'weight_init_sequence', {'compRand', 'compRand', 'compRand'});
+  end
+
+  % -------------------------------------------------------------------------
   %                                                    save experiment setup!
   % -------------------------------------------------------------------------
   saveStruct2File(opts, opts.paths.options_file_path, 0);
 
-  % -------------------------------------------------------------------------
-  %                                                   prepare data and labels
-  % -------------------------------------------------------------------------
-  vectorized_data = reshape(imdb.images.data, opts.train.number_of_features, [])';
-  labels = imdb.images.labels;
-  is_train = imdb.images.set == 1;
-  is_test = imdb.images.set == 3;
-
-  vectorized_data_train = vectorized_data(is_train, :);
-  vectorized_data_test = vectorized_data(is_test, :);
-  labels_train = labels(is_train);
-  labels_test = labels(is_test);
 
   % -------------------------------------------------------------------------
-  %                                                                     train
+  %                                                        5. Train committee
   % -------------------------------------------------------------------------
-  printConsoleOutputSeparator();
-  tree_template = templateTree('MinLeafSize',5);
-  boosted_forest = fitensemble( ...
-    vectorized_data_train, ...
-    labels_train, ...
-    opts.train.boosting_method, ...
-    opts.train.number_of_trees, ...
-    tree_template, ...
-    'LearnRate', 0.1, ...
-    'nprint', 25);
+  committee_models = {};
+  opts.single_model_options.imdb = imdb;
+
+  for i = 1:opts.committee_options.number_of_committee_members
+    afprintf(sprintf('[INFO] Training committee member #%d\n', i));
+    switch opts.committee_options.training_method
+      case 'svm'
+        [model, ~] = testSvm(opts.single_model_options);
+      case 'cnn'
+        [model, ~] = testCnn(opts.single_model_options);
+    end
+    committee_models{i} = model;
+  end
 
   % -------------------------------------------------------------------------
   %                                                   get performance summary
   % -------------------------------------------------------------------------
-  % l_loss = loss(boosted_forest, vectorized_data_train, labels_train, 'mode', 'cumulative');
-  % tab = tabulate(Y(is_test));
-  % confusion_matrix = bsxfun(@rdivide, confusionmat(Y(is_test), Yfit), tab(:,2)) * 100;
-  % acc = (1 - l_loss(end)) * 100;
-  % spec = confusion_matrix(1,1);
-  % sens = confusion_matrix(2,2);
+  training_method = sprintf('committee-%s', opts.committee_options.training_method);
   if opts.general.return_performance_summary
     afprintf(sprintf('[INFO] Getting model performance on `train` set...\n'));
-    [top_train_predictions, ~] = getPredictionsFromModelOnImdb(boosted_forest, 'forest', imdb, 1);
+    [top_train_predictions, ~] = getPredictionsFromModelOnImdb(committee_models, training_method, imdb, 1);
     afprintf(sprintf('[INFO] Model performance on `train` set\n'));
+    labels_train = imdb.images.labels(imdb.images.set == 1);
     [ ...
       train_accuracy, ...
       train_sensitivity, ...
       train_specificity, ...
     ] = getAccSensSpec(labels_train, top_train_predictions, true);
     afprintf(sprintf('[INFO] Getting model performance on `test` set...\n'));
-    [top_test_predictions, ~] = getPredictionsFromModelOnImdb(boosted_forest, 'forest', imdb, 3);
+    [top_test_predictions, ~] = getPredictionsFromModelOnImdb(committee_models, training_method, imdb, 3);
     afprintf(sprintf('[INFO] Model performance on `test` set\n'));
+    labels_test = imdb.images.labels(imdb.images.set == 3);
     [ ...
       test_accuracy, ...
       test_sensitivity, ...
@@ -133,7 +138,7 @@ function [trained_model, performance_summary] = testForest(input_opts)
   % -------------------------------------------------------------------------
   %                                                             assign output
   % -------------------------------------------------------------------------
-  trained_model = boosted_forest;
+  trained_model = committee_models;
   performance_summary.train.accuracy = train_accuracy;
   performance_summary.train.sensitivity = train_sensitivity;
   performance_summary.train.specificity = train_specificity;
@@ -145,3 +150,4 @@ function [trained_model, performance_summary] = testForest(input_opts)
   %                                                               save output
   % -------------------------------------------------------------------------
   saveStruct2File(performance_summary, opts.paths.results_file_path, 0);
+

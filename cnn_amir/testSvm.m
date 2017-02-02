@@ -98,6 +98,7 @@ function [trained_model, performance_summary] = testSvm(input_opts)
   %                                                   get performance summary
   % -------------------------------------------------------------------------
   if opts.general.return_performance_summary
+    afprintf(sprintf('[INFO] Getting model performance on `train` set...\n'));
     [top_train_predictions, ~] = getPredictionsFromModelOnImdb(svm_struct, 'svm', imdb, 1);
     afprintf(sprintf('[INFO] Model performance on `train` set\n'));
     [ ...
@@ -105,6 +106,7 @@ function [trained_model, performance_summary] = testSvm(input_opts)
       train_sensitivity, ...
       train_specificity, ...
     ] = getAccSensSpec(labels_train, top_train_predictions, true);
+    afprintf(sprintf('[INFO] Getting model performance on `test` set...\n'));
     [top_test_predictions, ~] = getPredictionsFromModelOnImdb(svm_struct, 'svm', imdb, 3);
     afprintf(sprintf('[INFO] Model performance on `test` set\n'));
     [ ...
