@@ -87,7 +87,7 @@ function [trained_model, performance_summary] = testCommittee(input_opts)
 
 
   % -------------------------------------------------------------------------
-  %                                                        5. Train committee
+  %                                                           train committee
   % -------------------------------------------------------------------------
   committee_models = {};
   opts.single_model_options.imdb = imdb;

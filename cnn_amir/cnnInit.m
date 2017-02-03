@@ -1,4 +1,4 @@
-function output_opts = cnnInit(input_opts)
+function network_opts = cnnInit(input_opts)
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
 
@@ -41,11 +41,11 @@ function output_opts = cnnInit(input_opts)
   rng(0);
   net.layers = {};
   if strcmp(input_opts.train.learning_rate, 'default_keyword')
-    output_opts.train.learning_rate = getLearningRate(opts.dataset, opts.network_arch);
+    network_opts.train.learning_rate = getLearningRate(opts.dataset, opts.network_arch);
   else
-    output_opts.train.learning_rate = input_opts.train.learning_rate;
+    network_opts.train.learning_rate = input_opts.train.learning_rate;
   end
-  output_opts.train.num_epochs = numel(output_opts.train.learning_rate);
+  network_opts.train.num_epochs = numel(network_opts.train.learning_rate);
 
   fh = networkInitializationUtils;
   switch opts.network_arch
@@ -132,4 +132,4 @@ function output_opts = cnnInit(input_opts)
   %    VERY IMPORTANT: reset this afterwards so other modules are true random
   % -------------------------------------------------------------------------
   rng(s);
-  output_opts.net.net = net;
+  network_opts.net = net;

@@ -235,6 +235,7 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   experiment_options.training_method = 'ensemble-cnn';
   experiment_options.iteration_count = 8;
   experiment_options.number_of_samples_per_model = 1000;
+  experiment_options.uni_model_boosting = true;
 
   % -------------------------------------------------
   experiment_options.boosting_method = 'rusboost';

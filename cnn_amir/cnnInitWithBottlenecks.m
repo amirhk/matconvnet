@@ -1,4 +1,4 @@
-function output_opts = cnnInitWithBottlenecks(input_opts)
+function network_opts = cnnInitWithBottlenecks(input_opts)
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
 
@@ -41,8 +41,8 @@ function output_opts = cnnInitWithBottlenecks(input_opts)
   s = rng;
   rng(0);
   net.layers = {};
-  output_opts.train.learning_rate = getLearningRate(opts.dataset, opts.network_arch);
-  output_opts.train.num_epochs = numel(output_opts.train.learning_rate);
+  network_opts.train.learning_rate = getLearningRate(opts.dataset, opts.network_arch);
+  network_opts.train.num_epochs = numel(network_opts.train.learning_rate);
 
   fh = networkInitializationUtils;
   switch opts.network_arch
@@ -168,7 +168,7 @@ function output_opts = cnnInitWithBottlenecks(input_opts)
   %    VERY IMPORTANT: reset this afterwards so other modules are true random
   % -------------------------------------------------------------------------
   rng(s);
-  output_opts.net.net = net;
+  network_opts.net = net;
 
 
 

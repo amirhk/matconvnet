@@ -36,6 +36,7 @@ function [trained_model, performance_summary] = testEnsemble(input_opts)
   % -------------------------------------------------------------------------
   % TODO... implement boosting methods in addition to RUSBoost
   opts.ensemble_options.boosting_method = getValueFromFieldOrDefault(input_opts, 'boosting_method', 'rusboost'); % {'adaboost.m1', 'rusboost', ...}
+  opts.ensemble_options.uni_model_boosting = getValueFromFieldOrDefault(input_opts, 'uni_model_boosting', false);
   opts.ensemble_options.training_method = getValueFromFieldOrDefault(input_opts, 'training_method', 'cnn');
   opts.ensemble_options.loss_calculation_method = getValueFromFieldOrDefault(input_opts, 'loss_calculation_method', 'default_in_literature');
   opts.ensemble_options.iteration_count = getValueFromFieldOrDefault(input_opts, 'iteration_count', 5);
@@ -209,6 +210,9 @@ function [trained_model, performance_summary] = testEnsemble(input_opts)
       case 'svm'
         [model, ~] = testSvm(opts.single_model_options);
       case 'cnn'
+        if opts.ensemble_options.uni_model_boosting && iteration > 1
+          opts.single_model_options.net = model_per_iteration{iteration - 1};
+        end
         [model, ~] = testCnn(opts.single_model_options);
     end
 

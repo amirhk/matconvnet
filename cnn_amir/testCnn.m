@@ -39,7 +39,7 @@ function [trained_model, performance_summary] = testCnn(input_opts)
   % -------------------------------------------------------------------------
   %                                                                  opts.net
   % -------------------------------------------------------------------------
-  opts.net.net = getValueFromFieldOrDefault(input_opts, 'network', struct()); % may optionally pass in the network
+  opts.net.net = getValueFromFieldOrDefault(input_opts, 'net', struct()); % may optionally pass in the network
   opts.net.weight_init_source = getValueFromFieldOrDefault(input_opts, 'weight_init_source', 'gen');
   opts.net.weight_init_sequence = getValueFromFieldOrDefault(input_opts, 'weight_init_sequence', {'compRand', 'compRand', 'compRand', 'compRand', 'compRand'});
   opts.net.bottleneck_structure = getValueFromFieldOrDefault(input_opts, 'bottleneck_structure', []);
@@ -106,12 +106,17 @@ function [trained_model, performance_summary] = testCnn(input_opts)
   %                                                               get network
   % -------------------------------------------------------------------------
   if numel(opts.net.bottleneck_structure) > 0
-    output_opts = cnnInitWithBottlenecks(opts);
+    network_opts = cnnInitWithBottlenecks(opts);
   else
-    output_opts = cnnInit(opts);
+    network_opts = cnnInit(opts);
   end
-  opts.net = mergeStructs(opts.net, output_opts.net);
-  opts.train = mergeStructs(opts.train, output_opts.train);
+  if ~length(fieldnames(opts.net.net))
+    % opts.net = mergeStructs(opts.net, network_opts.net);
+    opts.net.net = network_opts.net;
+  else
+    opts.net.net = opts.net.net; % use the network passed in this function
+  end
+  opts.train = mergeStructs(opts.train, network_opts.train);
   % opts.train.weight_init_sequence = printWeightInitSequence(opts.net.weight_init_sequence); % TODO really needed?
 
   % -------------------------------------------------------------------------

@@ -129,6 +129,7 @@ function folds = testKFold(input_opts)
     case 'ensemble-cnn'
       % ensemble options
       opts.single_training_method_options.boosting_method = getValueFromFieldOrDefault(input_opts, 'boosting_method', 'rusboost');
+      opts.single_training_method_options.uni_model_boosting = getValueFromFieldOrDefault(input_opts, 'uni_model_boosting', false);
       opts.single_training_method_options.iteration_count = getValueFromFieldOrDefault(input_opts, 'iteration_count', 5);
       opts.single_training_method_options.number_of_samples_per_model = getValueFromFieldOrDefault(input_opts, 'number_of_samples_per_model', 1000);
       opts.single_training_method_options.loss_calculation_method = getValueFromFieldOrDefault(input_opts, 'loss_calculation_method', 'default_in_literature');
