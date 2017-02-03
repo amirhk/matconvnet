@@ -211,20 +211,20 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   experiment_options.backprop_depth = 13;
   testKFold(experiment_options);
 
-  % -------------------------------------------------
-  experiment_options.number_of_committee_members = 7;
-  % -------------------------------------------------
-  % Exp. 1
-  experiment_options.backprop_depth = 4;
-  testKFold(experiment_options);
+  % % -------------------------------------------------
+  % experiment_options.number_of_committee_members = 7;
+  % % -------------------------------------------------
+  % % Exp. 1
+  % experiment_options.backprop_depth = 4;
+  % testKFold(experiment_options);
 
-  % Exp. 2
-  experiment_options.backprop_depth = 7;
-  testKFold(experiment_options);
+  % % Exp. 2
+  % experiment_options.backprop_depth = 7;
+  % testKFold(experiment_options);
 
-  % Exp. 3
-  experiment_options.backprop_depth = 13;
-  testKFold(experiment_options);
+  % % Exp. 3
+  % experiment_options.backprop_depth = 13;
+  % testKFold(experiment_options);
 
 
 
