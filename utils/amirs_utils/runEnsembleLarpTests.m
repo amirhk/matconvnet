@@ -227,8 +227,6 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   % testKFold(experiment_options);
 
 
-
-
   % -------------------------------------------------------------------------
   %                                                              ensemble cnn
   % -------------------------------------------------------------------------
@@ -241,20 +239,20 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   experiment_options.boosting_method = 'rusboost';
   % -------------------------------------------------
 
-  % % Exp. 1
-  % experiment_options.loss_calculation_method = 'default_in_literature';
-  % experiment_options.backprop_depth = 4;
-  % testKFold(experiment_options);
+  % Exp. 1
+  experiment_options.loss_calculation_method = 'default_in_literature';
+  experiment_options.backprop_depth = 4;
+  testKFold(experiment_options);
 
-  % % Exp. 2
-  % experiment_options.loss_calculation_method = 'default_in_literature';
-  % experiment_options.backprop_depth = 7;
-  % testKFold(experiment_options);
+  % Exp. 2
+  experiment_options.loss_calculation_method = 'default_in_literature';
+  experiment_options.backprop_depth = 7;
+  testKFold(experiment_options);
 
-  % % Exp. 3
-  % experiment_options.loss_calculation_method = 'default_in_literature';
-  % experiment_options.backprop_depth = 13;
-  % testKFold(experiment_options);
+  % Exp. 3
+  experiment_options.loss_calculation_method = 'default_in_literature';
+  experiment_options.backprop_depth = 13;
+  testKFold(experiment_options);
 
   % Exp. 4
   experiment_options.loss_calculation_method = 'class_normalized';
