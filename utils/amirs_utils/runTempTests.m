@@ -38,9 +38,11 @@ function runTempTests()
   % runEnsembleLarpTests('cifar-no-white-two-class-deer-truck', 'unbalanced',   2);
 
 
-  runEnsembleLarpTests('cifar-two-class-deer-horse',          'balanced-low', 3);
-  runEnsembleLarpTests('cifar-two-class-deer-horse',          'unbalanced',   3);
-  runEnsembleLarpTests('stl-10-two-class-airplane-bird',      'balanced-low', 3);
-  runEnsembleLarpTests('stl-10-two-class-airplane-bird',      'unbalanced',   3);
+  % runEnsembleLarpTests('cifar-two-class-deer-horse',          'balanced-low', 3);
+  % runEnsembleLarpTests('cifar-two-class-deer-horse',          'unbalanced',   3);
+  % runEnsembleLarpTests('stl-10-two-class-airplane-bird',      'balanced-low', 3);
+  % runEnsembleLarpTests('stl-10-two-class-airplane-bird',      'unbalanced',   3);
 
+
+  runEnsembleLarpTests('stl-10-two-class-airplane-bird',      'balanced-low', 4);
 
