@@ -46,7 +46,7 @@ switch network_arch
         learning_rate = [0.05*ones(1,10) 0.005*ones(1,20) 0.001*ones(1,120)];
       case 'stl-10-two-class-airplane-bird'
         % learning_rate = [0.05*ones(1,20) 0.005*ones(1,20) 0.001*ones(1,110)] * 10;
-        learning_rate = [0.05*ones(1,20) 0.005*ones(1,20) 0.001*ones(1,210)] * 10;
+        learning_rate = [0.05*ones(1,20) 0.005*ones(1,20) 0.001*ones(1,410)] * 10;
       case 'svhn-two-class-9-4'
         learning_rate = [0.05*ones(1,10) 0.005*ones(1,20) 0.001*ones(1,120)];
       case 'prostate-v2-20-patients'
