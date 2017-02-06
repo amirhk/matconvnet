@@ -525,9 +525,10 @@ function [all_samples_top_class_predictions, all_samples_all_class_predictions, 
 
   afprintf(sprintf('Extracting `top`-class predictions based on `softmaxloss`\n'));
   [all_samples_top_class_predictions, ~, all_labels_1] = tmpBeef(opts, getBatch, epoch, subset, learning_rate, imdb, net_1, 'softmaxloss');
-  afprintf(sprintf('Extracting `all`-class predictions based on `softmax`\n'));
-  [~, all_samples_all_class_predictions, all_labels_2] = tmpBeef(opts, getBatch, epoch, subset, learning_rate, imdb, net_2, 'softmax');
-  assert(isequal(all_labels_1, all_labels_2));
+  all_samples_all_class_predictions = all_samples_top_class_predictions;
+  % afprintf(sprintf('Extracting `all`-class predictions based on `softmax`\n'));
+  % [~, all_samples_all_class_predictions, all_labels_2] = tmpBeef(opts, getBatch, epoch, subset, learning_rate, imdb, net_2, 'softmax');
+  % assert(isequal(all_labels_1, all_labels_2));
   all_labels = all_labels_1;
 
 % -------------------------------------------------------------------------
