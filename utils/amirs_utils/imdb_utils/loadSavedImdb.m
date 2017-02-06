@@ -33,6 +33,9 @@ function imdb = loadSavedImdb(input_opts)
   if ~isTwoClassImdb(dataset)
     afprintf(sprintf('[INFO] Loading all-class imdb (dataset: %s, network_arch: %s)\n', dataset, network_arch));
     imdb = load(fullfile(getDevPath(), 'data', 'imdb', sprintf('%s-%s', dataset, network_arch), 'imdb.mat'));
+    % % TODO: revert back to support ^... also, tmp = load(...); imdb = tmp.imdb shit should be fixed / consistent
+    % tmp = load('subsampled_imdb.mat');
+    imdb = tmp.imdb;
   else
     afprintf(sprintf('[INFO] Loading two-class imdb (dataset: %s, posneg_balance: %s)\n', dataset, posneg_balance));
     path_to_imdbs = fullfile(getDevPath(), 'data', 'two_class_imdbs');
@@ -937,8 +940,8 @@ function imdb = loadSavedImdb(input_opts)
       otherwise
         fprintf('TODO: implement!');
       end
+      imdb = tmp.imdb;
   end
-  imdb = tmp.imdb;
   afprintf(sprintf('[INFO] done!\n'));
 
   % print info

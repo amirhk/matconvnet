@@ -150,6 +150,20 @@ function folds = testKFold(input_opts)
       opts.single_training_method_options.training_method = 'svm';
       % svm options
       % no additional options
+    case 'ensemble-multi-class-cnn'
+      % ensemble options
+      opts.single_training_method_options.boosting_method = getValueFromFieldOrDefault(input_opts, 'boosting_method', 'rusboost');
+      opts.single_training_method_options.iteration_count = getValueFromFieldOrDefault(input_opts, 'iteration_count', 5);
+      opts.single_training_method_options.number_of_samples_per_model = getValueFromFieldOrDefault(input_opts, 'number_of_samples_per_model', 1000);
+      opts.single_training_method_options.loss_calculation_method = getValueFromFieldOrDefault(input_opts, 'loss_calculation_method', 'default_in_literature');
+      opts.single_training_method_options.training_method = 'cnn';
+      % cnn options
+      opts.single_training_method_options.network_arch = getValueFromFieldOrDefault(input_opts, 'network_arch', 'lenet');
+      opts.single_training_method_options.backprop_depth = getValueFromFieldOrDefault(input_opts, 'backprop_depth', 4);
+      opts.single_training_method_options.gpus = ifNotMacSetGpu(getValueFromFieldOrDefault(input_opts, 'gpus', 1));
+      opts.single_training_method_options.debug_flag = getValueFromFieldOrDefault(input_opts, 'debug_flag', false);
+      opts.single_training_method_options.learning_rate = getValueFromFieldOrDefault(input_opts, 'learning_rate', 'default_keyword');
+      opts.single_training_method_options.weight_init_sequence = getValueFromFieldOrDefault(input_opts, 'weight_init_sequence', {'compRand', 'compRand', 'compRand'});
   end
 
   % -------------------------------------------------------------------------
@@ -198,6 +212,8 @@ function folds = testKFold(input_opts)
       trainingMethodFunctionHandle = @testEnsemble;
     case 'ensemble-svm'
       trainingMethodFunctionHandle = @testEnsemble;
+    case 'ensemble-multi-class-cnn'
+      trainingMethodFunctionHandle = @testEnsembleMultiClass;
   end
 
   for i = 1:opts.k_fold_options.number_of_folds
