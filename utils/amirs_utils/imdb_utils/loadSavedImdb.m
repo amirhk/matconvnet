@@ -35,7 +35,7 @@ function imdb = loadSavedImdb(input_opts)
     imdb = load(fullfile(getDevPath(), 'data', 'imdb', sprintf('%s-%s', dataset, network_arch), 'imdb.mat'));
     % % TODO: revert back to support ^... also, tmp = load(...); imdb = tmp.imdb shit should be fixed / consistent
     % tmp = load('subsampled_imdb.mat');
-    imdb = tmp.imdb;
+    % imdb = tmp.imdb;
   else
     afprintf(sprintf('[INFO] Loading two-class imdb (dataset: %s, posneg_balance: %s)\n', dataset, posneg_balance));
     path_to_imdbs = fullfile(getDevPath(), 'data', 'two_class_imdbs');
