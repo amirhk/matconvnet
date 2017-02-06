@@ -232,7 +232,7 @@ function [trained_model, performance_summary] = testEnsemble(input_opts)
     afprintf(sprintf('[INFO] Computing `validation set` predictions...\n'));
     % NOTE: this asks for predictions on a cnn, whereas below we ask for predicitons on ensemble-{cnn, svm}
     % TODO: bug in all_validation_predictions!!
-    [top_validation_predictions, all_validation_predictions] = ...
+    [top_validation_predictions, ~] = ...
       getPredictionsFromModelOnImdb(model, opts.ensemble_options.training_method, initial_imdb_with_all_train_and_all_test, 1);
 
     [ ...
@@ -317,7 +317,7 @@ function [trained_model, performance_summary] = testEnsemble(input_opts)
     %   data_test_positive_count, ...
     %   data_test_negative_count));
     % NOTE: this asks for predictions on a cnn, whereas below we ask for predicitons on ensemble-{cnn, svm}
-    [top_test_predictions, all_test_predictions] = ...
+    [top_test_predictions, ~] = ...
       getPredictionsFromModelOnImdb(model, opts.ensemble_options.training_method, test_imdb, 3);
     [ ...
       test_accuracy, ...
@@ -338,7 +338,7 @@ function [trained_model, performance_summary] = testEnsemble(input_opts)
     % ensemble.(sprintf('iteration_%d', iteration)).validation.positive_count = data_train_positive_count;
     % ensemble.(sprintf('iteration_%d', iteration)).validation.negative_count = data_train_negative_count;
     ensemble.(sprintf('iteration_%d', iteration)).validation.top_predictions = top_validation_predictions;
-    ensemble.(sprintf('iteration_%d', iteration)).validation.all_predictions = all_validation_predictions;
+    % ensemble.(sprintf('iteration_%d', iteration)).validation.all_predictions = all_validation_predictions;
     ensemble.(sprintf('iteration_%d', iteration)).validation.labels = labels_train;
     ensemble.(sprintf('iteration_%d', iteration)).validation.accuracy = validation_accuracy;
     ensemble.(sprintf('iteration_%d', iteration)).validation.sensitivity = validation_sensitivity;
@@ -346,7 +346,7 @@ function [trained_model, performance_summary] = testEnsemble(input_opts)
     % ensemble.(sprintf('iteration_%d', iteration)).test.positive_count = data_test_positive_count;
     % ensemble.(sprintf('iteration_%d', iteration)).test.negative_count = data_test_negative_count;
     ensemble.(sprintf('iteration_%d', iteration)).test.top_predictions = top_test_predictions;
-    ensemble.(sprintf('iteration_%d', iteration)).test.all_predictions = all_test_predictions;
+    % ensemble.(sprintf('iteration_%d', iteration)).test.all_predictions = all_test_predictions;
     ensemble.(sprintf('iteration_%d', iteration)).test.labels = labels_test;
     ensemble.(sprintf('iteration_%d', iteration)).test.accuracy = test_accuracy;
     ensemble.(sprintf('iteration_%d', iteration)).test.sensitivity = test_sensitivity;
