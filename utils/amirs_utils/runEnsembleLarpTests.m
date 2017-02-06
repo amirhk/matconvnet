@@ -73,7 +73,7 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   % -------------------------------------------------------------------------
   %                                                            shared options
   % -------------------------------------------------------------------------
-  experiment_options.number_of_folds = 1;
+  experiment_options.number_of_folds = 10;
   experiment_options.experiment_parent_dir = opts.paths.experiment_dir;
   experiment_options.dataset = opts.general.dataset;
   experiment_options.network_arch = opts.general.network_arch;
@@ -310,7 +310,7 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   % -------------------------------------------------------------------------
   experiment_options.training_method = 'ensemble-multi-class-cnn';
   % experiment_options.training_method = 'ensemble-multi-class-svm';
-  experiment_options.iteration_count = 2;
+  experiment_options.iteration_count = 8;
   experiment_options.number_of_samples_per_model = 100;
   experiment_options.uni_model_boosting = false;
 
