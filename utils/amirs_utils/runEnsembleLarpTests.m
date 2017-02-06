@@ -311,7 +311,7 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   experiment_options.training_method = 'ensemble-multi-class-cnn';
   % experiment_options.training_method = 'ensemble-multi-class-svm';
   experiment_options.iteration_count = 8;
-  experiment_options.number_of_samples_per_model = 100;
+  experiment_options.number_of_samples_per_model = 250;
   experiment_options.uni_model_boosting = false;
 
 
