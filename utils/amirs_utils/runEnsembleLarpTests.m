@@ -316,7 +316,7 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   experiment_options.boosting_method = 'adaboost.m1';
 
   % -------------------------------------------------
-  experiment_options.number_of_samples_per_model = 10000;
+  experiment_options.number_of_samples_per_model = 25000;
   % -------------------------------------------------
 
   % % Exp. 1
