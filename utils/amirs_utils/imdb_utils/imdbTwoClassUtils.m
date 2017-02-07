@@ -35,6 +35,10 @@ function fh = imdbTwoClassUtils()
   fh.constructPartialImdb = @constructPartialImdb;
   fh.constructTwoClassUnbalancedImdb = @constructTwoClassUnbalancedImdb;
 
+  fh.subsampleImdb = @subsampleImdb;
+  fh.constructTwoClassImdbFromMultiClassImdb = @constructTwoClassImdbFromMultiClassImdb;
+
+
 % -------------------------------------------------------------------------
 function [ ...
   data, ...
@@ -505,6 +509,57 @@ function imdb = constructPartialImdb(data, labels, set_number)
   imdb.meta.sets = {'train', 'val', 'test'};
 
 % -------------------------------------------------------------------------
+function imdb = constructTwoClassImdbFromMultiClassImdb(imdb, positive_class_number, negative_class_number)
+% -------------------------------------------------------------------------
+  afprintf(sprintf('[INFO] Constructing Two-Class Imdb From Multi-Class Imdb...\n'));
+
+  % enforce row vector before doing bsxfun
+  imdb.images.labels = reshape(imdb.images.labels, 1, prod(size(imdb.images.labels)));
+  imdb.images.set = reshape(imdb.images.set, 1, prod(size(imdb.images.set)));
+
+  % indices
+  train_positive_indices = bsxfun(@and, imdb.images.labels == positive_class_number, imdb.images.set == 1);
+  train_negative_indices = bsxfun(@and, imdb.images.labels == negative_class_number, imdb.images.set == 1);
+  test_positive_indices = bsxfun(@and, imdb.images.labels == positive_class_number, imdb.images.set == 3);
+  test_negative_indices = bsxfun(@and, imdb.images.labels == negative_class_number, imdb.images.set == 3);
+
+  % actual data
+  data_train_positive = imdb.images.data(:,:,:,train_positive_indices);
+  data_train_negative = imdb.images.data(:,:,:,train_negative_indices);
+  data_test_positive = imdb.images.data(:,:,:,test_positive_indices);
+  data_test_negative = imdb.images.data(:,:,:,test_negative_indices);
+
+  imdb = constructImdbHelper(data_train_positive, data_train_negative, data_test_positive, data_test_negative);
+
+% -------------------------------------------------------------------------
+function imdb = constructImdbHelper(data_train_positive, data_train_negative, data_test_positive, data_test_negative)
+% -------------------------------------------------------------------------
+  % train set
+  data_train = cat(4, data_train_positive, data_train_negative);
+  labels_train = cat(2, 2 * ones(1, size(data_train_positive, 4)), 1 * ones(1, size(data_train_negative, 4)));
+
+  % test set
+  data_test = cat(4, data_test_positive, data_test_negative);
+  labels_test = cat(2, 2 * ones(1, size(data_test_positive, 4)), 1 * ones(1, size(data_test_negative, 4)));
+
+  % put it all together
+  data = single(cat(4, data_train, data_test));
+  labels = single(cat(2, labels_train, labels_test));
+  set = single(cat(2, 1 * ones(1, size(labels_train, 2)), 3 * ones(1, size(labels_test, 2))));
+
+  % shuffle
+  ix = randperm(size(data, 4));
+  data = data(:,:,:,ix);
+  labels = labels(ix);
+  set = set(ix);
+
+  % put it all together
+  imdb.images.data = data;
+  imdb.images.labels = labels;
+  imdb.images.set = set;
+  imdb.meta.sets = {'train', 'val', 'test'};
+
+% -------------------------------------------------------------------------
 function imdb = balanceImdb(imdb, set_name, balance_type)
   % set_name = {'train', 'test'}
   % balance_type = {'downsample', 'augment'}
@@ -513,7 +568,8 @@ function imdb = balanceImdb(imdb, set_name, balance_type)
   % -------------------------------------------------------------------------
   %                                                                  get info
   % -------------------------------------------------------------------------
-  afprintf(sprintf('[INFO] Initial imdb info...\n'));
+  afprintf(sprintf('[INFO] Balancing `%s` set in imdb (balance type: `%s`)...\n', set_name, balance_type));
+  afprintf(sprintf('[INFO] Initial imdb info...\n'), 1);
   [ ...
     data, ...
     data_train, ...
@@ -565,7 +621,6 @@ function imdb = balanceImdb(imdb, set_name, balance_type)
   % -------------------------------------------------------------------------
   %                                                                      beef
   % -------------------------------------------------------------------------
-  afprintf(sprintf('[INFO] Balancing `%s` set in imdb (balance type: `%s`)...\n', set_name, balance_type));
   switch balance_type
     case 'downsample'
       switch set_name
@@ -597,7 +652,7 @@ function imdb = balanceImdb(imdb, set_name, balance_type)
   % -------------------------------------------------------------------------
   %                                                   putting it all together
   % -------------------------------------------------------------------------
-  afprintf(sprintf('[INFO] Putting it all together...\n'));
+  % afprintf(sprintf('[INFO] Putting it all together...\n'));
   new_data = cat( ...
     4, ...
     new_data_train_positive, ...
@@ -620,7 +675,7 @@ function imdb = balanceImdb(imdb, set_name, balance_type)
   % -------------------------------------------------------------------------
   %                                                                   shuffle
   % -------------------------------------------------------------------------
-  afprintf(sprintf('[INFO] Shuffling data...\n'));
+  % afprintf(sprintf('[INFO] Shuffling data...\n'));
   ix = randperm(size(new_data, 4));
   new_data = new_data(:,:,:,ix);
   new_labels = new_labels(ix);
@@ -633,9 +688,73 @@ function imdb = balanceImdb(imdb, set_name, balance_type)
   imdb.images.data = single(new_data);
   imdb.images.labels = single(new_labels);
   imdb.images.set = single(new_set);
-  afprintf(sprintf('[INFO] Final imdb info...\n'));
+  afprintf(sprintf('[INFO] Final imdb info...\n'), 1);
   [~] = getImdbInfo(imdb, true);
-  afprintf(sprintf('done!\n'));
+
+% -------------------------------------------------------------------------
+function imdb = subsampleImdb(imdb, set_name, class_name, subsample_count)
+  % set_name = {'train', 'test'}
+  % set_name = {'positive', 'negative'}
+  % subsample_count = {100, 277, 707, 1880, 5000}
+% -------------------------------------------------------------------------
+  afprintf(sprintf('[INFO] Subsampling imdb (`%s` samples in `%s` set)...\n', class_name, set_name));
+  [ ...
+    data, ...
+    data_train, ...
+    data_train_positive, ...
+    data_train_negative, ...
+    data_train_indices, ...
+    data_train_positive_indices, ...
+    data_train_negative_indices, ...
+    data_train_count, ...
+    data_train_positive_count, ...
+    data_train_negative_count, ...
+    labels_train, ...
+    labels_train_positive, ...
+    labels_train_negative, ...
+    data_test, ...
+    data_test_positive, ...
+    data_test_negative, ...
+    data_test_indices, ...
+    data_test_positive_indices, ...
+    data_test_negative_indices, ...
+    data_test_count, ...
+    data_test_positive_count, ...
+    data_test_negative_count, ...
+    labels_test, ...
+    labels_test_positive, ...
+    labels_test_negative, ...
+  ] = getImdbInfo(imdb, false);
+
+  switch set_name
+    case 'train'
+      switch class_name
+        case 'positive'
+          subsampled_data_train_positive_indices = randsample(size(data_train_positive, 4), subsample_count);
+          subsampled_data_train_positive = data_train_positive(:,:,:,subsampled_data_train_positive_indices);
+          data_train_positive = subsampled_data_train_positive;
+        case 'negative'
+          subsampled_data_train_negative_indices = randsample(size(data_train_negative, 4), subsample_count);
+          subsampled_data_train_negative = data_train_negative(:,:,:,subsampled_data_train_negative_indices);
+          data_train_negative = subsampled_data_train_negative;
+      end
+    case 'test'
+      switch class_name
+        case 'positive'
+          subsampled_data_test_positive_indices = randsample(size(data_test_positive, 4), subsample_count);
+          subsampled_data_test_positive = data_test_positive(:,:,:,subsampled_data_test_positive_indices);
+          data_test_positive = subsampled_data_test_positive;
+        case 'negative'
+          subsampled_data_test_negative_indices = randsample(size(data_test_negative, 4), subsample_count);
+          subsampled_data_test_negative = data_test_negative(:,:,:,subsampled_data_test_negative_indices);
+          data_test_negative = subsampled_data_test_negative;
+      end
+  end
+  imdb = constructImdbHelper(data_train_positive, data_train_negative, data_test_positive, data_test_negative);
+
+
+
+
 
 % -------------------------------------------------------------------------
 % TODO: this method should really be two separate methods...
@@ -655,7 +774,7 @@ function imdb = constructTwoClassUnbalancedImdb(imdb, positive_class_number, neg
   data_train_positive = imdb.images.data(:,:,:,train_positive_indices);
   data_train_negative = imdb.images.data(:,:,:,train_negative_indices);
   downsampled_data_train_positive_indices = randsample(size(data_train_positive, 4), floor(size(data_train_positive, 4) / unbalance_inverse_ratio));
-  downsampled_data_train_positive = data_train_positive(:,:,:, downsampled_data_train_positive_indices);
+  downsampled_data_train_positive = data_train_positive(:,:,:,downsampled_data_train_positive_indices);
 
   data_train_positive = downsampled_data_train_positive;
   data_train_negative = data_train_negative;
@@ -687,9 +806,13 @@ function imdb = constructTwoClassUnbalancedImdb(imdb, positive_class_number, neg
   imdb.meta.sets = {'train', 'val', 'test'};
   imdb.meta.classes = arrayfun(@(x)sprintf('%d',x),0:9,'uniformoutput',false);
 
+
+
+
 %-------------------------------------------------------------------------
 function saveImdb(imdb, dataset, posneg_balance, positive_class_number, negative_class_number)
 %-------------------------------------------------------------------------
+  afprintf(sprintf('[INFO] Saving imdb...\n'));
   save_file_name_prefix = sprintf( ...
     'saved-two-class-%s-pos%d-neg%d', ...
     dataset, ...

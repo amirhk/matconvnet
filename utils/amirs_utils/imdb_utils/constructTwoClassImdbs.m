@@ -25,7 +25,7 @@ function constructTwoClassImdbs(dataset, network_arch, positive_class_number, ne
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
 
-  afprintf(sprintf('[INFO] Constructing unbalanced `%s` imdbs...\n', dataset));
+  afprintf(sprintf('[INFO] Constructing two-class `%s` imdbs...\n', dataset));
   opts.imdb.data_dir = fullfile(getDevPath(), 'data', 'source', dataset);
   switch dataset
     case 'mnist'
@@ -45,33 +45,129 @@ function constructTwoClassImdbs(dataset, network_arch, positive_class_number, ne
 
   fh_imdb_utils = imdbTwoClassUtils;
 
+  % % -------------------------------------------------------------------------
+  % %                                                              balanced-low
+  % % -------------------------------------------------------------------------
+  % posneg_balance = 'balanced-low';
+  % afprintf(sprintf('[INFO] `%s`...\n', posneg_balance));
+  % imdb = fh_imdb_utils.constructTwoClassUnbalancedImdb(all_class_imdb, positive_class_number, negative_class_number, 200);
+  % imdb = fh_imdb_utils.balanceImdb(imdb, 'train', 'downsample');
+  % imdb = fh_imdb_utils.balanceImdb(imdb, 'test', 'downsample'); % all test sets should be balanced so acc = avg(sens, spec)
+  % fh_imdb_utils.saveImdb(imdb, dataset, posneg_balance, positive_class_number, negative_class_number)
+  % afprintf(sprintf('done!\n\n'));
+
+  % % -------------------------------------------------------------------------
+  % %                                                                unbalanced
+  % % -------------------------------------------------------------------------
+  % posneg_balance = 'unbalanced';
+  % afprintf(sprintf('[INFO] `%s`...\n', posneg_balance));
+  % imdb = fh_imdb_utils.constructTwoClassUnbalancedImdb(all_class_imdb, positive_class_number, negative_class_number, 200);
+  % imdb = fh_imdb_utils.balanceImdb(imdb, 'test', 'downsample'); % all test sets should be balanced so acc = avg(sens, spec)
+  % fh_imdb_utils.saveImdb(imdb, dataset, posneg_balance, positive_class_number, negative_class_number)
+  % afprintf(sprintf('done!\n\n'));
+
+  % % -------------------------------------------------------------------------
+  % %                                                             balanced-high
+  % % -------------------------------------------------------------------------
+  % posneg_balance = 'balanced-high';
+  % afprintf(sprintf('[INFO] `%s`...\n', posneg_balance));
+  % imdb = fh_imdb_utils.constructTwoClassUnbalancedImdb(all_class_imdb, positive_class_number, negative_class_number, 1);
+  % imdb = fh_imdb_utils.balanceImdb(imdb, 'test', 'downsample'); % all test sets should be balanced so acc = avg(sens, spec)
+  % fh_imdb_utils.saveImdb(imdb, dataset, posneg_balance, positive_class_number, negative_class_number)
+  % afprintf(sprintf('done!\n\n'));
+
   % -------------------------------------------------------------------------
-  %                                                              balanced-low
-  % -------------------------------------------------------------------------
-  posneg_balance = 'balanced-low';
-  afprintf(sprintf('[INFO] `%s`...\n', posneg_balance));
-  imdb = fh_imdb_utils.constructTwoClassUnbalancedImdb(all_class_imdb, positive_class_number, negative_class_number, 200);
-  imdb = fh_imdb_utils.balanceImdb(imdb, 'train', 'downsample');
+  balance_count = 100;
+  posneg_balance = sprintf('balanced-%d-%d', balance_count, balance_count);
+  afprintf(sprintf('[INFO] Constructing `%s`...\n', posneg_balance));
+  imdb = fh_imdb_utils.constructTwoClassImdbFromMultiClassImdb(all_class_imdb, positive_class_number, negative_class_number);
+  imdb = fh_imdb_utils.subsampleImdb(imdb, 'train', 'positive', balance_count);
+  imdb = fh_imdb_utils.subsampleImdb(imdb, 'train', 'negative', balance_count);
   imdb = fh_imdb_utils.balanceImdb(imdb, 'test', 'downsample'); % all test sets should be balanced so acc = avg(sens, spec)
   fh_imdb_utils.saveImdb(imdb, dataset, posneg_balance, positive_class_number, negative_class_number)
   afprintf(sprintf('done!\n\n'));
 
   % -------------------------------------------------------------------------
-  %                                                                unbalanced
-  % -------------------------------------------------------------------------
-  posneg_balance = 'unbalanced';
-  afprintf(sprintf('[INFO] `%s`...\n', posneg_balance));
-  imdb = fh_imdb_utils.constructTwoClassUnbalancedImdb(all_class_imdb, positive_class_number, negative_class_number, 200);
+  balance_count = 266;
+  posneg_balance = sprintf('balanced-%d-%d', balance_count, balance_count);
+  afprintf(sprintf('[INFO] Constructing `%s`...\n', posneg_balance));
+  imdb = fh_imdb_utils.constructTwoClassImdbFromMultiClassImdb(all_class_imdb, positive_class_number, negative_class_number);
+  imdb = fh_imdb_utils.subsampleImdb(imdb, 'train', 'positive', balance_count);
+  imdb = fh_imdb_utils.subsampleImdb(imdb, 'train', 'negative', balance_count);
   imdb = fh_imdb_utils.balanceImdb(imdb, 'test', 'downsample'); % all test sets should be balanced so acc = avg(sens, spec)
   fh_imdb_utils.saveImdb(imdb, dataset, posneg_balance, positive_class_number, negative_class_number)
   afprintf(sprintf('done!\n\n'));
 
   % -------------------------------------------------------------------------
-  %                                                             balanced-high
-  % -------------------------------------------------------------------------
-  posneg_balance = 'balanced-high';
-  afprintf(sprintf('[INFO] `%s`...\n', posneg_balance));
-  imdb = fh_imdb_utils.constructTwoClassUnbalancedImdb(all_class_imdb, positive_class_number, negative_class_number, 1);
+  balance_count = 707;
+  posneg_balance = sprintf('balanced-%d-%d', balance_count, balance_count);
+  afprintf(sprintf('[INFO] Constructing `%s`...\n', posneg_balance));
+  imdb = fh_imdb_utils.constructTwoClassImdbFromMultiClassImdb(all_class_imdb, positive_class_number, negative_class_number);
+  imdb = fh_imdb_utils.subsampleImdb(imdb, 'train', 'positive', balance_count);
+  imdb = fh_imdb_utils.subsampleImdb(imdb, 'train', 'negative', balance_count);
   imdb = fh_imdb_utils.balanceImdb(imdb, 'test', 'downsample'); % all test sets should be balanced so acc = avg(sens, spec)
   fh_imdb_utils.saveImdb(imdb, dataset, posneg_balance, positive_class_number, negative_class_number)
   afprintf(sprintf('done!\n\n'));
+
+  % -------------------------------------------------------------------------
+  balance_count = 1880;
+  posneg_balance = sprintf('balanced-%d-%d', balance_count, balance_count);
+  afprintf(sprintf('[INFO] Constructing `%s`...\n', posneg_balance));
+  imdb = fh_imdb_utils.constructTwoClassImdbFromMultiClassImdb(all_class_imdb, positive_class_number, negative_class_number);
+  imdb = fh_imdb_utils.subsampleImdb(imdb, 'train', 'positive', balance_count);
+  imdb = fh_imdb_utils.subsampleImdb(imdb, 'train', 'negative', balance_count);
+  imdb = fh_imdb_utils.balanceImdb(imdb, 'test', 'downsample'); % all test sets should be balanced so acc = avg(sens, spec)
+  fh_imdb_utils.saveImdb(imdb, dataset, posneg_balance, positive_class_number, negative_class_number)
+  afprintf(sprintf('done!\n\n'));
+
+  % -------------------------------------------------------------------------
+  balance_count = 5000;
+  posneg_balance = sprintf('balanced-%d-%d', balance_count, balance_count);
+  afprintf(sprintf('[INFO] Constructing `%s`...\n', posneg_balance));
+  imdb = fh_imdb_utils.constructTwoClassImdbFromMultiClassImdb(all_class_imdb, positive_class_number, negative_class_number);
+  imdb = fh_imdb_utils.subsampleImdb(imdb, 'train', 'positive', balance_count);
+  imdb = fh_imdb_utils.subsampleImdb(imdb, 'train', 'negative', balance_count);
+  imdb = fh_imdb_utils.balanceImdb(imdb, 'test', 'downsample'); % all test sets should be balanced so acc = avg(sens, spec)
+  fh_imdb_utils.saveImdb(imdb, dataset, posneg_balance, positive_class_number, negative_class_number)
+  afprintf(sprintf('done!\n\n'));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
