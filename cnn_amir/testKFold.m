@@ -108,7 +108,7 @@ function folds = testKFold(input_opts)
       opts.single_training_method_options.gpus = ifNotMacSetGpu(getValueFromFieldOrDefault(input_opts, 'gpus', 1));
       opts.single_training_method_options.debug_flag = getValueFromFieldOrDefault(input_opts, 'debug_flag', false);
       opts.single_training_method_options.learning_rate = getValueFromFieldOrDefault(input_opts, 'learning_rate', 'default_keyword');
-      opts.single_training_method_options.weight_init_sequence = getValueFromFieldOrDefault(input_opts, 'weight_init_sequence', {'compRand', 'compRand', 'compRand'});
+      opts.single_training_method_options.weight_init_sequence = getValueFromFieldOrDefault(input_opts, 'weight_init_sequence', {'compRand', 'compRand', 'compRand', 'compRand', 'compRand'});
     case 'committee-cnn'
       % committee options
       opts.single_training_method_options.number_of_committee_members = getValueFromFieldOrDefault(input_opts, 'number_of_committee_members', 3);
@@ -119,7 +119,7 @@ function folds = testKFold(input_opts)
       opts.single_training_method_options.gpus = ifNotMacSetGpu(getValueFromFieldOrDefault(input_opts, 'gpus', 1));
       opts.single_training_method_options.debug_flag = getValueFromFieldOrDefault(input_opts, 'debug_flag', false);
       opts.single_training_method_options.learning_rate = getValueFromFieldOrDefault(input_opts, 'learning_rate', 'default_keyword');
-      opts.single_training_method_options.weight_init_sequence = getValueFromFieldOrDefault(input_opts, 'weight_init_sequence', {'compRand', 'compRand', 'compRand'});
+      opts.single_training_method_options.weight_init_sequence = getValueFromFieldOrDefault(input_opts, 'weight_init_sequence', {'compRand', 'compRand', 'compRand', 'compRand', 'compRand'});
     case 'committee-svm'
       % committee options
       opts.single_training_method_options.number_of_committee_members = getValueFromFieldOrDefault(input_opts, 'number_of_committee_members', 3);
@@ -140,7 +140,7 @@ function folds = testKFold(input_opts)
       opts.single_training_method_options.gpus = ifNotMacSetGpu(getValueFromFieldOrDefault(input_opts, 'gpus', 1));
       opts.single_training_method_options.debug_flag = getValueFromFieldOrDefault(input_opts, 'debug_flag', false);
       opts.single_training_method_options.learning_rate = getValueFromFieldOrDefault(input_opts, 'learning_rate', 'default_keyword');
-      opts.single_training_method_options.weight_init_sequence = getValueFromFieldOrDefault(input_opts, 'weight_init_sequence', {'compRand', 'compRand', 'compRand'});
+      opts.single_training_method_options.weight_init_sequence = getValueFromFieldOrDefault(input_opts, 'weight_init_sequence', {'compRand', 'compRand', 'compRand', 'compRand', 'compRand'});
     case 'ensemble-svm'
       % ensemble options
       opts.single_training_method_options.boosting_method = getValueFromFieldOrDefault(input_opts, 'boosting_method', 'rusboost');
@@ -163,7 +163,7 @@ function folds = testKFold(input_opts)
       opts.single_training_method_options.gpus = ifNotMacSetGpu(getValueFromFieldOrDefault(input_opts, 'gpus', 1));
       opts.single_training_method_options.debug_flag = getValueFromFieldOrDefault(input_opts, 'debug_flag', false);
       opts.single_training_method_options.learning_rate = getValueFromFieldOrDefault(input_opts, 'learning_rate', 'default_keyword');
-      opts.single_training_method_options.weight_init_sequence = getValueFromFieldOrDefault(input_opts, 'weight_init_sequence', {'compRand', 'compRand', 'compRand'});
+      opts.single_training_method_options.weight_init_sequence = getValueFromFieldOrDefault(input_opts, 'weight_init_sequence', {'compRand', 'compRand', 'compRand', 'compRand', 'compRand'});
   end
 
   % -------------------------------------------------------------------------
