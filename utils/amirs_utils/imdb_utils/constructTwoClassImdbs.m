@@ -43,7 +43,7 @@ function constructTwoClassImdbs(dataset, network_arch, positive_class_number, ne
       all_class_imdb = constructSvhnImdb(opts);
   end
 
-  fh_imdb_utils = imdbTwoClassUtils;
+
 
   % % -------------------------------------------------------------------------
   % %                                                              balanced-low
@@ -76,8 +76,21 @@ function constructTwoClassImdbs(dataset, network_arch, positive_class_number, ne
   % fh_imdb_utils.saveImdb(imdb, dataset, posneg_balance, positive_class_number, negative_class_number)
   % afprintf(sprintf('done!\n\n'));
 
+
+  % logspace(1 + log10(3.76), 3 + log10(5), 6)
   % -------------------------------------------------------------------------
-  balance_count = 100;
+  balance_count = 38; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
+  % balance_count = 100; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
+  % balance_count = 266; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
+  % balance_count = 707; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
+  % balance_count = 1880; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
+  % balance_count = 5000; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
+
+
+
+
+function createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number)
+  fh_imdb_utils = imdbTwoClassUtils;
   posneg_balance = sprintf('balanced-%d-%d', balance_count, balance_count);
   afprintf(sprintf('[INFO] Constructing `%s`...\n', posneg_balance));
   imdb = fh_imdb_utils.constructTwoClassImdbFromMultiClassImdb(all_class_imdb, positive_class_number, negative_class_number);
@@ -86,88 +99,3 @@ function constructTwoClassImdbs(dataset, network_arch, positive_class_number, ne
   imdb = fh_imdb_utils.balanceImdb(imdb, 'test', 'downsample'); % all test sets should be balanced so acc = avg(sens, spec)
   fh_imdb_utils.saveImdb(imdb, dataset, posneg_balance, positive_class_number, negative_class_number)
   afprintf(sprintf('done!\n\n'));
-
-  % -------------------------------------------------------------------------
-  balance_count = 266;
-  posneg_balance = sprintf('balanced-%d-%d', balance_count, balance_count);
-  afprintf(sprintf('[INFO] Constructing `%s`...\n', posneg_balance));
-  imdb = fh_imdb_utils.constructTwoClassImdbFromMultiClassImdb(all_class_imdb, positive_class_number, negative_class_number);
-  imdb = fh_imdb_utils.subsampleImdb(imdb, 'train', 'positive', balance_count);
-  imdb = fh_imdb_utils.subsampleImdb(imdb, 'train', 'negative', balance_count);
-  imdb = fh_imdb_utils.balanceImdb(imdb, 'test', 'downsample'); % all test sets should be balanced so acc = avg(sens, spec)
-  fh_imdb_utils.saveImdb(imdb, dataset, posneg_balance, positive_class_number, negative_class_number)
-  afprintf(sprintf('done!\n\n'));
-
-  % -------------------------------------------------------------------------
-  balance_count = 707;
-  posneg_balance = sprintf('balanced-%d-%d', balance_count, balance_count);
-  afprintf(sprintf('[INFO] Constructing `%s`...\n', posneg_balance));
-  imdb = fh_imdb_utils.constructTwoClassImdbFromMultiClassImdb(all_class_imdb, positive_class_number, negative_class_number);
-  imdb = fh_imdb_utils.subsampleImdb(imdb, 'train', 'positive', balance_count);
-  imdb = fh_imdb_utils.subsampleImdb(imdb, 'train', 'negative', balance_count);
-  imdb = fh_imdb_utils.balanceImdb(imdb, 'test', 'downsample'); % all test sets should be balanced so acc = avg(sens, spec)
-  fh_imdb_utils.saveImdb(imdb, dataset, posneg_balance, positive_class_number, negative_class_number)
-  afprintf(sprintf('done!\n\n'));
-
-  % -------------------------------------------------------------------------
-  balance_count = 1880;
-  posneg_balance = sprintf('balanced-%d-%d', balance_count, balance_count);
-  afprintf(sprintf('[INFO] Constructing `%s`...\n', posneg_balance));
-  imdb = fh_imdb_utils.constructTwoClassImdbFromMultiClassImdb(all_class_imdb, positive_class_number, negative_class_number);
-  imdb = fh_imdb_utils.subsampleImdb(imdb, 'train', 'positive', balance_count);
-  imdb = fh_imdb_utils.subsampleImdb(imdb, 'train', 'negative', balance_count);
-  imdb = fh_imdb_utils.balanceImdb(imdb, 'test', 'downsample'); % all test sets should be balanced so acc = avg(sens, spec)
-  fh_imdb_utils.saveImdb(imdb, dataset, posneg_balance, positive_class_number, negative_class_number)
-  afprintf(sprintf('done!\n\n'));
-
-  % -------------------------------------------------------------------------
-  balance_count = 5000;
-  posneg_balance = sprintf('balanced-%d-%d', balance_count, balance_count);
-  afprintf(sprintf('[INFO] Constructing `%s`...\n', posneg_balance));
-  imdb = fh_imdb_utils.constructTwoClassImdbFromMultiClassImdb(all_class_imdb, positive_class_number, negative_class_number);
-  imdb = fh_imdb_utils.subsampleImdb(imdb, 'train', 'positive', balance_count);
-  imdb = fh_imdb_utils.subsampleImdb(imdb, 'train', 'negative', balance_count);
-  imdb = fh_imdb_utils.balanceImdb(imdb, 'test', 'downsample'); % all test sets should be balanced so acc = avg(sens, spec)
-  fh_imdb_utils.saveImdb(imdb, dataset, posneg_balance, positive_class_number, negative_class_number)
-  afprintf(sprintf('done!\n\n'));
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
