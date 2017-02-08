@@ -80,15 +80,15 @@ function imdb = loadSavedImdb(input_opts)
           case 'balanced-high'
             tmp = load(fullfile(path_to_imdbs, 'cifar', 'saved-two-class-cifar-pos5-neg10-balanced-high-train-5000-5000.mat'));
           case 'balanced-100-100'
-            tmp = load(fullfile(path_to_imdbs, 'mnist', 'balanced', 'saved-two-class-cifar-pos5-neg10-balanced-100-100-train-100-100.mat'));
+            tmp = load(fullfile(path_to_imdbs, 'cifar', 'balanced', 'saved-two-class-cifar-pos5-neg10-balanced-100-100-train-100-100.mat'));
           case 'balanced-266-266'
-            tmp = load(fullfile(path_to_imdbs, 'mnist', 'balanced', 'saved-two-class-cifar-pos5-neg10-balanced-266-266-train-266-266.mat'));
+            tmp = load(fullfile(path_to_imdbs, 'cifar', 'balanced', 'saved-two-class-cifar-pos5-neg10-balanced-266-266-train-266-266.mat'));
           case 'balanced-707-707'
-            tmp = load(fullfile(path_to_imdbs, 'mnist', 'balanced', 'saved-two-class-cifar-pos5-neg10-balanced-707-707-train-707-707.mat'));
+            tmp = load(fullfile(path_to_imdbs, 'cifar', 'balanced', 'saved-two-class-cifar-pos5-neg10-balanced-707-707-train-707-707.mat'));
           case 'balanced-1880-1880'
-            tmp = load(fullfile(path_to_imdbs, 'mnist', 'balanced', 'saved-two-class-cifar-pos5-neg10-balanced-1880-1880-train-1880-1880.mat'));
+            tmp = load(fullfile(path_to_imdbs, 'cifar', 'balanced', 'saved-two-class-cifar-pos5-neg10-balanced-1880-1880-train-1880-1880.mat'));
           case 'balanced-5000-5000'
-            tmp = load(fullfile(path_to_imdbs, 'mnist', 'balanced', 'saved-two-class-cifar-pos5-neg10-balanced-5000-5000-train-5000-5000.mat'));
+            tmp = load(fullfile(path_to_imdbs, 'cifar', 'balanced', 'saved-two-class-cifar-pos5-neg10-balanced-5000-5000-train-5000-5000.mat'));
         end
       case 'cifar-no-white-two-class-deer-truck'
         % currently fold number is not implemented.
@@ -120,15 +120,15 @@ function imdb = loadSavedImdb(input_opts)
           case 'balanced-high'
             tmp = load(fullfile(path_to_imdbs, 'svhn', 'saved-two-class-svhn-pos9-neg4-balanced-high-train-4659-7458.mat'));
           case 'balanced-100-100'
-            tmp = load(fullfile(path_to_imdbs, 'mnist', 'balanced', 'saved-two-class-svhn-pos9-neg4-balanced-100-100-train-100-100.mat'));
+            tmp = load(fullfile(path_to_imdbs, 'svhn', 'balanced', 'saved-two-class-svhn-pos9-neg4-balanced-100-100-train-100-100.mat'));
           case 'balanced-266-266'
-            tmp = load(fullfile(path_to_imdbs, 'mnist', 'balanced', 'saved-two-class-svhn-pos9-neg4-balanced-266-266-train-266-266.mat'));
+            tmp = load(fullfile(path_to_imdbs, 'svhn', 'balanced', 'saved-two-class-svhn-pos9-neg4-balanced-266-266-train-266-266.mat'));
           case 'balanced-707-707'
-            tmp = load(fullfile(path_to_imdbs, 'mnist', 'balanced', 'saved-two-class-svhn-pos9-neg4-balanced-707-707-train-707-707.mat'));
+            tmp = load(fullfile(path_to_imdbs, 'svhn', 'balanced', 'saved-two-class-svhn-pos9-neg4-balanced-707-707-train-707-707.mat'));
           case 'balanced-1880-1880'
-            tmp = load(fullfile(path_to_imdbs, 'mnist', 'balanced', 'saved-two-class-svhn-pos9-neg4-balanced-1880-1880-train-1880-1880.mat'));
+            tmp = load(fullfile(path_to_imdbs, 'svhn', 'balanced', 'saved-two-class-svhn-pos9-neg4-balanced-1880-1880-train-1880-1880.mat'));
           case 'balanced-5000-5000'
-            tmp = load(fullfile(path_to_imdbs, 'mnist', 'balanced', 'saved-two-class-svhn-pos9-neg4-balanced-4659-4659-train-4659-4659.mat'));
+            tmp = load(fullfile(path_to_imdbs, 'svhn', 'balanced', 'saved-two-class-svhn-pos9-neg4-balanced-4659-4659-train-4659-4659.mat'));
         end
       case 'prostate-v2-20-patients'
         switch posneg_balance
