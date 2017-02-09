@@ -55,6 +55,15 @@ switch network_arch
       case 'prostate-v3-104-patients'
         learning_rate = [0.05*ones(1,10) 0.005*ones(1,20) 0.001*ones(1,20)];
     end
+  case 'lenet+1'
+    switch dataset
+      case 'cifar-two-class-deer-truck'
+        learning_rate = [0.05*ones(1,10) 0.005*ones(1,20) 0.001*ones(1,120)];
+      case 'mnist-two-class-9-4'
+        learning_rate = [0.05*ones(1,10) 0.005*ones(1,20) 0.001*ones(1,120)];
+      case 'svhn-two-class-9-4'
+        learning_rate = [0.05*ones(1,10) 0.005*ones(1,20) 0.001*ones(1,120)];
+    end
   case 'alexnet'
     switch dataset
       case 'cifar'

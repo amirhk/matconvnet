@@ -81,16 +81,16 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   experiment_options.gpus = opts.train.gpus;
 
 
-  % -------------------------------------------------------------------------
-  %                                                                single svm
-  % -------------------------------------------------------------------------
+  % % -------------------------------------------------------------------------
+  % %                                                                single svm
+  % % -------------------------------------------------------------------------
   % experiment_options.training_method = 'svm';
   % % Exp. 1
   % testKFold(experiment_options);
 
-  % -------------------------------------------------------------------------
-  %                                                              ensemble svm
-  % -------------------------------------------------------------------------
+  % % -------------------------------------------------------------------------
+  % %                                                              ensemble svm
+  % % -------------------------------------------------------------------------
   % experiment_options.training_method = 'ensemble-svm';
   % experiment_options.boosting_method = 'adaboost.m1';
   % experiment_options.iteration_count = 8;
@@ -103,14 +103,14 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   % experiment_options.loss_calculation_method = 'class_normalized';
   % testKFold(experiment_options);
 
-  % -------------------------------------------------------------------------
-  %                                                               single tree
-  % -------------------------------------------------------------------------
+  % % -------------------------------------------------------------------------
+  % %                                                               single tree
+  % % -------------------------------------------------------------------------
   % TODO...
 
-  % -------------------------------------------------------------------------
-  %                                                                    forest
-  % -------------------------------------------------------------------------
+  % % -------------------------------------------------------------------------
+  % %                                                                    forest
+  % % -------------------------------------------------------------------------
   % experiment_options.training_method = 'forest';
   % % % Exp. 1
   % % experiment_options.boosting_method = 'AdaBoostM1';
@@ -119,29 +119,20 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   % experiment_options.boosting_method = 'RUSBoost';
   % testKFold(experiment_options);
 
-  % -------------------------------------------------------------------------
-  %                                                                single cnn
-  % -------------------------------------------------------------------------
+  % % -------------------------------------------------------------------------
+  % %                                                                single cnn
+  % % -------------------------------------------------------------------------
   experiment_options.training_method = 'single-cnn';
 
+  % -------------------------------------------------
+  % experiment_options.network_arch = 'lenet';
+  % -------------------------------------------------
   % % -------------------------------------------------
-  % experiment_options.weight_init_sequence = {'compRand', 'compRand', 'compRand'};
-  % % -------------------------------------------------
-
-  % % Exp. 1
-  % experiment_options.backprop_depth = 4;
-  % testKFold(experiment_options);
-
-  % % % Exp. 2
-  % % experiment_options.backprop_depth = 7;
-  % % testKFold(experiment_options);
-
-  % % Exp. 3
-  % experiment_options.backprop_depth = 13;
-  % testKFold(experiment_options);
-
-  % % -------------------------------------------------
-  % experiment_options.weight_init_sequence = {'quasiRandSobol', 'quasiRandSobol', 'quasiRandSobol'};
+  % experiment_options.weight_init_sequence = { ...
+  %   'compRand', ...
+  %   'compRand', ...
+  %   'compRand', ...
+  % };
   % % -------------------------------------------------
 
   % % Exp. 1
@@ -157,7 +148,31 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   % testKFold(experiment_options);
 
   % % -------------------------------------------------
-  % experiment_options.weight_init_sequence = {'quasiRandSobolSkip', 'quasiRandSobolSkip', 'quasiRandSobolSkip'};
+  % experiment_options.weight_init_sequence = { ...
+  %   'quasiRandSobol', ...
+  %   'quasiRandSobol', ...
+  %   'quasiRandSobol', ...
+  % };
+  % % -------------------------------------------------
+
+  % % Exp. 1
+  % experiment_options.backprop_depth = 4;
+  % testKFold(experiment_options);
+
+  % % % Exp. 2
+  % % experiment_options.backprop_depth = 7;
+  % % testKFold(experiment_options);
+
+  % % Exp. 3
+  % experiment_options.backprop_depth = 13;
+  % testKFold(experiment_options);
+
+  % % -------------------------------------------------
+  % experiment_options.weight_init_sequence = { ...
+  %   'quasiRandSobolSkip', ...
+  %   'quasiRandSobolSkip', ...
+  %   'quasiRandSobolSkip', ...
+  % };
   % % -------------------------------------------------
 
   % % Exp. 1
@@ -173,14 +188,24 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   % testKFold(experiment_options);
 
 
-  experiment_options.network_arch = 'alexnet';
+  % -------------------------------------------------
+  % experiment_options.network_arch = 'alexnet';
+  % -------------------------------------------------
+  % % Exp. 1
+  % experiment_options.backprop_depth = 7;
+  % testKFold(experiment_options);
 
-  % Exp. 1
-  experiment_options.backprop_depth = 7;
-  testKFold(experiment_options);
+  % % Exp. 3
+  % experiment_options.backprop_depth = 20;
+  % testKFold(experiment_options);
 
-  % Exp. 3
-  experiment_options.backprop_depth = 20;
+  % -------------------------------------------------
+  % experiment_options.network_arch = 'lenet+1';
+  % -------------------------------------------------
+  % want to test FC + 3 (3/4) to see how it compares against just lenet architecture
+  % so same number of parameters, just with some random non-linear projection at the begininning
+  % % Exp. 1
+  experiment_options.backprop_depth = 12;
   testKFold(experiment_options);
 
 
@@ -203,9 +228,9 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   % testKFold(experiment_options);
 
 
-  % -------------------------------------------------------------------------
-  %                                                             committee cnn
-  % -------------------------------------------------------------------------
+  % % -------------------------------------------------------------------------
+  % %                                                             committee cnn
+  % % -------------------------------------------------------------------------
   % experiment_options.training_method = 'committee-cnn';
 
   % % -------------------------------------------------
@@ -239,13 +264,13 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   % testKFold(experiment_options);
 
 
-  % -------------------------------------------------------------------------
-  %                                                              ensemble cnn
-  % -------------------------------------------------------------------------
-  experiment_options.training_method = 'ensemble-cnn';
-  experiment_options.iteration_count = 8;
-  experiment_options.number_of_samples_per_model = 1000;
-  experiment_options.uni_model_boosting = false;
+  % % -------------------------------------------------------------------------
+  % %                                                              ensemble cnn
+  % % -------------------------------------------------------------------------
+  % experiment_options.training_method = 'ensemble-cnn';
+  % experiment_options.iteration_count = 8;
+  % experiment_options.number_of_samples_per_model = 1000;
+  % experiment_options.uni_model_boosting = false;
 
   % % -------------------------------------------------
   % experiment_options.boosting_method = 'rusboost';
@@ -316,20 +341,20 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   % testKFold(experiment_options);
 
 
-  % -------------------------------------------------
-  experiment_options.boosting_method = 'adaboost.m1';
-  % -------------------------------------------------
-  experiment_options.network_arch = 'alexnet';
+  % % -------------------------------------------------
+  % experiment_options.boosting_method = 'adaboost.m1';
+  % % -------------------------------------------------
+  % experiment_options.network_arch = 'alexnet';
 
-  % Exp. 1
-  experiment_options.loss_calculation_method = 'default_in_literature';
-  experiment_options.backprop_depth = 7;
-  testKFold(experiment_options);
+  % % Exp. 1
+  % experiment_options.loss_calculation_method = 'default_in_literature';
+  % experiment_options.backprop_depth = 7;
+  % testKFold(experiment_options);
 
-  % Exp. 3
-  experiment_options.loss_calculation_method = 'default_in_literature';
-  experiment_options.backprop_depth = 20;
-  testKFold(experiment_options);
+  % % Exp. 3
+  % experiment_options.loss_calculation_method = 'default_in_literature';
+  % experiment_options.backprop_depth = 20;
+  % testKFold(experiment_options);
 
 
 
