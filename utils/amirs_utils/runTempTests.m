@@ -26,12 +26,12 @@ function runTempTests()
 % POSSIBILITY OF SUCH DAMAGE.
 
 
-  % runEnsembleLarpTests('mnist-two-class-9-4', 'balanced-38-38',     2);
-  % runEnsembleLarpTests('mnist-two-class-9-4', 'balanced-100-100',   2);
-  % runEnsembleLarpTests('mnist-two-class-9-4', 'balanced-266-266',   2);
-  % runEnsembleLarpTests('mnist-two-class-9-4', 'balanced-707-707',   2);
-  % runEnsembleLarpTests('mnist-two-class-9-4', 'balanced-1880-1880', 2);
-  % runEnsembleLarpTests('mnist-two-class-9-4', 'balanced-5000-5000', 2);
+  runEnsembleLarpTests('mnist-two-class-9-4', 'balanced-38-38',     2);
+  runEnsembleLarpTests('mnist-two-class-9-4', 'balanced-100-100',   2);
+  runEnsembleLarpTests('mnist-two-class-9-4', 'balanced-266-266',   2);
+  runEnsembleLarpTests('mnist-two-class-9-4', 'balanced-707-707',   2);
+  runEnsembleLarpTests('mnist-two-class-9-4', 'balanced-1880-1880', 2);
+  runEnsembleLarpTests('mnist-two-class-9-4', 'balanced-5000-5000', 2);
 
   % runEnsembleLarpTests('svhn-two-class-9-4', 'balanced-38-38',     3);
   % runEnsembleLarpTests('svhn-two-class-9-4', 'balanced-100-100',   3);
@@ -40,9 +40,9 @@ function runTempTests()
   % runEnsembleLarpTests('svhn-two-class-9-4', 'balanced-1880-1880', 3);
   % runEnsembleLarpTests('svhn-two-class-9-4', 'balanced-5000-5000', 3);
 
-  runEnsembleLarpTests('cifar-two-class-deer-truck', 'balanced-38-38',     4);
-  runEnsembleLarpTests('cifar-two-class-deer-truck', 'balanced-100-100',   4);
-  runEnsembleLarpTests('cifar-two-class-deer-truck', 'balanced-266-266',   4);
-  runEnsembleLarpTests('cifar-two-class-deer-truck', 'balanced-707-707',   4);
-  runEnsembleLarpTests('cifar-two-class-deer-truck', 'balanced-1880-1880', 4);
-  runEnsembleLarpTests('cifar-two-class-deer-truck', 'balanced-5000-5000', 4);
+  % runEnsembleLarpTests('cifar-two-class-deer-truck', 'balanced-38-38',     4);
+  % runEnsembleLarpTests('cifar-two-class-deer-truck', 'balanced-100-100',   4);
+  % runEnsembleLarpTests('cifar-two-class-deer-truck', 'balanced-266-266',   4);
+  % runEnsembleLarpTests('cifar-two-class-deer-truck', 'balanced-707-707',   4);
+  % runEnsembleLarpTests('cifar-two-class-deer-truck', 'balanced-1880-1880', 4);
+  % runEnsembleLarpTests('cifar-two-class-deer-truck', 'balanced-5000-5000', 4);
