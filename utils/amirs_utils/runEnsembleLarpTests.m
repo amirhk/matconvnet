@@ -125,7 +125,7 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   experiment_options.training_method = 'single-cnn';
 
   % -------------------------------------------------
-  % experiment_options.network_arch = 'lenet';
+  experiment_options.network_arch = 'lenet';
   % -------------------------------------------------
   % % -------------------------------------------------
   % experiment_options.weight_init_sequence = { ...
@@ -135,17 +135,21 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   % };
   % % -------------------------------------------------
 
-  % % Exp. 1
-  % experiment_options.backprop_depth = 4;
-  % testKFold(experiment_options);
+  % Exp. 1
+  experiment_options.backprop_depth = 4;
+  testKFold(experiment_options);
 
   % % % Exp. 2
   % % experiment_options.backprop_depth = 7;
   % % testKFold(experiment_options);
 
-  % % Exp. 3
-  % experiment_options.backprop_depth = 13;
-  % testKFold(experiment_options);
+  % Exp. 3
+  experiment_options.backprop_depth = 12;
+  testKFold(experiment_options);
+
+  % Exp. 4
+  experiment_options.backprop_depth = 13;
+  testKFold(experiment_options);
 
   % % -------------------------------------------------
   % experiment_options.weight_init_sequence = { ...
@@ -199,23 +203,23 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   % experiment_options.backprop_depth = 20;
   % testKFold(experiment_options);
 
-  % -------------------------------------------------
-  experiment_options.network_arch = 'lenet+1';
-  % -------------------------------------------------
-  % want to test FC + 3 (3/4) to see how it compares against just lenet architecture
-  % so same number of parameters, just with some random non-linear projection at the begininning
+  % % -------------------------------------------------
+  % experiment_options.network_arch = 'lenet+1';
+  % % -------------------------------------------------
+  % % want to test FC + 3 (3/4) to see how it compares against just lenet architecture
+  % % so same number of parameters, just with some random non-linear projection at the begininning
 
-  % Exp. 1
-  experiment_options.backprop_depth = 10;
-  testKFold(experiment_options);
+  % % Exp. 1
+  % experiment_options.backprop_depth = 10;
+  % testKFold(experiment_options);
 
-  % Exp. 1
-  experiment_options.backprop_depth = 13;
-  testKFold(experiment_options);
+  % % Exp. 1
+  % experiment_options.backprop_depth = 13;
+  % testKFold(experiment_options);
 
-  % Exp. 1
-  experiment_options.backprop_depth = 15;
-  testKFold(experiment_options);
+  % % Exp. 1
+  % experiment_options.backprop_depth = 15;
+  % testKFold(experiment_options);
 
 
 
