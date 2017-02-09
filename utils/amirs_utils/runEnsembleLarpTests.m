@@ -175,9 +175,9 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
 
   experiment_options.network_arch = 'alexnet';
 
-  % % Exp. 1
-  % experiment_options.backprop_depth = 7;
-  % testKFold(experiment_options);
+  % Exp. 1
+  experiment_options.backprop_depth = 7;
+  testKFold(experiment_options);
 
   % Exp. 3
   experiment_options.backprop_depth = 20;
