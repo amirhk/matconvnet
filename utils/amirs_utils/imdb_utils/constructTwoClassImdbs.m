@@ -82,9 +82,10 @@ function constructTwoClassImdbs(dataset, network_arch, positive_class_number, ne
   balance_count = 38; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
   balance_count = 100; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
   balance_count = 266; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
-  balance_count = 707; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
-  balance_count = 1880; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
-  balance_count = 5000; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
+  balance_count = 500; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
+  % balance_count = 707; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
+  % balance_count = 1880; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
+  % balance_count = 5000; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
 
 
 
