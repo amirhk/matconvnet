@@ -124,9 +124,9 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   % % -------------------------------------------------------------------------
   experiment_options.training_method = 'single-cnn';
 
-  % % -------------------------------------------------
-  % experiment_options.network_arch = 'lenet';
-  % % -------------------------------------------------
+  % -------------------------------------------------
+  experiment_options.network_arch = 'lenet';
+  % -------------------------------------------------
   % % -------------------------------------------------
   % experiment_options.weight_init_sequence = { ...
   %   'compRand', ...
@@ -147,9 +147,9 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   % experiment_options.backprop_depth = 10;
   % testKFold(experiment_options);
 
-  % % Exp. 4
-  % experiment_options.backprop_depth = 13;
-  % testKFold(experiment_options);
+  % Exp. 4
+  experiment_options.backprop_depth = 13;
+  testKFold(experiment_options);
 
   % % -------------------------------------------------
   % experiment_options.weight_init_sequence = { ...
@@ -230,13 +230,13 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   % testKFold(experiment_options);
 
 
-  % % -------------------------------------------------
-  experiment_options.network_arch = 'lenet_no_pool';
-  % % -------------------------------------------------
+  % % % -------------------------------------------------
+  % experiment_options.network_arch = 'lenet_no_pool';
+  % % % -------------------------------------------------
 
-  % Exp. 1
-  experiment_options.backprop_depth = 4;
-  testKFold(experiment_options);
+  % % Exp. 1
+  % experiment_options.backprop_depth = 4;
+  % testKFold(experiment_options);
 
 
 
