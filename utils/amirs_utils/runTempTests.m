@@ -26,12 +26,12 @@ function runTempTests()
 % POSSIBILITY OF SUCH DAMAGE.
 
 
-  % runEnsembleLarpTests('mnist-two-class-9-4', 'balanced-38-38',     2);
-  % runEnsembleLarpTests('mnist-two-class-9-4', 'balanced-100-100',   2);
-  % runEnsembleLarpTests('mnist-two-class-9-4', 'balanced-266-266',   2);
-  % runEnsembleLarpTests('mnist-two-class-9-4', 'balanced-707-707',   2);
-  % runEnsembleLarpTests('mnist-two-class-9-4', 'balanced-1880-1880', 2);
-  % runEnsembleLarpTests('mnist-two-class-9-4', 'balanced-5000-5000', 2);
+  runEnsembleLarpTests('mnist-two-class-9-4', 'balanced-38-38',     2);
+  runEnsembleLarpTests('mnist-two-class-9-4', 'balanced-100-100',   2);
+  runEnsembleLarpTests('mnist-two-class-9-4', 'balanced-266-266',   2);
+  runEnsembleLarpTests('mnist-two-class-9-4', 'balanced-707-707',   2);
+  runEnsembleLarpTests('mnist-two-class-9-4', 'balanced-1880-1880', 2);
+  runEnsembleLarpTests('mnist-two-class-9-4', 'balanced-5000-5000', 2);
 
   % runEnsembleLarpTests('svhn-two-class-9-4', 'balanced-38-38',     3);
   % runEnsembleLarpTests('svhn-two-class-9-4', 'balanced-100-100',   3);
@@ -55,23 +55,23 @@ function runTempTests()
 
 
 
-  runEnsembleLarpTests('mnist-two-class-9-4', 'balanced-38-38',     1);
-  runEnsembleLarpTests('mnist-two-class-9-4', 'balanced-100-100',   1);
-  runEnsembleLarpTests('mnist-two-class-9-4', 'balanced-266-266',   1);
-  runEnsembleLarpTests('mnist-two-class-9-4', 'balanced-707-707',   1);
-  runEnsembleLarpTests('mnist-two-class-9-4', 'balanced-1880-1880', 1);
-  runEnsembleLarpTests('mnist-two-class-9-4', 'balanced-5000-5000', 1);
+  % runEnsembleLarpTests('mnist-two-class-9-4', 'balanced-38-38',     1);
+  % runEnsembleLarpTests('mnist-two-class-9-4', 'balanced-100-100',   1);
+  % runEnsembleLarpTests('mnist-two-class-9-4', 'balanced-266-266',   1);
+  % runEnsembleLarpTests('mnist-two-class-9-4', 'balanced-707-707',   1);
+  % runEnsembleLarpTests('mnist-two-class-9-4', 'balanced-1880-1880', 1);
+  % runEnsembleLarpTests('mnist-two-class-9-4', 'balanced-5000-5000', 1);
 
-  runEnsembleLarpTests('svhn-two-class-9-4', 'balanced-38-38',     1);
-  runEnsembleLarpTests('svhn-two-class-9-4', 'balanced-100-100',   1);
-  runEnsembleLarpTests('svhn-two-class-9-4', 'balanced-266-266',   1);
-  runEnsembleLarpTests('svhn-two-class-9-4', 'balanced-707-707',   1);
-  runEnsembleLarpTests('svhn-two-class-9-4', 'balanced-1880-1880', 1);
-  runEnsembleLarpTests('svhn-two-class-9-4', 'balanced-5000-5000', 1);
+  % runEnsembleLarpTests('svhn-two-class-9-4', 'balanced-38-38',     1);
+  % runEnsembleLarpTests('svhn-two-class-9-4', 'balanced-100-100',   1);
+  % runEnsembleLarpTests('svhn-two-class-9-4', 'balanced-266-266',   1);
+  % runEnsembleLarpTests('svhn-two-class-9-4', 'balanced-707-707',   1);
+  % runEnsembleLarpTests('svhn-two-class-9-4', 'balanced-1880-1880', 1);
+  % runEnsembleLarpTests('svhn-two-class-9-4', 'balanced-5000-5000', 1);
 
-  runEnsembleLarpTests('cifar-two-class-deer-truck', 'balanced-38-38',     1);
-  runEnsembleLarpTests('cifar-two-class-deer-truck', 'balanced-100-100',   1);
-  runEnsembleLarpTests('cifar-two-class-deer-truck', 'balanced-266-266',   1);
-  runEnsembleLarpTests('cifar-two-class-deer-truck', 'balanced-707-707',   1);
-  runEnsembleLarpTests('cifar-two-class-deer-truck', 'balanced-1880-1880', 1);
-  runEnsembleLarpTests('cifar-two-class-deer-truck', 'balanced-5000-5000', 1);
+  % runEnsembleLarpTests('cifar-two-class-deer-truck', 'balanced-38-38',     1);
+  % runEnsembleLarpTests('cifar-two-class-deer-truck', 'balanced-100-100',   1);
+  % runEnsembleLarpTests('cifar-two-class-deer-truck', 'balanced-266-266',   1);
+  % runEnsembleLarpTests('cifar-two-class-deer-truck', 'balanced-707-707',   1);
+  % runEnsembleLarpTests('cifar-two-class-deer-truck', 'balanced-1880-1880', 1);
+  % runEnsembleLarpTests('cifar-two-class-deer-truck', 'balanced-5000-5000', 1);
