@@ -48,10 +48,10 @@ function runTempTests()
   % runEnsembleLarpTests('cifar-two-class-deer-truck', 'balanced-5000-5000', 4);
 
 
-  runEnsembleLarpTests('stl-10-two-class-airplane-bird', 'balanced-38-38',     4);
-  runEnsembleLarpTests('stl-10-two-class-airplane-bird', 'balanced-100-100',   4);
-  runEnsembleLarpTests('stl-10-two-class-airplane-bird', 'balanced-266-266',   4);
-  runEnsembleLarpTests('stl-10-two-class-airplane-bird', 'balanced-500-500',   4);
+  % runEnsembleLarpTests('stl-10-two-class-airplane-bird', 'balanced-38-38',     2);
+  % runEnsembleLarpTests('stl-10-two-class-airplane-bird', 'balanced-100-100',   2);
+  runEnsembleLarpTests('stl-10-two-class-airplane-bird', 'balanced-266-266',   2);
+  runEnsembleLarpTests('stl-10-two-class-airplane-bird', 'balanced-500-500',   2);
 
 
 
