@@ -50,9 +50,13 @@ function runTempTests()
 
   % runEnsembleLarpTests('stl-10-two-class-airplane-bird', 'balanced-38-38',     2);
   % runEnsembleLarpTests('stl-10-two-class-airplane-bird', 'balanced-100-100',   2);
-  runEnsembleLarpTests('stl-10-two-class-airplane-bird', 'balanced-266-266',   2);
-  runEnsembleLarpTests('stl-10-two-class-airplane-bird', 'balanced-500-500',   2);
+  % runEnsembleLarpTests('stl-10-two-class-airplane-bird', 'balanced-266-266',   2);
+  % runEnsembleLarpTests('stl-10-two-class-airplane-bird', 'balanced-500-500',   2);
 
+  runEnsembleLarpTests('stl-10-two-class-airplane-cat', 'balanced-38-38',     3);
+  runEnsembleLarpTests('stl-10-two-class-airplane-cat', 'balanced-100-100',   3);
+  runEnsembleLarpTests('stl-10-two-class-airplane-cat', 'balanced-266-266',   3);
+  runEnsembleLarpTests('stl-10-two-class-airplane-cat', 'balanced-500-500',   3);
 
 
 
