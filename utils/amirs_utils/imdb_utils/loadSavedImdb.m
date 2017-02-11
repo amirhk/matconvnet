@@ -122,7 +122,7 @@ function imdb = loadSavedImdb(input_opts)
           case 'balanced-500-500'
             tmp = load(fullfile(path_to_imdbs, 'stl-10', 'balanced', 'saved-two-class-stl-10-pos1-neg2-balanced-500-500-train-500-500.mat'));
         end
-      case 'stl-10-two-class-airplane-car'
+      case 'stl-10-two-class-airplane-cat'
         % currently fold number is not implemented.
         switch posneg_balance
           case 'balanced-38-38'
