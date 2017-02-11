@@ -93,6 +93,7 @@ function imdb = loadSavedImdb(input_opts)
             tmp = load(fullfile(path_to_imdbs, 'cifar', 'balanced', 'saved-two-class-cifar-pos5-neg10-balanced-1880-1880-train-1880-1880.mat'));
           case 'balanced-5000-5000'
             tmp = load(fullfile(path_to_imdbs, 'cifar', 'balanced', 'saved-two-class-cifar-pos5-neg10-balanced-5000-5000-train-5000-5000.mat'));
+
         end
       case 'cifar-no-white-two-class-deer-truck'
         % currently fold number is not implemented.
@@ -103,6 +104,18 @@ function imdb = loadSavedImdb(input_opts)
             tmp = load(fullfile(path_to_imdbs, 'cifar-no-white', 'saved-two-class-cifar-pos5-neg10-unbalanced-train-25-5000.mat'));
           case 'balanced-high'
             tmp = load(fullfile(path_to_imdbs, 'cifar-no-white', 'saved-two-class-cifar-pos5-neg10-balanced-high-train-5000-5000.mat'));
+          case 'balanced-38-38'
+            tmp = load(fullfile(path_to_imdbs, 'cifar-no-white', 'balanced', 'saved-two-class-cifar-pos5-neg10-balanced-38-38-train-38-38.mat'));
+          case 'balanced-100-100'
+            tmp = load(fullfile(path_to_imdbs, 'cifar-no-white', 'balanced', 'saved-two-class-cifar-pos5-neg10-balanced-100-100-train-100-100.mat'));
+          case 'balanced-266-266'
+            tmp = load(fullfile(path_to_imdbs, 'cifar-no-white', 'balanced', 'saved-two-class-cifar-pos5-neg10-balanced-266-266-train-266-266.mat'));
+          case 'balanced-707-707'
+            tmp = load(fullfile(path_to_imdbs, 'cifar-no-white', 'balanced', 'saved-two-class-cifar-pos5-neg10-balanced-707-707-train-707-707.mat'));
+          case 'balanced-1880-1880'
+            tmp = load(fullfile(path_to_imdbs, 'cifar-no-white', 'balanced', 'saved-two-class-cifar-pos5-neg10-balanced-1880-1880-train-1880-1880.mat'));
+          case 'balanced-5000-5000'
+            tmp = load(fullfile(path_to_imdbs, 'cifar-no-white', 'balanced', 'saved-two-class-cifar-pos5-neg10-balanced-5000-5000-train-5000-5000.mat'));
         end
       case 'stl-10-two-class-airplane-bird'
         % currently fold number is not implemented.
