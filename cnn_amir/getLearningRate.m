@@ -32,9 +32,6 @@ switch network_arch
         learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];
       case 'mnist'
         learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];
-      case 'subsampled-mnist'
-        learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];
-        % learning_rate = [0.05*ones(1,5)];
       case 'stl-10'
         learning_rate = [0.5*ones(1,20) 0.05*ones(1,15)  0.1:-0.01:0.06 0.05*ones(1,10)];
       case 'svhn'
@@ -45,6 +42,18 @@ switch network_arch
         learning_rate = [0.05*ones(1,10) 0.005*ones(1,20) 0.001*ones(1,120)];
       case 'cifar-no-white-two-class-deer-truck'
         learning_rate = [0.05*ones(1,10) 0.005*ones(1,20) 0.001*ones(1,120)];
+
+      % multi-class subsampled
+      case 'mnist-multi-class-subsampled'
+        learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];
+      case 'svhn-multi-class-subsampled'
+        learning_rate = [0.05*ones(1,30) 0.005*ones(1,10) 0.0005*ones(1,10)];
+      case 'cifar-multi-class-subsampled'
+        learning_rate = [0.05*ones(1,10) 0.005*ones(1,20) 0.001*ones(1,120)];
+      case 'stl-10-multi-class-subsampled'
+        learning_rate = [0.5*ones(1,20) 0.05*ones(1,15)  0.1:-0.01:0.06 0.05*ones(1,10)];
+
+      % two-class
       case 'mnist-two-class-9-4'
         learning_rate = [0.05*ones(1,10) 0.005*ones(1,20) 0.001*ones(1,120)];
       case 'stl-10-two-class-airplane-bird'

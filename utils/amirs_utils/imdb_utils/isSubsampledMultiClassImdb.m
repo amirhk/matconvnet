@@ -26,6 +26,9 @@ function output = isSubsampledMultiClassImdb(dataset)
 % POSSIBILITY OF SUCH DAMAGE.
 
   output = false;
-  if strcmp(dataset, 'subsampled-mnist')
+  if strcmp(dataset, 'mnist-multi-class-subsampled') || ...
+    strcmp(dataset, 'svhn-multi-class-subsampled') || ...
+    strcmp(dataset, 'cifar-multi-class-subsampled') || ...
+    strcmp(dataset, 'stl-10-multi-class-subsampled')
     output = true;
   end

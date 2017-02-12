@@ -39,7 +39,7 @@ function imdb = loadSavedImdb(input_opts)
   elseif isSubsampledMultiClassImdb(dataset)
     path_to_imdbs = fullfile(getDevPath(), 'data', 'subsampled_multi_class_imdbs');
     switch dataset
-      case 'subsampled-mnist'
+      case 'mnist-multi-class-subsampled'
         % currently fold number is not implemented.
         switch posneg_balance
           case 'balanced-38'
@@ -54,6 +54,50 @@ function imdb = loadSavedImdb(input_opts)
             tmp = load(fullfile(path_to_imdbs, 'mnist', 'saved-multi-class-mnist-train-balance-1880-test-balance-750.mat'));
           case 'balanced-5000'
             tmp = load(fullfile(path_to_imdbs, 'mnist', 'saved-multi-class-mnist-train-balance-5000-test-balance-750.mat'));
+        end
+      case 'svhn-multi-class-subsampled'
+        % currently fold number is not implemented.
+        switch posneg_balance
+          case 'balanced-38'
+            tmp = load(fullfile(path_to_imdbs, 'svhn', ''));
+          case 'balanced-100'
+            tmp = load(fullfile(path_to_imdbs, 'svhn', ''));
+          case 'balanced-266'
+            tmp = load(fullfile(path_to_imdbs, 'svhn', ''));
+          case 'balanced-707'
+            tmp = load(fullfile(path_to_imdbs, 'svhn', ''));
+          case 'balanced-1880'
+            tmp = load(fullfile(path_to_imdbs, 'svhn', ''));
+          case 'balanced-5000'
+            tmp = load(fullfile(path_to_imdbs, 'svhn', ''));
+        end
+      case 'cifar-multi-class-subsampled'
+        % currently fold number is not implemented.
+        switch posneg_balance
+          case 'balanced-38'
+            tmp = load(fullfile(path_to_imdbs, 'cifar', ''));
+          case 'balanced-100'
+            tmp = load(fullfile(path_to_imdbs, 'cifar', ''));
+          case 'balanced-266'
+            tmp = load(fullfile(path_to_imdbs, 'cifar', ''));
+          case 'balanced-707'
+            tmp = load(fullfile(path_to_imdbs, 'cifar', ''));
+          case 'balanced-1880'
+            tmp = load(fullfile(path_to_imdbs, 'cifar', ''));
+          case 'balanced-5000'
+            tmp = load(fullfile(path_to_imdbs, 'cifar', ''));
+        end
+      case 'stl-10-multi-class-subsampled'
+        % currently fold number is not implemented.
+        switch posneg_balance
+          case 'balanced-38'
+            tmp = load(fullfile(path_to_imdbs, 'stl-10', 'saved-multi-class-stl-10-train-balance-38-test-balance-750.mat'));
+          case 'balanced-100'
+            tmp = load(fullfile(path_to_imdbs, 'stl-10', 'saved-multi-class-stl-10-train-balance-100-test-balance-750.mat'));
+          case 'balanced-266'
+            tmp = load(fullfile(path_to_imdbs, 'stl-10', 'saved-multi-class-stl-10-train-balance-266-test-balance-750.mat'));
+          case 'balanced-500'
+            tmp = load(fullfile(path_to_imdbs, 'stl-10', 'saved-multi-class-stl-10-train-balance-500-test-balance-750.mat'));
         end
     end
     imdb = tmp.imdb;
