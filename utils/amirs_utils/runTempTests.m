@@ -25,19 +25,19 @@ function runTempTests()
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % % POSSIBILITY OF SUCH DAMAGE.
 
-  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-38', 1);
-  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-100', 1);
-  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-266', 1);
-  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-707', 1);
-  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-1880', 1);
-  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-5000', 1);
+  % runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-38', 1);
+  % runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-100', 1);
+  % runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-266', 1);
+  % runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-707', 1);
+  % runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-1880', 1);
+  % runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-5000', 1);
 
-  % runEnsembleLarpTests('svhn-multi-class-subsampled', 'balanced-38', 2);
-  % runEnsembleLarpTests('svhn-multi-class-subsampled', 'balanced-100', 2);
-  % runEnsembleLarpTests('svhn-multi-class-subsampled', 'balanced-266', 2);
-  % runEnsembleLarpTests('svhn-multi-class-subsampled', 'balanced-707', 2);
-  % runEnsembleLarpTests('svhn-multi-class-subsampled', 'balanced-1880', 2);
-  % runEnsembleLarpTests('svhn-multi-class-subsampled', 'balanced-5000', 2);
+  runEnsembleLarpTests('svhn-multi-class-subsampled', 'balanced-38', 2);
+  runEnsembleLarpTests('svhn-multi-class-subsampled', 'balanced-100', 2);
+  runEnsembleLarpTests('svhn-multi-class-subsampled', 'balanced-266', 2);
+  runEnsembleLarpTests('svhn-multi-class-subsampled', 'balanced-707', 2);
+  runEnsembleLarpTests('svhn-multi-class-subsampled', 'balanced-1880', 2);
+  runEnsembleLarpTests('svhn-multi-class-subsampled', 'balanced-5000', 2);
 
   % runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-38', 3);
   % runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-100', 3);
