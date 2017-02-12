@@ -23,91 +23,30 @@ function runTempTests()
 % INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
 % CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-% POSSIBILITY OF SUCH DAMAGE.
+% % POSSIBILITY OF SUCH DAMAGE.
 
+  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-38', 1);
+  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-100', 1);
+  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-266', 1);
+  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-707', 1);
+  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-1880', 1);
+  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-5000', 1);
 
-  % runEnsembleLarpTests('mnist-two-class-9-4', 'balanced-38-38',     2);
-  % runEnsembleLarpTests('mnist-two-class-9-4', 'balanced-100-100',   2);
-  % runEnsembleLarpTests('mnist-two-class-9-4', 'balanced-266-266',   2);
-  % runEnsembleLarpTests('mnist-two-class-9-4', 'balanced-707-707',   2);
-  % runEnsembleLarpTests('mnist-two-class-9-4', 'balanced-1880-1880', 2);
-  % runEnsembleLarpTests('mnist-two-class-9-4', 'balanced-5000-5000', 2);
+  % runEnsembleLarpTests('svhn-multi-class-subsampled', 'balanced-38', 2);
+  % runEnsembleLarpTests('svhn-multi-class-subsampled', 'balanced-100', 2);
+  % runEnsembleLarpTests('svhn-multi-class-subsampled', 'balanced-266', 2);
+  % runEnsembleLarpTests('svhn-multi-class-subsampled', 'balanced-707', 2);
+  % runEnsembleLarpTests('svhn-multi-class-subsampled', 'balanced-1880', 2);
+  % runEnsembleLarpTests('svhn-multi-class-subsampled', 'balanced-5000', 2);
 
-  % runEnsembleLarpTests('svhn-two-class-9-4', 'balanced-38-38',     3);
-  % runEnsembleLarpTests('svhn-two-class-9-4', 'balanced-100-100',   3);
-  % runEnsembleLarpTests('svhn-two-class-9-4', 'balanced-266-266',   3);
-  % runEnsembleLarpTests('svhn-two-class-9-4', 'balanced-707-707',   3);
-  % runEnsembleLarpTests('svhn-two-class-9-4', 'balanced-1880-1880', 3);
-  % runEnsembleLarpTests('svhn-two-class-9-4', 'balanced-5000-5000', 3);
+  % runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-38', 3);
+  % runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-100', 3);
+  % runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-266', 3);
+  % runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-707', 3);
+  % runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-1880', 3);
+  % runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-5000', 3);
 
-  % runEnsembleLarpTests('cifar-two-class-deer-truck', 'balanced-38-38',     4);
-  % runEnsembleLarpTests('cifar-two-class-deer-truck', 'balanced-100-100',   4);
-  % runEnsembleLarpTests('cifar-two-class-deer-truck', 'balanced-266-266',   4);
-  % runEnsembleLarpTests('cifar-two-class-deer-truck', 'balanced-707-707',   4);
-  % runEnsembleLarpTests('cifar-two-class-deer-truck', 'balanced-1880-1880', 4);
-  % runEnsembleLarpTests('cifar-two-class-deer-truck', 'balanced-5000-5000', 4);
-
-  % runEnsembleLarpTests('cifar-two-class-deer-truck', 'balanced-5000-5000', 4);
-  % runEnsembleLarpTests('cifar-two-class-deer-truck', 'balanced-1880-1880', 4);
-
-
-  runEnsembleLarpTests('subsampled-mnist', 'balanced-38', 1);
-  runEnsembleLarpTests('subsampled-mnist', 'balanced-100', 1);
-  runEnsembleLarpTests('subsampled-mnist', 'balanced-266', 1);
-  runEnsembleLarpTests('subsampled-mnist', 'balanced-707', 1);
-  runEnsembleLarpTests('subsampled-mnist', 'balanced-1880', 1);
-  runEnsembleLarpTests('subsampled-mnist', 'balanced-5000', 1);
-
-
-
-
-
-
-
-
-
-
-  % runEnsembleLarpTests('stl-10-two-class-airplane-bird', 'balanced-38-38',     2);
-  % runEnsembleLarpTests('stl-10-two-class-airplane-bird', 'balanced-100-100',   2);
-  % runEnsembleLarpTests('stl-10-two-class-airplane-bird', 'balanced-266-266',   2);
-  % runEnsembleLarpTests('stl-10-two-class-airplane-bird', 'balanced-500-500',   2);
-
-  % runEnsembleLarpTests('stl-10-two-class-airplane-cat', 'balanced-38-38',     3);
-  % runEnsembleLarpTests('stl-10-two-class-airplane-cat', 'balanced-100-100',   3);
-  % runEnsembleLarpTests('stl-10-two-class-airplane-cat', 'balanced-266-266',   3);
-  % runEnsembleLarpTests('stl-10-two-class-airplane-cat', 'balanced-500-500',   3);
-
-
-
-
-
-
-  % runEnsembleLarpTests('mnist-two-class-9-4', 'balanced-38-38',     1);
-  % runEnsembleLarpTests('mnist-two-class-9-4', 'balanced-100-100',   1);
-  % runEnsembleLarpTests('mnist-two-class-9-4', 'balanced-266-266',   1);
-  % runEnsembleLarpTests('mnist-two-class-9-4', 'balanced-707-707',   1);
-  % runEnsembleLarpTests('mnist-two-class-9-4', 'balanced-1880-1880', 1);
-  % runEnsembleLarpTests('mnist-two-class-9-4', 'balanced-5000-5000', 1);
-
-  % runEnsembleLarpTests('svhn-two-class-9-4', 'balanced-38-38',     1);
-  % runEnsembleLarpTests('svhn-two-class-9-4', 'balanced-100-100',   1);
-  % runEnsembleLarpTests('svhn-two-class-9-4', 'balanced-266-266',   1);
-  % runEnsembleLarpTests('svhn-two-class-9-4', 'balanced-707-707',   1);
-  % runEnsembleLarpTests('svhn-two-class-9-4', 'balanced-1880-1880', 1);
-  % runEnsembleLarpTests('svhn-two-class-9-4', 'balanced-5000-5000', 1);
-
-  % runEnsembleLarpTests('cifar-two-class-deer-truck', 'balanced-38-38',     1);
-  % runEnsembleLarpTests('cifar-two-class-deer-truck', 'balanced-100-100',   1);
-  % runEnsembleLarpTests('cifar-two-class-deer-truck', 'balanced-266-266',   1);
-  % runEnsembleLarpTests('cifar-two-class-deer-truck', 'balanced-707-707',   1);
-  % runEnsembleLarpTests('cifar-two-class-deer-truck', 'balanced-1880-1880', 1);
-  % runEnsembleLarpTests('cifar-two-class-deer-truck', 'balanced-5000-5000', 1);
-
-  % runEnsembleLarpTests('stl-10-two-class-airplane-bird', 'balanced-38-38',     1);
-  % runEnsembleLarpTests('stl-10-two-class-airplane-bird', 'balanced-100-100',   1);
-  % runEnsembleLarpTests('stl-10-two-class-airplane-bird', 'balanced-266-266',   1);
-  % runEnsembleLarpTests('stl-10-two-class-airplane-bird', 'balanced-500-500',   1);
-
-
-
-  % runEnsembleLarpTests('stl-10-two-class-airplane-bird', 'balanced-500-500',   1);
+  % runEnsembleLarpTests('stl-10-multi-class-subsampled', 'balanced-38', 4);
+  % runEnsembleLarpTests('stl-10-multi-class-subsampled', 'balanced-100', 4);
+  % runEnsembleLarpTests('stl-10-multi-class-subsampled', 'balanced-266', 4);
+  % runEnsembleLarpTests('stl-10-multi-class-subsampled', 'balanced-707', 4);
