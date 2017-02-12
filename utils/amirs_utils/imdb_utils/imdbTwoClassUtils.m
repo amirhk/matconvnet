@@ -694,8 +694,8 @@ function imdb = balanceImdb(imdb, set_name, balance_type)
 % -------------------------------------------------------------------------
 function imdb = subsampleImdb(imdb, set_name, class_name, subsample_count)
   % set_name = {'train', 'test'}
-  % set_name = {'positive', 'negative'}
-  % subsample_count = {100, 277, 707, 1880, 5000}
+  % class_name = {'positive', 'negative'}
+  % subsample_count = {38, 100, 277, 707, 1880, 5000}
 % -------------------------------------------------------------------------
   afprintf(sprintf('[INFO] Subsampling imdb (`%s` samples in `%s` set)...\n', class_name, set_name));
   [ ...

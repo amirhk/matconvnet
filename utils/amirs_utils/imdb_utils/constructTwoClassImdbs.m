@@ -100,3 +100,20 @@ function createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_
   imdb = fh_imdb_utils.balanceImdb(imdb, 'test', 'downsample'); % all test sets should be balanced so acc = avg(sens, spec)
   fh_imdb_utils.saveImdb(imdb, dataset, posneg_balance, positive_class_number, negative_class_number)
   afprintf(sprintf('done!\n\n'));
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

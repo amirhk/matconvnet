@@ -30,12 +30,33 @@ function imdb = loadSavedImdb(input_opts)
   posneg_balance = getValueFromFieldOrDefault(input_opts, 'posneg_balance', 'balanced-low');
   fold_number = getValueFromFieldOrDefault(input_opts, 'fold_number', 1); % currently only implemented for prostate data
 
-  if ~isTwoClassImdb(dataset)
+  if ~isTwoClassImdb(dataset) && ~isSubsampledMultiClassImdb(dataset)
     afprintf(sprintf('[INFO] Loading all-class imdb (dataset: %s, network_arch: %s)\n', dataset, network_arch));
     imdb = load(fullfile(getDevPath(), 'data', 'imdb', sprintf('%s-%s', dataset, network_arch), 'imdb.mat'));
     % % TODO: revert back to support ^... also, tmp = load(...); imdb = tmp.imdb shit should be fixed / consistent
     % tmp = load('subsampled_imdb.mat');
     % imdb = tmp.imdb;
+  elseif isSubsampledMultiClassImdb(dataset)
+    path_to_imdbs = fullfile(getDevPath(), 'data', 'subsampled_multi_class_imdbs');
+    switch dataset
+      case 'subsampled-mnist'
+        % currently fold number is not implemented.
+        switch posneg_balance
+          case 'balanced-38'
+            tmp = load(fullfile(path_to_imdbs, 'mnist', 'saved-multi-class-mnist-train-balance-38-test-balance-750.mat'));
+          case 'balanced-100'
+            tmp = load(fullfile(path_to_imdbs, 'mnist', 'saved-multi-class-mnist-train-balance-100-test-balance-750.mat'));
+          case 'balanced-266'
+            tmp = load(fullfile(path_to_imdbs, 'mnist', 'saved-multi-class-mnist-train-balance-266-test-balance-750.mat'));
+          case 'balanced-707'
+            tmp = load(fullfile(path_to_imdbs, 'mnist', 'saved-multi-class-mnist-train-balance-707-test-balance-750.mat'));
+          case 'balanced-1880'
+            tmp = load(fullfile(path_to_imdbs, 'mnist', 'saved-multi-class-mnist-train-balance-1880-test-balance-750.mat'));
+          case 'balanced-5000'
+            tmp = load(fullfile(path_to_imdbs, 'mnist', 'saved-multi-class-mnist-train-balance-5000-test-balance-750.mat'));
+        end
+    end
+    imdb = tmp.imdb;
   else
     afprintf(sprintf('[INFO] Loading two-class imdb (dataset: %s, posneg_balance: %s)\n', dataset, posneg_balance));
     path_to_imdbs = fullfile(getDevPath(), 'data', 'two_class_imdbs');

@@ -47,8 +47,23 @@ function runTempTests()
   % runEnsembleLarpTests('cifar-two-class-deer-truck', 'balanced-1880-1880', 4);
   % runEnsembleLarpTests('cifar-two-class-deer-truck', 'balanced-5000-5000', 4);
 
-  runEnsembleLarpTests('cifar-two-class-deer-truck', 'balanced-5000-5000', 4);
-  runEnsembleLarpTests('cifar-two-class-deer-truck', 'balanced-1880-1880', 4);
+  % runEnsembleLarpTests('cifar-two-class-deer-truck', 'balanced-5000-5000', 4);
+  % runEnsembleLarpTests('cifar-two-class-deer-truck', 'balanced-1880-1880', 4);
+
+
+  runEnsembleLarpTests('subsampled-mnist', 'balanced-38', 4);
+  runEnsembleLarpTests('subsampled-mnist', 'balanced-100', 4);
+  runEnsembleLarpTests('subsampled-mnist', 'balanced-266', 4);
+  runEnsembleLarpTests('subsampled-mnist', 'balanced-707', 4);
+  runEnsembleLarpTests('subsampled-mnist', 'balanced-1880', 4);
+  runEnsembleLarpTests('subsampled-mnist', 'balanced-5000', 4);
+
+
+
+
+
+
+
 
 
 
