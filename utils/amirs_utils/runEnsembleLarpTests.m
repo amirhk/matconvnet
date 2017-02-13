@@ -243,7 +243,7 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   % % -------------------------------------------------
 
   % Exp. 1
-  experiment_options.backprop_depth = 4;
+  experiment_options.backprop_depth = 6;
   testKFold(experiment_options);
 
 
