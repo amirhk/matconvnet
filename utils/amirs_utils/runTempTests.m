@@ -52,4 +52,4 @@ function runTempTests()
   % runEnsembleLarpTests('stl-10-multi-class-subsampled', 'balanced-500', 4);
 
 
-  runEnsembleLarpTests('mnist', 'whatever', 4);
+  runEnsembleLarpTests('mnist', 'whatever', 3);
