@@ -112,8 +112,8 @@ function network_opts = cnnInit(input_opts)
       net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 500, 100, 5/100, 0, 'compRand', 'gen');
       net.layers{end+1} = fh.reluLayer(layer_number);
 
-      layer_number = layer_number + 1;
-      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 500, 100, 5/100, 0, 'compRand', 'gen');
+      layer_number = layer_number + 2;
+      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 500, 10, 5/100, 0, 'compRand', 'gen');
       % if isTwoClassImdb(opts.dataset)
       %   net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 64, 2, 5/100, 0, 'compRand', 'gen');
       % elseif strcmp(opts.dataset, 'coil-100')
