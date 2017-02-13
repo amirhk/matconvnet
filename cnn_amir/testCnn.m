@@ -34,7 +34,7 @@ function [trained_model, performance_summary] = testCnn(input_opts)
   opts.general.dataset = getValueFromFieldOrDefault(input_opts, 'dataset', 'cifar');
   opts.general.network_arch = getValueFromFieldOrDefault(input_opts, 'network_arch', 'lenet');
   opts.general.return_performance_summary = getValueFromFieldOrDefault(input_opts, 'return_performance_summary', true);
-  opts.general.debug_flag = getValueFromFieldOrDefault(input_opts, 'debug_flag', true);
+  opts.general.debug_flag = getValueFromFieldOrDefault(input_opts, 'debug_flag', false);
 
   % -------------------------------------------------------------------------
   %                                                                  opts.net
