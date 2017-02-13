@@ -84,6 +84,41 @@ function network_opts = cnnInit(input_opts)
 
       % LOSS LAYER
       net.layers{end+1} = fh.softmaxlossLayer();
+    case 'lenet_with_avr'
+      % -----------------------------------------------------------------------
+      %                                                          LENET WITH AVR
+      % -----------------------------------------------------------------------
+      layer_number = 1;
+      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 3, 32, 1/100, 2, char(opts.weight_init_sequence{1}), opts.weight_init_source);
+      net.layers{end+1} = fh.poolingLayerLeNetMax(layer_number);
+      net.layers{end+1} = fh.avrLayer(layer_number);
+
+      layer_number = layer_number + 3;
+      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 32, 32, 5/100, 2, char(opts.weight_init_sequence{2}), opts.weight_init_source);
+      net.layers{end+1} = fh.avrLayer(layer_number);
+      net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
+
+      layer_number = layer_number + 3;
+      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 32, 64, 5/100, 2, char(opts.weight_init_sequence{3}), opts.weight_init_source);
+      net.layers{end+1} = fh.avrLayer(layer_number);
+      net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
+
+      % FULLY CONNECTED
+      layer_number = layer_number + 3;
+      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 4, 64, 64, 5/100, 0, 'compRand', 'gen');
+      net.layers{end+1} = fh.avrLayer(layer_number);
+
+      layer_number = layer_number + 2;
+      if isTwoClassImdb(opts.dataset)
+        net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 64, 2, 5/100, 0, 'compRand', 'gen');
+      elseif strcmp(opts.dataset, 'coil-100')
+        net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 64, 100, 5/100, 0, 'compRand', 'gen');
+      else
+        net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 64, 10, 5/100, 0, 'compRand', 'gen');
+      end
+
+      % LOSS LAYER
+      net.layers{end+1} = fh.softmaxlossLayer();
     case 'lenet_no_pool'
       % -----------------------------------------------------------------------
       %                                                            LENET NO POOL

@@ -30,6 +30,7 @@ function fh = networkInitializationUtils()
   fh.loadWeights = @loadWeights;
   fh.constructConvLayer = @constructConvLayer;
   fh.reluLayer = @reluLayer;
+  fh.avrLayer = @avrLayer;
   fh.tanhLayer = @tanhLayer;
   fh.poolingLayer = @poolingLayer;
   fh.poolingLayerAlexNet = @poolingLayerAlexNet;
@@ -122,6 +123,13 @@ function structuredLayer = reluLayer(layer_number)
   structuredLayer = struct( ...
     'type', 'relu', ...
     'name', sprintf('relu%s', layer_number));
+
+% --------------------------------------------------------------------
+function structuredLayer = avrLayer(layer_number)
+% --------------------------------------------------------------------
+  structuredLayer = struct( ...
+    'type', 'avr', ...
+    'name', sprintf('avr%s', layer_number));
 
 % --------------------------------------------------------------------
 function structuredLayer = tanhLayer(layer_number)

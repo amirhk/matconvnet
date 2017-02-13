@@ -224,6 +224,8 @@ for i=1:n
     case 'relu'
       if isfield(l, 'leak'), leak = {'leak', l.leak} ; else leak = {} ; end
       res(i+1).x = vl_nnrelu(res(i).x,[],leak{:}) ;
+    case 'avr'
+      res(i+1).x = vl_nnavr(res(i).x,[]) ;
     case 'tanh'
       if isfield(l, 'leak'), leak = {'leak', l.leak} ; else leak = {} ; end
       res(i+1).x = vl_nntanh(res(i).x,[],leak{:}) ;
@@ -371,6 +373,8 @@ if doder
           % hack (which works only for ReLU):
           res(i).dzdx = vl_nnrelu(res(i+1).x, res(i+1).dzdx, leak{:}) ;
         end
+      case 'avr'
+        res(i).dzdx = vl_nnavr(res(i+1).x, res(i+1).dzdx);
       case 'tanh'
         if isfield(l, 'leak'), leak = {'leak', l.leak} ; else leak = {} ; end
         if ~isempty(res(i).x)

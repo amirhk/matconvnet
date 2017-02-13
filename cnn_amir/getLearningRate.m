@@ -26,6 +26,7 @@ function learning_rate = getLearningRate(dataset, network_arch)
 switch network_arch
   case 'lenet'
     switch dataset
+      % multi-class
       case 'cifar'
         learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];
       case 'coil-100'
@@ -67,6 +68,15 @@ switch network_arch
         learning_rate = [0.05*ones(1,10) 0.005*ones(1,20) 0.001*ones(1,20)];
       case 'prostate-v3-104-patients'
         learning_rate = [0.05*ones(1,10) 0.005*ones(1,20) 0.001*ones(1,20)];
+    end
+  case 'lenet_with_avr'
+    switch dataset
+      % multi-class
+      case 'mnist'
+        learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,50)];
+      % multi-class subsampled
+      case 'mnist-multi-class-subsampled'
+        learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];
     end
   case 'lenet_no_pool'
     switch dataset

@@ -122,7 +122,7 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   % % -------------------------------------------------------------------------
   % %                                                                single cnn
   % % -------------------------------------------------------------------------
-  % experiment_options.training_method = 'single-cnn';
+  experiment_options.training_method = 'single-cnn';
 
   % % -------------------------------------------------
   % experiment_options.network_arch = 'lenet';
@@ -237,6 +237,14 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   % % Exp. 1
   % experiment_options.backprop_depth = 4;
   % testKFold(experiment_options);
+
+  % % -------------------------------------------------
+  experiment_options.network_arch = 'lenet_with_avr';
+  % % -------------------------------------------------
+
+  % Exp. 1
+  experiment_options.backprop_depth = 4;
+  testKFold(experiment_options);
 
 
 
@@ -414,29 +422,29 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
 
 
 
-  % -------------------------------------------------------------------------
-  %                                                      ensemble multi-class
-  % -------------------------------------------------------------------------
-  experiment_options.training_method = 'ensemble-multi-class-cnn';
-  % experiment_options.training_method = 'ensemble-multi-class-svm';
-  experiment_options.iteration_count = 8;
-  experiment_options.uni_model_boosting = false;
+  % % -------------------------------------------------------------------------
+  % %                                                      ensemble multi-class
+  % % -------------------------------------------------------------------------
+  % experiment_options.training_method = 'ensemble-multi-class-cnn';
+  % % experiment_options.training_method = 'ensemble-multi-class-svm';
+  % experiment_options.iteration_count = 8;
+  % experiment_options.uni_model_boosting = false;
 
-  experiment_options.boosting_method = 'adaboost.m1';
+  % experiment_options.boosting_method = 'adaboost.m1';
 
-  % -------------------------------------------------
-  experiment_options.number_of_samples_per_model = 100000;
-  % -------------------------------------------------
+  % % -------------------------------------------------
+  % experiment_options.number_of_samples_per_model = 100000;
+  % % -------------------------------------------------
 
-  % Exp. 1
-  experiment_options.loss_calculation_method = 'default_in_literature';
-  experiment_options.backprop_depth = 4;
-  testKFold(experiment_options);
+  % % Exp. 1
+  % experiment_options.loss_calculation_method = 'default_in_literature';
+  % experiment_options.backprop_depth = 4;
+  % testKFold(experiment_options);
 
-  % Exp. 1
-  experiment_options.loss_calculation_method = 'default_in_literature';
-  experiment_options.backprop_depth = 13;
-  testKFold(experiment_options);
+  % % Exp. 1
+  % experiment_options.loss_calculation_method = 'default_in_literature';
+  % experiment_options.backprop_depth = 13;
+  % testKFold(experiment_options);
 
 
 
