@@ -236,7 +236,7 @@ function network_opts = cnnInit(input_opts)
       % net.layers{end+1} = fh.reluLayer(layer_number);
 
       layer_number = layer_number + 1;
-      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 1024, 500, 5/100, 0, 'compRand', 'gen');
+      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 1024 * 64, 500, 5/100, 0, 'compRand', 'gen');
       net.layers{end+1} = fh.reluLayer(layer_number);
 
       layer_number = layer_number + 2;
