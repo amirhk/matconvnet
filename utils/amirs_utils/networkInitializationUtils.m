@@ -32,6 +32,7 @@ function fh = networkInitializationUtils()
   fh.reluLayer = @reluLayer;
   fh.avrLayer = @avrLayer;
   fh.tanhLayer = @tanhLayer;
+  fh.flattenLayer = @flattenLayer;
   fh.poolingLayer = @poolingLayer;
   fh.poolingLayerAlexNet = @poolingLayerAlexNet;
   fh.poolingLayerLeNetAvg = @poolingLayerLeNetAvg;
@@ -122,21 +123,28 @@ function structuredLayer = reluLayer(layer_number)
 % --------------------------------------------------------------------
   structuredLayer = struct( ...
     'type', 'relu', ...
-    'name', sprintf('relu%s', layer_number));
+    'name', sprintf('relu%d', layer_number));
 
 % --------------------------------------------------------------------
 function structuredLayer = avrLayer(layer_number)
 % --------------------------------------------------------------------
   structuredLayer = struct( ...
     'type', 'avr', ...
-    'name', sprintf('avr%s', layer_number));
+    'name', sprintf('avr%d', layer_number));
 
 % --------------------------------------------------------------------
 function structuredLayer = tanhLayer(layer_number)
 % --------------------------------------------------------------------
   structuredLayer = struct( ...
     'type', 'tanh', ...
-    'name', sprintf('tanh%s', layer_number));
+    'name', sprintf('tanh%d', layer_number));
+
+% --------------------------------------------------------------------
+function structuredLayer = flattenLayer(layer_number)
+% --------------------------------------------------------------------
+  structuredLayer = struct( ...
+    'type', 'flatten', ...
+    'name', sprintf('flatten%d', layer_number));
 
 % --------------------------------------------------------------------
 function structuredLayer = poolingLayer(layer_number)
