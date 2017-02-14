@@ -75,7 +75,7 @@ switch network_arch
       case 'mnist'
         % learning_rate = [0.1*ones(1,5) 0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,45)] / 2; % ReLU LR
         % learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,50)] * 0.01; % AVR LR
-        learning_rate = [0.05*ones(1,20)];
+        learning_rate = [0.05*ones(1,100)];
       case 'cifar'
         learning_rate = [0.1*ones(1,5) 0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,45)] / 2;
       case 'mnist-multi-class-subsampled'
