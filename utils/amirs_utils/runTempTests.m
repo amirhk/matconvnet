@@ -51,20 +51,20 @@ function runTempTests()
   % runEnsembleLarpTests('stl-10-multi-class-subsampled', 'balanced-266', 4);
   % runEnsembleLarpTests('stl-10-multi-class-subsampled', 'balanced-500', 4);
 
-
   % runEnsembleLarpTests('mnist', 'whatever', 1);
-  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-5000', 1);
-  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-1880', 1);
-  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-707', 1);
-  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-266', 1);
-  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-100', 1);
-  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-38', 1);
 
-  % runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-5000', 2);
-  % runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-1880', 2);
-  % runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-707', 2);
-  % runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-266', 2);
-  % runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-100', 2);
-  % runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-38', 2);
+  % runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-5000', 1);
+  % runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-1880', 1);
+  % runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-707', 1);
+  % runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-266', 1);
+  % runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-100', 1);
+  % runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-38', 1);
+
+  runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-5000', 2);
+  runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-1880', 2);
+  runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-707', 2);
+  runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-266', 2);
+  runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-100', 2);
+  runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-38', 2);
 
 
