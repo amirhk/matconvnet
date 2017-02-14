@@ -112,7 +112,7 @@ switch network_arch
     switch dataset
       % multi-class
       case 'mnist'
-        learning_rate = [0.05*ones(1,75)];
+        learning_rate = [0.05*ones(1,75)] / 2;
         % learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];
         % learning_rate = [0.05*ones(1,15) 0.01*ones(1,20) 0.005*ones(1,10) 0.0005*ones(1,25)];
     end
