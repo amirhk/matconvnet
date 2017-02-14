@@ -50,7 +50,7 @@ switch network_arch
       case 'svhn-multi-class-subsampled'
         learning_rate = [0.05*ones(1,30) 0.005*ones(1,10) 0.0005*ones(1,10)];
       case 'cifar-multi-class-subsampled'
-        learning_rate = [0.05*ones(1,10) 0.005*ones(1,20) 0.001*ones(1,120)];
+        learning_rate = [0.05*ones(1,10) 0.005*ones(1,20) 0.001*ones(1,25)];
       case 'stl-10-multi-class-subsampled'
         learning_rate = [0.5*ones(1,20) 0.05*ones(1,15)  0.1:-0.01:0.06 0.05*ones(1,10)];
 
@@ -69,16 +69,18 @@ switch network_arch
       case 'prostate-v3-104-patients'
         learning_rate = [0.05*ones(1,10) 0.005*ones(1,20) 0.001*ones(1,20)];
     end
-  case 'lenet_with_avr'
+  case 'lenet_with_larger_fc'
     switch dataset
       % multi-class
       case 'mnist'
-        learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,50)];
-        % learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,50)] * 0.01;
-
-      % multi-class subsampled
+        learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)]; % ReLU LR
+        % learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,50)] * 0.01; % AVR LR
+      case 'cifar'
+        learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];
       case 'mnist-multi-class-subsampled'
         learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];
+      case 'cifar-multi-class-subsampled'
+        learning_rate = [0.05*ones(1,10) 0.005*ones(1,20) 0.001*ones(1,25)];
     end
   case 'lenet_no_pool'
     switch dataset
