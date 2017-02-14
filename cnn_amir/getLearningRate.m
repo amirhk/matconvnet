@@ -80,7 +80,7 @@ switch network_arch
       case 'mnist-multi-class-subsampled'
         learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];
       case 'cifar-multi-class-subsampled'
-        learning_rate = [0.05*ones(1,10) 0.005*ones(1,20) 0.001*ones(1,25)];
+        learning_rate = [0.05*ones(1,10) 0.005*ones(1,20) 0.001*ones(1,20)];
     end
   case 'lenet_no_pool'
     switch dataset
