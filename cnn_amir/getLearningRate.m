@@ -108,6 +108,14 @@ switch network_arch
       case 'cifar-multi-class-subsampled'
         learning_rate = [0.05*ones(1,10) 0.005*ones(1,20) 0.001*ones(1,20)];
     end
+  case 'lenet_with_larger_fc_and_flatten_alex_no_pool'
+    switch dataset
+      % multi-class
+      case 'mnist'
+        learning_rate = [0.05*ones(1,75)];
+        % learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];
+        % learning_rate = [0.05*ones(1,15) 0.01*ones(1,20) 0.005*ones(1,10) 0.0005*ones(1,25)];
+    end
   case 'lenet_no_pool'
     switch dataset
       case 'cifar-two-class-deer-truck'

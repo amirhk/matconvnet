@@ -378,7 +378,7 @@ if doder
       case 'avr'
         res(i).dzdx = vl_nnavr(res(i+1).x, res(i+1).dzdx);
       case 'flatten'
-        res(i).dzdx = vl_nnflatten(res(i+1).x, res(i+1).dzdx);
+        res(i).dzdx = vl_nnflatten(res(i+1).x, res(i+1).dzdx, res(i)); % passing in res(i) as well, only for it's dimensions.. see flatten
       case 'tanh'
         if isfield(l, 'leak'), leak = {'leak', l.leak} ; else leak = {} ; end
         if ~isempty(res(i).x)
