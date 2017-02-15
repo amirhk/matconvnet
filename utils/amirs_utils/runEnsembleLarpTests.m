@@ -73,7 +73,7 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   % -------------------------------------------------------------------------
   %                                                            shared options
   % -------------------------------------------------------------------------
-  experiment_options.number_of_folds = 3;
+  experiment_options.number_of_folds = 1;
   experiment_options.experiment_parent_dir = opts.paths.experiment_dir;
   experiment_options.dataset = opts.general.dataset;
   experiment_options.network_arch = opts.general.network_arch;
@@ -122,7 +122,13 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   % % -------------------------------------------------------------------------
   % %                                                                single cnn
   % % -------------------------------------------------------------------------
-  experiment_options.training_method = 'single-cnn';
+  experiment_options.training_method = 'single-mlp';
+  testKFold(experiment_options);
+
+  % % -------------------------------------------------------------------------
+  % %                                                                single cnn
+  % % -------------------------------------------------------------------------
+  % experiment_options.training_method = 'single-cnn';
 
   % % -------------------------------------------------
   % experiment_options.network_arch = 'lenet';
@@ -159,13 +165,13 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   % experiment_options.backprop_depth = 4;
   % testKFold(experiment_options);
 
-  % -------------------------------------------------
-  experiment_options.network_arch = 'lenet_with_flatten';
-  % -------------------------------------------------
+  % % -------------------------------------------------
+  % experiment_options.network_arch = 'lenet_with_flatten';
+  % % -------------------------------------------------
 
-  % Exp. 1
-  experiment_options.backprop_depth = 5; % or 4, doesn't matter if backprop over the flatten layer or not...
-  testKFold(experiment_options);
+  % % Exp. 1
+  % experiment_options.backprop_depth = 5; % or 4, doesn't matter if backprop over the flatten layer or not...
+  % testKFold(experiment_options);
 
   % % -------------------------------------------------
   % experiment_options.weight_init_sequence = { ...

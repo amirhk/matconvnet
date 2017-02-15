@@ -36,7 +36,9 @@ function [top_predictions, all_predictions] = getPredictionsFromModelOnImdb(mode
     case 'forest'
       [top_predictions, all_predictions] = getPredictionsFromBoostedForestOnImdb(model, imdb);
     case 'cnn'
-      [top_predictions, all_predictions] = getPredictionsFromNetOnImdb(model, imdb);
+      [top_predictions, all_predictions] = getPredictionsFromConvNetOnImdb(model, imdb);
+    case 'mlp'
+      [top_predictions, all_predictions] = getPredictionsFromMlpOnImdb(model, imdb);
     case 'committee-cnn'
       [top_predictions, all_predictions] = getPredictionsFromCommitteeOnImdb(model, imdb, 'cnn');
     case 'committee-svm'
@@ -63,7 +65,15 @@ function [top_predictions, all_predictions] = getPredictionsFromBoostedForestOnI
   all_predictions = getAllPredictionsFromTopPredictions(top_predictions, imdb);
 
 % -------------------------------------------------------------------------
-function [top_predictions, all_predictions] = getPredictionsFromNetOnImdb(net, imdb)
+function [top_predictions, all_predictions] = getPredictionsFromMlpOnImdb(net, imdb)
+% -------------------------------------------------------------------------
+  vectorized_data = getVectorizedDataFromImdb(imdb);
+  top_predictions = predict(net, vectorized_data);
+  all_predictions = getAllPredictionsFromTopPredictions(top_predictions, imdb);
+
+
+% -------------------------------------------------------------------------
+function [top_predictions, all_predictions] = getPredictionsFromConvNetOnImdb(net, imdb)
 % -------------------------------------------------------------------------
   [net, info] = cnnTrain(net, imdb, getBatch(), ...
     'debug_flag', false, ...

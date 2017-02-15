@@ -102,6 +102,8 @@ function folds = testKFold(input_opts)
       % no additional options
     case 'forest'
       opts.single_training_method_options.boosting_method = getValueFromFieldOrDefault(input_opts, 'boosting_method', 'RUSBoost');
+    case 'single-mlp'
+      % no additional options
     case 'single-cnn'
       opts.single_training_method_options.network_arch = getValueFromFieldOrDefault(input_opts, 'network_arch', 'lenet');
       opts.single_training_method_options.backprop_depth = getValueFromFieldOrDefault(input_opts, 'backprop_depth', 4);
@@ -202,6 +204,8 @@ function folds = testKFold(input_opts)
       trainingMethodFunctionHandle = @testSvm;
     case 'forest'
       trainingMethodFunctionHandle = @testForest;
+    case 'single-mlp'
+      trainingMethodFunctionHandle = @testMlp;
     case 'single-cnn'
       trainingMethodFunctionHandle = @testCnn;
     case 'committee-cnn'
