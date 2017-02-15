@@ -68,7 +68,7 @@ function [top_predictions, all_predictions] = getPredictionsFromBoostedForestOnI
 function [top_predictions, all_predictions] = getPredictionsFromMlpOnImdb(net, imdb)
 % -------------------------------------------------------------------------
   vectorized_data = getVectorizedDataFromImdb(imdb);
-  top_predictions = predict(net, vectorized_data);
+  top_predictions = net(net, vectorized_data);
   all_predictions = getAllPredictionsFromTopPredictions(top_predictions, imdb);
 
 
