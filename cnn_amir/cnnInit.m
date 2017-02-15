@@ -49,7 +49,7 @@ function network_opts = cnnInit(input_opts)
 
   fh = networkInitializationUtils;
   switch opts.network_arch
-    case 'lenet'
+    case 'lenet_bu'
       % -----------------------------------------------------------------------
       %                                                                   LENET
       % -----------------------------------------------------------------------
@@ -109,17 +109,11 @@ function network_opts = cnnInit(input_opts)
       net.layers{end+1} = fh.reluLayer(layer_number);
 
       layer_number = layer_number + 2;
-      % if isTwoClassImdb(opts.dataset)
-      %   net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 64, 2, 5/100, 0, 'compRand', 'gen');
-      % elseif strcmp(opts.dataset, 'coil-100')
-      %   net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 64, 100, 5/100, 0, 'compRand', 'gen');
-      % else
       net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 64, 10, 5/100, 0, 'compRand', 'gen');
-      % end
 
       % LOSS LAYER
       net.layers{end+1} = fh.softmaxlossLayer();
-     case 'lenet_with_flatten'
+    case 'lenet_with_flatten'
       % -----------------------------------------------------------------------
       %                                                                   LENET
       % -----------------------------------------------------------------------
@@ -148,274 +142,150 @@ function network_opts = cnnInit(input_opts)
       net.layers{end+1} = fh.reluLayer(layer_number);
 
       layer_number = layer_number + 2;
-      % if isTwoClassImdb(opts.dataset)
-      %   net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 64, 2, 5/100, 0, 'compRand', 'gen');
-      % elseif strcmp(opts.dataset, 'coil-100')
-      %   net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 64, 100, 5/100, 0, 'compRand', 'gen');
-      % else
       net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 64, 10, 5/100, 0, 'compRand', 'gen');
-      % end
 
       % LOSS LAYER
       net.layers{end+1} = fh.softmaxlossLayer();
-    % case 'fc_lenet_with_flatten'
-    %   % -----------------------------------------------------------------------
-    %   %                                                   FC LENET WITH FLATTEN
-    %   % -----------------------------------------------------------------------
-    %   % FULLY CONNECTED
-    %   layer_number = 1;
-    %   % net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 4, 64, 500, 5/100, 0, 'compRand', 'gen');
-    %   net.layers{end+1} = fh.flattenLayer(layer_number); % [4x4x64x#Samples] -> [1x1x(4x4x64)x#Samples]
-    %   % net.layers{end+1} = fh.reluLayer(layer_number);
+    case 'fc_lenet_with_conv'
+      % -----------------------------------------------------------------------
+      %                                                      FC LENET WITH CONV
+      % -----------------------------------------------------------------------
+      % FULLY CONNECTED
+      layer_number = 1;
+      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 32, 3, 64, 5/100, 0, 'compRand', 'gen');
+      net.layers{end+1} = fh.reluLayer(layer_number);
 
-    %   layer_number = layer_number + 2;
-    %   net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 32 * 32 * 3, 100, 5/100, 0, 'compRand', 'gen');
-    %   net.layers{end+1} = fh.reluLayer(layer_number);
+      layer_number = layer_number + 2;
+      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 64, 10, 5/100, 0, 'compRand', 'gen');
 
-    %   layer_number = layer_number + 2;
-    %   net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 100, 10, 5/100, 0, 'compRand', 'gen');
+      % LOSS LAYER
+      net.layers{end+1} = fh.softmaxlossLayer();
+    case 'fc_lenet_with_flatten'
+      % -----------------------------------------------------------------------
+      %                                                   FC LENET WITH FLATTEN
+      % -----------------------------------------------------------------------
+      % FULLY CONNECTED
+      layer_number = 1;
+      net.layers{end+1} = fh.flattenLayer(layer_number); % [4x4x64x#Samples] -> [1x1x(4x4x64)x#Samples]
+      % net.layers{end+1} = fh.reluLayer(layer_number);
 
-    %   % LOSS LAYER
-    %   net.layers{end+1} = fh.softmaxlossLayer();
-    % case 'fc_lenet_with_conv'
-    %   % -----------------------------------------------------------------------
-    %   %                                                      FC LENET WITH CONV
-    %   % -----------------------------------------------------------------------
-    %   % FULLY CONNECTED
-    %   layer_number = 1;
-    %   net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 32, 3, 100, 5/100, 0, 'compRand', 'gen');
-    %   % net.layers{end+1} = fh.flattenLayer(layer_number); % [4x4x64x#Samples] -> [1x1x(4x4x64)x#Samples]
-    %   % net.layers{end+1} = fh.reluLayer(layer_number);
+      layer_number = layer_number + 1;
+      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 32 * 32 * 3, 64, 5/100, 0, 'compRand', 'gen');
+      net.layers{end+1} = fh.reluLayer(layer_number);
 
-    %   % layer_number = layer_number + 2;
-    %   % net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 32 * 32 * 3, 100, 5/100, 0, 'compRand', 'gen');
-    %   % net.layers{end+1} = fh.reluLayer(layer_number);
+      layer_number = layer_number + 2;
+      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 64, 10, 5/100, 0, 'compRand', 'gen');
 
-    %   layer_number = layer_number + 2;
-    %   net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 100, 10, 5/100, 0, 'compRand', 'gen');
+      % LOSS LAYER
+      net.layers{end+1} = fh.softmaxlossLayer();
+    case 'lenet_with_larger_fc_conv'
+      % -----------------------------------------------------------------------
+      %                                               lenet_with_larger_fc_conv
+      % -----------------------------------------------------------------------
+      layer_number = 1;
+      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 3, 32, 1/100, 2, char(opts.weight_init_sequence{1}), opts.weight_init_source);
+      net.layers{end+1} = fh.poolingLayerLeNetMax(layer_number);
+      net.layers{end+1} = fh.reluLayer(layer_number);
 
-    %   % LOSS LAYER
-    %   net.layers{end+1} = fh.softmaxlossLayer();
-    % case 'lenet_with_larger_fc'
-    %   % -----------------------------------------------------------------------
-    %   %                                                    LENET WITH LARGER FC
-    %   % -----------------------------------------------------------------------
-    %   layer_number = 1;
-    %   net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 3, 32, 1/100, 2, char(opts.weight_init_sequence{1}), opts.weight_init_source);
-    %   net.layers{end+1} = fh.poolingLayerLeNetMax(layer_number);
-    %   net.layers{end+1} = fh.reluLayer(layer_number);
+      layer_number = layer_number + 3;
+      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 32, 32, 5/100, 2, char(opts.weight_init_sequence{2}), opts.weight_init_source);
+      net.layers{end+1} = fh.reluLayer(layer_number);
+      net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
 
-    %   layer_number = layer_number + 3;
-    %   net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 32, 32, 5/100, 2, char(opts.weight_init_sequence{2}), opts.weight_init_source);
-    %   net.layers{end+1} = fh.reluLayer(layer_number);
-    %   net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
+      layer_number = layer_number + 3;
+      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 32, 64, 5/100, 2, char(opts.weight_init_sequence{3}), opts.weight_init_source);
+      net.layers{end+1} = fh.reluLayer(layer_number);
+      net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
 
-    %   layer_number = layer_number + 3;
-    %   net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 32, 64, 5/100, 2, char(opts.weight_init_sequence{3}), opts.weight_init_source);
-    %   net.layers{end+1} = fh.reluLayer(layer_number);
-    %   net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
+      % FULLY CONNECTED
+      layer_number = layer_number + 3;
+      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 4, 64, 500, 5/100, 0, 'compRand', 'gen');
+      net.layers{end+1} = fh.reluLayer(layer_number);
 
-    %   % FULLY CONNECTED
-    %   layer_number = layer_number + 3;
-    %   net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 4, 64, 500, 5/100, 0, 'compRand', 'gen');
-    %   net.layers{end+1} = fh.reluLayer(layer_number);
+      layer_number = layer_number + 2;
+      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 500, 100, 5/100, 0, 'compRand', 'gen');
+      net.layers{end+1} = fh.reluLayer(layer_number);
 
-    %   layer_number = layer_number + 2;
-    %   net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 500, 100, 5/100, 0, 'compRand', 'gen');
-    %   net.layers{end+1} = fh.reluLayer(layer_number);
+      layer_number = layer_number + 2;
+      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 100, 10, 5/100, 0, 'compRand', 'gen');
+      % LOSS LAYER
+      net.layers{end+1} = fh.softmaxlossLayer();
+    case 'lenet_with_larger_fc_flatten'
+      % -----------------------------------------------------------------------
+      %                                            lenet_with_larger_fc_flatten
+      % -----------------------------------------------------------------------
+      layer_number = 1;
+      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 3, 32, 1/100, 2, char(opts.weight_init_sequence{1}), opts.weight_init_source);
+      net.layers{end+1} = fh.poolingLayerLeNetMax(layer_number);
+      net.layers{end+1} = fh.reluLayer(layer_number);
 
-    %   layer_number = layer_number + 2;
-    %   net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 100, 10, 5/100, 0, 'compRand', 'gen');
-    %   % if isTwoClassImdb(opts.dataset)
-    %   %   net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 64, 2, 5/100, 0, 'compRand', 'gen');
-    %   % elseif strcmp(opts.dataset, 'coil-100')
-    %   %   net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 64, 100, 5/100, 0, 'compRand', 'gen');
-    %   % else
-    %   %   net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 64, 10, 5/100, 0, 'compRand', 'gen');
-    %   % end
+      layer_number = layer_number + 3;
+      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 32, 32, 5/100, 2, char(opts.weight_init_sequence{2}), opts.weight_init_source);
+      net.layers{end+1} = fh.reluLayer(layer_number);
+      net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
 
-    %   % LOSS LAYER
-    %   net.layers{end+1} = fh.softmaxlossLayer();
-    % case 'lenet_with_larger_fc_and_flatten'
-    %   % -----------------------------------------------------------------------
-    %   %                                        LENET WITH LARGER FC AND FLATTEN
-    %   % -----------------------------------------------------------------------
-    %   layer_number = 1;
-    %   net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 3, 32, 1/100, 2, char(opts.weight_init_sequence{1}), opts.weight_init_source);
-    %   net.layers{end+1} = fh.poolingLayerLeNetMax(layer_number);
-    %   net.layers{end+1} = fh.reluLayer(layer_number);
+      layer_number = layer_number + 3;
+      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 32, 64, 5/100, 2, char(opts.weight_init_sequence{3}), opts.weight_init_source);
+      net.layers{end+1} = fh.reluLayer(layer_number);
+      net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
 
-    %   layer_number = layer_number + 3;
-    %   net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 32, 32, 5/100, 2, char(opts.weight_init_sequence{2}), opts.weight_init_source);
-    %   net.layers{end+1} = fh.reluLayer(layer_number);
-    %   net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
+      % FULLY CONNECTED
+      layer_number = layer_number + 3;
+      % net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 4, 64, 64, 5/100, 0, 'compRand', 'gen');
+      net.layers{end+1} = fh.flattenLayer(layer_number); % [4x4x64x#Samples] -> [1x1x(4x4x64)x#Samples]
 
-    %   layer_number = layer_number + 3;
-    %   net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 32, 64, 5/100, 2, char(opts.weight_init_sequence{3}), opts.weight_init_source);
-    %   net.layers{end+1} = fh.reluLayer(layer_number);
-    %   net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
+      layer_number = layer_number + 1;
+      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 1024, 500, 5/100, 0, 'compRand', 'gen');
+      net.layers{end+1} = fh.reluLayer(layer_number);
 
-    %   % FULLY CONNECTED
-    %   layer_number = layer_number + 3;
-    %   net.layers{end+1} = fh.flattenLayer(layer_number); % [4x4x64x#Samples] -> [1x1x(4x4x64)x#Samples]
-    %   net.layers{end+1} = fh.reluLayer(layer_number);
+      layer_number = layer_number + 2;
+      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 500, 100, 5/100, 0, 'compRand', 'gen');
+      net.layers{end+1} = fh.reluLayer(layer_number);
 
-    %   layer_number = layer_number + 2;
-    %   net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 1024, 100, 5/100, 0, 'compRand', 'gen');
-    %   net.layers{end+1} = fh.reluLayer(layer_number);
+      layer_number = layer_number + 2;
+      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 100, 10, 5/100, 0, 'compRand', 'gen');
 
-    %   layer_number = layer_number + 2;
-    %   net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 100, 10, 5/100, 0, 'compRand', 'gen');
+      % LOSS LAYER
+      net.layers{end+1} = fh.softmaxlossLayer();
+    case 'fc_lenet_with_larger_fc_conv'
+      % -----------------------------------------------------------------------
+      %                                            fc_lenet_with_larger_fc_conv
+      % -----------------------------------------------------------------------
+      % FULLY CONNECTED
+      layer_number = 1;
+      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 32, 3, 500, 5/100, 0, 'compRand', 'gen');
+      net.layers{end+1} = fh.reluLayer(layer_number);
 
-    %   % LOSS LAYER
-    %   net.layers{end+1} = fh.softmaxlossLayer();
-    % case 'lenet_with_larger_fc_and_flatten_alex'
-    %   % -----------------------------------------------------------------------
-    %   %                                   LENET WITH LARGER FC AND FLATTEN ALEX
-    %   % -----------------------------------------------------------------------
-    %   layer_number = 1;
-    %   net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 3, 32, 1/100, 2, char(opts.weight_init_sequence{1}), opts.weight_init_source);
-    %   net.layers{end+1} = fh.poolingLayerLeNetMax(layer_number);
-    %   net.layers{end+1} = fh.reluLayer(layer_number);
+      layer_number = layer_number + 2;
+      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 500, 100, 5/100, 0, 'compRand', 'gen');
+      net.layers{end+1} = fh.reluLayer(layer_number);
 
-    %   layer_number = layer_number + 3;
-    %   net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 32, 32, 5/100, 2, char(opts.weight_init_sequence{2}), opts.weight_init_source);
-    %   net.layers{end+1} = fh.reluLayer(layer_number);
-    %   net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
+      layer_number = layer_number + 2;
+      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 100, 10, 5/100, 0, 'compRand', 'gen');
+      % LOSS LAYER
+      net.layers{end+1} = fh.softmaxlossLayer();
+    case 'fc_lenet_with_larger_fc_flatten'
+      % -----------------------------------------------------------------------
+      %                                         fc_lenet_with_larger_fc_flatten
+      % -----------------------------------------------------------------------
+      % FULLY CONNECTED
+      layer_number = 1;
+      net.layers{end+1} = fh.flattenLayer(layer_number); % [4x4x64x#Samples] -> [1x1x(4x4x64)x#Samples]
+      % net.layers{end+1} = fh.reluLayer(layer_number);
 
-    %   layer_number = layer_number + 3;
-    %   net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 32, 64, 5/100, 2, char(opts.weight_init_sequence{3}), opts.weight_init_source);
-    %   net.layers{end+1} = fh.reluLayer(layer_number);
-    %   net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
+      layer_number = layer_number + 1;
+      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 32 * 32 * 3, 500, 5/100, 0, 'compRand', 'gen');
+      net.layers{end+1} = fh.reluLayer(layer_number);
 
-    %   % FULLY CONNECTED
-    %   layer_number = layer_number + 3;
-    %   net.layers{end+1} = fh.flattenLayer(layer_number); % [4x4x64x#Samples] -> [1x1x(4x4x64)x#Samples]
-    %   % net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 4, 64, 500, 5/100, 0, 'compRand', 'gen');
-    %   % net.layers{end+1} = fh.reluLayer(layer_number);
+      layer_number = layer_number + 2;
+      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 500, 100, 5/100, 0, 'compRand', 'gen');
+      net.layers{end+1} = fh.reluLayer(layer_number);
 
-    %   layer_number = layer_number + 1;
-    %   net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 1024, 500, 5/100, 0, 'compRand', 'gen');
-    %   net.layers{end+1} = fh.reluLayer(layer_number);
+      layer_number = layer_number + 2;
+      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 100, 10, 5/100, 0, 'compRand', 'gen');
 
-    %   layer_number = layer_number + 2;
-    %   net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 500, 100, 5/100, 0, 'compRand', 'gen');
-    %   net.layers{end+1} = fh.reluLayer(layer_number);
-
-    %   layer_number = layer_number + 2;
-    %   net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 100, 10, 5/100, 0, 'compRand', 'gen');
-    %   % if isTwoClassImdb(opts.dataset)
-    %   %   net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 64, 2, 5/100, 0, 'compRand', 'gen');
-    %   % elseif strcmp(opts.dataset, 'coil-100')
-    %   %   net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 64, 100, 5/100, 0, 'compRand', 'gen');
-    %   % else
-    %   %   net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 64, 10, 5/100, 0, 'compRand', 'gen');
-    %   % end
-
-    %   % LOSS LAYER
-    %   net.layers{end+1} = fh.softmaxlossLayer();
-    % case 'fc_lenet_with_larger_fc_and_flatten_alex'
-    %   % -----------------------------------------------------------------------
-    %   %                                                   FC LENET WITH FLATTEN
-    %   % -----------------------------------------------------------------------
-    %   % FULLY CONNECTED
-    %   layer_number = 1;
-    %   net.layers{end+1} = fh.flattenLayer(layer_number); % [4x4x64x#Samples] -> [1x1x(4x4x64)x#Samples]
-    %   % net.layers{end+1} = fh.reluLayer(layer_number);
-
-    %   layer_number = layer_number + 2;
-    %   net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 32 * 32 * 3, 500, 5/100, 0, 'compRand', 'gen');
-    %   net.layers{end+1} = fh.reluLayer(layer_number);
-
-    %   layer_number = layer_number + 2;
-    %   net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 500, 100, 5/100, 0, 'compRand', 'gen');
-    %   net.layers{end+1} = fh.reluLayer(layer_number);
-
-    %   layer_number = layer_number + 2;
-    %   net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 100, 10, 5/100, 0, 'compRand', 'gen');
-
-    %   % LOSS LAYER
-    %   net.layers{end+1} = fh.softmaxlossLayer();
-    % case 'lenet_with_larger_fc_and_flatten_alex_no_pool'
-    %   % -----------------------------------------------------------------------
-    %   %                           LENET WITH LARGER FC AND FLATTEN ALEX NO POOL
-    %   % -----------------------------------------------------------------------
-    %   layer_number = 1;
-    %   net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 3, 32, 1/100, 2, char(opts.weight_init_sequence{1}), opts.weight_init_source);
-    %   % net.layers{end+1} = fh.poolingLayerLeNetMax(layer_number);
-    %   net.layers{end+1} = fh.reluLayer(layer_number);
-
-    %   layer_number = layer_number + 3;
-    %   net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 32, 32, 5/100, 2, char(opts.weight_init_sequence{2}), opts.weight_init_source);
-    %   net.layers{end+1} = fh.reluLayer(layer_number);
-    %   % net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
-
-    %   layer_number = layer_number + 3;
-    %   net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 32, 64, 5/100, 2, char(opts.weight_init_sequence{3}), opts.weight_init_source);
-    %   net.layers{end+1} = fh.reluLayer(layer_number);
-    %   % net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
-
-    %   % FULLY CONNECTED
-    %   layer_number = layer_number + 3;
-    %   net.layers{end+1} = fh.flattenLayer(layer_number); % [4x4x64x#Samples] -> [1x1x(4x4x64)x#Samples]
-    %   % net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 4, 64, 500, 5/100, 0, 'compRand', 'gen');
-    %   % net.layers{end+1} = fh.reluLayer(layer_number);
-
-    %   layer_number = layer_number + 1;
-    %   net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 1024 * 64, 500, 5/100, 0, 'compRand', 'gen');
-    %   net.layers{end+1} = fh.reluLayer(layer_number);
-
-    %   layer_number = layer_number + 2;
-    %   net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 500, 100, 5/100, 0, 'compRand', 'gen');
-    %   net.layers{end+1} = fh.reluLayer(layer_number);
-
-    %   layer_number = layer_number + 2;
-    %   net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 100, 10, 5/100, 0, 'compRand', 'gen');
-    %   % if isTwoClassImdb(opts.dataset)
-    %   %   net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 64, 2, 5/100, 0, 'compRand', 'gen');
-    %   % elseif strcmp(opts.dataset, 'coil-100')
-    %   %   net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 64, 100, 5/100, 0, 'compRand', 'gen');
-    %   % else
-    %   %   net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 64, 10, 5/100, 0, 'compRand', 'gen');
-    %   % end
-
-    %   % LOSS LAYER
-    %   net.layers{end+1} = fh.softmaxlossLayer();
-    % case 'lenet_no_pool'
-    %   % -----------------------------------------------------------------------
-    %   %                                                            LENET NO POOL
-    %   % -----------------------------------------------------------------------
-    %   layer_number = 1;
-    %   net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 3, 32, 1/100, 2, char(opts.weight_init_sequence{1}), opts.weight_init_source);
-    %   % net.layers{end+1} = fh.poolingLayerLeNetMax(layer_number);
-    %   net.layers{end+1} = fh.reluLayer(layer_number);
-
-    %   layer_number = layer_number + 3;
-    %   net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 32, 32, 5/100, 2, char(opts.weight_init_sequence{2}), opts.weight_init_source);
-    %   net.layers{end+1} = fh.reluLayer(layer_number);
-    %   % net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
-
-    %   layer_number = layer_number + 3;
-    %   net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 32, 64, 5/100, 2, char(opts.weight_init_sequence{3}), opts.weight_init_source);
-    %   net.layers{end+1} = fh.reluLayer(layer_number);
-    %   % net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
-
-    %   % FULLY CONNECTED
-    %   layer_number = layer_number + 3;
-    %   net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 32, 64, 64, 5/100, 0, 'compRand', 'gen');
-    %   net.layers{end+1} = fh.reluLayer(layer_number);
-
-    %   layer_number = layer_number + 2;
-    %   if isTwoClassImdb(opts.dataset)
-    %     net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 64, 2, 5/100, 0, 'compRand', 'gen');
-    %   elseif strcmp(opts.dataset, 'coil-100')
-    %     net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 64, 100, 5/100, 0, 'compRand', 'gen');
-    %   else
-    %     net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 64, 10, 5/100, 0, 'compRand', 'gen');
-    %   end
-
-    %   % LOSS LAYER
-    %   net.layers{end+1} = fh.softmaxlossLayer();
+      % LOSS LAYER
+      net.layers{end+1} = fh.softmaxlossLayer();
     case 'lenet+1'
       % -----------------------------------------------------------------------
       %                                                               LENET + 1

@@ -133,13 +133,6 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   % % -------------------------------------------------
   % experiment_options.network_arch = 'lenet';
   % % -------------------------------------------------
-  % % -------------------------------------------------
-  % experiment_options.weight_init_sequence = { ...
-  %   'compRand', ...
-  %   'compRand', ...
-  %   'compRand', ...
-  % };
-  % % -------------------------------------------------
 
   % % Exp. 1
   % experiment_options.backprop_depth = 4;
@@ -156,240 +149,64 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   % % Exp. 4
   % experiment_options.backprop_depth = 13;
   % testKFold(experiment_options);
-
-  % % -------------------------------------------------
-  % experiment_options.network_arch = 'lenet_with_conv';
-  % % -------------------------------------------------
-
-  % % Exp. 1
-  % experiment_options.backprop_depth = 4;
-  % testKFold(experiment_options);
-
-  % % -------------------------------------------------
-  % experiment_options.network_arch = 'lenet_with_flatten';
-  % % -------------------------------------------------
-
-  % % Exp. 1
-  % experiment_options.backprop_depth = 5; % or 4, doesn't matter if backprop over the flatten layer or not...
-  % testKFold(experiment_options);
-
-  % % -------------------------------------------------
-  % experiment_options.weight_init_sequence = { ...
-  %   'quasiRandSobol', ...
-  %   'quasiRandSobol', ...
-  %   'quasiRandSobol', ...
-  % };
-  % % -------------------------------------------------
-
-  % % Exp. 1
-  % experiment_options.backprop_depth = 4;
-  % testKFold(experiment_options);
-
-  % % % Exp. 2
-  % % experiment_options.backprop_depth = 7;
-  % % testKFold(experiment_options);
-
-  % % Exp. 3
-  % experiment_options.backprop_depth = 13;
-  % testKFold(experiment_options);
-
-  % % -------------------------------------------------
-  % experiment_options.weight_init_sequence = { ...
-  %   'quasiRandSobolSkip', ...
-  %   'quasiRandSobolSkip', ...
-  %   'quasiRandSobolSkip', ...
-  % };
-  % % -------------------------------------------------
-
-  % % Exp. 1
-  % experiment_options.backprop_depth = 4;
-  % testKFold(experiment_options);
-
-  % % Exp. 2
-  % experiment_options.backprop_depth = 7;
-  % testKFold(experiment_options);
-
-  % % Exp. 3
-  % experiment_options.backprop_depth = 13;
-  % testKFold(experiment_options);
-
 
   % -------------------------------------------------
-  % experiment_options.network_arch = 'alexnet';
+  experiment_options.network_arch = 'lenet_with_conv';
   % -------------------------------------------------
-  % % Exp. 1
-  % experiment_options.backprop_depth = 7;
-  % testKFold(experiment_options);
+  % Exp. 1
+  experiment_options.backprop_depth = 4;
+  testKFold(experiment_options);
 
-  % % Exp. 3
-  % experiment_options.backprop_depth = 20;
-  % testKFold(experiment_options);
+  % -------------------------------------------------
+  experiment_options.network_arch = 'lenet_with_flatten';
+  % -------------------------------------------------
+  % Exp. 1
+  experiment_options.backprop_depth = 5; % or 4, doesn't matter if backprop over the flatten layer or not...
+  testKFold(experiment_options);
 
-  % % -------------------------------------------------
-  % experiment_options.network_arch = 'fc_lenet_with_flatten';
-  % % -------------------------------------------------
+  % -------------------------------------------------
+  experiment_options.network_arch = 'fc_lenet_with_conv';
+  % -------------------------------------------------
+  % Exp. 1
+  experiment_options.backprop_depth = 4;
+  testKFold(experiment_options);
 
-  % % Exp. 1
-  % experiment_options.backprop_depth = 5;
-  % testKFold(experiment_options);
+  % -------------------------------------------------
+  experiment_options.network_arch = 'fc_lenet_with_flatten';
+  % -------------------------------------------------
+  % Exp. 1
+  experiment_options.backprop_depth = 5;
+  testKFold(experiment_options);
 
-  % % -------------------------------------------------
-  % experiment_options.network_arch = 'fc_lenet_with_larger_fc_and_flatten_alex';
-  % % -------------------------------------------------
+  % -------------------------------------------------
+  experiment_options.network_arch = 'lenet_with_larger_fc_conv';
+  % -------------------------------------------------
+  % Exp. 1
+  experiment_options.backprop_depth = 6;
+  testKFold(experiment_options);
 
-  % % Exp. 1
-  % experiment_options.backprop_depth = 7;
-  % testKFold(experiment_options);
+  % -------------------------------------------------
+  experiment_options.network_arch = 'lenet_with_larger_fc_flatten';
+  % -------------------------------------------------
+  % Exp. 1
+  experiment_options.backprop_depth = 7;
+  testKFold(experiment_options);
 
+  % -------------------------------------------------
+  experiment_options.network_arch = 'TODO fc_lenet_with_larger_fc_conv';
+  % -------------------------------------------------
+  % Exp. 1
+  experiment_options.backprop_depth = 6;
+  testKFold(experiment_options);
 
-  % % -------------------------------------------------
-  % experiment_options.network_arch = 'lenet+1';
-  % % -------------------------------------------------
-  % % want to test FC + 3 (3/4) to see how it compares against just lenet architecture
-  % % so same number of parameters, just with some random non-linear projection at the begininning
-
-  % % Exp. 1
-  % experiment_options.backprop_depth = 4;
-  % testKFold(experiment_options);
-
-  % % Exp. 2
-  % experiment_options.backprop_depth = 7;
-  % testKFold(experiment_options);
-
-  % % Exp. 3
-  % experiment_options.backprop_depth = 10;
-  % testKFold(experiment_options);
-
-  % % Exp. 4
-  % experiment_options.backprop_depth = 13;
-  % testKFold(experiment_options);
-
-  % % Exp. 5
-  % experiment_options.backprop_depth = 15;
-  % testKFold(experiment_options);
-
-
-  % % % -------------------------------------------------
-  % experiment_options.network_arch = 'lenet_no_pool';
-  % % % -------------------------------------------------
-
-  % % Exp. 1
-  % experiment_options.backprop_depth = 4;
-  % testKFold(experiment_options);
-
-  % % % -------------------------------------------------
-  % experiment_options.network_arch = 'lenet_with_larger_fc_and_flatten';
-  % % % -------------------------------------------------
-
-  % % Exp. 1
-  % experiment_options.backprop_depth = 6;
-  % testKFold(experiment_options);
-
-  % % Exp. 2
-  % experiment_options.backprop_depth = 9;
-  % testKFold(experiment_options);
-
-  % % Exp. 3
-  % experiment_options.backprop_depth = 12;
-  % testKFold(experiment_options);
-
-  % % Exp. 4
-  % experiment_options.backprop_depth = 15;
-  % testKFold(experiment_options);
-
-  % % % % -------------------------------------------------
-  % experiment_options.network_arch = 'lenet_with_larger_fc_and_flatten_alex';
-  % % % % -------------------------------------------------
-
-  % % Exp. 1
-  % experiment_options.backprop_depth = 6 + 1;
-  % testKFold(experiment_options);
-
-  % % Exp. 2
-  % experiment_options.backprop_depth = 9 + 1;
-  % testKFold(experiment_options);
-
-  % % Exp. 3
-  % experiment_options.backprop_depth = 12 + 1;
-  % testKFold(experiment_options);
-
-  % % Exp. 4
-  % experiment_options.backprop_depth = 15 + 1;
-  % testKFold(experiment_options);
+  % -------------------------------------------------
+  experiment_options.network_arch = 'TODO fc_lenet_with_larger_fc_flatten';
+  % -------------------------------------------------
+  % Exp. 1
+  experiment_options.backprop_depth = 7;
+  testKFold(experiment_options);
 
 
-  % % % -------------------------------------------------
-  % experiment_options.network_arch = 'lenet_with_larger_fc_and_flatten_alex_no_pool';
-  % % % -------------------------------------------------
-
-  % % Exp. 1
-  % experiment_options.backprop_depth = 6 + 1;
-  % testKFold(experiment_options);
-
-  % % % -------------------------------------------------
-  % experiment_options.network_arch = 'lenet_with_larger_fc';
-  % % % -------------------------------------------------
-
-  % % Exp. 1
-  % experiment_options.backprop_depth = 6;
-  % testKFold(experiment_options);
-
-  % % Exp. 2
-  % experiment_options.backprop_depth = 9;
-  % testKFold(experiment_options);
-
-  % % Exp. 3
-  % experiment_options.backprop_depth = 12;
-  % testKFold(experiment_options);
-
-  % % Exp. 4
-  % experiment_options.backprop_depth = 15;
-  % testKFold(experiment_options);
-
-
-
-  % % -------------------------------------------------
-  % experiment_options.network_arch = 'lenet++1';
-  % % -------------------------------------------------
-
-  % % Exp. 1
-  % experiment_options.backprop_depth = 4;
-  % testKFold(experiment_options);
-
-  % % Exp. 2
-  % experiment_options.backprop_depth = 7;
-  % testKFold(experiment_options);
-
-  % % Exp. 3
-  % experiment_options.backprop_depth = 10;
-  % testKFold(experiment_options);
-
-  % % Exp. 4
-  % experiment_options.backprop_depth = 13;
-  % testKFold(experiment_options);
-
-  % % Exp. 5
-  % experiment_options.backprop_depth = 15;
-  % testKFold(experiment_options);
-
-
-
-  % % -------------------------------------------------------------------------
-  % %                                                             committee svm
-  % % -------------------------------------------------------------------------
-  % experiment_options.training_method = 'committee-svm';
-
-  % % -------------------------------------------------
-  % experiment_options.number_of_committee_members = 3;
-  % % -------------------------------------------------
-  % % Exp. 1
-  % testKFold(experiment_options);
-
-  % % -------------------------------------------------
-  % experiment_options.number_of_committee_members = 7;
-  % % -------------------------------------------------
-  % % Exp. 1
-  % testKFold(experiment_options);
 
 
   % % -------------------------------------------------------------------------
