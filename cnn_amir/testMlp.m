@@ -84,11 +84,12 @@ function [trained_model, performance_summary] = testMlp(input_opts)
   % -------------------------------------------------------------------------
 
   net = patternnet([64,10]);
-  if ispc
-    net = train(net, vectorized_data_train, labels_train, 'useGPU', 'yes');
-  else
-    net = train(net, vectorized_data_train, labels_train, 'useGPU', 'no');
-  end
+  net = train(net, vectorized_data_train, labels_train, 'useGPU', 'no');
+  % if ispc
+  %   net = train(net, vectorized_data_train, labels_train, 'useGPU', 'yes');
+  % else
+  %   net = train(net, vectorized_data_train, labels_train, 'useGPU', 'no');
+  % end
 
   % -------------------------------------------------------------------------
   %                                                   get performance summary
