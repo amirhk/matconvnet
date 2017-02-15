@@ -73,7 +73,7 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   % -------------------------------------------------------------------------
   %                                                            shared options
   % -------------------------------------------------------------------------
-  experiment_options.number_of_folds = 1;
+  experiment_options.number_of_folds = 3;
   experiment_options.experiment_parent_dir = opts.paths.experiment_dir;
   experiment_options.dataset = opts.general.dataset;
   experiment_options.network_arch = opts.general.network_arch;
@@ -210,6 +210,15 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   % Exp. 1
   experiment_options.backprop_depth = 5;
   testKFold(experiment_options);
+
+  % % -------------------------------------------------
+  % experiment_options.network_arch = 'fc_lenet_with_larger_fc_and_flatten_alex';
+  % % -------------------------------------------------
+
+  % % Exp. 1
+  % experiment_options.backprop_depth = 7;
+  % testKFold(experiment_options);
+
 
   % % -------------------------------------------------
   % experiment_options.network_arch = 'lenet+1';
