@@ -69,6 +69,14 @@ switch network_arch
       case 'prostate-v3-104-patients'
         learning_rate = [0.05*ones(1,10) 0.005*ones(1,20) 0.001*ones(1,20)];
     end
+  case 'fc_lenet_with_flatten'
+    switch dataset
+      % multi-class
+      case 'mnist'
+        learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];
+      case 'mnist-multi-class-subsampled'
+        learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];
+    end
   case 'lenet_with_larger_fc'
     switch dataset
       % multi-class
