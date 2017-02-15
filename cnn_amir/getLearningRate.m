@@ -69,31 +69,23 @@ switch network_arch
       case 'prostate-v3-104-patients'
         learning_rate = [0.05*ones(1,10) 0.005*ones(1,20) 0.001*ones(1,20)];
     end
-  case 'lenet_with_conv'
-    switch dataset
-      % multi-class
-      case 'mnist'
-        learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];
-      % multi-class subsampled
-      case 'mnist-multi-class-subsampled'
-        learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];
-    end
-  case 'lenet_with_flatten'
-    switch dataset
-      % multi-class
-      case 'mnist'
-        learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];
-      % multi-class subsampled
-      case 'mnist-multi-class-subsampled'
-        learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];
-    end
+
+
+
+
   case 'fc_lenet_with_flatten'
     switch dataset
       % multi-class
       case 'mnist'
         learning_rate = [0.1*ones(1,5) 0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,45)] / 20;
         % learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];
+      case 'cifar'
+        learning_rate = [0.1*ones(1,5) 0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,45)] / 20;
+        % learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];
       case 'mnist-multi-class-subsampled'
+        learning_rate = [0.1*ones(1,5) 0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,45)] / 20;
+        % learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];
+      case 'cifar-multi-class-subsampled'
         learning_rate = [0.1*ones(1,5) 0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,45)] / 20;
         % learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];
     end
@@ -103,9 +95,62 @@ switch network_arch
       case 'mnist'
         learning_rate = [0.1*ones(1,5) 0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,45)] / 20;
         % learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];
+      case 'cifar'
+        learning_rate = [0.1*ones(1,5) 0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,45)] / 20;
+        % learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];
       case 'mnist-multi-class-subsampled'
         learning_rate = [0.1*ones(1,5) 0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,45)] / 20;
         % learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];
+      case 'cifar-multi-class-subsampled'
+        learning_rate = [0.1*ones(1,5) 0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,45)] / 20;
+        % learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];
+    end
+  case 'lenet_with_conv'
+    switch dataset
+      % multi-class
+      case 'mnist'
+        learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];
+      case 'cifar'
+        learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];
+      % multi-class subsampled
+      case 'mnist-multi-class-subsampled'
+        learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];
+      case 'cifar-multi-class-subsampled'
+        learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];
+    end
+  case 'lenet_with_flatten'
+    switch dataset
+      % multi-class
+      case 'mnist'
+        learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];
+      case 'cifar'
+        learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];
+      % multi-class subsampled
+      case 'mnist-multi-class-subsampled'
+        learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];
+      case 'cifar-multi-class-subsampled'
+        learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];
+    end
+
+
+
+
+
+  case 'fc_lenet_with_larger_fc_conv'
+    switch dataset
+      % multi-class
+      case 'mnist'
+        learning_rate = [0.05*ones(1,15) 0.01*ones(1,20) 0.005*ones(1,10) 0.0005*ones(1,25)]; % testing!!!
+      case 'mnist-multi-class-subsampled'
+        learning_rate = [0.05*ones(1,15) 0.01*ones(1,20) 0.005*ones(1,10) 0.0005*ones(1,25)]; % testing!!!
+    end
+  case 'fc_lenet_with_larger_fc_flatten'
+    switch dataset
+      % multi-class
+      case 'mnist'
+        learning_rate = [0.05*ones(1,15) 0.01*ones(1,20) 0.005*ones(1,10) 0.0005*ones(1,25)]; % testing!!!
+      case 'mnist-multi-class-subsampled'
+        learning_rate = [0.05*ones(1,15) 0.01*ones(1,20) 0.005*ones(1,10) 0.0005*ones(1,25)]; % testing!!!
     end
   case 'lenet_with_larger_fc_conv'
     switch dataset
@@ -123,22 +168,11 @@ switch network_arch
       case 'mnist-multi-class-subsampled'
         learning_rate = [0.05*ones(1,15) 0.01*ones(1,20) 0.005*ones(1,10) 0.0005*ones(1,25)]; % best
     end
-  case 'fc_lenet_with_larger_fc_conv'
-    switch dataset
-      % multi-class
-      case 'mnist'
-        learning_rate = [0.05*ones(1,15) 0.01*ones(1,20) 0.005*ones(1,10) 0.0005*ones(1,25)]; % testing!!!
-      case 'mnist-multi-class-subsampled'
-        learning_rate = [0.05*ones(1,15) 0.01*ones(1,20) 0.005*ones(1,10) 0.0005*ones(1,25)]; % testing!!!
-    end
-  case 'fc_lenet_with_larger_fc_flatten'
-    switch dataset
-      % multi-class
-      case 'mnist'
-        learning_rate = [0.05*ones(1,15) 0.01*ones(1,20) 0.005*ones(1,10) 0.0005*ones(1,25)]; % testing!!!
-      case 'mnist-multi-class-subsampled'
-        learning_rate = [0.05*ones(1,15) 0.01*ones(1,20) 0.005*ones(1,10) 0.0005*ones(1,25)]; % testing!!!
-    end
+
+
+
+
+
   case 'lenet+1'
     switch dataset
       case 'cifar-two-class-deer-truck'
