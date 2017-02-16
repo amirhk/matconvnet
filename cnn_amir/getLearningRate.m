@@ -110,7 +110,7 @@ switch network_arch
       case 'svhn'
         % learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];             % 72.80 / 70.39 (bpd 0 / 3)
         % learning_rate = [0.05*ones(1,30) 0.005*ones(1,10) 0.0005*ones(1,10)];             % 75.10 / 72.01 (bpd 0 / 3)
-        % learning_rate = [0.05*ones(1,150)];                                               % GPU 4         (bpd 0 / 3)
+        % learning_rate = [0.05*ones(1,150)];                                               % 76.75 / 71.82 (bpd 0 / 3)
         learning_rate = [0.05*ones(1,50) 0.01*ones(1,50) 0.005*ones(1,50)];                 % GPU 1         (bpd 0 / 3)
 
       % multi-class subsampled % TODO!!!!!!!!!! should follow above
@@ -129,7 +129,8 @@ switch network_arch
         case 'cifar'
           learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];             % 35.89 / 29.74 (bpd 0 / 3)
           learning_rate = [0.1 * ones(1,25) 0.05*ones(1,50)];                               % GPU 3 (bpd 0 / 3)
-          learning_rate = [0.01*ones(1,25) 0.005*ones(1,25) 0.0001*ones(1,25)];             % GPU 2
+          learning_rate = [0.01*ones(1,25) 0.005*ones(1,25) 0.001*ones(1,25)];              % GPU 4
+          % learning_rate = [0.01*ones(1,25) 0.005*ones(1,25) 0.0001*ones(1,25)];             % GPU 2
       end
 
 
