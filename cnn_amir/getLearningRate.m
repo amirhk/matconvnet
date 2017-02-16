@@ -117,12 +117,12 @@ switch network_arch
         % learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];             % 15.05 / 14.69
         % learning_rate = [0.5*ones(1,20) 0.05*ones(1,15)  0.1:-0.01:0.06 0.05*ones(1,10)]; % 27.15 / 27.48
         % learning_rate = [0.5*ones(1,50) 0.05*ones(1,100)];                                % 36.10 / 36.60
-        % learning_rate = [0.5*ones(1,150)];                                                %
+        % learning_rate = [0.5*ones(1,150)];                                                % 45.32 / 44.85
         learning_rate = [1 * ones(1,20) 0.5*ones(1,130)];                                   %
       case 'svhn'
         % learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];             % 72.80 / 70.39
-        % learning_rate = [0.05*ones(1,30) 0.005*ones(1,10) 0.0005*ones(1,10)];             %
-        learning_rate = [0.05*ones(1,150)];                                                 %
+        learning_rate = [0.05*ones(1,30) 0.005*ones(1,10) 0.0005*ones(1,10)];             %
+        % learning_rate = [0.05*ones(1,150)];                                                 %
 
       % multi-class subsampled
       case 'mnist-multi-class-subsampled'
