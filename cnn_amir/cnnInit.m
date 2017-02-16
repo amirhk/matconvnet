@@ -113,6 +113,35 @@ function network_opts = cnnInit(input_opts)
 
       % LOSS LAYER
       net.layers{end+1} = fh.softmaxlossLayer();
+    case 'lenet_with_conv_without_pool'
+      % -----------------------------------------------------------------------
+      %                                                                   LENET
+      % -----------------------------------------------------------------------
+      layer_number = 1;
+      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 3, 32, 1/100, 2, char(opts.weight_init_sequence{1}), opts.weight_init_source);
+      % net.layers{end+1} = fh.poolingLayerLeNetMax(layer_number);
+      net.layers{end+1} = fh.reluLayer(layer_number);
+
+      layer_number = layer_number + 3;
+      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 32, 32, 5/100, 2, char(opts.weight_init_sequence{2}), opts.weight_init_source);
+      net.layers{end+1} = fh.reluLayer(layer_number);
+      % net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
+
+      layer_number = layer_number + 3;
+      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 32, 64, 5/100, 2, char(opts.weight_init_sequence{3}), opts.weight_init_source);
+      net.layers{end+1} = fh.reluLayer(layer_number);
+      % net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
+
+      % FULLY CONNECTED
+      layer_number = layer_number + 3;
+      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 32, 64, 64, 5/100, 0, 'compRand', 'gen');
+      net.layers{end+1} = fh.reluLayer(layer_number);
+
+      layer_number = layer_number + 2;
+      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 64, 10, 5/100, 0, 'compRand', 'gen');
+
+      % LOSS LAYER
+      net.layers{end+1} = fh.softmaxlossLayer();
     case 'fc_lenet_with_conv'
       % -----------------------------------------------------------------------
       %                                                      FC LENET WITH CONV

@@ -59,7 +59,7 @@ function runTempTests()
   % runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-100', 1);
   % runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-38', 1);
 
-  % runEnsembleLarpTests('cifar', 'whatever', 2);
+  runEnsembleLarpTests('cifar', 'whatever', 2);
   % runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-5000', 2);
   % runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-1880', 2);
   % runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-707', 2);
@@ -75,7 +75,7 @@ function runTempTests()
   % runEnsembleLarpTests('stl-10-multi-class-subsampled', 'balanced-38', 2);
 
 
-  runEnsembleLarpTests('svhn', 'whatever', 1);
+  % runEnsembleLarpTests('svhn', 'whatever', 4);
   % runEnsembleLarpTests('svhn-multi-class-subsampled', 'balanced-5000', 4);
   % runEnsembleLarpTests('svhn-multi-class-subsampled', 'balanced-1880', 4);
   % runEnsembleLarpTests('svhn-multi-class-subsampled', 'balanced-707', 4);

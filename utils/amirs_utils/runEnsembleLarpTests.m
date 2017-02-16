@@ -160,8 +160,15 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   % experiment_options.backprop_depth = 4;
   % testKFold(experiment_options);
 
+  % % -------------------------------------------------
+  % experiment_options.network_arch = 'lenet_with_conv';
+  % % -------------------------------------------------
+  % % Exp. 1
+  % experiment_options.backprop_depth = 4;
+  % testKFold(experiment_options);
+
   % -------------------------------------------------
-  experiment_options.network_arch = 'lenet_with_conv';
+  experiment_options.network_arch = 'lenet_with_conv_without_pool';
   % -------------------------------------------------
   % Exp. 1
   experiment_options.backprop_depth = 4;
