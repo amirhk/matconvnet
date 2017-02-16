@@ -108,10 +108,10 @@ switch network_arch
         % learning_rate = [0.5*ones(1,150)];                                                % 45.32 / 44.85 (bpd 0 / 3)
         learning_rate = [1 * ones(1,20) 0.5*ones(1,130)];                                   % 46.48 / 45.55 (bpd 0 / 3)
       case 'svhn'
-        % learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];             % 72.80 / 70.39 (bpd 0 / 3)
-        % learning_rate = [0.05*ones(1,30) 0.005*ones(1,10) 0.0005*ones(1,10)];             % 75.10 / 72.01 (bpd 0 / 3)
-        % learning_rate = [0.05*ones(1,150)];                                               % 76.75 / 71.82 (bpd 0 / 3)
-        learning_rate = [0.05*ones(1,50) 0.01*ones(1,50) 0.005*ones(1,50)];                 % GPU 1         (bpd 0 / 3)
+        % learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];                                % 72.80 / 70.39 (bpd 0 / 3)
+        % learning_rate = [0.05*ones(1,30) 0.005*ones(1,10) 0.0005*ones(1,10)];                                % 75.10 / 72.01 (bpd 0 / 3)
+        % learning_rate = [0.05*ones(1,150)];                                                                  % 76.75 / 71.82 (bpd 0 / 3)
+        learning_rate = [0.05*ones(1,50) 0.01*ones(1,50) 0.005*ones(1,50)];                                    % GPU 1         (bpd 0 / 3)
 
       % multi-class subsampled % TODO!!!!!!!!!! should follow above
       case 'mnist-multi-class-subsampled'
@@ -127,11 +127,11 @@ switch network_arch
     switch dataset
       % multi-class
       case 'cifar'
-        learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];                    % 35.89 / 29.74 (bpd 0 / 3)
-        learning_rate = [0.1 * ones(1,25) 0.05*ones(1,50)];                                      % 10.00 / 10.00 (bpd 0 / 3)
-        learning_rate = [0.01*ones(1,25) 0.005*ones(1,25) 0.001*ones(1,25)];                     % GPU 4
-        learning_rate = [0.01*ones(1,25) 0.005*ones(1,25) 0.0001*ones(1,25)];                    % 56.34 / 40.22  (bpd 0 / 3)
-        learning_rate = [0.01*ones(1,10) 0.005*ones(1,20) 0.0001*ones(1,20) 0.00005*ones(1,25)]; % GPU 3
+        learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];                                  % 35.89 / 29.74 (bpd 0 / 3)
+        learning_rate = [0.1 * ones(1,25) 0.05*ones(1,50)];                                                    % 10.00 / 10.00 (bpd 0 / 3)
+        learning_rate = [0.01*ones(1,25) 0.005*ones(1,25) 0.001*ones(1,25)];                                   % 60.24 / 41.92 (bpd 0 / 3)
+        learning_rate = [0.01*ones(1,25) 0.005*ones(1,25) 0.0001*ones(1,25)];                                  % 56.34 / 40.22 (bpd 0 / 3)
+        learning_rate = [0.01*ones(1,10) 0.005*ones(1,20) 0.0001*ones(1,20) 0.00005*ones(1,25)];               % GPU 3
         learning_rate = [0.01*ones(1,10) 0.005*ones(1,20) 0.0001*ones(1,20) 0.01*ones(1,5) 0.0001*ones(1,20)]; % GPU 2
     end
 
@@ -140,11 +140,7 @@ switch network_arch
     switch dataset
       % multi-class
       case 'cifar'
-        % learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];                    % 35.89 / 29.74 (bpd 0 / 3)
-        % learning_rate = [0.1 * ones(1,25) 0.05*ones(1,50)];                                      % 10.00 / 10.00 (bpd 0 / 3)
-        % learning_rate = [0.01*ones(1,25) 0.005*ones(1,25) 0.001*ones(1,25)];                     % GPU 4
-        % learning_rate = [0.01*ones(1,25) 0.005*ones(1,25) 0.0001*ones(1,25)];                    %
-        % learning_rate = [0.01*ones(1,10) 0.005*ones(1,20) 0.0001*ones(1,20) 0.00005*ones(1,25)]; % GPU 3
+        learning_rate = [0.01*ones(1,75)];                      % GPU 4
     end
 
 
