@@ -75,10 +75,10 @@ function runTempTests()
   % runEnsembleLarpTests('stl-10-multi-class-subsampled', 'balanced-500', 2);
 
 
-  runEnsembleLarpTests('svhn', 'whatever', 3);
-  runEnsembleLarpTests('svhn-multi-class-subsampled', 'balanced-38', 3);
-  runEnsembleLarpTests('svhn-multi-class-subsampled', 'balanced-100', 3);
-  runEnsembleLarpTests('svhn-multi-class-subsampled', 'balanced-266', 3);
-  runEnsembleLarpTests('svhn-multi-class-subsampled', 'balanced-707', 3);
-  runEnsembleLarpTests('svhn-multi-class-subsampled', 'balanced-1880', 3);
-  runEnsembleLarpTests('svhn-multi-class-subsampled', 'balanced-5000', 3);
+  runEnsembleLarpTests('svhn', 'whatever', 4);
+  runEnsembleLarpTests('svhn-multi-class-subsampled', 'balanced-38', 4);
+  runEnsembleLarpTests('svhn-multi-class-subsampled', 'balanced-100', 4);
+  runEnsembleLarpTests('svhn-multi-class-subsampled', 'balanced-266', 4);
+  runEnsembleLarpTests('svhn-multi-class-subsampled', 'balanced-707', 4);
+  runEnsembleLarpTests('svhn-multi-class-subsampled', 'balanced-1880', 4);
+  runEnsembleLarpTests('svhn-multi-class-subsampled', 'balanced-5000', 4);
