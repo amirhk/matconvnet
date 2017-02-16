@@ -160,26 +160,12 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   % experiment_options.backprop_depth = 4;
   % testKFold(experiment_options);
 
-  % % -------------------------------------------------
-  % experiment_options.network_arch = 'fc_lenet_with_flatten';
-  % % -------------------------------------------------
-  % % Exp. 1
-  % experiment_options.backprop_depth = 5;
-  % testKFold(experiment_options);
-
   % -------------------------------------------------
   experiment_options.network_arch = 'lenet_with_conv';
   % -------------------------------------------------
   % Exp. 1
   experiment_options.backprop_depth = 4;
   testKFold(experiment_options);
-
-  % % -------------------------------------------------
-  % experiment_options.network_arch = 'lenet_with_flatten';
-  % % -------------------------------------------------
-  % % Exp. 1
-  % experiment_options.backprop_depth = 5; % or 4, doesn't matter if backprop over the flatten layer or not...
-  % testKFold(experiment_options);
 
 
 
@@ -192,25 +178,12 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   % testKFold(experiment_options);
 
   % % -------------------------------------------------
-  % experiment_options.network_arch = 'TODO fc_lenet_with_larger_fc_flatten';
-  % % -------------------------------------------------
-  % % Exp. 1
-  % experiment_options.backprop_depth = 7;
-  % testKFold(experiment_options);
-
-  % % -------------------------------------------------
   % experiment_options.network_arch = 'lenet_with_larger_fc_conv';
   % % -------------------------------------------------
   % % Exp. 1
   % experiment_options.backprop_depth = 6;
   % testKFold(experiment_options);
 
-  % % -------------------------------------------------
-  % experiment_options.network_arch = 'lenet_with_larger_fc_flatten';
-  % % -------------------------------------------------
-  % % Exp. 1
-  % experiment_options.backprop_depth = 7;
-  % testKFold(experiment_options);
 
 
 
