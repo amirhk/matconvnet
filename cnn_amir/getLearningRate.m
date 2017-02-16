@@ -148,14 +148,15 @@ switch network_arch
     switch dataset
       % multi-class
       case 'cifar'
-        learning_rate = [0.1*ones(1,75)];                                    % 10.00 / 10.00
-        learning_rate = [0.05*ones(1,75)];                                   % 10.00 / 10.00
-        learning_rate = [0.01*ones(1,75)];                                   % 10.00 / 10.00
+        learning_rate = [0.1*ones(1,75)];                                    % 10.00 / 10.00 (bpd 0 / 3)
+        learning_rate = [0.05*ones(1,75)];                                   % 10.00 / 10.00 (bpd 0 / 3)
+        learning_rate = [0.01*ones(1,75)];                                   % 10.00 / 10.00 (bpd 0 / 3)
         learning_rate = [0.005*ones(1,75)];                                  % GPU 1
-        learning_rate = [0.001*ones(1,75)];                                  % GPU 4
+        learning_rate = [0.001*ones(1,75)];                                  % 25.79 / 24.86 (bpd 0 / 3)
         learning_rate = [0.0005*ones(1,150)];                                % GPU 2
         learning_rate = [0.0001*ones(1,150)];                                % GPU 3
-        learning_rate = [0.01*ones(1,10) 0.005*ones(1,90) 0.001*ones(1,50)]; % GPU ???
+        learning_rate = [0.01*ones(1,10) 0.005*ones(1,90) 0.001*ones(1,50)]; % GPU 4
+        learning_rate = [0.01*ones(1,75) 0.001*ones(1,75)];                  % GPU 1
     end
 
 
