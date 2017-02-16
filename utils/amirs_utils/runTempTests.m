@@ -68,7 +68,7 @@ function runTempTests()
   % runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-38', 2);
 
 
-  runEnsembleLarpTests('stl-10', 'whatever', 2);
+  runEnsembleLarpTests('stl-10', 'whatever', 1);
   % runEnsembleLarpTests('stl-10-multi-class-subsampled', 'balanced-500', 2);
   % runEnsembleLarpTests('stl-10-multi-class-subsampled', 'balanced-266', 2);
   % runEnsembleLarpTests('stl-10-multi-class-subsampled', 'balanced-100', 2);
