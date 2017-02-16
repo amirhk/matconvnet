@@ -128,6 +128,7 @@ switch network_arch
         % multi-class
         case 'cifar'
           learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];            % GPU 2
+          learning_rate = [0.01 * ones(1,25) 0.05*ones(1,50)];                             % GPU ???
       end
 
 
