@@ -153,12 +153,12 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
 
 
 
-  % % -------------------------------------------------
-  % experiment_options.network_arch = 'fc_lenet_with_conv';
-  % % -------------------------------------------------
-  % % Exp. 1
-  % experiment_options.backprop_depth = 4;
-  % testKFold(experiment_options);
+  % -------------------------------------------------
+  experiment_options.network_arch = 'fc_lenet_with_conv';
+  % -------------------------------------------------
+  % Exp. 1
+  experiment_options.backprop_depth = 4;
+  testKFold(experiment_options);
 
   % % -------------------------------------------------
   % experiment_options.network_arch = 'fc_lenet_with_flatten';
@@ -167,12 +167,12 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   % experiment_options.backprop_depth = 5;
   % testKFold(experiment_options);
 
-  % -------------------------------------------------
-  experiment_options.network_arch = 'lenet_with_conv';
-  % -------------------------------------------------
-  % Exp. 1
-  experiment_options.backprop_depth = 4;
-  testKFold(experiment_options);
+  % % -------------------------------------------------
+  % experiment_options.network_arch = 'lenet_with_conv';
+  % % -------------------------------------------------
+  % % Exp. 1
+  % experiment_options.backprop_depth = 4;
+  % testKFold(experiment_options);
 
   % % -------------------------------------------------
   % experiment_options.network_arch = 'lenet_with_flatten';

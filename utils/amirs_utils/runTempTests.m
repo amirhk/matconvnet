@@ -60,10 +60,25 @@ function runTempTests()
   % runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-38', 1);
 
   % runEnsembleLarpTests('cifar', 'whatever', 2);
-  runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-5000', 2);
-  runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-1880', 2);
-  runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-707', 2);
-  runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-266', 2);
-  runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-100', 2);
-  runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-38', 2);
+  % runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-5000', 2);
+  % runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-1880', 2);
+  % runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-707', 2);
+  % runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-266', 2);
+  % runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-100', 2);
+  % runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-38', 2);
 
+
+  runEnsembleLarpTests('stl-10', 'whatever', 1);
+  runEnsembleLarpTests('stl-10-multi-class-subsampled', 'balanced-38', 1);
+  runEnsembleLarpTests('stl-10-multi-class-subsampled', 'balanced-100', 1);
+  runEnsembleLarpTests('stl-10-multi-class-subsampled', 'balanced-266', 1);
+  runEnsembleLarpTests('stl-10-multi-class-subsampled', 'balanced-500', 1);
+
+
+  % runEnsembleLarpTests('svhn', 'whatever', 2);
+  % runEnsembleLarpTests('svhn-multi-class-subsampled', 'balanced-38', 2);
+  % runEnsembleLarpTests('svhn-multi-class-subsampled', 'balanced-100', 2);
+  % runEnsembleLarpTests('svhn-multi-class-subsampled', 'balanced-266', 2);
+  % runEnsembleLarpTests('svhn-multi-class-subsampled', 'balanced-707', 2);
+  % runEnsembleLarpTests('svhn-multi-class-subsampled', 'balanced-1880', 2);
+  % runEnsembleLarpTests('svhn-multi-class-subsampled', 'balanced-5000', 2);
