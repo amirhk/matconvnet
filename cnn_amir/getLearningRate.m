@@ -89,7 +89,7 @@ switch network_arch
         % learning_rate = [0.1*ones(1,5) 0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,45)] / 20;
         % learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];
         % learning_rate = [0.1*ones(1,5) 0.05*ones(1,70)] / 20;
-        learning_rate = [0.01*ones(1,100)] / 20;
+        learning_rate = [0.1*ones(1,10) 0.01*ones(1,140)] / 20;
     end
   case 'fc_lenet_with_conv'
     switch dataset
@@ -107,7 +107,7 @@ switch network_arch
         % learning_rate = [0.1*ones(1,5) 0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,45)] / 20;
         % learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];
         % learning_rate = [0.1*ones(1,5) 0.05*ones(1,70)] / 20;
-        learning_rate = [0.01*ones(1,100)] / 20;
+        learning_rate = [0.1*ones(1,10) 0.01*ones(1,140)] / 20;
     end
   case 'lenet_with_conv'
     switch dataset
