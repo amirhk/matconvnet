@@ -156,7 +156,7 @@ switch network_arch
         learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 003; % 10.83 / 10.94 (bpd 0 / 5)
         learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 010; % GPU 1 (bpd 0 / 5)
         learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 030; % GPU 2 (bpd 0 / 5)
-        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 100; % GPU 3 (bpd 0 / 5)
+        learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 100; % GPU 3 (bpd 0 / 5)
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 300; % GPU 4 (bpd 0 / 5)
     end
 
