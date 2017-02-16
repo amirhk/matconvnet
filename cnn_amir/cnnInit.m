@@ -84,7 +84,7 @@ function network_opts = cnnInit(input_opts)
 
       % LOSS LAYER
       net.layers{end+1} = fh.softmaxlossLayer();
-    case 'cvv0+fcv1'
+    case 'cvv0p0+fcv1'
       % -----------------------------------------------------------------------
       %                                                      FC LENET WITH CONV
       % -----------------------------------------------------------------------
@@ -98,7 +98,7 @@ function network_opts = cnnInit(input_opts)
 
       % LOSS LAYER
       net.layers{end+1} = fh.softmaxlossLayer();
-    case 'cvv3+fcv1'
+    case 'cvv3p3+fcv1'
       % -----------------------------------------------------------------------
       %                                                                   LENET
       % -----------------------------------------------------------------------
@@ -127,7 +127,7 @@ function network_opts = cnnInit(input_opts)
 
       % LOSS LAYER
       net.layers{end+1} = fh.softmaxlossLayer();
-    case 'cvv3np+fcv1'
+    case 'cvv3p0+fcv1'
       % -----------------------------------------------------------------------
       %                                                                   LENET
       % -----------------------------------------------------------------------
@@ -156,7 +156,46 @@ function network_opts = cnnInit(input_opts)
 
       % LOSS LAYER
       net.layers{end+1} = fh.softmaxlossLayer();
-    case 'cvv5np+fcv1'
+    case 'cvv5p3+fcv1'
+      % -----------------------------------------------------------------------
+      %                                                                   LENET
+      % -----------------------------------------------------------------------
+      layer_number = 1;
+      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 3, 64, 1/100, 2, char(opts.weight_init_sequence{1}), opts.weight_init_source);
+      net.layers{end+1} = fh.poolingLayerLeNetMax(layer_number);
+      net.layers{end+1} = fh.reluLayer(layer_number);
+
+      layer_number = layer_number + 2;
+      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 64, 64, 5/100, 2, char(opts.weight_init_sequence{2}), opts.weight_init_source);
+      net.layers{end+1} = fh.reluLayer(layer_number);
+      % net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
+
+      layer_number = layer_number + 2;
+      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 64, 64, 5/100, 2, char(opts.weight_init_sequence{3}), opts.weight_init_source);
+      net.layers{end+1} = fh.reluLayer(layer_number);
+      net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
+
+      layer_number = layer_number + 2;
+      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 64, 64, 5/100, 2, char(opts.weight_init_sequence{4}), opts.weight_init_source);
+      net.layers{end+1} = fh.reluLayer(layer_number);
+      % net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
+
+      layer_number = layer_number + 2;
+      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 64, 64, 5/100, 2, char(opts.weight_init_sequence{5}), opts.weight_init_source);
+      net.layers{end+1} = fh.reluLayer(layer_number);
+      net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
+
+      % FULLY CONNECTED
+      layer_number = layer_number + 2;
+      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 4, 64, 64, 5/100, 0, 'compRand', 'gen');
+      net.layers{end+1} = fh.reluLayer(layer_number);
+
+      layer_number = layer_number + 2;
+      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 1, 64, 10, 5/100, 0, 'compRand', 'gen');
+
+      % LOSS LAYER
+      net.layers{end+1} = fh.softmaxlossLayer();
+    case 'cvv5p0+fcv1'
       % -----------------------------------------------------------------------
       %                                                                   LENET
       % -----------------------------------------------------------------------
