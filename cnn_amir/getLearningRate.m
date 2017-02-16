@@ -85,13 +85,13 @@ switch network_arch
         learning_rate = [0.1*ones(1,5) 0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,45)] / 20;
 
       % multi-class subsampled
-      case 'mnist-multi-class-subsampled'
-        learning_rate = [0.1*ones(1,5) 0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,45)] / 20;
-      case 'cifar-multi-class-subsampled'
-        learning_rate = [0.1*ones(1,5) 0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,45)] / 20;
-      case 'stl-10-multi-class-subsampled'
-        learning_rate = [0.1*ones(1,5) 0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,45)] / 20;
-      case 'svhn-multi-class-subsampled'
+      % case 'mnist-multi-class-subsampled'
+      %   learning_rate = [0.1*ones(1,5) 0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,45)] / 20;
+      % case 'cifar-multi-class-subsampled'
+      %   learning_rate = [0.1*ones(1,5) 0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,45)] / 20;
+      % case 'stl-10-multi-class-subsampled'
+      %   learning_rate = [0.1*ones(1,5) 0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,45)] / 20;
+      % case 'svhn-multi-class-subsampled'
         learning_rate = [0.1*ones(1,5) 0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,45)] / 20;
     end
   case 'cvv3+fcv1' % = lenet_bu
@@ -111,16 +111,16 @@ switch network_arch
         % learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];                                % 72.80 / 70.39 (bpd 0 / 3)
         % learning_rate = [0.05*ones(1,30) 0.005*ones(1,10) 0.0005*ones(1,10)];                                % 75.10 / 72.01 (bpd 0 / 3)
         % learning_rate = [0.05*ones(1,150)];                                                                  % 76.75 / 71.82 (bpd 0 / 3)
-        learning_rate = [0.05*ones(1,50) 0.01*ones(1,50) 0.005*ones(1,50)];                                    % GPU 1         (bpd 0 / 3)
+        learning_rate = [0.05*ones(1,50) 0.01*ones(1,50) 0.005*ones(1,50)];                                    % 78.37 / 74.12 (bpd 0 / 3)
 
       % multi-class subsampled % TODO!!!!!!!!!! should follow above
-      case 'mnist-multi-class-subsampled'
-        learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];
-      case 'cifar-multi-class-subsampled'
-        learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];
-      case 'stl-10-multi-class-subsampled'
-        learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];
-      case 'svhn-multi-class-subsampled'
+      % case 'mnist-multi-class-subsampled'
+      %   learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];
+      % case 'cifar-multi-class-subsampled'
+      %   learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];
+      % case 'stl-10-multi-class-subsampled'
+      %   learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];
+      % case 'svhn-multi-class-subsampled'
         learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];
     end
   case 'cvv3np+fcv1'
@@ -140,8 +140,9 @@ switch network_arch
     switch dataset
       % multi-class
       case 'cifar'
-        learning_rate = [0.01*ones(1,75)];                      % 10.00 / 10.00
-        learning_rate = [0.001*ones(1,75)];                      % 10.00 / 10.00
+        learning_rate = [0.01*ones(1,75)];                       % 10.00 / 10.00
+        learning_rate = [0.005*ones(1,75)];                      % GPU 1
+        % learning_rate = [0.001*ones(1,75)];                      % GPU 4
     end
 
 
