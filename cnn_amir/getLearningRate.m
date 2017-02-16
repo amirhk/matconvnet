@@ -109,7 +109,7 @@ switch network_arch
         learning_rate = [1 * ones(1,20) 0.5*ones(1,130)];                                   % 46.48 / 45.55 (bpd 0 / 3)
       case 'svhn'
         % learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];             % 72.80 / 70.39
-        % learning_rate = [0.05*ones(1,30) 0.005*ones(1,10) 0.0005*ones(1,10)];             % GPU 3
+        % learning_rate = [0.05*ones(1,30) 0.005*ones(1,10) 0.0005*ones(1,10)];             % 75.10 / 72.01
         % learning_rate = [0.05*ones(1,150)];                                               % GPU 4
         learning_rate = [0.05*ones(1,50) 0.01*ones(1,50) 0.005*ones(1,50)];                 % GPU 1
 
@@ -128,7 +128,7 @@ switch network_arch
         % multi-class
         case 'cifar'
           learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];            % GPU 2
-          learning_rate = [0.01 * ones(1,25) 0.05*ones(1,50)];                             % GPU ???
+          learning_rate = [0.1 * ones(1,25) 0.05*ones(1,50)];                             % GPU 3
       end
 
 
