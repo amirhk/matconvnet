@@ -109,8 +109,9 @@ switch network_arch
         learning_rate = [1 * ones(1,20) 0.5*ones(1,130)];                                   %
       case 'svhn'
         % learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];             % 72.80 / 70.39
-        learning_rate = [0.05*ones(1,30) 0.005*ones(1,10) 0.0005*ones(1,10)];               %
+        % learning_rate = [0.05*ones(1,30) 0.005*ones(1,10) 0.0005*ones(1,10)];             %
         % learning_rate = [0.05*ones(1,150)];                                               %
+        learning_rate = [0.05*ones(1,50) 0.01*ones(1,50) 0.005*ones(1,50)];                 %
 
       % multi-class subsampled
       case 'mnist-multi-class-subsampled'
