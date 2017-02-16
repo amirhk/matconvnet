@@ -98,12 +98,12 @@ switch network_arch
     switch dataset
       % multi-class
       case 'cifar'
-        % learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];                                  % 35.89 / 29.74 (bpd 0 / 5)
-        % learning_rate = [0.1 * ones(1,25) 0.05*ones(1,50)];                                                    % 10.00 / 10.00 (bpd 0 / 5)
-        learning_rate = [0.01*ones(1,25) 0.005*ones(1,25) 0.001*ones(1,25)];                                     % 60.24 / 41.92 (bpd 0 / 5) % BEST!!!
-        % learning_rate = [0.01*ones(1,25) 0.005*ones(1,25) 0.0001*ones(1,25)];                                  % 56.34 / 40.22 (bpd 0 / 5)
-        % learning_rate = [0.01*ones(1,10) 0.005*ones(1,20) 0.0001*ones(1,20) 0.00005*ones(1,25)];               % 43.82 / 37.85 (bpd 0 / 5)
-        % learning_rate = [0.01*ones(1,10) 0.005*ones(1,20) 0.0001*ones(1,20) 0.01*ones(1,5) 0.0001*ones(1,20)]; % 46.83 / 37.94 (bpd 0 / 5)
+        % learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];                                  % 35.89 / 29.74 (bpd 0 / 3)
+        % learning_rate = [0.1 * ones(1,25) 0.05*ones(1,50)];                                                    % 10.00 / 10.00 (bpd 0 / 3)
+        learning_rate = [0.01*ones(1,25) 0.005*ones(1,25) 0.001*ones(1,25)];                                     % 60.24 / 41.92 (bpd 0 / 3) % BEST!!!
+        % learning_rate = [0.01*ones(1,25) 0.005*ones(1,25) 0.0001*ones(1,25)];                                  % 56.34 / 40.22 (bpd 0 / 3)
+        % learning_rate = [0.01*ones(1,10) 0.005*ones(1,20) 0.0001*ones(1,20) 0.00005*ones(1,25)];               % 43.82 / 37.85 (bpd 0 / 3)
+        % learning_rate = [0.01*ones(1,10) 0.005*ones(1,20) 0.0001*ones(1,20) 0.01*ones(1,5) 0.0001*ones(1,20)]; % 46.83 / 37.94 (bpd 0 / 3)
     end
   case 'cvv3p3+fcv1' % = lenet_bu
     switch dataset
@@ -134,30 +134,30 @@ switch network_arch
       % case 'svhn-multi-class-subsampled'
         learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];
     end
-
-
   case 'cvv5p0+fcv1'
     switch dataset
       % multi-class
       case 'cifar'
-        learning_rate = [0.1*ones(1,75)];                                    % 10.00 / 10.00 (bpd 0 / 3)
-        learning_rate = [0.05*ones(1,75)];                                   % 10.00 / 10.00 (bpd 0 / 3)
-        learning_rate = [0.01*ones(1,75)];                                   % 10.00 / 10.00 (bpd 0 / 3)
-        learning_rate = [0.005*ones(1,75)];                                  % 27.66 / 25.49 (bpd 0 / 3)
-        learning_rate = [0.001*ones(1,75)];                                  % 25.79 / 24.86 (bpd 0 / 3)
-        learning_rate = [0.0005*ones(1,150)];                                % 27.46 / 26.04
-        learning_rate = [0.0001*ones(1,150)];                                % 23.63 / 23.86
-        learning_rate = [0.01*ones(1,10) 0.005*ones(1,90) 0.001*ones(1,50)]; % GPU 4
-        learning_rate = [0.01*ones(1,75) 0.001*ones(1,75)];                  % GPU 1
+        % learning_rate = [0.1*ones(1,75)];                                    % 10.00 / 10.00 (bpd 0 / 5)
+        % learning_rate = [0.05*ones(1,75)];                                   % 10.00 / 10.00 (bpd 0 / 5)
+        % learning_rate = [0.01*ones(1,75)];                                   % 10.00 / 10.00 (bpd 0 / 5)
+        learning_rate = [0.005*ones(1,75)];                                    % 27.66 / 25.49 (bpd 0 / 5) % BEST!!! (considering final perf & number of epochs)
+        % learning_rate = [0.001*ones(1,75)];                                  % 25.79 / 24.86 (bpd 0 / 5)
+        % learning_rate = [0.0005*ones(1,150)];                                % 27.46 / 26.04 (bpd 0 / 5)
+        % learning_rate = [0.0001*ones(1,150)];                                % 23.63 / 23.86 (bpd 0 / 5)
+        % learning_rate = [0.01*ones(1,10) 0.005*ones(1,90) 0.001*ones(1,50)]; % 26.96 / 21.12 (bpd 0 / 5)
+        % learning_rate = [0.01*ones(1,75) 0.001*ones(1,75)];                  % 24.30 / 23.17 (bpd 0 / 5)
     end
   case 'cvv5p3+fcv1'
     switch dataset
       % multi-class
       case 'cifar'
-        learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 01; % GPU 2 (bpd 0 / 5)
-        learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 03; % GPU 3 (bpd 0 / 5)
-        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 10; % GPU ??? (bpd 0 / 5)
-        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 30; % GPU ??? (bpd 0 / 5)
+        learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 001; % 10.00 / 10.00 (bpd 0 / 5)
+        learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 003; % 10.83 / 10.94 (bpd 0 / 5)
+        learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 010; % GPU 1 (bpd 0 / 5)
+        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 030; % GPU 2 (bpd 0 / 5)
+        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 100; % GPU 3 (bpd 0 / 5)
+        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 300; % GPU 4 (bpd 0 / 5)
     end
 
 
