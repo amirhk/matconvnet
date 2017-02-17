@@ -104,8 +104,8 @@ switch network_arch
     switch dataset
       % multi-class
       case 'cifar'
-        learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 003;                              % GPU 1 (bpd 0 / 5)
-        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 010;                              % GPU 2 (bpd 0 / 5)
+        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 003;                              % GPU 1 (bpd 0 / 5)
+        learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 010;                              % GPU 2 (bpd 0 / 5)
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 030;                              % GPU 3 (bpd 0 / 5)
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 100;                              % GPU 4 (bpd 0 / 5)
     end
@@ -113,8 +113,8 @@ switch network_arch
     switch dataset
       % multi-class
       case 'cifar'
-        learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 003;                              % GPU 1 (bpd 0 / 5)
-        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 010;                              % GPU 2 (bpd 0 / 5)
+        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 003;                              % GPU 1 (bpd 0 / 5)
+        learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 010;                              % GPU 2 (bpd 0 / 5)
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 030;                              % GPU 3 (bpd 0 / 5)
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 100;                              % GPU 4 (bpd 0 / 5)
     end
@@ -133,8 +133,8 @@ switch network_arch
     switch dataset
       % multi-class
       case 'cifar'
-        learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 003;                              % GPU 1 (bpd 0 / 5)
-        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 010;                              % GPU 2 (bpd 0 / 5)
+        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 003;                              % GPU 1 (bpd 0 / 5)
+        learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 010;                              % GPU 2 (bpd 0 / 5)
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 030;                              % GPU 3 (bpd 0 / 5)
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 100;                              % GPU 4 (bpd 0 / 5)
     end
@@ -191,8 +191,8 @@ switch network_arch
     switch dataset
       % multi-class
       case 'cifar'
-        learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 003;                              % GPU 1 (bpd 0 / 5)
-        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 010;                              % GPU 2 (bpd 0 / 5)
+        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 003;                              % GPU 1 (bpd 0 / 5)
+        learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 010;                              % GPU 2 (bpd 0 / 5)
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 030;                              % GPU 3 (bpd 0 / 5)
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 100;                              % GPU 4 (bpd 0 / 5)
     end
@@ -211,8 +211,8 @@ switch network_arch
     switch dataset
       % multi-class
       case 'cifar'
-        learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 003;                              % GPU 1 (bpd 0 / 5)
-        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 010;                              % GPU 2 (bpd 0 / 5)
+        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 003;                              % GPU 1 (bpd 0 / 5)
+        learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 010;                              % GPU 2 (bpd 0 / 5)
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 030;                              % GPU 3 (bpd 0 / 5)
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 100;                              % GPU 4 (bpd 0 / 5)
     end
