@@ -340,7 +340,7 @@ function network_opts = cnnInit(input_opts)
 
       % LOSS LAYER
       net.layers{end+1} = fh.softmaxlossLayer();
-    case 'cvv5p3+fcv1'
+    case 'cvv5p5+fcv1'
       % -----------------------------------------------------------------------
       %                                                                   LENET
       % -----------------------------------------------------------------------
