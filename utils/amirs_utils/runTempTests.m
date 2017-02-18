@@ -85,8 +85,8 @@ function runTempTests()
 
 
   gpu = 4;
-  % runEnsembleLarpTests('cifar',  'whatever', gpu);
+  runEnsembleLarpTests('cifar',  'whatever', gpu);
   runEnsembleLarpTests('mnist',  'whatever', gpu);
-  % runEnsembleLarpTests('svhn',   'whatever', gpu);
-  % runEnsembleLarpTests('stl-10', 'whatever', gpu);
+  runEnsembleLarpTests('svhn',   'whatever', gpu);
+  runEnsembleLarpTests('stl-10', 'whatever', gpu);
 
