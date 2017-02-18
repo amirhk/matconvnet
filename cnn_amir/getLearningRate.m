@@ -92,10 +92,10 @@ switch network_arch
       case 'stl-10'
         % learning_rate = [0.1*ones(1,5) 0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,45)] / 20; % OLD
         learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 001; % GPU 4...
-        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 003;              % GPU 1 (bpd 0)
-        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 010;              % GPU 2 (bpd 0)
-        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 030;              % GPU 3 (bpd 0)
-        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 100;              % GPU 4 (bpd 0)
+        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 003;              % 48.26 / 41.20 (bpd 0)
+        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 010;              % 38.26 / 36.29 (bpd 0)
+        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 030;              % 30.38 / 30.13 (bpd 0)
+        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 100;              % 24.12 / 23.89 (bpd 0)
       case 'cifar'
         % learning_rate = [0.1*ones(1,5) 0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,45)] / 20;                 % 49.79 / 37.38 (bpd 0)
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 001;                                % 10.00 / 10.00 (bpd 0)
@@ -188,10 +188,10 @@ switch network_arch
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 100;                              % 66.15 / 62.87 (bpd 0)
       case 'stl-10'
         learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 001; % GPU 4...
-        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 003;              % GPU 1 (bpd 0)
-        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 010;              % GPU 2 (bpd 0)
-        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 030;              % GPU 3 (bpd 0)
-        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 100;              % GPU 4 (bpd 0)
+        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 003;              % 33.80 / 33.26 (bpd 0)
+        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 010;              % 22.74 / 22.66 (bpd 0)
+        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 030;              % 16.78 / 16.41 (bpd 0)
+        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 100;              % 13.16 / 12.60 (bpd 0)
 % HERE!!
       case 'cifar'
         learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 001; % GPU 4...
@@ -252,10 +252,10 @@ switch network_arch
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 100;                              % 50.66 / 50.94 (bpd 0)
       case 'stl-10'
         learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 001; % GPU 4...
-        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 003;              % GPU 1 (bpd 0)
-        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 010;              % GPU 2 (bpd 0)
-        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 030;              % GPU 3 (bpd 0)
-        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 100;              % GPU 4 (bpd 0)
+        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 003;              % 15.30 / 14.68 (bpd 0)
+        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 010;              % 14.80 / 14.85 (bpd 0)
+        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 030;              % 11.26 / 11.29 (bpd 0)
+        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 100;              % 11.16 / 11.14 (bpd 0)
       % case 'mnist'
       %   learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,25)];
 % HERE!!
@@ -312,10 +312,10 @@ switch network_arch
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 100;                               % 55.48 / 52.22 (bpd 0)
       case 'stl-10'
         learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 001; % GPU 4...
-        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 003;              % GPU 1 (bpd 0)
-        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 010;              % GPU 2 (bpd 0)
-        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 030;              % GPU 3 (bpd 0)
-        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 100;              % GPU 4 (bpd 0)
+        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 003;              % 46.10 / 40.41 (bpd 0)
+        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 010;              % 34.30 / 33.63 (bpd 0)
+        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 030;              % 24.28 / 24.29 (bpd 0)
+        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 100;              % 17.14 / 17.14 (bpd 0)
 % HERE!!
       case 'cifar'
         learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 001; % GPU 4...
@@ -379,10 +379,10 @@ switch network_arch
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 100;                              % 59.22 / 58.56 (bpd 0)
       case 'stl-10'
         learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 001; % GPU 4...
-        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 003;              % GPU 1 (bpd 0)
-        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 010;              % GPU 2 (bpd 0)
-        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 030;              % GPU 3 (bpd 0)
-        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 100;              % GPU 4 (bpd 0)
+        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 003;              % 16.42 / 15.68 (bpd 0)
+        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 010;              % 11.34 / 10.64 (bpd 0)
+        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 030;              % 10.00 / 10.00 (bpd 0)
+        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 100;              % 10.00 / 10.00 (bpd 0)
       case 'cifar'
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 001;                              % 10.00 / 10.00 (bpd 0)
         learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 001; % GPU 4...
