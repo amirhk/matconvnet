@@ -323,6 +323,7 @@ switch network_arch
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 010;                               % 23.54 / 23.80 (bpd 0) % BEST
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 030;                               % 24.75 / 23.84 (bpd 0) % BEST
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 100;                               % 24.00 / 23.46 (bpd 0) % BEST
+    end
   case 'cvv5hp1+fcv1'
     switch dataset
       % multi-class
