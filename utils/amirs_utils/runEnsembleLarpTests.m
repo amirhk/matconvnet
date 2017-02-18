@@ -196,28 +196,28 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   testKFold(experiment_options);
 
   % -------------------------------------------------
-  experiment_options.network_arch = 'cvv5p0+fcv1';
+  experiment_options.network_arch = 'cvv5hp0+fcv1';
   % -------------------------------------------------
   % Exp. 1
   experiment_options.backprop_depth = 4;
   testKFold(experiment_options);
 
   % -------------------------------------------------
-  experiment_options.network_arch = 'cvv5p1+fcv1';
+  experiment_options.network_arch = 'cvv5hp1+fcv1';
   % -------------------------------------------------
   % Exp. 1
   experiment_options.backprop_depth = 4;
   testKFold(experiment_options);
 
   % -------------------------------------------------
-  experiment_options.network_arch = 'cvv5p3+fcv1';
+  experiment_options.network_arch = 'cvv5hp3+fcv1';
   % -------------------------------------------------
   % Exp. 1
   experiment_options.backprop_depth = 4;
   testKFold(experiment_options);
 
   % -------------------------------------------------
-  experiment_options.network_arch = 'cvv5p5+fcv1';
+  experiment_options.network_arch = 'cvv5hp5+fcv1';
   % -------------------------------------------------
   % Exp. 1
   experiment_options.backprop_depth = 4;
