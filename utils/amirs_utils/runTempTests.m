@@ -84,7 +84,7 @@ function runTempTests()
   % runEnsembleLarpTests('svhn-multi-class-subsampled', 'balanced-38', 4);
 
 
-  gpu = 3;
+  gpu = 4;
   runEnsembleLarpTests('cifar',  'whatever', gpu);
   runEnsembleLarpTests('mnist',  'whatever', gpu);
   runEnsembleLarpTests('svhn',   'whatever', gpu);
