@@ -317,12 +317,12 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   experiment_options.backprop_depth = 7;
   testKFold(experiment_options);
 
-  % -------------------------------------------------
-  experiment_options.network_arch = 'cvv3cp1+fcv1';
-  % -------------------------------------------------
-  % Exp. 1
-  experiment_options.backprop_depth = 7;
-  testKFold(experiment_options);
+  % % -------------------------------------------------
+  % experiment_options.network_arch = 'cvv3cp1+fcv1';
+  % % -------------------------------------------------
+  % % Exp. 1
+  % experiment_options.backprop_depth = 7;
+  % testKFold(experiment_options);
 
 
 
