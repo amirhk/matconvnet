@@ -252,48 +252,79 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   % testKFold(experiment_options);
 
 
+%% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %%
+%% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %%
+
+
+  % % -------------------------------------------------
+  % experiment_options.network_arch = 'cvv0p0+fcv2';
+  % % -------------------------------------------------
+  % % Exp. 1
+  % experiment_options.backprop_depth = 6;
+  % testKFold(experiment_options);
+
+  % % -------------------------------------------------
+  % experiment_options.network_arch = 'cvv1p0+fcv2';
+  % % -------------------------------------------------
+  % % Exp. 1
+  % experiment_options.backprop_depth = 6;
+  % testKFold(experiment_options);
+
+  % % -------------------------------------------------
+  % experiment_options.network_arch = 'cvv1p1+fcv2';
+  % % -------------------------------------------------
+  % % Exp. 1
+  % experiment_options.backprop_depth = 6;
+  % testKFold(experiment_options);
+
+  % % -------------------------------------------------
+  % experiment_options.network_arch = 'cvv3p0+fcv2';
+  % % -------------------------------------------------
+  % % Exp. 1
+  % experiment_options.backprop_depth = 6;
+  % testKFold(experiment_options);
+
+  % % -------------------------------------------------
+  % experiment_options.network_arch = 'cvv3p1+fcv2';
+  % % -------------------------------------------------
+  % % Exp. 1
+  % experiment_options.backprop_depth = 6;
+  % testKFold(experiment_options);
+
+  % % -------------------------------------------------
+  % experiment_options.network_arch = 'cvv3p3+fcv2';
+  % % -------------------------------------------------
+  % % Exp. 1
+  % experiment_options.backprop_depth = 6;
+  % testKFold(experiment_options);
+
+
+%% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %%
+%% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %%
+
 
   % -------------------------------------------------
-  experiment_options.network_arch = 'cvv0p0+fcv2';
+  experiment_options.network_arch = 'cvv1cp1+fcv1';
   % -------------------------------------------------
   % Exp. 1
-  experiment_options.backprop_depth = 6;
+  experiment_options.backprop_depth = 7;
   testKFold(experiment_options);
 
   % -------------------------------------------------
-  experiment_options.network_arch = 'cvv1p0+fcv2';
+  experiment_options.network_arch = 'cvv2cp1+fcv1';
   % -------------------------------------------------
   % Exp. 1
-  experiment_options.backprop_depth = 6;
+  experiment_options.backprop_depth = 7;
   testKFold(experiment_options);
 
   % -------------------------------------------------
-  experiment_options.network_arch = 'cvv1p1+fcv2';
+  experiment_options.network_arch = 'cvv3cp1+fcv1';
   % -------------------------------------------------
   % Exp. 1
-  experiment_options.backprop_depth = 6;
+  experiment_options.backprop_depth = 7;
   testKFold(experiment_options);
 
-  % -------------------------------------------------
-  experiment_options.network_arch = 'cvv3p0+fcv2';
-  % -------------------------------------------------
-  % Exp. 1
-  experiment_options.backprop_depth = 6;
-  testKFold(experiment_options);
 
-  % -------------------------------------------------
-  experiment_options.network_arch = 'cvv3p1+fcv2';
-  % -------------------------------------------------
-  % Exp. 1
-  experiment_options.backprop_depth = 6;
-  testKFold(experiment_options);
-
-  % -------------------------------------------------
-  experiment_options.network_arch = 'cvv3p3+fcv2';
-  % -------------------------------------------------
-  % Exp. 1
-  experiment_options.backprop_depth = 6;
-  testKFold(experiment_options);
 
 
 
