@@ -80,7 +80,49 @@ function [trained_model, performance_summary] = testSvm(input_opts)
   % -------------------------------------------------------------------------
   %                                                                     train
   % -------------------------------------------------------------------------
-  svm_struct = svmtrain(vectorized_data_train, labels_train);
+
+  % using fitcecoc and predict
+  svm_struct = fitcecoc(vectorized_data_train, labels_train);
+  if isTwoClassImdb(opts.general.dataset)
+    fhGetAccSensSpec = @getAccSensSpec;
+  else
+    fhGetAccSensSpec = @getAccSensSpecMultiClass;
+  end
+
+  % % using svmtrain and svmclassify
+  % svm_struct = svmtrain(vectorized_data_train, labels_train);
+  % top_test_predictions = svmclassify(svm_struct, vectorized_data_test);
+  % fhGetAccSensSpec = @getAccSensSpec;
+  % [ ...
+  %   train_accuracy, ...
+  %   train_sensitivity, ...
+  %   train_specificity, ...
+  % ] = fhGetAccSensSpec(labels_test, top_test_predictions, true);
+
+  % % using fitcecoc and predict
+  % svm_struct = fitcecoc(vectorized_data_train, labels_train)
+  % top_test_predictions = predict(svm_struct, vectorized_data_test);
+  % fhGetAccSensSpec = @getAccSensSpec;
+  % [ ...
+  %   train_accuracy, ...
+  %   train_sensitivity, ...
+  %   train_specificity, ...
+  % ] = fhGetAccSensSpec(labels_test, top_test_predictions, true);
+
+
+
+
+
+
+  % keyboard
+  % if isTwoClassImdb(opts.general.dataset)
+  %   svm_struct = svmtrain(vectorized_data_train, labels_train);
+  %   fhGetAccSensSpec = @getAccSensSpec;
+  % else
+  %   svm_struct = fitcecoc(vectorized_data_train, labels_train)
+  %   % top_train_predictions = predict(Mdl, vectorized_data_test);
+  %   fhGetAccSensSpec = @getAccSensSpecMultiClass;
+  % end
   % has_converged = false;
   % while ~has_converged
   %   try
@@ -105,7 +147,7 @@ function [trained_model, performance_summary] = testSvm(input_opts)
       train_accuracy, ...
       train_sensitivity, ...
       train_specificity, ...
-    ] = getAccSensSpec(labels_train, top_train_predictions, true);
+    ] = fhGetAccSensSpec(labels_train, top_train_predictions, true);
     afprintf(sprintf('[INFO] Getting model performance on `test` set...\n'));
     [top_test_predictions, ~] = getPredictionsFromModelOnImdb(svm_struct, 'svm', imdb, 3);
     afprintf(sprintf('[INFO] Model performance on `test` set\n'));
@@ -113,7 +155,7 @@ function [trained_model, performance_summary] = testSvm(input_opts)
       test_accuracy, ...
       test_sensitivity, ...
       test_specificity, ...
-    ] = getAccSensSpec(labels_test, top_test_predictions, true);
+    ] = fhGetAccSensSpec(labels_test, top_test_predictions, true);
     printConsoleOutputSeparator();
   else
     train_accuracy = -1;

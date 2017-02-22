@@ -26,6 +26,10 @@ function [acc, sens, spec] = getAccSensSpecMutliClass(labels, predictions, debug
 % POSSIBILITY OF SUCH DAMAGE.
 
 
+  % enforce row vector before doing sum(...)
+  labels = reshape(labels, 1, prod(size(labels)));
+  predictions = reshape(predictions, 1, prod(size(predictions)));
+  assert(length(labels) == length(predictions));
   assert(numel(labels) == numel(predictions));
   acc = sum(bsxfun(@eq, labels, predictions)) / numel(labels);
   sens = -1;

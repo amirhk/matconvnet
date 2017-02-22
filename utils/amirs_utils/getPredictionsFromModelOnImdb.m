@@ -54,7 +54,8 @@ function [top_predictions, all_predictions] = getPredictionsFromModelOnImdb(mode
 function [top_predictions, all_predictions] = getPredictionsFromSvmStructOnImdb(svm_struct, imdb)
 % -------------------------------------------------------------------------
   vectorized_data = getVectorizedDataFromImdb(imdb);
-  top_predictions = svmclassify(svm_struct, vectorized_data);
+  % top_predictions = svmclassify(svm_struct, vectorized_data);
+  top_predictions = predict(svm_struct, vectorized_data);
   all_predictions = getAllPredictionsFromTopPredictions(top_predictions, imdb);
 
 % -------------------------------------------------------------------------
