@@ -311,34 +311,46 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   % testKFold(experiment_options);
 
   % % -------------------------------------------------
-  % experiment_options.network_arch = 'larpV1sP0+convV2sP1+fcV1';
+  % experiment_options.network_arch = 'larpV1sP0+convV1sP1+fcV1';
   % % -------------------------------------------------
   % % Exp. 1
   % experiment_options.backprop_depth = 7;
   % testKFold(experiment_options);
 
   % % -------------------------------------------------
-  % experiment_options.network_arch = 'larpV2sP0+convV3sP1+fcV1';
+  % experiment_options.network_arch = 'larpV2sP0+convV1sP1+fcV1';
+  % % -------------------------------------------------
+  % % Exp. 1
+  % experiment_options.backprop_depth = 7;
+  % testKFold(experiment_options);
+
+  % % -------------------------------------------------
+  % experiment_options.network_arch = 'larpV1lP0+convV1lP1+fcV1';
+  % % -------------------------------------------------
+  % % Exp. 1
+  % experiment_options.backprop_depth = 7;
+  % testKFold(experiment_options);
+
+  % % -------------------------------------------------
+  % experiment_options.network_arch = 'larpV2lP0+convV1lP1+fcV1';
   % % -------------------------------------------------
   % % Exp. 1
   % experiment_options.backprop_depth = 7;
   % testKFold(experiment_options);
 
   % -------------------------------------------------
-  experiment_options.network_arch = 'larpV1lP0+convV2lP1+fcV1';
+  experiment_options.network_arch = 'larpV1lP0+convV3lP1+fcV1';
   % -------------------------------------------------
   % Exp. 1
-  experiment_options.backprop_depth = 7;
+  experiment_options.backprop_depth = 11;
   testKFold(experiment_options);
 
   % -------------------------------------------------
-  experiment_options.network_arch = 'larpV2lP0+convV3lP1+fcV1';
+  experiment_options.network_arch = 'larpV2lP0+convV13P1+fcV1';
   % -------------------------------------------------
   % Exp. 1
-  experiment_options.backprop_depth = 7;
+  experiment_options.backprop_depth = 11;
   testKFold(experiment_options);
-
-
 
 
 
