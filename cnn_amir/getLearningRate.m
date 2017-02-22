@@ -1051,6 +1051,12 @@ switch network_arch
       end
 
 
+      case 'larpV0P0+convV3lP3+fcV1'
+        switch dataset
+          case 'cifar'
+            learning_rate = [0.05*ones(1,10) 0.05:-0.01:0.01 0.01*ones(1,5)  0.005*ones(1,10) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,4)];%[0.05*ones(1,20) 0.005*ones(1,20) 0.0005*ones(1,25) 0.0001*ones(1,35)]; % [0.01:-0.0001:0.00001] ;
+        end
+
 
 
 
