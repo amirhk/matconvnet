@@ -141,3 +141,31 @@ function [images, labels] = getSimpleNNBatch(imdb, batch)
   images = imdb.images.data(:,:,:,batch);
   labels = imdb.images.labels(1,batch);
   if rand > 0.5, images=fliplr(images); end
+
+
+
+
+% % get network - TMP NETWORK
+% opts.general.dataset = 'mnist-two-class-9-4';
+% opts.general.network_arch = 'TMP_NETWORK';
+% opts.net.weight_init_source = 'gen';
+% opts.net.weight_init_sequence = {'compRand', 'compRand', 'compRand', 'compRand', 'compRand'};
+% opts.train.learning_rate = 'default_keyword';
+% network_opts = cnnInit(opts);
+% net = network_opts.net;
+
+% % saved trained larpV3P3+convV0P0+fcV1
+% net = load('/Volumes/Amir/matconvnet/experiment_results/test-ensemble-larp-tests-22-Feb-2017-15-10-40-cifar-whatever-GPU-2/k=1-fold-cifar-22-Feb-2017-15-10-40-single-cnn/cnn-22-Feb-2017-15-10-45-cifar-larpV3P3+fcV1-GPU-2-bpd-13/net-epoch-49.mat')
+% net = net.net
+
+% % get imdb
+% tmp_opts.dataset = 'mnist-two-class-9-4';
+% tmp_opts.posneg_balance = 'balanced-38-38';
+% imdb = loadSavedImdb(tmp_opts);
+
+
+% % visualize
+% input_opts.dataset = 'mnist-two-class-9-4';
+% input_opts.net = net;
+% input_opts.imdb = imdb;
+% visualizeNetworkLayerOutputs(input_opts)
