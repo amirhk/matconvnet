@@ -104,9 +104,11 @@ switch network_arch
       case 'cifar'
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 001;    % 10.00 / 10.00 (batch size: 100; weight decay: 0.0001)
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 003;    % 10.00 / 10.00 (batch size: 100; weight decay: 0.0001)
-        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 010;    % --.-- / --.-- (batch size:  50; weight decay: 0.01)
-                                                                                       % 87.39 / 37.74 (batch size: 100; weight decay: 0.0001) % BEST
-        learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 030;    % --.-- / --.-- (batch size:  50; weight decay: 0.01)
+        learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 010;    % 10.00 / 10.00 (batch size:  50; weight decay: 0.01)
+                                                                                       % --.-- / --.-- (batch size: 100; weight decay: 0.01)
+                                                                                       % 87.39 / 37.74 (batch size: 100; weight decay: 0.0001)
+        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 030;    % 91.31 / 38.80 (batch size:  50; weight decay: 0.01)
+                                                                                       % --.-- / --.-- (batch size: 100; weight decay: 0.01)
                                                                                        % 60.91 / 36.43 (batch size: 100; weight decay: 0.0001)
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 100;    % 24.08 / 22.48 (batch size: 100; weight decay: 0.0001)
     end
