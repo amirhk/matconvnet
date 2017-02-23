@@ -104,8 +104,10 @@ switch network_arch
       case 'cifar'
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 001;    % 10.00 / 10.00 (batch size: 100; weight decay: 0.0001)
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 003;    % 10.00 / 10.00 (batch size: 100; weight decay: 0.0001)
-        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 010;    % 87.39 / 37.74 (batch size: 100; weight decay: 0.0001) % BEST
-        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 030;    % 60.91 / 36.43 (batch size: 100; weight decay: 0.0001)
+        learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 010;    % --.-- / --.-- (batch size:  50; weight decay: 0.01)
+                                                                                       % 87.39 / 37.74 (batch size: 100; weight decay: 0.0001) % BEST
+        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 030;    % --.-- / --.-- (batch size:  50; weight decay: 0.01)
+                                                                                       % 60.91 / 36.43 (batch size: 100; weight decay: 0.0001)
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 100;    % 24.08 / 22.48 (batch size: 100; weight decay: 0.0001)
     end
 
@@ -631,8 +633,10 @@ switch network_arch
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 001;        % 10.00 / 10.00 (batch size: 100; weight decay: 0.0001)
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 003;        % 10.00 / 10.00 (batch size: 100; weight decay: 0.0001)
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 010;        % 10.67 / 10.25 (batch size: 100; weight decay: 0.0001)
-        learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 030;        % 20.80 / 15.68 (batch size: 100; weight decay: 0.0001)
-                                                                                           % 45.23 / 26.11 (batch size: 100; weight decay: 0.01)
+        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 030;        % 25.08 / 17.01 (batch size:  50; weight decay: 0.0001) % BRONZE
+                                                                                           % 93.64 / 35.61 (batch size:  50; weight decay: 0.01)   % GOLD
+                                                                                           % 20.80 / 15.68 (batch size: 100; weight decay: 0.0001)
+                                                                                           % 45.23 / 26.11 (batch size: 100; weight decay: 0.01)   % SILVER
                                                                                            % 15.89 / 13.84 (batch size: 250; weight decay: 0.0001)
                                                                                            % 20.06 / 16.45 (batch size: 250; weight decay: 0.01)
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 100;        % 20.54 / 17.93 (batch size: 100; weight decay: 0.0001)
