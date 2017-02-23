@@ -32,3 +32,4 @@ function imdb = filterImdbForSet(imdb, set)
   % cnnTrain method only works if the data is in validation set.... so this must be `3`
   % TODO: but what about other methods, like ensemble????????????
   imdb.images.set = 3 * ones(1, length(imdb.images.labels));
+  assert(numel(find(imdb.images.set == 1)) == 0);

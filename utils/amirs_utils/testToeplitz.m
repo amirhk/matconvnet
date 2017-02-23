@@ -1,4 +1,5 @@
 % without padding, stride 1
+% my toeplitz implentation is identical to the conv2 operation!
 dim_image = 10;
 dim_kernel = 3;
 dim_output = dim_image - dim_kernel + 1;
@@ -17,6 +18,7 @@ reshape(toep * vec_I, dim_output, dim_output)
 
 
 % with padding, stride 1
+% my toeplitz implentation IS NOT identical to the conv2 operation
 dim_image = 10;
 dim_kernel = 3;
 dim_output = dim_image - dim_kernel + 1;

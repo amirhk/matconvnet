@@ -27,7 +27,7 @@ function network_opts = cnnInit(input_opts)
   %                                                              Parse inputs
   % -------------------------------------------------------------------------
 
-  opts.dataset = input_opts.general.dataset;
+  opts.dataset = input_opts.general.dataset; % Used in 2 places: 1) convLayer loading weights 2) based on the dataset, networks decide how many outputs nodes in FC
   opts.network_arch = input_opts.general.network_arch;
   opts.weight_init_source = input_opts.net.weight_init_source;
   opts.weight_init_sequence = input_opts.net.weight_init_sequence;
@@ -1194,12 +1194,12 @@ function network_opts = cnnInit(input_opts)
       net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 3, 32, 1/100, 2, 'compRand', 'gen');
       % net.layers{end+1} = fh.poolingLayerLeNetMax(layer_number);
       net.layers{end+1} = fh.reluLayer(layer_number);
-      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 32, 32, 1/100, 2, 'compRand', 'gen');
-      % net.layers{end+1} = fh.poolingLayerLeNetMax(layer_number);
-      net.layers{end+1} = fh.reluLayer(layer_number);
-      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 32, 32, 1/100, 2, 'compRand', 'gen');
-      % net.layers{end+1} = fh.poolingLayerLeNetMax(layer_number);
-      net.layers{end+1} = fh.reluLayer(layer_number);
+      % net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 32, 32, 1/100, 2, 'compRand', 'gen');
+      % % net.layers{end+1} = fh.poolingLayerLeNetMax(layer_number);
+      % net.layers{end+1} = fh.reluLayer(layer_number);
+      % net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 32, 32, 1/100, 2, 'compRand', 'gen');
+      % % net.layers{end+1} = fh.poolingLayerLeNetMax(layer_number);
+      % net.layers{end+1} = fh.reluLayer(layer_number);
 
       % layer_number = 1;
       % net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 3, 32, 1/100, 2, 'compRand', 'gen');

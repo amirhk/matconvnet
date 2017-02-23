@@ -29,11 +29,7 @@ function visualizeNetworkLayerOutputs(input_opts)
   %                                                              opts.general
   % -------------------------------------------------------------------------
   opts.general.dataset = getValueFromFieldOrDefault(input_opts, 'dataset', 'cifar');
-
-  % -------------------------------------------------------------------------
-  %                                                                  opts.net
-  % -------------------------------------------------------------------------
-  opts.net.net = getValueFromFieldOrDefault(input_opts, 'net', struct()); % may optionally pass in the network
+  opts.general.network_arch = getValueFromFieldOrDefault(input_opts, 'network_arch', 'lenet');
 
   % -------------------------------------------------------------------------
   %                                                                 opts.imdb
@@ -79,10 +75,17 @@ function visualizeNetworkLayerOutputs(input_opts)
   % -------------------------------------------------------------------------
 
 
+  % get rid of extra crap
+  fh_projection_utils = projectionUtils();
+  net = fh_projection_utils.getNetworkObjectFromNetworkArchWithoutLearningRate( ...
+    opts.general.dataset, ...
+    opts.general.network_arch);
+  imdb = opts.imdb.imdb;
+
   % save input sample
   sample_number = 1;
   h = figure;
-  sample_image = opts.imdb.imdb.images.data(:,:,:, sample_number);
+  sample_image = imdb.images.data(:,:,:, sample_number);
   assert(numel(size(sample_image)) == 3); % assert sample only has 3 dimensions
   number_of_image_channels = size(sample_image, 3);
   file_name = 'Input Layer';
@@ -92,80 +95,43 @@ function visualizeNetworkLayerOutputs(input_opts)
   saveas(h, fullfile(opts.paths.experiment_dir, sprintf('%s.png%', file_name)));
 
 
-
-
-
-  opts.imdb.imdb = filterImdbForSet(opts.imdb.imdb, 1); % TODO: this is set to train.... should this change?????
+  imdb = filterImdbForSet(imdb, 1); % TODO: this is set to train.... should this change?????
   conv_count = 0;
-  for ii = 1:numel(opts.net.net.layers)
-    if strcmp(opts.net.net.layers{ii}.type, 'conv')
+  for ii = 1:numel(net.layers)
+    if strcmp(net.layers{ii}.type, 'conv')
       conv_count = conv_count + 1;
       file_name = sprintf('Layer #%d - Conv #%d', ii, conv_count);
 
       % get forward pass matrices for all samples at certain depth
-      [net, info] = cnnTrain(opts.net.net, opts.imdb.imdb, getBatch(), ...
-        'forward_pass_only_mode', true, ...
-        'forward_pass_only_depth', ii + 1, ... % +1 is critical because for a 3 layer network, cnn_train's res variable has 4 layers incl'd the input.
-        'debug_flag', false, ...
-        'continue', false, ...
-        'num_epochs', 1, ...
-        'train', [], ...
-        'val', find(opts.imdb.imdb.images.set == 3));
+      all_samples_forward_pass_results = ...
+        fh_projection_utils.getProjectedImdbSamplesOnNetworkArch(imdb, net, ii);
 
       % monkey work
       number_of_layer_outputs = size(net.layers{ii}.weights{1}, 4);
       subplot_width = 8; % TODO: this can be better... but whatever....
       assert(mod(number_of_layer_outputs, subplot_width) == 0); % so equal number of subplots in each row...
       subplot_height = number_of_layer_outputs / subplot_width;
-      assert(subplot_height * subplot_width == size(info.all_samples_forward_pass_results, 3));
+      assert(subplot_height * subplot_width == size(all_samples_forward_pass_results, 3));
 
       % plot and save
       h = figure;
       % title(file_name);
       for jj = 1:number_of_layer_outputs
-        subplot(subplot_height, subplot_width, jj), imshow(info.all_samples_forward_pass_results(:,:,jj,sample_number),[]);
+        subplot(subplot_height, subplot_width, jj), imshow(all_samples_forward_pass_results(:,:,jj,sample_number),[]);
       end
       saveas(h, fullfile(opts.paths.experiment_dir, sprintf('%s.png%', file_name)));
     end
   end
   close all
 
-% -------------------------------------------------------------------------
-function fn = getBatch()
-% -------------------------------------------------------------------------
-  fn = @(x,y) getSimpleNNBatch(x,y);
 
-% -------------------------------------------------------------------------
-function [images, labels] = getSimpleNNBatch(imdb, batch)
-% -------------------------------------------------------------------------
-  images = imdb.images.data(:,:,:,batch);
-  labels = imdb.images.labels(1,batch);
-  if rand > 0.5, images=fliplr(images); end
+% get imdb
+tmp_opts.dataset = 'mnist-two-class-9-4';
+tmp_opts.posneg_balance = 'balanced-38';
+imdb = loadSavedImdb(tmp_opts);
 
-
-
-
-% % get network - TMP NETWORK
-% opts.general.dataset = 'mnist-two-class-9-4';
-% opts.general.network_arch = 'TMP_NETWORK';
-% opts.net.weight_init_source = 'gen';
-% opts.net.weight_init_sequence = {'compRand', 'compRand', 'compRand', 'compRand', 'compRand'};
-% opts.train.learning_rate = 'default_keyword';
-% network_opts = cnnInit(opts);
-% net = network_opts.net;
-
-% % saved trained larpV3P3+convV0P0+fcV1
-% net = load('/Volumes/Amir/matconvnet/experiment_results/test-ensemble-larp-tests-22-Feb-2017-15-10-40-cifar-whatever-GPU-2/k=1-fold-cifar-22-Feb-2017-15-10-40-single-cnn/cnn-22-Feb-2017-15-10-45-cifar-larpV3P3+fcV1-GPU-2-bpd-13/net-epoch-49.mat')
-% net = net.net
-
-% % get imdb
-% tmp_opts.dataset = 'mnist-two-class-9-4';
-% tmp_opts.posneg_balance = 'balanced-38-38';
-% imdb = loadSavedImdb(tmp_opts);
-
-
-% % visualize
-% input_opts.dataset = 'mnist-two-class-9-4';
-% input_opts.net = net;
-% input_opts.imdb = imdb;
-% visualizeNetworkLayerOutputs(input_opts)
+% visualize
+input_opts.dataset = 'mnist-two-class-9-4';
+input_opts.imdb = imdb;
+input_opts.network_arch = 'TMP_NETWORK';
+visualizeNetworkLayerOutputs(input_opts)
