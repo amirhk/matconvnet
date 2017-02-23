@@ -616,7 +616,8 @@ switch network_arch
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 001;        % 01.00 / 01.00 (batch size: 100; weight decay: 0.0001)
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 003;        % 02.44 / 02.00 (batch size: 100; weight decay: 0.0001)
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 010;        % 96.78 / 95.31 (batch size: 100; weight decay: 0.0001)
-        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 030;        % 99.53 / 96.56 (batch size: 100; weight decay: 0.0001), 99.03 / 96.22 (batch size: 100; weight decay: 0.01)
+        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 030;        % 99.53 / 96.56 (batch size: 100; weight decay: 0.0001)
+                                                                                           % 99.03 / 96.22 (batch size: 100; weight decay: 0.01)
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 100;        % 99.06 / 93.36 (batch size: 100; weight decay: 0.0001)
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 300;        % 95.83 / 88.28 (batch size: 100; weight decay: 0.0001)
       case 'stl-10'
@@ -630,12 +631,20 @@ switch network_arch
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 001;        % 10.00 / 10.00 (batch size: 100; weight decay: 0.0001)
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 003;        % 10.00 / 10.00 (batch size: 100; weight decay: 0.0001)
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 010;        % 10.67 / 10.25 (batch size: 100; weight decay: 0.0001)
-        learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 030;        % 20.80 / 15.68 (batch size: 100; weight decay: 0.0001), 45.23 / 26.11 (batch size: 100; weight decay: 0.01)
-        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 100;        % 20.54 / 17.93 (batch size: 100; weight decay: 0.0001), 19.99 / 17.77 (batch size: 100; weight decay: 0.01)
-        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 300;        % 14.63 / 13.18 (batch size: 100; weight decay: 0.0001), 14.48 / 12.98 (batch size: 100; weight decay: 0.01)
+        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 030;        % 20.80 / 15.68 (batch size: 100; weight decay: 0.0001)
+                                                                                           % 45.23 / 26.11 (batch size: 100; weight decay: 0.01)
+                                                                                           % 15.89 / 13.84 (batch size: 250; weight decay: 0.0001)
+                                                                                           % 20.06 / 16.45 (batch size: 250; weight decay: 0.01)
+        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 100;        % 20.54 / 17.93 (batch size: 100; weight decay: 0.0001)
+                                                                                           % 19.99 / 17.77 (batch size: 100; weight decay: 0.01)
+        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 300;        % 14.63 / 13.18 (batch size: 100; weight decay: 0.0001)
+                                                                                           % 14.48 / 12.98 (batch size: 100; weight decay: 0.01)
 
-        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,225)] / 030;        % 32.49 / 18.70 (batch size: 100; weight decay: 0.0001) 80.74 / 29.49 (batch size: 100; weight decay: 0.01)
-        % learning_rate = [                 0.03*ones(1,25) 0.01*ones(1,250)] / 030;        % 39.91 / 24.69 (batch size: 100; weight decay: 0.0001) 59.41 / 29.06 (batch size: 100; weight decay: 0.01)
+        % 75+ epochs:
+        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,225)] / 030;        % 32.49 / 18.70 (batch size: 100; weight decay: 0.0001)
+                                                                                            % 80.74 / 29.49 (batch size: 100; weight decay: 0.01)
+        % learning_rate = [                 0.03*ones(1,25) 0.01*ones(1,250)] / 030;        % 39.91 / 24.69 (batch size: 100; weight decay: 0.0001)
+                                                                                            % 59.41 / 29.06 (batch size: 100; weight decay: 0.01)
     end
 
 

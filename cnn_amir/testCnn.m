@@ -65,8 +65,8 @@ function [trained_model, performance_summary] = testCnn(input_opts)
   opts.train.learning_rate = getValueFromFieldOrDefault(input_opts, 'learning_rate', 'default_keyword');
   opts.train.num_epochs = getValueFromFieldOrDefault(input_opts, 'num_epochs', numel(opts.train.learning_rate));
   opts.train.weight_decay = getValueFromFieldOrDefault(input_opts, 'weight_decay', 0.0001);
-  opts.train.batch_size = 250;
-  opts.train.weight_decay = 0.01;
+  opts.train.batch_size = 50;
+  opts.train.weight_decay = 0.0001;
 
   % -------------------------------------------------------------------------
   %                                                                opts.other
