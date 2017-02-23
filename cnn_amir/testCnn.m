@@ -60,12 +60,13 @@ function [trained_model, performance_summary] = testCnn(input_opts)
   % -------------------------------------------------------------------------
   opts.train.gpus = ifNotMacSetGpu(getValueFromFieldOrDefault(input_opts, 'gpus', 1));
   opts.train.backprop_depth = getValueFromFieldOrDefault(input_opts, 'backprop_depth', 4);
-  opts.train.batch_size = getValueFromFieldOrDefault(input_opts, 'batch_size', 250);
+  opts.train.batch_size = getValueFromFieldOrDefault(input_opts, 'batch_size', 100);
   opts.train.error_function = getErrorFunctionForDataset(opts.general.dataset);
   opts.train.learning_rate = getValueFromFieldOrDefault(input_opts, 'learning_rate', 'default_keyword');
   opts.train.num_epochs = getValueFromFieldOrDefault(input_opts, 'num_epochs', numel(opts.train.learning_rate));
   opts.train.weight_decay = getValueFromFieldOrDefault(input_opts, 'weight_decay', 0.0001);
-  opts.train.weight_decay = 0.01;
+  opts.train.batch_size = 250;
+  opts.train.weight_decay = 0.0001;
 
   % -------------------------------------------------------------------------
   %                                                                opts.other

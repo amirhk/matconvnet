@@ -347,8 +347,6 @@ function  [net_cpu,stats,prof] = process_epoch(opts, getBatch, epoch, subset, le
   mmap = [];
   stats = [];
 
-  keyboard
-
   for t=1:opts.batch_size:numel(subset)
     if opts.debug_flag
       fprintf('%s: epoch %02d: batch %3d/%3d: ', mode, epoch, ...
