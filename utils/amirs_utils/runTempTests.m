@@ -84,15 +84,15 @@ function runTempTests()
   % runEnsembleLarpTests('svhn-multi-class-subsampled', 'balanced-38', 4);
 
 
-  gpu = 3;
-  runEnsembleLarpTests('cifar',  'whatever', gpu);
+  gpu = 1;
+  % runEnsembleLarpTests('cifar',  'whatever', gpu);
   % runEnsembleLarpTests('mnist',  'whatever', gpu);
   % runEnsembleLarpTests('svhn',   'whatever', gpu);
   % runEnsembleLarpTests('stl-10', 'whatever', gpu);
   % runEnsembleLarpTests('coil-100', 'whatever', gpu);
 
-  % runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-38', 1);
-  % runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-100', 1);
-  % runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-266', 1);
-  % runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-707', 1);
-  % runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-1880', 1);
+  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-38', 1);
+  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-100', 1);
+  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-266', 1);
+  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-707', 1);
+  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-1880', 1);
