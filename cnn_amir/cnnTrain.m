@@ -21,6 +21,8 @@ function [net, info] = cnn_train(net, imdb, getBatch, varargin)
   % This file is part of the VLFeat library and is made available under
   % the terms of the BSD license (see the COPYING file).
 
+  opts.forward_pass_only_mode = false;
+  opts.forward_pass_only_depth = -1;
   opts.debug_flag = true;
   opts.weight_init_source = 'gen'; % {'load' | 'gen'}
   opts.weight_init_sequence = {'compRand', 'compRand', 'compRand', 'compRand', 'compRand'};
@@ -224,15 +226,15 @@ function [net, info] = cnn_train(net, imdb, getBatch, varargin)
     if ~opts.debug_flag
       fprintf('\n');
     end
-  else
+  elseif ~opts.forward_pass_only_mode
     % only to be used for validation
     epoch = 1;
     val = opts.val;
     if numGpus <= 1
-      [top_predictions, all_predictions, labels] = evaluate_one_epoch_of_trained_network(opts, getBatch, epoch, val, 0, imdb, net);
+      [top_predictions, all_predictions, labels] = get_all_samples_predictions_from_network(opts, getBatch, epoch, val, 0, imdb, net);
     else
       spmd(numGpus)
-        [top_predictions_, all_predictions_, labels_] = evaluate_one_epoch_of_trained_network(opts, getBatch, epoch, val, 0, imdb, net);
+        [top_predictions_, all_predictions_, labels_] = get_all_samples_predictions_from_network(opts, getBatch, epoch, val, 0, imdb, net);
       end
       % TODO: WARNING: because the returned predictions could be coming from
       % multiple GPUs, the ordering of the predicited class may be fucked!
@@ -243,6 +245,22 @@ function [net, info] = cnn_train(net, imdb, getBatch, varargin)
     info.top_predictions = top_predictions;
     info.all_predictions = all_predictions;
     info.labels = labels;
+  else
+    assert(opts.forward_pass_only_mode);
+    assert(opts.forward_pass_only_depth > 0);
+    epoch = 1;
+    val = opts.val;
+    if numGpus <= 1
+      all_samples_forward_pass_results = get_resulting_forward_pass_matrix_from_network_for_all_samples(opts, getBatch, epoch, val, 0, imdb, net, opts.forward_pass_only_depth);
+    else
+      spmd(numGpus)
+        all_samples_forward_pass_results_ = get_resulting_forward_pass_matrix_from_network_for_all_samples(opts, getBatch, epoch, val, 0, imdb, net, opts.forward_pass_only_depth);
+      end
+      % TODO: WARNING: because the returned resulting matrices could be coming
+      % from multiple GPUs, the ordering of the predicited class may be fucked!
+      all_samples_forward_pass_results = cat(4, all_samples_forward_pass_results_{:});
+    end
+    info.all_samples_forward_pass_results = all_samples_forward_pass_results;
   end
 
 % -------------------------------------------------------------------------
@@ -505,7 +523,7 @@ function write_gradients(mmap, net, res)
   end
 
 % -------------------------------------------------------------------------
-function [all_samples_top_class_predictions, all_samples_all_class_predictions, all_labels] = evaluate_one_epoch_of_trained_network(opts, getBatch, epoch, subset, learning_rate, imdb, net_cpu)
+function [all_samples_top_class_predictions, all_samples_all_class_predictions, all_labels] = get_all_samples_predictions_from_network(opts, getBatch, epoch, subset, learning_rate, imdb, net_cpu)
 % -------------------------------------------------------------------------
   % validation mode if learning rate is zero
   % if nargout > 2, mpiprofile on; end
@@ -522,17 +540,28 @@ function [all_samples_top_class_predictions, all_samples_all_class_predictions, 
   % softmax
   net_2.layers = net_1.layers;
   net_2.layers{end}.type = 'softmax';
-
   afprintf(sprintf('Extracting `top`-class predictions based on `softmaxloss`\n'));
-  [all_samples_top_class_predictions, ~, all_labels_1] = tmpBeef(opts, getBatch, epoch, subset, learning_rate, imdb, net_1, 'softmaxloss');
+  [all_samples_top_class_predictions, ~, all_labels_1, ~] = tmpBeef(opts, getBatch, epoch, subset, learning_rate, imdb, net_1, 'softmaxloss', -1);
   all_samples_all_class_predictions = all_samples_top_class_predictions;
+
   % afprintf(sprintf('Extracting `all`-class predictions based on `softmax`\n'));
-  % [~, all_samples_all_class_predictions, all_labels_2] = tmpBeef(opts, getBatch, epoch, subset, learning_rate, imdb, net_2, 'softmax');
+  % [~, all_samples_all_class_predictions, all_labels_2, ~] = tmpBeef(opts, getBatch, epoch, subset, learning_rate, imdb, net_2, 'softmax', -1);
   % assert(isequal(all_labels_1, all_labels_2));
   all_labels = all_labels_1;
 
+
+
+
 % -------------------------------------------------------------------------
-function [all_samples_top_class_predictions, all_samples_all_class_predictions, all_labels] = tmpBeef(opts, getBatch, epoch, subset, learning_rate, imdb, net_cpu, loss_layer_type)
+function [all_samples_forward_pass_results] = get_resulting_forward_pass_matrix_from_network_for_all_samples(opts, getBatch, epoch, subset, learning_rate, imdb, net_cpu, forward_pass_only_depth)
+% -------------------------------------------------------------------------
+  afprintf(sprintf('Extracting result of forward pass through network...\n'));
+  [~, ~, ~, all_samples_forward_pass_results] = ...
+    tmpBeef(opts, getBatch, epoch, subset, learning_rate, imdb, net_cpu, 'none', forward_pass_only_depth);
+
+
+% -------------------------------------------------------------------------
+function [all_samples_top_class_predictions, all_samples_all_class_predictions, all_labels, all_samples_forward_pass_results] = tmpBeef(opts, getBatch, epoch, subset, learning_rate, imdb, net_cpu, loss_layer_type, forward_pass_only_depth)
 % -------------------------------------------------------------------------
   % move CNN to GPU as needed
   numGpus = numel(opts.gpus);
@@ -550,6 +579,7 @@ function [all_samples_top_class_predictions, all_samples_all_class_predictions, 
   mmap = [];
   all_samples_top_class_predictions = [];
   all_samples_all_class_predictions = [];
+  all_samples_forward_pass_results  = [];
   all_labels = [];
   if ~opts.debug_flag
     afprintf(sprintf('[INFO] processed     %d samples', 0), 1);
@@ -601,7 +631,6 @@ function [all_samples_top_class_predictions, all_samples_all_class_predictions, 
         case 'softmaxloss'
           batch_samples_all_class_predictions = gather(res(end-1).x);
           [~,batch_samples_top_class_predictions] = sort(batch_samples_all_class_predictions, 3, 'descend');
-
           all_samples_top_class_predictions = cat( ...
             2, ...
             all_samples_top_class_predictions, ...
@@ -612,6 +641,13 @@ function [all_samples_top_class_predictions, all_samples_all_class_predictions, 
             2, ...
             all_samples_all_class_predictions, ...
             reshape(batch_samples_all_class_predictions(:,:,:,:), 2, []));
+        case 'none'
+          assert(numel(res) >= forward_pass_only_depth)
+          batch_samples_all_class_predictions = gather(res(forward_pass_only_depth).x);
+          all_samples_forward_pass_results = cat( ...
+            4, ... % NOTE THE MERGE IN 4D... others reshape, we don't
+            all_samples_forward_pass_results, ...
+            batch_samples_all_class_predictions);
       end
       all_labels  = cat( ...
         2, ...

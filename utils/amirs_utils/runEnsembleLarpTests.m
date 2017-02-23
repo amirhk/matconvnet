@@ -84,9 +84,9 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   % % -------------------------------------------------------------------------
   % %                                                                single svm
   % % -------------------------------------------------------------------------
-  experiment_options.training_method = 'svm';
-  % Exp. 1
-  testKFold(experiment_options);
+  % experiment_options.training_method = 'svm';
+  % % Exp. 1
+  % testKFold(experiment_options);
 
   % % -------------------------------------------------------------------------
   % %                                                              ensemble svm
@@ -414,10 +414,12 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
 
 
 
-
-
-
-
+  % % -------------------------------------------------
+  % experiment_options.network_arch = 'TMP_NETWORK';
+  % % -------------------------------------------------
+  % % Exp. 1
+  % experiment_options.backprop_depth = 13;
+  % testKFold(experiment_options);
 
 
 

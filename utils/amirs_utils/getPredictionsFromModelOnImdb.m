@@ -217,17 +217,6 @@ function [top_predictions, all_predictions] = getPredictionsFromEnsembleOnImdb(e
   top_predictions = weighted_ensemble_predictions;
   all_predictions = getAllPredictionsFromTopPredictions(top_predictions, imdb);
 
-% -------------------------------------------------------------------------
-function imdb = filterImdbForSet(imdb, set)
-% -------------------------------------------------------------------------
-  % imdb should only contain test set ...
-  % TODO: extend this file and cnn_train to support testing train set
-  imdb.images.data = imdb.images.data(:,:,:,imdb.images.set == set);
-  imdb.images.labels = imdb.images.labels(imdb.images.set == set);
-  % cnnTrain method only works if the data is in validation set.... so this must be `3`
-  % TODO: but what about other methods, like ensemble????????????
-  imdb.images.set = 3 * ones(1, length(imdb.images.labels));
-
 % TODO: copy to central file
 % -------------------------------------------------------------------------
 function fn = getBatch()
@@ -240,12 +229,6 @@ function [images, labels] = getSimpleNNBatch(imdb, batch)
   images = imdb.images.data(:,:,:,batch);
   labels = imdb.images.labels(1,batch);
   if rand > 0.5, images=fliplr(images); end
-
-% -------------------------------------------------------------------------
-function vectorized_data = getVectorizedDataFromImdb(imdb)
-% -------------------------------------------------------------------------
-  number_of_features = prod(size(imdb.images.data(:,:,:,1))); % 32 x 32 x 3 = 3072
-  vectorized_data = reshape(imdb.images.data, number_of_features, [])';
 
 % -------------------------------------------------------------------------
 function all_predictions = getAllPredictionsFromTopPredictions(top_predictions, imdb)
