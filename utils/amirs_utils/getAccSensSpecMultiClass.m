@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function [acc, sens, spec] = getAccSensSpecMutliClass(labels, predictions, debug_flag)
+function [acc, sens, spec] = getAccSensSpecMultiClass(labels, predictions, debug_flag)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.

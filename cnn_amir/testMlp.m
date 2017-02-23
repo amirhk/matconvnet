@@ -114,10 +114,10 @@ function [trained_model, performance_summary] = testMlp(input_opts)
       ] = getAccSensSpec(labels_test, top_test_predictions, true);
       printConsoleOutputSeparator();
     else
-      [train_accuracy, ~, ~] = getAccSensSpecMutliClass(labels_train, top_train_predictions, true);
+      [train_accuracy, ~, ~] = getAccSensSpecMultiClass(labels_train, top_train_predictions, true);
       train_sensitivity = -1;
       train_specificity = -1;
-      [test_accuracy, ~, ~] = getAccSensSpecMutliClass(labels_test, top_test_predictions, true);
+      [test_accuracy, ~, ~] = getAccSensSpecMultiClass(labels_test, top_test_predictions, true);
       test_sensitivity = -1;
       test_specificity = -1;
     end

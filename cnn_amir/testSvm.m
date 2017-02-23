@@ -88,7 +88,6 @@ function [trained_model, performance_summary] = testSvm(input_opts)
   else
     fhGetAccSensSpec = @getAccSensSpecMultiClass;
   end
-
   % % using svmtrain and svmclassify
   % svm_struct = svmtrain(vectorized_data_train, labels_train);
   % top_test_predictions = svmclassify(svm_struct, vectorized_data_test);
