@@ -633,6 +633,9 @@ switch network_arch
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 030;        % 20.80 / 15.68 (weight decay: 0.0001), 45.23 / 26.11 (weight decay 0.01)
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 100;        % 20.54 / 17.93 (weight decay: 0.0001)
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 300;        % 14.63 / 13.18 (weight decay: 0.0001)
+
+        learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,225)] / 030;        % GPU 2 (weight decay: 0.0001)
+        % learning_rate = [                 0.03*ones(1,25) 0.01*ones(1,250)] / 030;        % GPU 3 (weight decay: 0.0001)
     end
 
 
