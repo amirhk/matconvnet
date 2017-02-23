@@ -631,7 +631,7 @@ switch network_arch
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 001;        % 10.00 / 10.00 (batch size: 100; weight decay: 0.0001)
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 003;        % 10.00 / 10.00 (batch size: 100; weight decay: 0.0001)
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 010;        % 10.67 / 10.25 (batch size: 100; weight decay: 0.0001)
-        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 030;        % 20.80 / 15.68 (batch size: 100; weight decay: 0.0001)
+        learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 030;        % 20.80 / 15.68 (batch size: 100; weight decay: 0.0001)
                                                                                            % 45.23 / 26.11 (batch size: 100; weight decay: 0.01)
                                                                                            % 15.89 / 13.84 (batch size: 250; weight decay: 0.0001)
                                                                                            % 20.06 / 16.45 (batch size: 250; weight decay: 0.01)
