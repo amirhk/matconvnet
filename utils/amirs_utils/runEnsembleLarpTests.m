@@ -153,12 +153,12 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
 
 
 
-  % % -------------------------------------------------
-  % experiment_options.network_arch = 'larpV0P0+convV0P0+fcV1';
-  % % -------------------------------------------------
-  % % Exp. 1
-  % experiment_options.backprop_depth = 4;
-  % testKFold(experiment_options);
+  % -------------------------------------------------
+  experiment_options.network_arch = 'larpV0P0+convV0P0+fcV1';
+  % -------------------------------------------------
+  % Exp. 1
+  experiment_options.backprop_depth = 4;
+  testKFold(experiment_options);
 
   % % -------------------------------------------------
   % experiment_options.network_arch = 'larpV1P0+convV0P0+fcV1';
@@ -256,12 +256,12 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
 %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %%
 
 
-  % -------------------------------------------------
-  experiment_options.network_arch = 'larpV0P0+convV0P0+fcV2';
-  % -------------------------------------------------
-  % Exp. 1
-  experiment_options.backprop_depth = 6;
-  testKFold(experiment_options);
+  % % -------------------------------------------------
+  % experiment_options.network_arch = 'larpV0P0+convV0P0+fcV2';
+  % % -------------------------------------------------
+  % % Exp. 1
+  % experiment_options.backprop_depth = 6;
+  % testKFold(experiment_options);
 
   % % -------------------------------------------------
   % experiment_options.network_arch = 'larpV1P0+convV0P0+fcV2';
