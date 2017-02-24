@@ -27,5 +27,4 @@ function tmp = loadSavedProjectedImdb(dataset, posneg_balance, projection)
   path_to_imdbs = fullfile(getDevPath(), 'data', 'projected_imdbs');
   through_arch_string = projection(strfind(projection, 'through'):end); % e.g., 'projected-through-larpV1P1+convV0P0+fcV1' returns 11, then start at that index:end
   file_name = sprintf('saved-projected-%s-%s-%s.mat', dataset, posneg_balance, through_arch_string); % e.g., saved-projected-cifar-multi-class-subsampled-balanced-38-through-larpV1P1+convV0P0+fcV1
-  disp(fullfile(path_to_imdbs, file_name));
   tmp = load(fullfile(path_to_imdbs, file_name));
