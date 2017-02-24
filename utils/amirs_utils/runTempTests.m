@@ -102,9 +102,9 @@ function runTempTests()
   % runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-1880', 'projected-through-larpV3P3+convV0P0+fcV1', gpu);
 
   % runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-5000', 'no-projection',                            gpu);
-  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-5000', 'projected-through-larpV1P1+convV0P0+fcV1', gpu);
-  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-5000', 'projected-through-larpV3P1+convV0P0+fcV1', gpu);
-  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-5000', 'projected-through-larpV3P3+convV0P0+fcV1', gpu);
+  % runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-5000', 'projected-through-larpV1P1+convV0P0+fcV1', gpu);
+  % runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-5000', 'projected-through-larpV3P1+convV0P0+fcV1', gpu);
+  % runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-5000', 'projected-through-larpV3P3+convV0P0+fcV1', gpu);
 
   runEnsembleLarpTests('mnist',                        'whatever',      'no-projection',                            gpu);
   runEnsembleLarpTests('mnist',                        'whatever',      'projected-through-larpV1P1+convV0P0+fcV1', gpu);
