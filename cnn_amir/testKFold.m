@@ -191,6 +191,7 @@ function folds = testKFold(input_opts)
     afprintf(sprintf('[INFO] Loading imdb for fold #%d...\n', i));
     tmp_opts.dataset = opts.general.dataset;
     tmp_opts.posneg_balance = opts.imdb.posneg_balance;
+    tmp_opts.projection = opts.imdb.projection;
     tmp_opts.fold_number = i; % currently only implemented for prostate data
     imdbs{i} = loadSavedImdb(tmp_opts);
     afprintf(sprintf('[INFO] done!\n'));

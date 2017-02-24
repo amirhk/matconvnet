@@ -25,74 +25,124 @@ function runTempTests()
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % % POSSIBILITY OF SUCH DAMAGE.
 
-  % runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-38', 1);
-  % runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-100', 1);
-  % runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-266', 1);
-  % runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-707', 1);
-  % runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-1880', 1);
-  % runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-5000', 1);
-
-  % runEnsembleLarpTests('svhn-multi-class-subsampled', 'balanced-38', 2);
-  % runEnsembleLarpTests('svhn-multi-class-subsampled', 'balanced-100', 2);
-  % runEnsembleLarpTests('svhn-multi-class-subsampled', 'balanced-266', 2);
-  % runEnsembleLarpTests('svhn-multi-class-subsampled', 'balanced-707', 2);
-  % runEnsembleLarpTests('svhn-multi-class-subsampled', 'balanced-1880', 2);
-  % runEnsembleLarpTests('svhn-multi-class-subsampled', 'balanced-5000', 2);
-
-  % runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-38', 3);
-  % runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-100', 3);
-  % runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-266', 3);
-  % runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-707', 3);
-  % runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-1880', 3);
-  % runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-5000', 3);
-
-  % runEnsembleLarpTests('stl-10-multi-class-subsampled', 'balanced-38', 4);
-  % runEnsembleLarpTests('stl-10-multi-class-subsampled', 'balanced-100', 4);
-  % runEnsembleLarpTests('stl-10-multi-class-subsampled', 'balanced-266', 4);
-  % runEnsembleLarpTests('stl-10-multi-class-subsampled', 'balanced-500', 4);
-
-  % runEnsembleLarpTests('mnist', 'whatever', 1);
-  % runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-5000', 1);
-  % runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-1880', 1);
-  % runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-707', 1);
-  % runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-266', 1);
-  % runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-100', 1);
-  % runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-38', 1);
-
-  % runEnsembleLarpTests('cifar', 'whatever', 4);
-  % runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-5000', 2);
-  % runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-1880', 2);
-  % runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-707', 2);
-  % runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-266', 2);
-  % runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-100', 2);
-  % runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-38', 2);
-
-
-  % runEnsembleLarpTests('stl-10', 'whatever', 2);
-  % runEnsembleLarpTests('stl-10-multi-class-subsampled', 'balanced-500', 2);
-  % runEnsembleLarpTests('stl-10-multi-class-subsampled', 'balanced-266', 2);
-  % runEnsembleLarpTests('stl-10-multi-class-subsampled', 'balanced-100', 2);
-  % runEnsembleLarpTests('stl-10-multi-class-subsampled', 'balanced-38', 2);
-
-
-  % runEnsembleLarpTests('svhn', 'whatever', 4);
-  % runEnsembleLarpTests('svhn-multi-class-subsampled', 'balanced-5000', 4);
-  % runEnsembleLarpTests('svhn-multi-class-subsampled', 'balanced-1880', 4);
-  % runEnsembleLarpTests('svhn-multi-class-subsampled', 'balanced-707', 4);
-  % runEnsembleLarpTests('svhn-multi-class-subsampled', 'balanced-266', 4);
-  % runEnsembleLarpTests('svhn-multi-class-subsampled', 'balanced-100', 4);
-  % runEnsembleLarpTests('svhn-multi-class-subsampled', 'balanced-38', 4);
-
-
-  gpu = 1;
+  % gpu = 1;
   % runEnsembleLarpTests('cifar',  'whatever', gpu);
   % runEnsembleLarpTests('mnist',  'whatever', gpu);
   % runEnsembleLarpTests('svhn',   'whatever', gpu);
   % runEnsembleLarpTests('stl-10', 'whatever', gpu);
   % runEnsembleLarpTests('coil-100', 'whatever', gpu);
 
-  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-38', 1);
-  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-100', 1);
-  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-266', 1);
-  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-707', 1);
-  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-1880', 1);
+  % runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-38', 1);
+  % runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-100', 1);
+  % runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-266', 1);
+  % runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-707', 1);
+  % runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-1880', 1);
+
+  gpu = 1;
+  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-38',   'no-projection',                            gpu);
+  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-38',   'projected-through-larpV1P1+convV0P0+fcV1', gpu);
+  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-38',   'projected-through-larpV3P1+convV0P0+fcV1', gpu);
+  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-38',   'projected-through-larpV3P3+convV0P0+fcV1', gpu);
+
+  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-100',  'no-projection',                            gpu);
+  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-100',  'projected-through-larpV1P1+convV0P0+fcV1', gpu);
+  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-100',  'projected-through-larpV3P1+convV0P0+fcV1', gpu);
+  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-100',  'projected-through-larpV3P3+convV0P0+fcV1', gpu);
+
+  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-266',  'no-projection',                            gpu);
+  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-266',  'projected-through-larpV1P1+convV0P0+fcV1', gpu);
+  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-266',  'projected-through-larpV3P1+convV0P0+fcV1', gpu);
+  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-266',  'projected-through-larpV3P3+convV0P0+fcV1', gpu);
+
+  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-707',  'no-projection',                            gpu);
+  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-707',  'projected-through-larpV1P1+convV0P0+fcV1', gpu);
+  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-707',  'projected-through-larpV3P1+convV0P0+fcV1', gpu);
+  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-707',  'projected-through-larpV3P3+convV0P0+fcV1', gpu);
+
+  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-1880', 'no-projection',                            gpu);
+  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-1880', 'projected-through-larpV1P1+convV0P0+fcV1', gpu);
+  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-1880', 'projected-through-larpV3P1+convV0P0+fcV1', gpu);
+  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-1880', 'projected-through-larpV3P3+convV0P0+fcV1', gpu);
+
+  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-5000', 'no-projection',                            gpu);
+  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-5000', 'projected-through-larpV1P1+convV0P0+fcV1', gpu);
+  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-5000', 'projected-through-larpV3P1+convV0P0+fcV1', gpu);
+  runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-5000', 'projected-through-larpV3P3+convV0P0+fcV1', gpu);
+
+  runEnsembleLarpTests('mnist-multi-class-subsampled', 'whatever',      'no-projection',                            gpu);
+  runEnsembleLarpTests('mnist-multi-class-subsampled', 'whatever',      'projected-through-larpV1P1+convV0P0+fcV1', gpu);
+  runEnsembleLarpTests('mnist-multi-class-subsampled', 'whatever',      'projected-through-larpV3P1+convV0P0+fcV1', gpu);
+  runEnsembleLarpTests('mnist-multi-class-subsampled', 'whatever',      'projected-through-larpV3P3+convV0P0+fcV1', gpu);
+
+
+  gpu = 2;
+  runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-38',   'no-projection',                            gpu);
+  runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-38',   'projected-through-larpV1P1+convV0P0+fcV1', gpu);
+  runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-38',   'projected-through-larpV3P1+convV0P0+fcV1', gpu);
+  runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-38',   'projected-through-larpV3P3+convV0P0+fcV1', gpu);
+
+  runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-100',  'no-projection',                            gpu);
+  runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-100',  'projected-through-larpV1P1+convV0P0+fcV1', gpu);
+  runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-100',  'projected-through-larpV3P1+convV0P0+fcV1', gpu);
+  runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-100',  'projected-through-larpV3P3+convV0P0+fcV1', gpu);
+
+  runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-266',  'no-projection',                            gpu);
+  runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-266',  'projected-through-larpV1P1+convV0P0+fcV1', gpu);
+  runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-266',  'projected-through-larpV3P1+convV0P0+fcV1', gpu);
+  runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-266',  'projected-through-larpV3P3+convV0P0+fcV1', gpu);
+
+  runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-707',  'no-projection',                            gpu);
+  runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-707',  'projected-through-larpV1P1+convV0P0+fcV1', gpu);
+  runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-707',  'projected-through-larpV3P1+convV0P0+fcV1', gpu);
+  runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-707',  'projected-through-larpV3P3+convV0P0+fcV1', gpu);
+
+  runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-1880', 'no-projection',                            gpu);
+  runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-1880', 'projected-through-larpV1P1+convV0P0+fcV1', gpu);
+  runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-1880', 'projected-through-larpV3P1+convV0P0+fcV1', gpu);
+  runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-1880', 'projected-through-larpV3P3+convV0P0+fcV1', gpu);
+
+  runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-5000', 'no-projection',                            gpu);
+  runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-5000', 'projected-through-larpV1P1+convV0P0+fcV1', gpu);
+  runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-5000', 'projected-through-larpV3P1+convV0P0+fcV1', gpu);
+  runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-5000', 'projected-through-larpV3P3+convV0P0+fcV1', gpu);
+
+  runEnsembleLarpTests('cifar-multi-class-subsampled', 'whatever',      'no-projection',                            gpu);
+  runEnsembleLarpTests('cifar-multi-class-subsampled', 'whatever',      'projected-through-larpV1P1+convV0P0+fcV1', gpu);
+  runEnsembleLarpTests('cifar-multi-class-subsampled', 'whatever',      'projected-through-larpV3P1+convV0P0+fcV1', gpu);
+  runEnsembleLarpTests('cifar-multi-class-subsampled', 'whatever',      'projected-through-larpV3P3+convV0P0+fcV1', gpu);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

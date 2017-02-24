@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function runEnsembleLarpTests(dataset, posneg_balance, gpus)
+function runEnsembleLarpTests(dataset, posneg_balance, projection, gpus)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -35,6 +35,7 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   %                                                                 opts.imdb
   % -------------------------------------------------------------------------
   opts.imdb.posneg_balance = posneg_balance;
+  opts.imdb.projection = projection;
 
   % -------------------------------------------------------------------------
   %                                                                opts.train
@@ -78,6 +79,7 @@ function runEnsembleLarpTests(dataset, posneg_balance, gpus)
   experiment_options.dataset = opts.general.dataset;
   experiment_options.network_arch = opts.general.network_arch;
   experiment_options.posneg_balance = opts.imdb.posneg_balance;
+  experiment_options.projection = opts.imdb.projection;
   experiment_options.gpus = opts.train.gpus;
 
 

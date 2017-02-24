@@ -24,6 +24,7 @@ function tmp = loadSavedProstateImdb(dataset, posneg_balance, fold_number)
 % CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
+  path_to_imdbs = fullfile(getDevPath(), 'data', 'two_class_imdbs');
   switch dataset
     case 'prostate-v2-20-patients'
       switch posneg_balance

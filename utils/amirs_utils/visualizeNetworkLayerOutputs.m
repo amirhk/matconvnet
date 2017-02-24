@@ -125,13 +125,14 @@ function visualizeNetworkLayerOutputs(input_opts)
   close all
 
 
-% get imdb
-tmp_opts.dataset = 'mnist-two-class-9-4';
-tmp_opts.posneg_balance = 'balanced-38';
-imdb = loadSavedImdb(tmp_opts);
+% % get imdb
+% tmp_opts.dataset = 'mnist-two-class-9-4';
+% tmp_opts.posneg_balance = 'balanced-38';
+% tmp_opts.projection = 'no-projection';
+% imdb = loadSavedImdb(tmp_opts);
 
-% visualize
-input_opts.dataset = 'mnist-two-class-9-4';
-input_opts.imdb = imdb;
-input_opts.network_arch = 'TMP_NETWORK';
-visualizeNetworkLayerOutputs(input_opts)
+% % visualize
+% input_opts.dataset = 'mnist-two-class-9-4';
+% input_opts.imdb = imdb;
+% input_opts.network_arch = 'TMP_NETWORK';
+% visualizeNetworkLayerOutputs(input_opts)
