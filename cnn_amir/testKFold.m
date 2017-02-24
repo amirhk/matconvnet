@@ -41,6 +41,7 @@ function folds = testKFold(input_opts)
   %                                                                 opts.imdb
   % -------------------------------------------------------------------------
   opts.imdb.posneg_balance = getValueFromFieldOrDefault(input_opts, 'posneg_balance', 'unbalanced');
+  opts.imdb.projection = getValueFromFieldOrDefault(input_opts, 'projection', 'no-projection');
   if strcmp(opts.general.dataset, 'prostate-v2-20-patients')
     switch opts.imdb.posneg_balance
       case 'k=5-fold-unbalanced'
