@@ -33,6 +33,8 @@ function [top_predictions, all_predictions] = getPredictionsFromModelOnImdb(mode
   switch training_method
     case 'svm'
       [top_predictions, all_predictions] = getPredictionsFromSvmStructOnImdb(model, imdb);
+    case 'libsvm'
+      [top_predictions, all_predictions] = getPredictionsFromLibSvmStructOnImdb(model, imdb);
     case 'forest'
       [top_predictions, all_predictions] = getPredictionsFromBoostedForestOnImdb(model, imdb);
     case 'cnn'
@@ -57,6 +59,19 @@ function [top_predictions, all_predictions] = getPredictionsFromSvmStructOnImdb(
   % top_predictions = svmclassify(svm_struct, vectorized_data);
   top_predictions = predict(svm_struct, vectorized_data);
   all_predictions = getAllPredictionsFromTopPredictions(top_predictions, imdb);
+
+% -------------------------------------------------------------------------
+function [top_predictions, all_predictions] = getPredictionsFromLibSvmStructOnImdb(libsvm_struct, imdb)
+% -------------------------------------------------------------------------
+  vectorized_data = getVectorizedDataFromImdb(imdb);
+  vectorized_data = double(vectorized_data);
+  labels = imdb.images.labels;
+  labels = double(labels);
+  labels = labels';
+  % [top_predictions, accuracy, decision_values] = ....
+  [top_predictions, ~, ~] = svmpredict(labels, vectorized_data, libsvm_struct, '-q'); % -q for quite mode
+  all_predictions = getAllPredictionsFromTopPredictions(top_predictions, imdb);
+
 
 % -------------------------------------------------------------------------
 function [top_predictions, all_predictions] = getPredictionsFromBoostedForestOnImdb(boosted_forest, imdb)

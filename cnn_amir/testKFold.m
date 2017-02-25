@@ -101,6 +101,8 @@ function folds = testKFold(input_opts)
   switch opts.k_fold_options.training_method
     case 'svm'
       % no additional options
+    case 'libsvm'
+      opts.single_training_method_options.libsvm_options = getValueFromFieldOrDefault(input_opts, 'libsvm_options', '-t 0');
     case 'forest'
       opts.single_training_method_options.boosting_method = getValueFromFieldOrDefault(input_opts, 'boosting_method', 'RUSBoost');
     case 'single-mlp'
@@ -204,6 +206,8 @@ function folds = testKFold(input_opts)
   switch opts.k_fold_options.training_method
     case 'svm'
       trainingMethodFunctionHandle = @testSvm;
+    case 'libsvm'
+      trainingMethodFunctionHandle = @testLibSvm;
     case 'forest'
       trainingMethodFunctionHandle = @testForest;
     case 'single-mlp'

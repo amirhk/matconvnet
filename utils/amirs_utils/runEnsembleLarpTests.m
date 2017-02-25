@@ -86,9 +86,19 @@ function runEnsembleLarpTests(dataset, posneg_balance, projection, gpus)
   % % -------------------------------------------------------------------------
   % %                                                                single svm
   % % -------------------------------------------------------------------------
-  experiment_options.training_method = 'svm';
-  % Exp. 1
-  testKFold(experiment_options);
+  % experiment_options.training_method = 'svm';
+  % % Exp. 1
+  % testKFold(experiment_options);
+
+  % -------------------------------------------------------------------------
+  %                                                             single libsvm
+  % -------------------------------------------------------------------------
+  experiment_options.training_method = 'libsvm';
+  % Exp. i
+  for c = logspace(-2,3,6)
+    experiment_options.libsvm_options = sprintf('-q -t 0 -c %f', c);
+    testKFold(experiment_options);
+  end
 
   % % -------------------------------------------------------------------------
   % %                                                              ensemble svm
