@@ -47,6 +47,8 @@ function fh = networkInitializationUtils()
 % --------------------------------------------------------------------
 function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, n, init_multiplier, pad, weight_init_type, weight_init_source);
 % --------------------------------------------------------------------
+  % TODO: REMOVE!!!
+  weight_init_type = 'compRandSmoothed';
   switch weight_init_source
     case 'load'
       layerWeights = loadWeights(dataset, network_arch, layer_number, weight_init_type);
@@ -54,9 +56,12 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
       switch weight_init_type
         case 'compRand'
           layerWeights{1} = init_multiplier * randn(k, k, m, n, 'single');
-          % disp(mean(mean(mean(mean(layerWeights{1})))));
-          % layerWeights{1}
-          % keyboard
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'compRandSmoothed'
+          gaussian_filter = fspecial('gaussian', [3,3], 1);
+          random_kernels = init_multiplier * randn(k, k, m, n, 'single');
+          smoothed_random_kernels = imfilter(random_kernels, gaussian_filter);
+          layerWeights{1} = smoothed_random_kernels;
           layerWeights{2} = zeros(1, n, 'single');
         % case 'quasiRandSobol'
         %   q = sobolset(1);

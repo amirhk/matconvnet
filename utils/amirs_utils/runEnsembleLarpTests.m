@@ -93,14 +93,14 @@ function runEnsembleLarpTests(dataset, posneg_balance, projection, gpus)
   % -------------------------------------------------------------------------
   %                                                             single libsvm
   % -------------------------------------------------------------------------
-  experiment_options.training_method = 'libsvm';
-  % Exp. i
-  % for c = logspace(-2,3,6)
-  for i = -3:1:5
-    c = 2^i;
-    experiment_options.libsvm_options = sprintf('-q -t 0 -c %f', c);
-    testKFold(experiment_options);
-  end
+  % experiment_options.training_method = 'libsvm';
+  % % Exp. i
+  % % for c = logspace(-2,3,6)
+  % for i = -3:1:5
+  %   c = 2^i;
+  %   experiment_options.libsvm_options = sprintf('-q -t 0 -c %f', c);
+  %   testKFold(experiment_options);
+  % end
 
   % % -------------------------------------------------------------------------
   % %                                                              ensemble svm
@@ -165,14 +165,12 @@ function runEnsembleLarpTests(dataset, posneg_balance, projection, gpus)
   % testKFold(experiment_options);
 
 
-
-
-  % % -------------------------------------------------
-  % experiment_options.network_arch = 'larpV0P0+convV0P0+fcV1';
-  % % -------------------------------------------------
-  % % Exp. 1
-  % experiment_options.backprop_depth = 4;
-  % testKFold(experiment_options);
+  % -------------------------------------------------
+  experiment_options.network_arch = 'larpV0P0+convV0P0+fcV1';
+  % -------------------------------------------------
+  % Exp. 1
+  experiment_options.backprop_depth = 4;
+  testKFold(experiment_options);
 
   % % -------------------------------------------------
   % experiment_options.network_arch = 'larpV1P0+convV0P0+fcV1';
@@ -181,12 +179,12 @@ function runEnsembleLarpTests(dataset, posneg_balance, projection, gpus)
   % experiment_options.backprop_depth = 4;
   % testKFold(experiment_options);
 
-  % % -------------------------------------------------
-  % experiment_options.network_arch = 'larpV1P1+convV0P0+fcV1';
-  % % -------------------------------------------------
-  % % Exp. 1
-  % experiment_options.backprop_depth = 4;
-  % testKFold(experiment_options);
+  % -------------------------------------------------
+  experiment_options.network_arch = 'larpV1P1+convV0P0+fcV1';
+  % -------------------------------------------------
+  % Exp. 1
+  experiment_options.backprop_depth = 4;
+  testKFold(experiment_options);
 
   % % -------------------------------------------------
   % experiment_options.network_arch = 'larpV3P0+convV0P0+fcV1';
@@ -195,19 +193,19 @@ function runEnsembleLarpTests(dataset, posneg_balance, projection, gpus)
   % experiment_options.backprop_depth = 4;
   % testKFold(experiment_options);
 
-  % % -------------------------------------------------
-  % experiment_options.network_arch = 'larpV3P1+convV0P0+fcV1';
-  % % -------------------------------------------------
-  % % Exp. 1
-  % experiment_options.backprop_depth = 4;
-  % testKFold(experiment_options);
+  % -------------------------------------------------
+  experiment_options.network_arch = 'larpV3P1+convV0P0+fcV1';
+  % -------------------------------------------------
+  % Exp. 1
+  experiment_options.backprop_depth = 4;
+  testKFold(experiment_options);
 
-  % % -------------------------------------------------
-  % experiment_options.network_arch = 'larpV3P3+convV0P0+fcV1';
-  % % -------------------------------------------------
-  % % Exp. 1
-  % experiment_options.backprop_depth = 4;
-  % testKFold(experiment_options);
+  % -------------------------------------------------
+  experiment_options.network_arch = 'larpV3P3+convV0P0+fcV1';
+  % -------------------------------------------------
+  % Exp. 1
+  experiment_options.backprop_depth = 4;
+  testKFold(experiment_options);
 
   % % -------------------------------------------------
   % experiment_options.network_arch = 'larpV5hP0+convV0P0+fcV1';

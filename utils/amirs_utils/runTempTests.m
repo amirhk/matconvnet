@@ -25,12 +25,12 @@ function runTempTests()
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % % POSSIBILITY OF SUCH DAMAGE.
 
-  % gpu = 1;
-  % runEnsembleLarpTests('cifar',  'whatever', gpu);
-  % runEnsembleLarpTests('mnist',  'whatever', gpu);
-  % runEnsembleLarpTests('svhn',   'whatever', gpu);
-  % runEnsembleLarpTests('stl-10', 'whatever', gpu);
-  % runEnsembleLarpTests('coil-100', 'whatever', gpu);
+  gpu = 1;
+  runEnsembleLarpTests('cifar',  'whatever', 'no-projection', gpu);
+  % runEnsembleLarpTests('mnist',  'whatever', 'no-projection', gpu);
+  % runEnsembleLarpTests('svhn',   'whatever', 'no-projection', gpu);
+  % runEnsembleLarpTests('stl-10', 'whatever', 'no-projection', gpu);
+  % runEnsembleLarpTests('coil-100', 'whatever', 'no-projection', gpu);
 
   % runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-38', 1);
   % runEnsembleLarpTests('mnist-multi-class-subsampled', 'balanced-100', 1);
@@ -120,11 +120,11 @@ function runTempTests()
 
 
 
-  gpu = 1;
-  runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-38',   'no-projection',                            gpu);
-  runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-38',   'projected-through-larpV1P1+convV0P0+fcV1', gpu);
-  runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-38',   'projected-through-larpV3P1+convV0P0+fcV1', gpu);
-  runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-38',   'projected-through-larpV3P3+convV0P0+fcV1', gpu);
+  % gpu = 1;
+  % runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-38',   'no-projection',                            gpu);
+  % runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-38',   'projected-through-larpV1P1+convV0P0+fcV1', gpu);
+  % runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-38',   'projected-through-larpV3P1+convV0P0+fcV1', gpu);
+  % runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-38',   'projected-through-larpV3P3+convV0P0+fcV1', gpu);
 
   % runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-100',  'no-projection',                            gpu);
   % runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-100',  'projected-through-larpV1P1+convV0P0+fcV1', gpu);
