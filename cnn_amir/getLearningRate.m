@@ -111,10 +111,10 @@ switch network_arch
                                                                                        % 60.91 / 36.43 (batch size: 100; weight decay: 0.0001)
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 100;    % 24.08 / 22.48 (batch size: 100; weight decay: 0.0001)
 
-        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 001;                            % GPU 1 (smoothed random kernels)
-        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 003;                            % GPU 2 (smoothed random kernels)
-        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 010;                            % GPU 3 (smoothed random kernels)
-        learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 030;                            % GPU 4 (smoothed random kernels)
+        learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 001;                            % 86.19 / 38.23 (smoothed random kernels)
+        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 003;                            % 10.00 / 10.00 (smoothed random kernels)
+        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 010;                            % 91.24 / 38.83 (smoothed random kernels)
+        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 030;                            % 82.26 / 38.52 (smoothed random kernels)
     end
 
 
@@ -190,10 +190,10 @@ switch network_arch
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 030;    % 57.13 / 52.99 (batch size: 100; weight decay: 0.0001)
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 100;    % 44.28 / 42.87 (batch size: 100; weight decay: 0.0001)
 
-        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 001;                            % GPU 1 (smoothed random kernels)
+        learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 001;                            % GPU 1 (smoothed random kernels)
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 003;                            % GPU 2 (smoothed random kernels)
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 010;                            % GPU 3 (smoothed random kernels)
-        learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 030;                            % GPU 4 (smoothed random kernels)
+        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 030;                            % GPU 4 (smoothed random kernels)
     end
 
 
@@ -269,10 +269,10 @@ switch network_arch
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 030;    % 55.29 / 51.97 (batch size: 100; weight decay: 0.0001)
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 100;    % 44.25 / 43.13 (batch size: 100; weight decay: 0.0001)
 
-        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 001;                            % GPU 1 (smoothed random kernels)
+        learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 001;                            % GPU 1 (smoothed random kernels)
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 003;                            % GPU 2 (smoothed random kernels)
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 010;                            % GPU 3 (smoothed random kernels)
-        learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 030;                            % GPU 4 (smoothed random kernels)
+        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 030;                            % GPU 4 (smoothed random kernels)
     end
   case 'larpV3P3+convV0P0+fcV1' % = lenet_bu
     switch dataset
@@ -311,10 +311,10 @@ switch network_arch
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 030;    % 52.91 / 52.86 (batch size: 100; weight decay: 0.0001)
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 100;    % 45.91 / 46.11 (batch size: 100; weight decay: 0.0001)
 
-        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 001;                            % GPU 1 (smoothed random kernels)
+        learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 001;                            % GPU 1 (smoothed random kernels)
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 003;                            % GPU 2 (smoothed random kernels)
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 010;                            % GPU 3 (smoothed random kernels)
-        learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 030;                            % GPU 4 (smoothed random kernels)
+        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 030;                            % GPU 4 (smoothed random kernels)
 
 
       % case 'stl-10'

@@ -25,7 +25,7 @@ function runTempTests()
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % % POSSIBILITY OF SUCH DAMAGE.
 
-  gpu = 4;
+  gpu = 1;
   runEnsembleLarpTests('cifar',  'whatever', 'no-projection', gpu);
   % runEnsembleLarpTests('mnist',  'whatever', 'no-projection', gpu);
   % runEnsembleLarpTests('svhn',   'whatever', 'no-projection', gpu);
