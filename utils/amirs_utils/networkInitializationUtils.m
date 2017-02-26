@@ -47,8 +47,7 @@ function fh = networkInitializationUtils()
 % --------------------------------------------------------------------
 function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, n, init_multiplier, pad, weight_init_type, weight_init_source);
 % --------------------------------------------------------------------
-  % TODO: REMOVE!!!
-  weight_init_type = 'compRandSmoothed';
+  % TODO: REMOVE!!! weight_init_type = 'compRandSmoothed';
   switch weight_init_source
     case 'load'
       layerWeights = loadWeights(dataset, network_arch, layer_number, weight_init_type);
