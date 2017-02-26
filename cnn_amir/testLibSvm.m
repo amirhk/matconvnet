@@ -92,6 +92,7 @@ function [trained_model, performance_summary] = testLibSvm(input_opts)
   labels_test = double(labels_test);
   labels_test = labels_test';
 
+  keyboard
   libsvm_struct = svmtrain(labels_train, vectorized_data_train, opts.train.libsvm_options);
 
   if isTwoClassImdb(opts.general.dataset)
