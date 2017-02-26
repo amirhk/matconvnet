@@ -95,7 +95,9 @@ function runEnsembleLarpTests(dataset, posneg_balance, projection, gpus)
   % -------------------------------------------------------------------------
   experiment_options.training_method = 'libsvm';
   % Exp. i
-  for c = logspace(-2,3,6)
+  % for c = logspace(-2,3,6)
+  for i = -3:1:5
+    c = 2^i;
     experiment_options.libsvm_options = sprintf('-q -t 0 -c %f', c);
     testKFold(experiment_options);
   end
