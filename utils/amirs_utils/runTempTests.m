@@ -120,7 +120,7 @@ function runTempTests()
 
 
 
-  gpu = 3;
+  gpu = 1;
   runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-38',   'no-projection',                            gpu);
   runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-38',   'projected-through-larpV1P1+convV0P0+fcV1', gpu);
   runEnsembleLarpTests('cifar-multi-class-subsampled', 'balanced-38',   'projected-through-larpV3P1+convV0P0+fcV1', gpu);
