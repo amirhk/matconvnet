@@ -25,8 +25,32 @@ function runTempTests()
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % % POSSIBILITY OF SUCH DAMAGE.
 
-  gpu = 2;
-  runEnsembleLarpTests('cifar',  'whatever', 'no-projection', gpu);
+  input_opts.dataset = 'mnist-multi-class-subsampled';
+  input_opts.posneg_balance = 'balanced-38';
+  % input_opts.dataset = 'mnist';
+  % input_opts.posneg_balance = 'whatever';
+  input_opts.network_arch = 'lenet';
+  input_opts.projection = 'no-projection';
+  input_opts.fold_number = 1;
+  imdb = loadSavedImdb(input_opts)
+
+
+  opts.train.number_of_features = prod(size(imdb.images.data(:,:,:,1))); % 32 x 32 x 3 = 3072
+  vectorized_data = reshape(imdb.images.data, opts.train.number_of_features, [])';
+  labels = imdb.images.labels;
+  is_train = imdb.images.set == 1;
+  is_test = imdb.images.set == 3;
+
+  vectorized_data_train = vectorized_data(is_train, :);
+  vectorized_data_test = vectorized_data(is_test, :);
+  labels_train = labels(is_train)';
+  labels_test = labels(is_test)';
+
+  theta = train_svm(vectorized_data_train, labels_train, 1);
+
+
+  % gpu = 2;
+  % runEnsembleLarpTests('cifar',  'whatever', 'no-projection', gpu);
   % runEnsembleLarpTests('mnist',  'whatever', 'no-projection', gpu);
   % runEnsembleLarpTests('svhn',   'whatever', 'no-projection', gpu);
   % runEnsembleLarpTests('stl-10', 'whatever', 'no-projection', gpu);
@@ -155,8 +179,6 @@ function runTempTests()
   % runEnsembleLarpTests('cifar',                        'whatever',      'projected-through-larpV1P1+convV0P0+fcV1', gpu);
   % runEnsembleLarpTests('cifar',                        'whatever',      'projected-through-larpV3P1+convV0P0+fcV1', gpu);
   % runEnsembleLarpTests('cifar',                        'whatever',      'projected-through-larpV3P3+convV0P0+fcV1', gpu);
-
-
 
 
 

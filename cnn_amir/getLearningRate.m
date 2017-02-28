@@ -103,7 +103,7 @@ switch network_arch
       case 'cifar'
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 001;    % 10.00 / 10.00 (non-smooth random kernels; batch size: 100; weight decay: 0.0001)
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 003;    % 10.00 / 10.00 (non-smooth random kernels; batch size: 100; weight decay: 0.0001)
-        learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 010;    % 10.00 / 10.00 (non-smooth random kernels; batch size:  50; weight decay: 0.01)
+        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 010;    % 10.00 / 10.00 (non-smooth random kernels; batch size:  50; weight decay: 0.01)
                                                                                        % 89.98 / 40.46 (non-smooth random kernels; batch size: 100; weight decay: 0.01) % BEST
                                                                                        % 87.39 / 37.74 (non-smooth random kernels; batch size: 100; weight decay: 0.0001)
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 030;    % 91.31 / 38.80 (non-smooth random kernels; batch size:  50; weight decay: 0.01)
@@ -150,7 +150,7 @@ switch network_arch
       case 'cifar'
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 001;    % 37.30 / 29.05 (non-smooth random kernels; batch size: 100; weight decay: 0.0001)
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 003;    % 79.02 / 48.28 (non-smooth random kernels; batch size: 100; weight decay: 0.0001) % BEST
-        learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 010;    % 67.75 / 45.66 (non-smooth random kernels; batch size: 100; weight decay: 0.0001)
+        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 010;    % 67.75 / 45.66 (non-smooth random kernels; batch size: 100; weight decay: 0.0001)
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 030;    % 44.71 / 39.64 (non-smooth random kernels; batch size: 100; weight decay: 0.0001)
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 100;    % 29.28 / 27.79 (non-smooth random kernels; batch size: 100; weight decay: 0.0001)
 
@@ -191,7 +191,7 @@ switch network_arch
       case 'cifar'
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 001;    % 10.00 / 10.00 (non-smooth random kernels; batch size: 100; weight decay: 0.0001)
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 003;    % 61.46 / 51.37 (non-smooth random kernels; batch size: 100; weight decay: 0.0001)
-        learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 010;    % 66.64 / 57.18 (non-smooth random kernels; batch size: 100; weight decay: 0.0001) % BEST
+        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 010;    % 66.64 / 57.18 (non-smooth random kernels; batch size: 100; weight decay: 0.0001) % BEST
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 030;    % 57.13 / 52.99 (non-smooth random kernels; batch size: 100; weight decay: 0.0001)
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 100;    % 44.28 / 42.87 (non-smooth random kernels; batch size: 100; weight decay: 0.0001)
 
@@ -234,7 +234,7 @@ switch network_arch
       case 'cifar'
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 001;    % 10.00 / 10.00 (non-smooth random kernels; batch size: 100; weight decay: 0.0001)
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 003;    % 69.61 / 39.71 (non-smooth random kernels; batch size: 100; weight decay: 0.0001)
-        learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 010;    % 56.87 / 41.42 (non-smooth random kernels; batch size: 100; weight decay: 0.0001) % BEST
+        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 010;    % 56.87 / 41.42 (non-smooth random kernels; batch size: 100; weight decay: 0.0001) % BEST
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 030;    % 37.90 / 34.28 (non-smooth random kernels; batch size: 100; weight decay: 0.0001)
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 100;    % 27.99 / 27.56 (non-smooth random kernels; batch size: 100; weight decay: 0.0001)
 
@@ -275,7 +275,7 @@ switch network_arch
       case 'cifar'
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 001;    % 50.50 / 46.50 (non-smooth random kernels; batch size: 100; weight decay: 0.0001)
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 003;    % 78.63 / 58.58 (non-smooth random kernels; batch size: 100; weight decay: 0.0001) % BEST
-        learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 010;    % 66.27 / 57.26 (non-smooth random kernels; batch size: 100; weight decay: 0.0001)
+        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 010;    % 66.27 / 57.26 (non-smooth random kernels; batch size: 100; weight decay: 0.0001)
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 030;    % 55.29 / 51.97 (non-smooth random kernels; batch size: 100; weight decay: 0.0001)
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 100;    % 44.25 / 43.13 (non-smooth random kernels; batch size: 100; weight decay: 0.0001)
 
@@ -317,7 +317,7 @@ switch network_arch
         % learning_rate = [0.05*ones(1,10) 0.05:-0.01:0.01 0.01*ones(1,5)  0.005*ones(1,10) 0.001*ones(1,10) 0.0005*ones(1,5) 0.0001*ones(1,4)]; % (bpd 13) javad LR w/ weight decay 0.01: 90.23 / 83.02
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 001;    % 48.17 / 47.63 (non-smooth random kernels; batch size: 100; weight decay: 0.0001)
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 003;    % 58.42 / 57.58 (non-smooth random kernels; batch size: 100; weight decay: 0.0001) % BEST
-        learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 010;    % 57.27 / 56.37 (non-smooth random kernels; batch size: 100; weight decay: 0.0001)
+        % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 010;    % 57.27 / 56.37 (non-smooth random kernels; batch size: 100; weight decay: 0.0001)
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 030;    % 52.91 / 52.86 (non-smooth random kernels; batch size: 100; weight decay: 0.0001)
         % learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)] / 100;    % 45.91 / 46.11 (non-smooth random kernels; batch size: 100; weight decay: 0.0001)
 
