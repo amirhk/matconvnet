@@ -74,7 +74,7 @@ function runEnsembleLarpTests(dataset, posneg_balance, projection, gpus)
   % -------------------------------------------------------------------------
   %                                                            shared options
   % -------------------------------------------------------------------------
-  experiment_options.number_of_folds = 1;
+  experiment_options.number_of_folds = 3;
   experiment_options.experiment_parent_dir = opts.paths.experiment_dir;
   experiment_options.dataset = opts.general.dataset;
   experiment_options.network_arch = opts.general.network_arch;
@@ -107,13 +107,18 @@ function runEnsembleLarpTests(dataset, posneg_balance, projection, gpus)
   % % -------------------------------------------------------------------------
   experiment_options.training_method = 'minfuncsvm';
   % Exp. i
-  for c = logspace(-2,3,6)
-  % for i = -3:1:5
-  %   c = 2^i;
-    experiment_options.minfuncsvm_c_penalty = c;
-    % experiment_options.minfuncsvm_max_iters = 1000;
-    experiment_options.minfuncsvm_max_iters = 50;
-    testKFold(experiment_options);
+  % for max_iters = [100, 1000]
+  for max_iters = [1000]
+    % for c = logspace(-7,3,11)
+    for c = logspace(-5,-4,5)
+    % for c = logspace(-7,-1,7)
+    % for c = logspace(-2,3,6)
+    % for i = -3:1:5
+    %   c = 2^i;
+      experiment_options.minfuncsvm_c_penalty = c;
+      experiment_options.minfuncsvm_max_iters = max_iters;
+      testKFold(experiment_options);
+    end
   end
 
   % % -------------------------------------------------------------------------

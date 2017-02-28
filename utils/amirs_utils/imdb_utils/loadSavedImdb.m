@@ -32,11 +32,16 @@ function imdb = loadSavedImdb(input_opts)
   fold_number = getValueFromFieldOrDefault(input_opts, 'fold_number', 1); % currently only implemented for prostate data
 
   if ~isTwoClassImdb(dataset) && ~isSubsampledMultiClassImdb(dataset)
-    afprintf(sprintf('[INFO] Loading all-class imdb (dataset: %s, network_arch: %s)\n', dataset, network_arch));
-    imdb = load(fullfile(getDevPath(), 'data', 'imdb', sprintf('%s-%s', dataset, network_arch), 'imdb.mat'));
-    % % TODO: revert back to support ^... also, tmp = load(...); imdb = tmp.imdb shit should be fixed / consistent
-    % tmp = load('subsampled_imdb.mat');
-    % imdb = tmp.imdb;
+    if ~strcmp(projection, 'no-projection')
+      tmp = loadSavedProjectedImdb(dataset, posneg_balance, projection);
+      imdb = tmp.imdb;
+    else
+      afprintf(sprintf('[INFO] Loading all-class imdb (dataset: %s, network_arch: %s)\n', dataset, network_arch));
+      imdb = load(fullfile(getDevPath(), 'data', 'imdb', sprintf('%s-%s', dataset, network_arch), 'imdb.mat'));
+      % % TODO: revert back to support ^... also, tmp = load(...); imdb = tmp.imdb shit should be fixed / consistent
+      % tmp = load('subsampled_imdb.mat');
+      % imdb = tmp.imdb;
+    end
   elseif isSubsampledMultiClassImdb(dataset)
     path_to_imdbs = fullfile(getDevPath(), 'data', 'multi_class_imdbs_subsampled');
     if ~strcmp(projection, 'no-projection')

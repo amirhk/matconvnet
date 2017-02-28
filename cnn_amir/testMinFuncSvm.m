@@ -52,7 +52,7 @@ function [trained_model, performance_summary] = testMinFuncSvm(input_opts)
     'experiment_parent_dir', ...
     fullfile(vl_rootnn, 'experiment_results'));
   opts.paths.experiment_dir = fullfile(opts.paths.experiment_parent_dir, sprintf( ...
-    'libsvm-%s-%s-libsvm-options-c-%d', ...
+    'minfuncsvm-%s-%s-options-c-%d-max-iters-%d', ...
     opts.paths.time_string, ...
     opts.general.dataset, ...
     opts.train.minfuncsvm_c_penalty, ...
@@ -94,11 +94,14 @@ function [trained_model, performance_summary] = testMinFuncSvm(input_opts)
   labels_test = double(labels_test);
   labels_test = labels_test';
 
+  % tic;
+  tic
   theta = train_svm( ...
     vectorized_data_train, ...
     labels_train, ...
     opts.train.minfuncsvm_c_penalty, ...
     opts.train.minfuncsvm_max_iters);
+  training_duration = toc;
 
   if isTwoClassImdb(opts.general.dataset)
     fhGetAccSensSpec = @getAccSensSpec;
@@ -109,43 +112,39 @@ function [trained_model, performance_summary] = testMinFuncSvm(input_opts)
   % -------------------------------------------------------------------------
   %                                                   get performance summary
   % -------------------------------------------------------------------------
-  if opts.general.return_performance_summary
-    afprintf(sprintf('[INFO] Getting model performance on `train` set...\n'));
-    [top_train_predictions, ~] = getPredictionsFromModelOnImdb(theta, 'minfuncsvm', imdb, 1);
-    afprintf(sprintf('[INFO] Model performance on `train` set\n'));
-    [ ...
-      train_accuracy, ...
-      train_sensitivity, ...
-      train_specificity, ...
-    ] = fhGetAccSensSpec(labels_train, top_train_predictions, true);
-    afprintf(sprintf('[INFO] Getting model performance on `test` set...\n'));
-    [top_test_predictions, ~] = getPredictionsFromModelOnImdb(theta, 'minfuncsvm', imdb, 3);
-    afprintf(sprintf('[INFO] Model performance on `test` set\n'));
-    [ ...
-      test_accuracy, ...
-      test_sensitivity, ...
-      test_specificity, ...
-    ] = fhGetAccSensSpec(labels_test, top_test_predictions, true);
-    printConsoleOutputSeparator();
-  else
-    train_accuracy = -1;
-    train_sensitivity = -1;
-    train_specificity = -1;
-    test_accuracy = -1;
-    test_sensitivity = -1;
-    test_specificity = -1;
-  end
+  model_object = theta;
+  model_string = 'minfuncsvm';
+  dataset = opts.general.dataset;
+
+  % evaluate
+  tic;
+  [ ...
+    train_accuracy, ...
+    train_sensitivity, ...
+    train_specificity, ...
+  ] = getPerformanceSummary(model_object, model_string, dataset, imdb, labels_train, 'train', true);
+  train_duration = toc;
+  tic;
+  [ ...
+    test_accuracy, ...
+    test_sensitivity, ...
+    test_specificity, ...
+  ] = getPerformanceSummary(model_object, model_string, dataset, imdb, labels_test, 'test', true);
+  test_duration = toc;
 
   % -------------------------------------------------------------------------
   %                                                             assign output
   % -------------------------------------------------------------------------
   trained_model = theta;
-  performance_summary.train.accuracy = train_accuracy;
-  performance_summary.train.sensitivity = train_sensitivity;
-  performance_summary.train.specificity = train_specificity;
-  performance_summary.test.accuracy = test_accuracy;
-  performance_summary.test.sensitivity = test_sensitivity;
-  performance_summary.test.specificity = test_specificity;
+  performance_summary.training.duration = training_duration;
+  performance_summary.testing.train.accuracy = train_accuracy;
+  performance_summary.testing.train.sensitivity = train_sensitivity;
+  performance_summary.testing.train.specificity = train_specificity;
+  performance_summary.testing.train.duration = train_duration;
+  performance_summary.testing.test.accuracy = test_accuracy;
+  performance_summary.testing.test.sensitivity = test_sensitivity;
+  performance_summary.testing.test.specificity = test_specificity;
+  performance_summary.testing.test.duration = test_duration;
   % TODO: add more fields here... time it took to run experiment, as well as optional field to pass back anything to testKFold which saves stuff!!!!!!
 
   % -------------------------------------------------------------------------

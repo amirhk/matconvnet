@@ -84,7 +84,9 @@ function [trained_model, performance_summary] = testMlp(input_opts)
   % -------------------------------------------------------------------------
 
   net = patternnet([64,10]);
+  tic;
   net = train(net, vectorized_data_train, labels_train, 'useGPU', 'no');
+  training_duration = toc;
   % if ispc
   %   net = train(net, vectorized_data_train, labels_train, 'useGPU', 'yes');
   % else
@@ -94,52 +96,40 @@ function [trained_model, performance_summary] = testMlp(input_opts)
   % -------------------------------------------------------------------------
   %                                                   get performance summary
   % -------------------------------------------------------------------------
-  if opts.general.return_performance_summary
-    afprintf(sprintf('[INFO] Getting model performance on `train` set...\n'));
-    [top_train_predictions, ~] = getPredictionsFromModelOnImdb(net, 'mlp', imdb, 1);
-    afprintf(sprintf('[INFO] Getting model performance on `test` set...\n'));
-    [top_test_predictions, ~] = getPredictionsFromModelOnImdb(net, 'mlp', imdb, 3);
-    if isTwoClassImdb(opts.general.dataset)
-      afprintf(sprintf('[INFO] Model performance on `train` set\n'));
-      [ ...
-        train_accuracy, ...
-        train_sensitivity, ...
-        train_specificity, ...
-      ] = getAccSensSpec(labels_train, top_train_predictions, true);
-      afprintf(sprintf('[INFO] Model performance on `test` set\n'));
-      [ ...
-        test_accuracy, ...
-        test_sensitivity, ...
-        test_specificity, ...
-      ] = getAccSensSpec(labels_test, top_test_predictions, true);
-      printConsoleOutputSeparator();
-    else
-      [train_accuracy, ~, ~] = getAccSensSpecMultiClass(labels_train, top_train_predictions, true);
-      train_sensitivity = -1;
-      train_specificity = -1;
-      [test_accuracy, ~, ~] = getAccSensSpecMultiClass(labels_test, top_test_predictions, true);
-      test_sensitivity = -1;
-      test_specificity = -1;
-    end
-  else
-    train_accuracy = -1;
-    train_sensitivity = -1;
-    train_specificity = -1;
-    test_accuracy = -1;
-    test_sensitivity = -1;
-    test_specificity = -1;
-  end
+
+  model_object = net;
+  model_string = 'mlp';
+  dataset = opts.general.dataset;
+
+  % evaluate
+  tic;
+  [ ...
+    train_accuracy, ...
+    train_sensitivity, ...
+    train_specificity, ...
+  ] = getPerformanceSummary(model_object, model_string, dataset, imdb, labels_train, 'train', true);
+  train_duration = toc;
+  tic;
+  [ ...
+    test_accuracy, ...
+    test_sensitivity, ...
+    test_specificity, ...
+  ] = getPerformanceSummary(model_object, model_string, dataset, imdb, labels_test, 'test', true);
+  test_duration = toc;
 
   % -------------------------------------------------------------------------
   %                                                             assign output
   % -------------------------------------------------------------------------
   trained_model = svm_struct;
-  performance_summary.train.accuracy = train_accuracy;
-  performance_summary.train.sensitivity = train_sensitivity;
-  performance_summary.train.specificity = train_specificity;
-  performance_summary.test.accuracy = test_accuracy;
-  performance_summary.test.sensitivity = test_sensitivity;
-  performance_summary.test.specificity = test_specificity;
+  performance_summary.training.duration = training_duration;
+  performance_summary.testing.train.accuracy = train_accuracy;
+  performance_summary.testing.train.sensitivity = train_sensitivity;
+  performance_summary.testing.train.specificity = train_specificity;
+  performance_summary.testing.train.duration = train_duration;
+  performance_summary.testing.test.accuracy = test_accuracy;
+  performance_summary.testing.test.sensitivity = test_sensitivity;
+  performance_summary.testing.test.specificity = test_specificity;
+  performance_summary.testing.test.duration = test_duration;
 
   % -------------------------------------------------------------------------
   %                                                               save output

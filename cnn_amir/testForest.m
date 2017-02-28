@@ -85,6 +85,7 @@ function [trained_model, performance_summary] = testForest(input_opts)
   % -------------------------------------------------------------------------
   printConsoleOutputSeparator();
   tree_template = templateTree('MinLeafSize',5);
+  tic;
   boosted_forest = fitensemble( ...
     vectorized_data_train, ...
     labels_train, ...
@@ -93,6 +94,7 @@ function [trained_model, performance_summary] = testForest(input_opts)
     tree_template, ...
     'LearnRate', 0.1, ...
     'nprint', 25);
+  training_duration = toc;
 
   % -------------------------------------------------------------------------
   %                                                   get performance summary
@@ -103,43 +105,40 @@ function [trained_model, performance_summary] = testForest(input_opts)
   % acc = (1 - l_loss(end)) * 100;
   % spec = confusion_matrix(1,1);
   % sens = confusion_matrix(2,2);
-  if opts.general.return_performance_summary
-    afprintf(sprintf('[INFO] Getting model performance on `train` set...\n'));
-    [top_train_predictions, ~] = getPredictionsFromModelOnImdb(boosted_forest, 'forest', imdb, 1);
-    afprintf(sprintf('[INFO] Model performance on `train` set\n'));
-    [ ...
-      train_accuracy, ...
-      train_sensitivity, ...
-      train_specificity, ...
-    ] = getAccSensSpec(labels_train, top_train_predictions, true);
-    afprintf(sprintf('[INFO] Getting model performance on `test` set...\n'));
-    [top_test_predictions, ~] = getPredictionsFromModelOnImdb(boosted_forest, 'forest', imdb, 3);
-    afprintf(sprintf('[INFO] Model performance on `test` set\n'));
-    [ ...
-      test_accuracy, ...
-      test_sensitivity, ...
-      test_specificity, ...
-    ] = getAccSensSpec(labels_test, top_test_predictions, true);
-    printConsoleOutputSeparator();
-  else
-    train_accuracy = -1;
-    train_sensitivity = -1;
-    train_specificity = -1;
-    test_accuracy = -1;
-    test_sensitivity = -1;
-    test_specificity = -1;
-  end
+
+  model_object = boosted_forest;
+  model_string = 'forest';
+  dataset = opts.general.dataset;
+
+  % evaluate
+  tic;
+  [ ...
+    train_accuracy, ...
+    train_sensitivity, ...
+    train_specificity, ...
+  ] = getPerformanceSummary(model_object, model_string, dataset, imdb, labels_train, 'train', true);
+  train_duration = toc;
+  tic;
+  [ ...
+    test_accuracy, ...
+    test_sensitivity, ...
+    test_specificity, ...
+  ] = getPerformanceSummary(model_object, model_string, dataset, imdb, labels_test, 'test', true);
+  test_duration = toc;
 
   % -------------------------------------------------------------------------
   %                                                             assign output
   % -------------------------------------------------------------------------
   trained_model = boosted_forest;
-  performance_summary.train.accuracy = train_accuracy;
-  performance_summary.train.sensitivity = train_sensitivity;
-  performance_summary.train.specificity = train_specificity;
-  performance_summary.test.accuracy = test_accuracy;
-  performance_summary.test.sensitivity = test_sensitivity;
-  performance_summary.test.specificity = test_specificity;
+  performance_summary.training.duration = training_duration;
+  performance_summary.testing.train.accuracy = train_accuracy;
+  performance_summary.testing.train.sensitivity = train_sensitivity;
+  performance_summary.testing.train.specificity = train_specificity;
+  performance_summary.testing.train.duration = train_duration;
+  performance_summary.testing.test.accuracy = test_accuracy;
+  performance_summary.testing.test.sensitivity = test_sensitivity;
+  performance_summary.testing.test.specificity = test_specificity;
+  performance_summary.testing.test.duration = test_duration;
 
   % -------------------------------------------------------------------------
   %                                                               save output

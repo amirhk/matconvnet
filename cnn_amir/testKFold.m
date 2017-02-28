@@ -274,29 +274,51 @@ function saveIncrementalKFoldResults(folds, results_file_path)
     % mergeStructs(k_fold_results.(sprintf('fold_%d', i)), performance_summary_for_fold);
   end
 
-  for set = {'train', 'test'}
-    set = char(set);
-    all_folds_accuracy = [];
-    all_folds_sensitivity = [];
-    all_folds_specificity = [];
-    for i = 1:number_of_folds
-      all_folds_accuracy(i) = k_fold_results.(sprintf('fold_%d', i)).(set).accuracy;
-      all_folds_sensitivity(i) = k_fold_results.(sprintf('fold_%d', i)).(set).sensitivity;
-      all_folds_specificity(i) = k_fold_results.(sprintf('fold_%d', i)).(set).specificity;
+  for stage = {'training', 'testing'}
+    stage = char(stage);
+    if strcmp(stage, 'training')
+      all_folds_duration = [];
+      for i = 1:number_of_folds
+        all_folds_duration(i) = k_fold_results.(sprintf('fold_%d', i)).(stage).duration;
+      end
+
+      % sanitize
+      all_folds_duration = all_folds_duration(~isnan(all_folds_duration));
+
+      % save avg and std
+      k_fold_results.k_fold.(stage).duration_avg = mean(all_folds_duration);
+      k_fold_results.k_fold.(stage).duration_std = std(all_folds_duration);
+    else % stage = 'testing'
+      for set = {'train', 'test'}
+      set = char(set);
+      all_folds_accuracy = [];
+      all_folds_sensitivity = [];
+      all_folds_specificity = [];
+      all_folds_duration = [];
+      for i = 1:number_of_folds
+        all_folds_accuracy(i) = k_fold_results.(sprintf('fold_%d', i)).(stage).(set).accuracy;
+        all_folds_sensitivity(i) = k_fold_results.(sprintf('fold_%d', i)).(stage).(set).sensitivity;
+        all_folds_specificity(i) = k_fold_results.(sprintf('fold_%d', i)).(stage).(set).specificity;
+        all_folds_duration(i) = k_fold_results.(sprintf('fold_%d', i)).(stage).(set).duration;
+      end
+
+      % sanitize
+      all_folds_accuracy = all_folds_accuracy(~isnan(all_folds_accuracy));
+      all_folds_sensitivity = all_folds_sensitivity(~isnan(all_folds_sensitivity));
+      all_folds_specificity = all_folds_specificity(~isnan(all_folds_specificity));
+      all_folds_duration = all_folds_duration(~isnan(all_folds_duration));
+
+      % save avg and std
+      k_fold_results.k_fold.(stage).(set).accuracy_avg = mean(all_folds_accuracy);
+      k_fold_results.k_fold.(stage).(set).sensitivity_avg = mean(all_folds_sensitivity);
+      k_fold_results.k_fold.(stage).(set).specificity_avg = mean(all_folds_specificity);
+      k_fold_results.k_fold.(stage).(set).duration_avg = mean(all_folds_duration);
+      k_fold_results.k_fold.(stage).(set).accuracy_std = std(all_folds_accuracy);
+      k_fold_results.k_fold.(stage).(set).sensitivity_std = std(all_folds_sensitivity);
+      k_fold_results.k_fold.(stage).(set).specificity_std = std(all_folds_specificity);
+      k_fold_results.k_fold.(stage).(set).duration_std = std(all_folds_duration);
     end
-
-    % sanitize
-    all_folds_accuracy = all_folds_accuracy(~isnan(all_folds_accuracy));
-    all_folds_sensitivity = all_folds_sensitivity(~isnan(all_folds_sensitivity));
-    all_folds_specificity = all_folds_specificity(~isnan(all_folds_specificity));
-
-    % save avg and std
-    k_fold_results.k_fold.(set).accuracy_avg = mean(all_folds_accuracy);
-    k_fold_results.k_fold.(set).sensitivity_avg = mean(all_folds_sensitivity);
-    k_fold_results.k_fold.(set).specificity_avg = mean(all_folds_specificity);
-    k_fold_results.k_fold.(set).accuracy_std = std(all_folds_accuracy);
-    k_fold_results.k_fold.(set).sensitivity_std = std(all_folds_sensitivity);
-    k_fold_results.k_fold.(set).specificity_std = std(all_folds_specificity);
+    end
   end
 
   % don't amend file, but overwrite...

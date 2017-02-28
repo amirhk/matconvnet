@@ -169,11 +169,13 @@ function [trained_model, performance_summary] = testCnn(input_opts)
   % -------------------------------------------------------------------------
   %                                                                     train
   % -------------------------------------------------------------------------
+  tic;
   [net, info] = cnnTrain(opts.net.net, opts.imdb.imdb, getBatch(), ...
     opts.train, ...
     'experiment_dir', opts.paths.experiment_dir, ...
     'debug_flag', opts.general.debug_flag, ...
     'val', find(opts.imdb.imdb.images.set == 3));
+  training_duration = toc;
 
   % -------------------------------------------------------------------------
   %                                             delete all but last net files
@@ -186,55 +188,42 @@ function [trained_model, performance_summary] = testCnn(input_opts)
   % -------------------------------------------------------------------------
   %                                                   get performance summary
   % -------------------------------------------------------------------------
-  if opts.general.return_performance_summary
-    if isTwoClassImdb(opts.general.dataset)
-      [top_train_predictions, ~] = getPredictionsFromModelOnImdb(net, 'cnn', imdb, 1);
-      afprintf(sprintf('[INFO] Getting model performance on `train` set...\n'));
-      labels_train = imdb.images.labels(imdb.images.set == 1);
-      afprintf(sprintf('[INFO] Model performance on `train` set\n'));
-      [ ...
-        train_accuracy, ...
-        train_sensitivity, ...
-        train_specificity, ...
-      ] = getAccSensSpec(labels_train, top_train_predictions, true);
-      [top_test_predictions, ~] = getPredictionsFromModelOnImdb(net, 'cnn', imdb, 3);
-      afprintf(sprintf('[INFO] Getting model performance on `test` set...\n'));
-      afprintf(sprintf('[INFO] Model performance on `test` set\n'));
-      labels_test = imdb.images.labels(imdb.images.set == 3);
-      [ ...
-        test_accuracy, ...
-        test_sensitivity, ...
-        test_specificity, ...
-      ] = getAccSensSpec(labels_test, top_test_predictions, true);
-      printConsoleOutputSeparator();
-    else
-      train_accuracy = 1 - info.train.error(1,end);
-      train_sensitivity = -1;
-      train_specificity = -1;
-      test_accuracy = 1 - info.val.error(1,end);
-      test_sensitivity = -1;
-      test_specificity = -1;
-    end
-  else
-    train_accuracy = -1;
-    train_sensitivity = -1;
-    train_specificity = -1;
-    test_accuracy = -1;
-    test_sensitivity = -1;
-    test_specificity = -1;
-  end
+  labels_train = imdb.images.labels(imdb.images.set == 1);
+  labels_test = imdb.images.labels(imdb.images.set == 3);
+  model_object = net;
+  model_string = 'cnn';
+  dataset = opts.general.dataset;
+
+  % evaluate
+  tic;
+  [ ...
+    train_accuracy, ...
+    train_sensitivity, ...
+    train_specificity, ...
+  ] = getPerformanceSummary(model_object, model_string, dataset, imdb, labels_train, 'train', true);
+  train_duration = toc;
+  tic;
+  [ ...
+    test_accuracy, ...
+    test_sensitivity, ...
+    test_specificity, ...
+  ] = getPerformanceSummary(model_object, model_string, dataset, imdb, labels_test, 'test', true);
+  test_duration = toc;
 
   % -------------------------------------------------------------------------
   %                                                             assign output
   % -------------------------------------------------------------------------
   trained_model = net;
   % performance_summary.info = info;
-  performance_summary.train.accuracy = train_accuracy;
-  performance_summary.train.sensitivity = train_sensitivity;
-  performance_summary.train.specificity = train_specificity;
-  performance_summary.test.accuracy = test_accuracy;
-  performance_summary.test.sensitivity = test_sensitivity;
-  performance_summary.test.specificity = test_specificity;
+  performance_summary.training.duration = training_duration;
+  performance_summary.testing.train.accuracy = train_accuracy;
+  performance_summary.testing.train.sensitivity = train_sensitivity;
+  performance_summary.testing.train.specificity = train_specificity;
+  performance_summary.testing.train.duration = train_duration;
+  performance_summary.testing.test.accuracy = test_accuracy;
+  performance_summary.testing.test.sensitivity = test_sensitivity;
+  performance_summary.testing.test.specificity = test_specificity;
+  performance_summary.testing.test.duration = test_duration;
 
   % -------------------------------------------------------------------------
   %                                                               save output
