@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function [trained_model, performance_summary] = testLibSvm(input_opts)
+function [trained_model, performance_summary] = testMinFuncSvm(input_opts)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -40,7 +40,8 @@ function [trained_model, performance_summary] = testLibSvm(input_opts)
   %                                                                opts.train
   % -------------------------------------------------------------------------
   opts.train.number_of_features = prod(size(imdb.images.data(:,:,:,1))); % 32 x 32 x 3 = 3072
-  opts.train.libsvm_options = getValueFromFieldOrDefault(input_opts, 'libsvm_options', '-t 0');
+  opts.train.minfuncsvm_c_penalty = getValueFromFieldOrDefault(input_opts, 'minfuncsvm_c_penalty', 1);
+  opts.train.minfuncsvm_max_iters = getValueFromFieldOrDefault(input_opts, 'minfuncsvm_max_iters', 1000);
 
   % -------------------------------------------------------------------------
   %                                                                opts.paths
@@ -51,10 +52,11 @@ function [trained_model, performance_summary] = testLibSvm(input_opts)
     'experiment_parent_dir', ...
     fullfile(vl_rootnn, 'experiment_results'));
   opts.paths.experiment_dir = fullfile(opts.paths.experiment_parent_dir, sprintf( ...
-    'libsvm-%s-%s-libsvm-options%s', ...
+    'libsvm-%s-%s-libsvm-options-c-%d', ...
     opts.paths.time_string, ...
     opts.general.dataset, ...
-    strrep(opts.train.libsvm_options,' ','_'))); % '-t 0 -c 10' --> '-t_0_-c_10'
+    opts.train.minfuncsvm_c_penalty, ...
+    opts.train.minfuncsvm_max_iters));
   if ~exist(opts.paths.experiment_dir)
     mkdir(opts.paths.experiment_dir);
   end
@@ -92,7 +94,11 @@ function [trained_model, performance_summary] = testLibSvm(input_opts)
   labels_test = double(labels_test);
   labels_test = labels_test';
 
-  libsvm_struct = svmtrain(labels_train, vectorized_data_train, opts.train.libsvm_options);
+  theta = train_svm( ...
+    vectorized_data_train, ...
+    labels_train, ...
+    opts.train.minfuncsvm_c_penalty, ...
+    opts.train.minfuncsvm_max_iters);
 
   if isTwoClassImdb(opts.general.dataset)
     fhGetAccSensSpec = @getAccSensSpec;
@@ -105,7 +111,7 @@ function [trained_model, performance_summary] = testLibSvm(input_opts)
   % -------------------------------------------------------------------------
   if opts.general.return_performance_summary
     afprintf(sprintf('[INFO] Getting model performance on `train` set...\n'));
-    [top_train_predictions, ~] = getPredictionsFromModelOnImdb(libsvm_struct, 'libsvm', imdb, 1);
+    [top_train_predictions, ~] = getPredictionsFromModelOnImdb(theta, 'minfuncsvm', imdb, 1);
     afprintf(sprintf('[INFO] Model performance on `train` set\n'));
     [ ...
       train_accuracy, ...
@@ -113,7 +119,7 @@ function [trained_model, performance_summary] = testLibSvm(input_opts)
       train_specificity, ...
     ] = fhGetAccSensSpec(labels_train, top_train_predictions, true);
     afprintf(sprintf('[INFO] Getting model performance on `test` set...\n'));
-    [top_test_predictions, ~] = getPredictionsFromModelOnImdb(libsvm_struct, 'libsvm', imdb, 3);
+    [top_test_predictions, ~] = getPredictionsFromModelOnImdb(theta, 'minfuncsvm', imdb, 3);
     afprintf(sprintf('[INFO] Model performance on `test` set\n'));
     [ ...
       test_accuracy, ...
@@ -133,7 +139,7 @@ function [trained_model, performance_summary] = testLibSvm(input_opts)
   % -------------------------------------------------------------------------
   %                                                             assign output
   % -------------------------------------------------------------------------
-  trained_model = libsvm_struct;
+  trained_model = theta;
   performance_summary.train.accuracy = train_accuracy;
   performance_summary.train.sensitivity = train_sensitivity;
   performance_summary.train.specificity = train_specificity;

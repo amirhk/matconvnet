@@ -103,6 +103,9 @@ function folds = testKFold(input_opts)
       % no additional options
     case 'libsvm'
       opts.single_training_method_options.libsvm_options = getValueFromFieldOrDefault(input_opts, 'libsvm_options', '-t 0');
+    case 'minfuncsvm'
+      opts.single_training_method_options.minfuncsvm_c_penalty = getValueFromFieldOrDefault(input_opts, 'minfuncsvm_c_penalty', 1);
+      opts.single_training_method_options.minfuncsvm_max_iters = getValueFromFieldOrDefault(input_opts, 'minfuncsvm_max_iters', 1000);
     case 'forest'
       opts.single_training_method_options.boosting_method = getValueFromFieldOrDefault(input_opts, 'boosting_method', 'RUSBoost');
     case 'single-mlp'
@@ -208,6 +211,8 @@ function folds = testKFold(input_opts)
       trainingMethodFunctionHandle = @testSvm;
     case 'libsvm'
       trainingMethodFunctionHandle = @testLibSvm;
+    case 'minfuncsvm'
+      trainingMethodFunctionHandle = @testMinFuncSvm;
     case 'forest'
       trainingMethodFunctionHandle = @testForest;
     case 'single-mlp'
