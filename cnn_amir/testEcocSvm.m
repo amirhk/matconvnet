@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function [trained_model, performance_summary] = testSvm(input_opts)
+function [trained_model, performance_summary] = testEcocSvm(input_opts)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -136,7 +136,7 @@ function [trained_model, performance_summary] = testSvm(input_opts)
   %                                                   get performance summary
   % -------------------------------------------------------------------------
   model_object = svm_struct;
-  model_string = 'svm';
+  model_string = 'ecocsvm';
   dataset = opts.general.dataset;
 
   % evaluate

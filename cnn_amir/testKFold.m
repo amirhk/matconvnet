@@ -99,7 +99,7 @@ function folds = testKFold(input_opts)
   opts.single_training_method_options.dataset = opts.general.dataset;
   opts.single_training_method_options.experiment_parent_dir = opts.paths.experiment_dir;
   switch opts.k_fold_options.training_method
-    case 'svm'
+    case 'ecocsvm'
       % no additional options
     case 'libsvm'
       opts.single_training_method_options.libsvm_options = getValueFromFieldOrDefault(input_opts, 'libsvm_options', '-t 0');
@@ -131,7 +131,7 @@ function folds = testKFold(input_opts)
     case 'committee-svm'
       % committee options
       opts.single_training_method_options.number_of_committee_members = getValueFromFieldOrDefault(input_opts, 'number_of_committee_members', 3);
-      opts.single_training_method_options.training_method = 'svm';
+      opts.single_training_method_options.training_method = 'ecocsvm';
       % svm options
       % no additional options
     case 'ensemble-cnn'
@@ -155,7 +155,7 @@ function folds = testKFold(input_opts)
       opts.single_training_method_options.iteration_count = getValueFromFieldOrDefault(input_opts, 'iteration_count', 5);
       opts.single_training_method_options.number_of_samples_per_model = getValueFromFieldOrDefault(input_opts, 'number_of_samples_per_model', 1000);
       opts.single_training_method_options.loss_calculation_method = getValueFromFieldOrDefault(input_opts, 'loss_calculation_method', 'default_in_literature');
-      opts.single_training_method_options.training_method = 'svm';
+      opts.single_training_method_options.training_method = 'ecocsvm';
       % svm options
       % no additional options
     case 'ensemble-multi-class-cnn'
@@ -207,8 +207,8 @@ function folds = testKFold(input_opts)
   %                                                      train for each fold!
   % -------------------------------------------------------------------------
   switch opts.k_fold_options.training_method
-    case 'svm'
-      trainingMethodFunctionHandle = @testSvm;
+    case 'ecocsvm'
+      trainingMethodFunctionHandle = @testEcocSvm;
     case 'libsvm'
       trainingMethodFunctionHandle = @testLibSvm;
     case 'minfuncsvm'

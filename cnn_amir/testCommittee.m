@@ -96,8 +96,8 @@ function [trained_model, performance_summary] = testCommittee(input_opts)
   for i = 1:opts.committee_options.number_of_committee_members
     afprintf(sprintf('[INFO] Training committee member #%d\n', i));
     switch opts.committee_options.training_method
-      case 'svm'
-        [model, ~] = testSvm(opts.single_model_options);
+      case 'ecocsvm'
+        [model, ~] = testEcocSvm(opts.single_model_options);
       case 'cnn'
         [model, ~] = testCnn(opts.single_model_options);
     end

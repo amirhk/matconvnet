@@ -216,7 +216,7 @@ function [trained_model, performance_summary] = testEnsemble(input_opts)
 
     switch opts.ensemble_options.training_method
       case 'svm'
-        [model, ~] = testSvm(opts.single_model_options);
+        [model, ~] = testEcocSvm(opts.single_model_options);
       case 'cnn'
         if opts.ensemble_options.uni_model_boosting && iteration > 1
           opts.single_model_options.net = model_per_iteration{iteration - 1};

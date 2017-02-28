@@ -87,7 +87,7 @@ function [trained_model, performance_summary] = testEnsemble(input_opts)
   opts.single_model_options.experiment_parent_dir = opts.paths.experiment_dir;
   opts.single_model_options.return_performance_summary = false;
   switch opts.ensemble_options.training_method
-    case 'svm'
+    case 'ecocsvm'
       % no additional options
     case 'cnn'
       opts.single_model_options.network_arch = getValueFromFieldOrDefault(input_opts, 'network_arch', 'lenet');
@@ -208,7 +208,7 @@ function [trained_model, performance_summary] = testEnsemble(input_opts)
 
     switch opts.ensemble_options.training_method
       case 'svm'
-        [model, ~] = testSvm(opts.single_model_options);
+        [model, ~] = testEcocSvm(opts.single_model_options);
       case 'cnn'
         if opts.ensemble_options.uni_model_boosting && iteration > 1
           opts.single_model_options.net = model_per_iteration{iteration - 1};

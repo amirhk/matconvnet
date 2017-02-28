@@ -84,7 +84,7 @@ function runEnsembleLarpTests(dataset, posneg_balance, projection, gpus)
 
 
   % % -------------------------------------------------------------------------
-  % %                                                                single svm
+  % %                                                            single ecocsvm
   % % -------------------------------------------------------------------------
   % experiment_options.training_method = 'svm';
   % % Exp. 1
@@ -103,7 +103,7 @@ function runEnsembleLarpTests(dataset, posneg_balance, projection, gpus)
   % end
 
   % % -------------------------------------------------------------------------
-  % %                                                             single libsvm
+  % %                                                         single minfuncsvm
   % % -------------------------------------------------------------------------
   experiment_options.training_method = 'minfuncsvm';
   % Exp. i
@@ -122,7 +122,7 @@ function runEnsembleLarpTests(dataset, posneg_balance, projection, gpus)
   end
 
   % % -------------------------------------------------------------------------
-  % %                                                              ensemble svm
+  % %                                                          ensemble ecocsvm
   % % -------------------------------------------------------------------------
   % experiment_options.training_method = 'ensemble-svm';
   % experiment_options.boosting_method = 'adaboost.m1';

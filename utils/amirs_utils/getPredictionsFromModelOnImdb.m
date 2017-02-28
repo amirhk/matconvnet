@@ -31,8 +31,8 @@ function [top_predictions, all_predictions] = getPredictionsFromModelOnImdb(mode
   fh_imdb_utils.getImdbInfo(imdb, 1);
   imdb = filterImdbForSet(imdb, set);
   switch training_method
-    case 'svm'
-      [top_predictions, all_predictions] = getPredictionsFromSvmStructOnImdb(model, imdb);
+    case 'ecocsvm'
+      [top_predictions, all_predictions] = getPredictionsFromEcocSvmStructOnImdb(model, imdb);
     case 'libsvm'
       [top_predictions, all_predictions] = getPredictionsFromLibSvmStructOnImdb(model, imdb);
     case 'minfuncsvm'
@@ -55,7 +55,7 @@ function [top_predictions, all_predictions] = getPredictionsFromModelOnImdb(mode
   top_predictions = reshape(top_predictions, 1, prod(size(top_predictions)));
 
 % -------------------------------------------------------------------------
-function [top_predictions, all_predictions] = getPredictionsFromSvmStructOnImdb(svm_struct, imdb)
+function [top_predictions, all_predictions] = getPredictionsFromEcocSvmStructOnImdb(svm_struct, imdb)
 % -------------------------------------------------------------------------
   vectorized_data = getVectorizedDataFromImdb(imdb);
   % top_predictions = svmclassify(svm_struct, vectorized_data);
