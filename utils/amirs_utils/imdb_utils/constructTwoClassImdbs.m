@@ -36,6 +36,11 @@ function constructTwoClassImdbs(dataset, network_arch, positive_class_number, ne
       opts.imdb.contrast_normalization = true;
       opts.imdb.whiten_data = true;
       all_class_imdb = constructCifarImdb(opts);
+    case 'cifar-no-white'
+      opts.imdb.imdb_portion = 1.0;
+      opts.imdb.contrast_normalization = true;
+      opts.imdb.whiten_data = false;
+      all_class_imdb = constructCifarImdb(opts);
     case 'stl-10'
       all_class_imdb = constructStl10Imdb(opts);
     case 'svhn'
@@ -82,12 +87,11 @@ function constructTwoClassImdbs(dataset, network_arch, positive_class_number, ne
   balance_count = 38; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
   balance_count = 100; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
   balance_count = 266; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
-  % balance_count = 500; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
   balance_count = 707; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
   balance_count = 1880; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
   balance_count = 5000; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
 
-
+  % balance_count = 500; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
 
 
 function createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number)

@@ -36,6 +36,11 @@ function constructMultiClassImdbs(dataset, network_arch)
       opts.imdb.contrast_normalization = true;
       opts.imdb.whiten_data = true;
       all_class_imdb = constructCifarImdb(opts);
+    case 'cifar-no-white'
+      opts.imdb.imdb_portion = 1.0;
+      opts.imdb.contrast_normalization = true;
+      opts.imdb.whiten_data = false;
+      all_class_imdb = constructCifarImdb(opts);
     case 'stl-10'
       all_class_imdb = constructStl10Imdb(opts);
     case 'svhn'
