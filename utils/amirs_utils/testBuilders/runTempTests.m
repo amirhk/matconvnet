@@ -56,14 +56,14 @@ function runTempTests()
 
 
   runLarpTests(opts.paths.experiment_dir, 'cifar-multi-class-subsampled', 'balanced-38',   'no-projection',                            opts.train.gpus);
-  % runLarpTests(opts.paths.experiment_dir, 'cifar-multi-class-subsampled', 'balanced-38',   'projected-through-larpV1P1+convV0P0+fcV1', opts.train.gpus);
-  % runLarpTests(opts.paths.experiment_dir, 'cifar-multi-class-subsampled', 'balanced-38',   'projected-through-larpV3P1+convV0P0+fcV1', opts.train.gpus);
-  % runLarpTests(opts.paths.experiment_dir, 'cifar-multi-class-subsampled', 'balanced-38',   'projected-through-larpV3P3+convV0P0+fcV1', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, 'cifar-multi-class-subsampled', 'balanced-38',   'projected-through-larpV1P1+convV0P0+fcV1', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, 'cifar-multi-class-subsampled', 'balanced-38',   'projected-through-larpV3P1+convV0P0+fcV1', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, 'cifar-multi-class-subsampled', 'balanced-38',   'projected-through-larpV3P3+convV0P0+fcV1', opts.train.gpus);
 
-  % runLarpTests(opts.paths.experiment_dir, 'cifar-multi-class-subsampled', 'balanced-100',  'no-projection',                            opts.train.gpus);
-  % runLarpTests(opts.paths.experiment_dir, 'cifar-multi-class-subsampled', 'balanced-100',  'projected-through-larpV1P1+convV0P0+fcV1', opts.train.gpus);
-  % runLarpTests(opts.paths.experiment_dir, 'cifar-multi-class-subsampled', 'balanced-100',  'projected-through-larpV3P1+convV0P0+fcV1', opts.train.gpus);
-  % runLarpTests(opts.paths.experiment_dir, 'cifar-multi-class-subsampled', 'balanced-100',  'projected-through-larpV3P3+convV0P0+fcV1', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, 'cifar-multi-class-subsampled', 'balanced-100',  'no-projection',                            opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, 'cifar-multi-class-subsampled', 'balanced-100',  'projected-through-larpV1P1+convV0P0+fcV1', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, 'cifar-multi-class-subsampled', 'balanced-100',  'projected-through-larpV3P1+convV0P0+fcV1', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, 'cifar-multi-class-subsampled', 'balanced-100',  'projected-through-larpV3P3+convV0P0+fcV1', opts.train.gpus);
 
   % % runLarpTests(opts.paths.experiment_dir, 'cifar-multi-class-subsampled', 'balanced-266',  'no-projection',                            opts.train.gpus);
   % % runLarpTests(opts.paths.experiment_dir, 'cifar-multi-class-subsampled', 'balanced-266',  'projected-through-larpV1P1+convV0P0+fcV1', opts.train.gpus);
@@ -85,10 +85,10 @@ function runTempTests()
   % % runLarpTests(opts.paths.experiment_dir, 'cifar-multi-class-subsampled', 'balanced-5000', 'projected-through-larpV3P1+convV0P0+fcV1', opts.train.gpus);
   % % runLarpTests(opts.paths.experiment_dir, 'cifar-multi-class-subsampled', 'balanced-5000', 'projected-through-larpV3P3+convV0P0+fcV1', opts.train.gpus);
 
-  % runLarpTests(opts.paths.experiment_dir, 'cifar',                        'whatever',      'no-projection',                            opts.train.gpus);
-  % runLarpTests(opts.paths.experiment_dir, 'cifar',                        'whatever',      'projected-through-larpV1P1+convV0P0+fcV1', opts.train.gpus);
-  % runLarpTests(opts.paths.experiment_dir, 'cifar',                        'whatever',      'projected-through-larpV3P1+convV0P0+fcV1', opts.train.gpus);
-  % runLarpTests(opts.paths.experiment_dir, 'cifar',                        'whatever',      'projected-through-larpV3P3+convV0P0+fcV1', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, 'cifar',                        'whatever',      'no-projection',                            opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, 'cifar',                        'whatever',      'projected-through-larpV1P1+convV0P0+fcV1', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, 'cifar',                        'whatever',      'projected-through-larpV3P1+convV0P0+fcV1', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, 'cifar',                        'whatever',      'projected-through-larpV3P3+convV0P0+fcV1', opts.train.gpus);
 
 
 

@@ -103,9 +103,9 @@ function runLarpTests(experiment_parent_dir, dataset, posneg_balance, projection
   experiment_options.training_method = 'minfuncsvm';
   % Exp. i
   % for max_iters = [100, 1000]
-  for max_iters = [1000]
-    % for c = logspace(-7,3,11)
-    for c = logspace(-5,-4,5)
+  for max_iters = [2500]
+    for c = logspace(-7,3,11)
+    % for c = logspace(-5,-4,5)
     % for c = logspace(-7,-1,7)
     % for c = logspace(-2,3,6)
     % for i = -3:1:5
