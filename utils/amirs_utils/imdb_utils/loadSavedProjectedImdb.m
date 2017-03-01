@@ -24,7 +24,7 @@ function tmp = loadSavedProjectedImdb(dataset, posneg_balance, projection)
 % CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
-  path_to_imdbs = fullfile(getDevPath(), 'data', 'projected_imdbs');
+  path_to_imdbs = fullfile(getDevPath(), 'data', 'multi_class_projected_imdbs');
   through_arch_string = projection(strfind(projection, 'through'):end); % e.g., 'projected-through-larpV1P1+convV0P0+fcV1' returns 11, then start at that index:end
   file_name = sprintf('saved-projected-%s-%s-%s.mat', dataset, posneg_balance, through_arch_string); % e.g., saved-projected-cifar-multi-class-subsampled-balanced-38-through-larpV1P1+convV0P0+fcV1
   tmp = load(fullfile(path_to_imdbs, file_name));
