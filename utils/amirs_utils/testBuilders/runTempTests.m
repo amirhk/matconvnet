@@ -29,7 +29,7 @@ function runTempTests()
   % -------------------------------------------------------------------------
   %                                                                opts.train
   % -------------------------------------------------------------------------
-  opts.train.gpus = 4;
+  opts.train.gpus = 5;
 
   % -------------------------------------------------------------------------
   %                                                                opts.paths
@@ -55,40 +55,40 @@ function runTempTests()
   saveStruct2File(opts, opts.paths.options_file_path, 0);
 
 
-  runLarpTests(opts.paths.experiment_dir, 'mnist-multi-class-subsampled', 'balanced-38',   'no-projection',                            opts.train.gpus);
-  runLarpTests(opts.paths.experiment_dir, 'mnist-multi-class-subsampled', 'balanced-38',   'projected-through-larpV1P1+convV0P0+fcV1', opts.train.gpus);
-  runLarpTests(opts.paths.experiment_dir, 'mnist-multi-class-subsampled', 'balanced-38',   'projected-through-larpV3P1+convV0P0+fcV1', opts.train.gpus);
-  runLarpTests(opts.paths.experiment_dir, 'mnist-multi-class-subsampled', 'balanced-38',   'projected-through-larpV3P3+convV0P0+fcV1', opts.train.gpus);
+  % runLarpTests(opts.paths.experiment_dir, 'coil-100-multi-class-subsampled', 'balanced-38',   'no-projection',                            opts.train.gpus);
+  % runLarpTests(opts.paths.experiment_dir, 'coil-100-multi-class-subsampled', 'balanced-38',   'projected-through-larpV1P1+convV0P0+fcV1', opts.train.gpus);
+  % runLarpTests(opts.paths.experiment_dir, 'coil-100-multi-class-subsampled', 'balanced-38',   'projected-through-larpV3P1+convV0P0+fcV1', opts.train.gpus);
+  % runLarpTests(opts.paths.experiment_dir, 'coil-100-multi-class-subsampled', 'balanced-38',   'projected-through-larpV3P3+convV0P0+fcV1', opts.train.gpus);
 
-  runLarpTests(opts.paths.experiment_dir, 'mnist-multi-class-subsampled', 'balanced-100',  'no-projection',                            opts.train.gpus);
-  runLarpTests(opts.paths.experiment_dir, 'mnist-multi-class-subsampled', 'balanced-100',  'projected-through-larpV1P1+convV0P0+fcV1', opts.train.gpus);
-  runLarpTests(opts.paths.experiment_dir, 'mnist-multi-class-subsampled', 'balanced-100',  'projected-through-larpV3P1+convV0P0+fcV1', opts.train.gpus);
-  runLarpTests(opts.paths.experiment_dir, 'mnist-multi-class-subsampled', 'balanced-100',  'projected-through-larpV3P3+convV0P0+fcV1', opts.train.gpus);
+  % runLarpTests(opts.paths.experiment_dir, 'coil-100-multi-class-subsampled', 'balanced-100',  'no-projection',                            opts.train.gpus);
+  % runLarpTests(opts.paths.experiment_dir, 'coil-100-multi-class-subsampled', 'balanced-100',  'projected-through-larpV1P1+convV0P0+fcV1', opts.train.gpus);
+  % runLarpTests(opts.paths.experiment_dir, 'coil-100-multi-class-subsampled', 'balanced-100',  'projected-through-larpV3P1+convV0P0+fcV1', opts.train.gpus);
+  % runLarpTests(opts.paths.experiment_dir, 'coil-100-multi-class-subsampled', 'balanced-100',  'projected-through-larpV3P3+convV0P0+fcV1', opts.train.gpus);
 
-  % % runLarpTests(opts.paths.experiment_dir, 'mnist-multi-class-subsampled', 'balanced-266',  'no-projection',                            opts.train.gpus);
-  % % runLarpTests(opts.paths.experiment_dir, 'mnist-multi-class-subsampled', 'balanced-266',  'projected-through-larpV1P1+convV0P0+fcV1', opts.train.gpus);
-  % % runLarpTests(opts.paths.experiment_dir, 'mnist-multi-class-subsampled', 'balanced-266',  'projected-through-larpV3P1+convV0P0+fcV1', opts.train.gpus);
-  % % runLarpTests(opts.paths.experiment_dir, 'mnist-multi-class-subsampled', 'balanced-266',  'projected-through-larpV3P3+convV0P0+fcV1', opts.train.gpus);
+  % % runLarpTests(opts.paths.experiment_dir, 'coil-100-multi-class-subsampled', 'balanced-266',  'no-projection',                            opts.train.gpus);
+  % % runLarpTests(opts.paths.experiment_dir, 'coil-100-multi-class-subsampled', 'balanced-266',  'projected-through-larpV1P1+convV0P0+fcV1', opts.train.gpus);
+  % % runLarpTests(opts.paths.experiment_dir, 'coil-100-multi-class-subsampled', 'balanced-266',  'projected-through-larpV3P1+convV0P0+fcV1', opts.train.gpus);
+  % % runLarpTests(opts.paths.experiment_dir, 'coil-100-multi-class-subsampled', 'balanced-266',  'projected-through-larpV3P3+convV0P0+fcV1', opts.train.gpus);
 
-  % % runLarpTests(opts.paths.experiment_dir, 'mnist-multi-class-subsampled', 'balanced-707',  'no-projection',                            opts.train.gpus);
-  % % runLarpTests(opts.paths.experiment_dir, 'mnist-multi-class-subsampled', 'balanced-707',  'projected-through-larpV1P1+convV0P0+fcV1', opts.train.gpus);
-  % % runLarpTests(opts.paths.experiment_dir, 'mnist-multi-class-subsampled', 'balanced-707',  'projected-through-larpV3P1+convV0P0+fcV1', opts.train.gpus);
-  % % runLarpTests(opts.paths.experiment_dir, 'mnist-multi-class-subsampled', 'balanced-707',  'projected-through-larpV3P3+convV0P0+fcV1', opts.train.gpus);
+  % % runLarpTests(opts.paths.experiment_dir, 'coil-100-multi-class-subsampled', 'balanced-707',  'no-projection',                            opts.train.gpus);
+  % % runLarpTests(opts.paths.experiment_dir, 'coil-100-multi-class-subsampled', 'balanced-707',  'projected-through-larpV1P1+convV0P0+fcV1', opts.train.gpus);
+  % % runLarpTests(opts.paths.experiment_dir, 'coil-100-multi-class-subsampled', 'balanced-707',  'projected-through-larpV3P1+convV0P0+fcV1', opts.train.gpus);
+  % % runLarpTests(opts.paths.experiment_dir, 'coil-100-multi-class-subsampled', 'balanced-707',  'projected-through-larpV3P3+convV0P0+fcV1', opts.train.gpus);
 
-  % % runLarpTests(opts.paths.experiment_dir, 'mnist-multi-class-subsampled', 'balanced-1880', 'no-projection',                            opts.train.gpus);
-  % % runLarpTests(opts.paths.experiment_dir, 'mnist-multi-class-subsampled', 'balanced-1880', 'projected-through-larpV1P1+convV0P0+fcV1', opts.train.gpus);
-  % % runLarpTests(opts.paths.experiment_dir, 'mnist-multi-class-subsampled', 'balanced-1880', 'projected-through-larpV3P1+convV0P0+fcV1', opts.train.gpus);
-  % % runLarpTests(opts.paths.experiment_dir, 'mnist-multi-class-subsampled', 'balanced-1880', 'projected-through-larpV3P3+convV0P0+fcV1', opts.train.gpus);
+  % % runLarpTests(opts.paths.experiment_dir, 'coil-100-multi-class-subsampled', 'balanced-1880', 'no-projection',                            opts.train.gpus);
+  % % runLarpTests(opts.paths.experiment_dir, 'coil-100-multi-class-subsampled', 'balanced-1880', 'projected-through-larpV1P1+convV0P0+fcV1', opts.train.gpus);
+  % % runLarpTests(opts.paths.experiment_dir, 'coil-100-multi-class-subsampled', 'balanced-1880', 'projected-through-larpV3P1+convV0P0+fcV1', opts.train.gpus);
+  % % runLarpTests(opts.paths.experiment_dir, 'coil-100-multi-class-subsampled', 'balanced-1880', 'projected-through-larpV3P3+convV0P0+fcV1', opts.train.gpus);
 
-  % % runLarpTests(opts.paths.experiment_dir, 'mnist-multi-class-subsampled', 'balanced-5000', 'no-projection',                            opts.train.gpus);
-  % % runLarpTests(opts.paths.experiment_dir, 'mnist-multi-class-subsampled', 'balanced-5000', 'projected-through-larpV1P1+convV0P0+fcV1', opts.train.gpus);
-  % % runLarpTests(opts.paths.experiment_dir, 'mnist-multi-class-subsampled', 'balanced-5000', 'projected-through-larpV3P1+convV0P0+fcV1', opts.train.gpus);
-  % % runLarpTests(opts.paths.experiment_dir, 'mnist-multi-class-subsampled', 'balanced-5000', 'projected-through-larpV3P3+convV0P0+fcV1', opts.train.gpus);
+  % % runLarpTests(opts.paths.experiment_dir, 'coil-100-multi-class-subsampled', 'balanced-5000', 'no-projection',                            opts.train.gpus);
+  % % runLarpTests(opts.paths.experiment_dir, 'coil-100-multi-class-subsampled', 'balanced-5000', 'projected-through-larpV1P1+convV0P0+fcV1', opts.train.gpus);
+  % % runLarpTests(opts.paths.experiment_dir, 'coil-100-multi-class-subsampled', 'balanced-5000', 'projected-through-larpV3P1+convV0P0+fcV1', opts.train.gpus);
+  % % runLarpTests(opts.paths.experiment_dir, 'coil-100-multi-class-subsampled', 'balanced-5000', 'projected-through-larpV3P3+convV0P0+fcV1', opts.train.gpus);
 
-  runLarpTests(opts.paths.experiment_dir, 'mnist',                        'whatever',      'no-projection',                            opts.train.gpus);
-  runLarpTests(opts.paths.experiment_dir, 'mnist',                        'whatever',      'projected-through-larpV1P1+convV0P0+fcV1', opts.train.gpus);
-  runLarpTests(opts.paths.experiment_dir, 'mnist',                        'whatever',      'projected-through-larpV3P1+convV0P0+fcV1', opts.train.gpus);
-  runLarpTests(opts.paths.experiment_dir, 'mnist',                        'whatever',      'projected-through-larpV3P3+convV0P0+fcV1', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, 'coil-100',                        'whatever',      'no-projection',                            opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, 'coil-100',                        'whatever',      'projected-through-larpV1P1+convV0P0+fcV1', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, 'coil-100',                        'whatever',      'projected-through-larpV3P1+convV0P0+fcV1', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, 'coil-100',                        'whatever',      'projected-through-larpV3P3+convV0P0+fcV1', opts.train.gpus);
 
 
 
