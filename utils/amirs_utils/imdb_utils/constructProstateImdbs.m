@@ -26,7 +26,7 @@ function constructProstateImdbs(input_opts)
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
 
-  posneg_balance                   = getValueFromFieldOrDefault(input_opts, 'posneg_balance', 'unbalanced');
+  posneg_balance                   = getValueFromFieldOrDefault(input_opts, 'posneg_balance', 'balanced-38');
   imdb_opts.dataset_version        = getValueFromFieldOrDefault(input_opts, 'dataset_version', 'v2-20-patients');
   switch imdb_opts.dataset_version
     case 'v2-20-patients'

@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function runEnsembleLarpTests(dataset, posneg_balance, projection, gpus)
+function runLarpTests(experiment_parent_dir, dataset, posneg_balance, projection, gpus)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -29,7 +29,6 @@ function runEnsembleLarpTests(dataset, posneg_balance, projection, gpus)
   %                                                              opts.general
   % -------------------------------------------------------------------------
   opts.general.dataset = dataset;
-  opts.general.network_arch = 'lenet';
 
   % -------------------------------------------------------------------------
   %                                                                 opts.imdb
@@ -46,12 +45,9 @@ function runEnsembleLarpTests(dataset, posneg_balance, projection, gpus)
   %                                                                opts.paths
   % -------------------------------------------------------------------------
   opts.paths.time_string = sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
-  opts.paths.experiment_parent_dir = getValueFromFieldOrDefault( ...
-    {}, ... % TODO: this should be input_opts
-    'experiment_parent_dir', ...
-    fullfile(vl_rootnn, 'experiment_results'));
+  opts.paths.experiment_parent_dir = experiment_parent_dir;
   opts.paths.experiment_dir = fullfile(opts.paths.experiment_parent_dir, sprintf( ...
-    'test-ensemble-larp-tests-%s-%s-%s-GPU-%d', ...
+    'test-larp-tests-%s-%s-%s-GPU-%d', ...
     opts.paths.time_string, ...
     opts.general.dataset, ...
     opts.imdb.posneg_balance, ...
@@ -77,7 +73,6 @@ function runEnsembleLarpTests(dataset, posneg_balance, projection, gpus)
   experiment_options.number_of_folds = 3;
   experiment_options.experiment_parent_dir = opts.paths.experiment_dir;
   experiment_options.dataset = opts.general.dataset;
-  experiment_options.network_arch = opts.general.network_arch;
   experiment_options.posneg_balance = opts.imdb.posneg_balance;
   experiment_options.projection = opts.imdb.projection;
   experiment_options.gpus = opts.train.gpus;

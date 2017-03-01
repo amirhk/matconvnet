@@ -69,12 +69,9 @@ function visualizeNetworkLayerOutputs(input_opts)
   opts_copy.imdb.imdb = '< too large to print imdb >';
   saveStruct2File(opts_copy, opts.paths.options_file_path, 0);
 
-
   % -------------------------------------------------------------------------
   %                                                                     beef!
   % -------------------------------------------------------------------------
-
-
   % get rid of extra crap
   fh_projection_utils = projectionUtils();
   net = fh_projection_utils.getNetworkObjectFromNetworkArchWithoutLearningRate( ...
