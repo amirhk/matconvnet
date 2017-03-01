@@ -88,34 +88,34 @@ function runLarpTests(experiment_parent_dir, dataset, posneg_balance, projection
   % -------------------------------------------------------------------------
   %                                                             single libsvm
   % -------------------------------------------------------------------------
-  % experiment_options.training_method = 'libsvm';
-  % % Exp. i
-  % % for c = logspace(-2,3,6)
-  % % for i = -3:1:5
-  % for c = logspace(-6,3,10)
-  %   % c = 2^i;
-  %   experiment_options.libsvm_options = sprintf('-q -t 0 -c %f', c);
-  %   testKFold(experiment_options);
-  % end
-
-  % % -------------------------------------------------------------------------
-  % %                                                         single minfuncsvm
-  % % -------------------------------------------------------------------------
-  experiment_options.training_method = 'minfuncsvm';
+  experiment_options.training_method = 'libsvm';
   % Exp. i
-  % for max_iters = [100, 1000]
-  for max_iters = [2500]
-    for c = logspace(-6,3,10)
-    % for c = logspace(-5,-4,5)
-    % for c = logspace(-7,-1,7)
-    % for c = logspace(-2,3,6)
-    % for i = -3:1:5
-    %   c = 2^i;
-      experiment_options.minfuncsvm_c_penalty = c;
-      experiment_options.minfuncsvm_max_iters = max_iters;
-      testKFold(experiment_options);
-    end
+  % for c = logspace(-2,3,6)
+  % for i = -3:1:5
+  for c = logspace(-6,3,10)
+    % c = 2^i;
+    experiment_options.libsvm_options = sprintf('-q -t 0 -c %f', c);
+    testKFold(experiment_options);
   end
+
+  % % % -------------------------------------------------------------------------
+  % % %                                                         single minfuncsvm
+  % % % -------------------------------------------------------------------------
+  % experiment_options.training_method = 'minfuncsvm';
+  % % Exp. i
+  % % for max_iters = [100, 1000]
+  % for max_iters = [2500]
+  %   for c = logspace(-6,3,10)
+  %   % for c = logspace(-5,-4,5)
+  %   % for c = logspace(-7,-1,7)
+  %   % for c = logspace(-2,3,6)
+  %   % for i = -3:1:5
+  %   %   c = 2^i;
+  %     experiment_options.minfuncsvm_c_penalty = c;
+  %     experiment_options.minfuncsvm_max_iters = max_iters;
+  %     testKFold(experiment_options);
+  %   end
+  % end
 
   % % -------------------------------------------------------------------------
   % %                                                          ensemble ecocsvm
