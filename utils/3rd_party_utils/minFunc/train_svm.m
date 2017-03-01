@@ -22,7 +22,6 @@ function [loss, g] = l2svmloss_one_vs_all(w, trainXC, trainY, number_of_classes,
   [M, N] = size(trainXC);
   number_of_classifiers = number_of_classes; % 10
   theta = reshape(w, N, number_of_classifiers);
-  keyboard
   Y = bsxfun(@(trainY,ypos) 2*(trainY==ypos)-1, trainY, 1:number_of_classes);
 
   margin = max(0, 1 - Y .* (trainXC*theta));
@@ -35,18 +34,18 @@ function [loss, g] = l2svmloss_one_vs_all(w, trainXC, trainY, number_of_classes,
   %sum(i ~= y) / length(y)
 
 
-% 1-vs-1 L2-svm loss function;  similar to LibLinear.
-function [loss, g] = l2svmloss_one_vs_one(w, trainXC, trainY, number_of_classes, c_penalty)
-  [M, N] = size(trainXC);
-  number_of_classifiers = number_of_classes * (number_of_classes - 1) / 2; % 45
-  theta = reshape(w, N, number_of_classifiers);
-  Y = bsxfun(@(trainY,ypos) 2*(trainY==ypos)-1, trainY, 1:number_of_classes);
+% % 1-vs-1 L2-svm loss function;  similar to LibLinear.
+% function [loss, g] = l2svmloss_one_vs_one(w, trainXC, trainY, number_of_classes, c_penalty)
+%   [M, N] = size(trainXC);
+%   number_of_classifiers = number_of_classes * (number_of_classes - 1) / 2; % 45
+%   theta = reshape(w, N, number_of_classifiers);
+%   Y = bsxfun(@(trainY,ypos) 2*(trainY==ypos)-1, trainY, 1:number_of_classes);
 
-  margin = max(0, 1 - Y .* (trainXC*theta));
-  loss = (0.5 * sum(theta.^2)) + c_penalty*mean(margin.^2);
-  loss = sum(loss);
-  g = theta - 2*c_penalty/M * (trainXC' * (margin .* Y));
-  g = g(:);
+%   margin = max(0, 1 - Y .* (trainXC*theta));
+%   loss = (0.5 * sum(theta.^2)) + c_penalty*mean(margin.^2);
+%   loss = sum(loss);
+%   g = theta - 2*c_penalty/M * (trainXC' * (margin .* Y));
+%   g = g(:);
 
-  %[v,i] = max(X*theta,[],2);
-  %sum(i ~= y) / length(y)
+%   %[v,i] = max(X*theta,[],2);
+%   %sum(i ~= y) / length(y)

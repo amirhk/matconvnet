@@ -70,7 +70,7 @@ function runLarpTests(experiment_parent_dir, dataset, posneg_balance, projection
   % -------------------------------------------------------------------------
   %                                                            shared options
   % -------------------------------------------------------------------------
-  experiment_options.number_of_folds = 3;
+  experiment_options.number_of_folds = 1;
   experiment_options.experiment_parent_dir = opts.paths.experiment_dir;
   experiment_options.dataset = opts.general.dataset;
   experiment_options.posneg_balance = opts.imdb.posneg_balance;
