@@ -85,7 +85,7 @@ function runTempTests()
   % % runLarpTests(opts.paths.experiment_dir, 'coil-100-multi-class-subsampled', 'balanced-5000', 'projected-through-larpV3P1+convV0P0+fcV1', opts.train.gpus);
   % % runLarpTests(opts.paths.experiment_dir, 'coil-100-multi-class-subsampled', 'balanced-5000', 'projected-through-larpV3P3+convV0P0+fcV1', opts.train.gpus);
 
-  runLarpTests(opts.paths.experiment_dir, 'coil-100',                        'whatever',      'no-projection',                            opts.train.gpus);
+  % runLarpTests(opts.paths.experiment_dir, 'coil-100',                        'whatever',      'no-projection',                            opts.train.gpus);
   runLarpTests(opts.paths.experiment_dir, 'coil-100',                        'whatever',      'projected-through-larpV1P1+convV0P0+fcV1', opts.train.gpus);
   runLarpTests(opts.paths.experiment_dir, 'coil-100',                        'whatever',      'projected-through-larpV3P1+convV0P0+fcV1', opts.train.gpus);
   runLarpTests(opts.paths.experiment_dir, 'coil-100',                        'whatever',      'projected-through-larpV3P3+convV0P0+fcV1', opts.train.gpus);
