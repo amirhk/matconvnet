@@ -1,29 +1,55 @@
 fh = projectionUtils
 
+fh.projectAndSaveImdbThroughNetworkArch('mnist-multi-class-subsampled', 'balanced-38', 'larpV1P0+convV0P0+fcV1', 2);
+% fh.projectAndSaveImdbThroughNetworkArch('mnist-multi-class-subsampled', 'balanced-38', 'larpV1P1+convV0P0+fcV1', 3);
+fh.projectAndSaveImdbThroughNetworkArch('mnist-multi-class-subsampled', 'balanced-38', 'larpV3P0+convV0P0+fcV1', 6);
+% fh.projectAndSaveImdbThroughNetworkArch('mnist-multi-class-subsampled', 'balanced-38', 'larpV3P1+convV0P0+fcV1', 7);
+% fh.projectAndSaveImdbThroughNetworkArch('mnist-multi-class-subsampled', 'balanced-38', 'larpV3P3+convV0P0+fcV1', 9);
+
+fh.projectAndSaveImdbThroughNetworkArch('mnist',                        'whatever',    'larpV1P0+convV0P0+fcV1', 2);
+% fh.projectAndSaveImdbThroughNetworkArch('mnist',                        'whatever',    'larpV1P1+convV0P0+fcV1', 3);
+fh.projectAndSaveImdbThroughNetworkArch('mnist',                        'whatever',    'larpV3P0+convV0P0+fcV1', 6);
+% fh.projectAndSaveImdbThroughNetworkArch('mnist',                        'whatever',    'larpV3P1+convV0P0+fcV1', 7);
+% fh.projectAndSaveImdbThroughNetworkArch('mnist',                        'whatever',    'larpV3P3+convV0P0+fcV1', 9);
+
+
+
+fh.projectAndSaveImdbThroughNetworkArch('cifar-multi-class-subsampled', 'balanced-38', 'larpV1P0+convV0P0+fcV1', 2);
+% fh.projectAndSaveImdbThroughNetworkArch('cifar-multi-class-subsampled', 'balanced-38', 'larpV1P1+convV0P0+fcV1', 3);
+fh.projectAndSaveImdbThroughNetworkArch('cifar-multi-class-subsampled', 'balanced-38', 'larpV3P0+convV0P0+fcV1', 6);
+% fh.projectAndSaveImdbThroughNetworkArch('cifar-multi-class-subsampled', 'balanced-38', 'larpV3P1+convV0P0+fcV1', 7);
+% fh.projectAndSaveImdbThroughNetworkArch('cifar-multi-class-subsampled', 'balanced-38', 'larpV3P3+convV0P0+fcV1', 9);
+
+fh.projectAndSaveImdbThroughNetworkArch('cifar',                        'whatever',    'larpV1P0+convV0P0+fcV1', 2);
+% fh.projectAndSaveImdbThroughNetworkArch('cifar',                        'whatever',    'larpV1P1+convV0P0+fcV1', 3);
+fh.projectAndSaveImdbThroughNetworkArch('cifar',                        'whatever',    'larpV3P0+convV0P0+fcV1', 6);
+% fh.projectAndSaveImdbThroughNetworkArch('cifar',                        'whatever',    'larpV3P1+convV0P0+fcV1', 7);
+% fh.projectAndSaveImdbThroughNetworkArch('cifar',                        'whatever',    'larpV3P3+convV0P0+fcV1', 9);
+
+
+
+fh.projectAndSaveImdbThroughNetworkArch('cifar-no-white-multi-class-subsampled', 'balanced-38', 'larpV1P0+convV0P0+fcV1', 2);
+% fh.projectAndSaveImdbThroughNetworkArch('cifar-no-white-multi-class-subsampled', 'balanced-38', 'larpV1P1+convV0P0+fcV1', 3);
+fh.projectAndSaveImdbThroughNetworkArch('cifar-no-white-multi-class-subsampled', 'balanced-38', 'larpV3P0+convV0P0+fcV1', 6);
+% fh.projectAndSaveImdbThroughNetworkArch('cifar-no-white-multi-class-subsampled', 'balanced-38', 'larpV3P1+convV0P0+fcV1', 7);
+% fh.projectAndSaveImdbThroughNetworkArch('cifar-no-white-multi-class-subsampled', 'balanced-38', 'larpV3P3+convV0P0+fcV1', 9);
+
+fh.projectAndSaveImdbThroughNetworkArch('cifar-no-white',                        'whatever',    'larpV1P0+convV0P0+fcV1', 2);
+% fh.projectAndSaveImdbThroughNetworkArch('cifar-no-white',                        'whatever',    'larpV1P1+convV0P0+fcV1', 3);
+fh.projectAndSaveImdbThroughNetworkArch('cifar-no-white',                        'whatever',    'larpV3P0+convV0P0+fcV1', 6);
+% fh.projectAndSaveImdbThroughNetworkArch('cifar-no-white',                        'whatever',    'larpV3P1+convV0P0+fcV1', 7);
+% fh.projectAndSaveImdbThroughNetworkArch('cifar-no-white',                        'whatever',    'larpV3P3+convV0P0+fcV1', 9);
+
+
+
+fh.projectAndSaveImdbThroughNetworkArch('coil-100-multi-class-subsampled', 'balanced-38', 'larpV1P0+convV0P0+fcV1', 2);
 % fh.projectAndSaveImdbThroughNetworkArch('coil-100-multi-class-subsampled', 'balanced-38', 'larpV1P1+convV0P0+fcV1', 3);
+fh.projectAndSaveImdbThroughNetworkArch('coil-100-multi-class-subsampled', 'balanced-38', 'larpV3P0+convV0P0+fcV1', 6);
 % fh.projectAndSaveImdbThroughNetworkArch('coil-100-multi-class-subsampled', 'balanced-38', 'larpV3P1+convV0P0+fcV1', 7);
 % fh.projectAndSaveImdbThroughNetworkArch('coil-100-multi-class-subsampled', 'balanced-38', 'larpV3P3+convV0P0+fcV1', 9);
 
-% fh.projectAndSaveImdbThroughNetworkArch('coil-100-multi-class-subsampled', 'balanced-100', 'larpV1P1+convV0P0+fcV1', 3);
-% fh.projectAndSaveImdbThroughNetworkArch('coil-100-multi-class-subsampled', 'balanced-100', 'larpV3P1+convV0P0+fcV1', 7);
-% fh.projectAndSaveImdbThroughNetworkArch('coil-100-multi-class-subsampled', 'balanced-100', 'larpV3P3+convV0P0+fcV1', 9);
-
-% fh.projectAndSaveImdbThroughNetworkArch('coil-100-multi-class-subsampled', 'balanced-266', 'larpV1P1+convV0P0+fcV1', 3);
-% fh.projectAndSaveImdbThroughNetworkArch('coil-100-multi-class-subsampled', 'balanced-266', 'larpV3P1+convV0P0+fcV1', 7);
-% fh.projectAndSaveImdbThroughNetworkArch('coil-100-multi-class-subsampled', 'balanced-266', 'larpV3P3+convV0P0+fcV1', 9);
-
-% fh.projectAndSaveImdbThroughNetworkArch('coil-100-multi-class-subsampled', 'balanced-707', 'larpV1P1+convV0P0+fcV1', 3);
-% fh.projectAndSaveImdbThroughNetworkArch('coil-100-multi-class-subsampled', 'balanced-707', 'larpV3P1+convV0P0+fcV1', 7);
-% fh.projectAndSaveImdbThroughNetworkArch('coil-100-multi-class-subsampled', 'balanced-707', 'larpV3P3+convV0P0+fcV1', 9);
-
-% fh.projectAndSaveImdbThroughNetworkArch('coil-100-multi-class-subsampled', 'balanced-1880', 'larpV1P1+convV0P0+fcV1', 3);
-% fh.projectAndSaveImdbThroughNetworkArch('coil-100-multi-class-subsampled', 'balanced-1880', 'larpV3P1+convV0P0+fcV1', 7);
-% fh.projectAndSaveImdbThroughNetworkArch('coil-100-multi-class-subsampled', 'balanced-1880', 'larpV3P3+convV0P0+fcV1', 9);
-
-% fh.projectAndSaveImdbThroughNetworkArch('coil-100-multi-class-subsampled', 'balanced-5000', 'larpV1P1+convV0P0+fcV1', 3);
-% fh.projectAndSaveImdbThroughNetworkArch('coil-100-multi-class-subsampled', 'balanced-5000', 'larpV3P1+convV0P0+fcV1', 7);
-% fh.projectAndSaveImdbThroughNetworkArch('coil-100-multi-class-subsampled', 'balanced-5000', 'larpV3P3+convV0P0+fcV1', 9);
-
-fh.projectAndSaveImdbThroughNetworkArch('coil-100', 'whatever', 'larpV1P1+convV0P0+fcV1', 3);
-fh.projectAndSaveImdbThroughNetworkArch('coil-100', 'whatever', 'larpV3P1+convV0P0+fcV1', 7);
-fh.projectAndSaveImdbThroughNetworkArch('coil-100', 'whatever', 'larpV3P3+convV0P0+fcV1', 9);
+fh.projectAndSaveImdbThroughNetworkArch('coil-100',                        'whatever',    'larpV1P0+convV0P0+fcV1', 2);
+% fh.projectAndSaveImdbThroughNetworkArch('coil-100',                        'whatever',    'larpV1P1+convV0P0+fcV1', 3);
+fh.projectAndSaveImdbThroughNetworkArch('coil-100',                        'whatever',    'larpV3P0+convV0P0+fcV1', 6);
+% fh.projectAndSaveImdbThroughNetworkArch('coil-100',                        'whatever',    'larpV3P1+convV0P0+fcV1', 7);
+% fh.projectAndSaveImdbThroughNetworkArch('coil-100',                        'whatever',    'larpV3P3+convV0P0+fcV1', 9);
