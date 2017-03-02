@@ -48,6 +48,15 @@ function network_opts = cnnInit(input_opts)
   network_opts.train.num_epochs = numel(network_opts.train.learning_rate);
 
   fh = networkInitializationUtils;
+  % architecture_type = opts.network_arch(1:4);
+  % switch architecture_type
+  %   case 'larp'
+  %     net = getLarpArchitecture(opts.network_arch);
+  %   case 'conv'
+  %     net = getConvArchitecture(opts.network_arch)
+  %   otherwise
+  %     throwException('[ERROR] architecture type can only be `larp` or `conv`.')
+  % end
   switch opts.network_arch
       % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
     % case 'lenet_bu'
@@ -86,8 +95,6 @@ function network_opts = cnnInit(input_opts)
 
 %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %%
 %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %%
-
-
     case 'larpV0P0+convV0P0+fcV1'
       % -----------------------------------------------------------------------
       %                                                      FC LENET WITH CONV
