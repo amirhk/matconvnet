@@ -48,15 +48,18 @@ function network_opts = cnnInit(input_opts)
   network_opts.train.num_epochs = numel(network_opts.train.learning_rate);
 
   fh = networkInitializationUtils;
-  % architecture_type = opts.network_arch(1:4);
-  % switch architecture_type
-  %   case 'larp'
-  %     net = getLarpArchitecture(opts.network_arch);
-  %   case 'conv'
-  %     net = getConvArchitecture(opts.network_arch)
-  %   otherwise
-  %     throwException('[ERROR] architecture type can only be `larp` or `conv`.')
-  % end
+  flag = true;
+  if flag
+    architecture_type = opts.network_arch(1:4);
+    switch architecture_type
+      case 'larp'
+        net = getLarpArchitecture(opts.dataset, opts.network_arch);
+      case 'conv'
+        net = getConvArchitecture(opts.dataset, opts.network_arch)
+      otherwise
+        throwException('[ERROR] architecture type can only be `larp` or `conv`.')
+    end
+  else
   switch opts.network_arch
       % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
     % case 'lenet_bu'
@@ -1416,6 +1419,7 @@ function network_opts = cnnInit(input_opts)
 
   %     % LOSS LAYER
   %     net.layers{end+1} = fh.softmaxlossLayer();
+  end
   end
 
   % -------------------------------------------------------------------------
