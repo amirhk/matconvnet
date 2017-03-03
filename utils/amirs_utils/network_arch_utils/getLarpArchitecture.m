@@ -33,7 +33,7 @@ function net = getLarpArchitecture(dataset, network_arch)
     switch network_arch(index_of_smooth_boolean + 1)
       case 'T'
         smoothed_kernels = true;
-        weight_init_type = 'compRandSmoothed'
+        weight_init_type = 'compRandSmoothed';
       case 'F'
         smoothed_kernels = false;
         weight_init_type = 'compRand';
