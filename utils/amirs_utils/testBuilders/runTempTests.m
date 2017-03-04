@@ -81,7 +81,7 @@ function runTempTests()
   % -------------------------------------------------------------------------s
 
 
-  dataset_name = sprintf('%s-multi-class-subsampled', opts.general.dataset);
+  dataset_name = sprintf('%s', opts.general.dataset);
   balance_name = 'whatever';
   % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'no-projection',                opts.train.gpus);
 
