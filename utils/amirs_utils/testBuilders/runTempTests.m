@@ -29,7 +29,7 @@ function runTempTests()
   % -------------------------------------------------------------------------
   %                                                              opts.general
   % -------------------------------------------------------------------------
-  opts.general.dataset = 'cifar'
+  opts.general.dataset = 'cifar';
 
   % -------------------------------------------------------------------------
   %                                                                opts.train
@@ -61,7 +61,7 @@ function runTempTests()
   saveStruct2File(opts, opts.paths.options_file_path, 0);
 
 
-  % dataset_name = sprintf('%s-multi-class-subsampled', opts.general.dateset);
+  % dataset_name = sprintf('%s-multi-class-subsampled', opts.general.dataset);
   % balance_name = 'balanced-38';
   % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'no-projection',                opts.train.gpus);
 
@@ -81,7 +81,7 @@ function runTempTests()
   % -------------------------------------------------------------------------s
 
 
-  dataset_name = sprintf('%s-multi-class-subsampled', opts.general.dateset);
+  dataset_name = sprintf('%s-multi-class-subsampled', opts.general.dataset);
   balance_name = 'whatever';
   % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'no-projection',                opts.train.gpus);
 
