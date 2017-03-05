@@ -57,7 +57,6 @@ function net = getConvArchitecture(dataset, network_arch)
       % LOSS LAYER
       net.layers{end+1} = fh.softmaxlossLayer();
 
-
     % ------------------------------------------------------------------------------------------------------------------------------------------------------------
     case 'convV0P0+fcV1RF16CH64'
       % FULLY CONNECTED

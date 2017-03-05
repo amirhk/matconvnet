@@ -117,6 +117,8 @@ function folds = testKFold(input_opts)
       opts.single_training_method_options.debug_flag = getValueFromFieldOrDefault(input_opts, 'debug_flag', false);
       opts.single_training_method_options.learning_rate = getValueFromFieldOrDefault(input_opts, 'learning_rate', 'default_keyword');
       opts.single_training_method_options.weight_init_sequence = getValueFromFieldOrDefault(input_opts, 'weight_init_sequence', {'compRand', 'compRand', 'compRand', 'compRand', 'compRand'});
+      opts.single_training_method_options.weight_decay = getValueFromFieldOrDefault(input_opts, 'weight_decay', 0.0001);
+      opts.single_training_method_options.batch_size = getValueFromFieldOrDefault(input_opts, 'batch_size', 100);
     case 'committee-cnn'
       % committee options
       opts.single_training_method_options.number_of_committee_members = getValueFromFieldOrDefault(input_opts, 'number_of_committee_members', 3);

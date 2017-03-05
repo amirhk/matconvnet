@@ -41,6 +41,8 @@ function net = getLarpArchitecture(dataset, network_arch)
         throwException('[ERROR] unrecognizable flag for smoothness of kernels.');
     end
     network_arch = network_arch(1:index_of_smooth_boolean-1);
+  else
+    throwException('[ERROR] no indication of smootherness in the larp architecture.');
   end
 
 

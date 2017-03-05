@@ -101,21 +101,21 @@ function runLarpTests(experiment_parent_dir, dataset, posneg_balance, projection
   % % -------------------------------------------------------------------------
   % %                                                         single minfuncsvm
   % % -------------------------------------------------------------------------
-  experiment_options.training_method = 'minfuncsvm';
-  % Exp. i
-  % for max_iters = [100, 1000]
-  for max_iters = [2500]
-    for c = logspace(-6,3,10)
-    % for c = logspace(-5,-4,5)
-    % for c = logspace(-7,-1,7)
-    % for c = logspace(-2,3,6)
-    % for i = -3:1:5
-    %   c = 2^i;
-      experiment_options.minfuncsvm_c_penalty = c;
-      experiment_options.minfuncsvm_max_iters = max_iters;
-      testKFold(experiment_options);
-    end
-  end
+  % experiment_options.training_method = 'minfuncsvm';
+  % % Exp. i
+  % % for max_iters = [100, 1000]
+  % for max_iters = [2500]
+  %   for c = logspace(-6,3,10)
+  %   % for c = logspace(-5,-4,5)
+  %   % for c = logspace(-7,-1,7)
+  %   % for c = logspace(-2,3,6)
+  %   % for i = -3:1:5
+  %   %   c = 2^i;
+  %     experiment_options.minfuncsvm_c_penalty = c;
+  %     experiment_options.minfuncsvm_max_iters = max_iters;
+  %     testKFold(experiment_options);
+  %   end
+  % end
 
   % % -------------------------------------------------------------------------
   % %                                                          ensemble ecocsvm
@@ -158,6 +158,43 @@ function runLarpTests(experiment_parent_dir, dataset, posneg_balance, projection
   % %                                                                single cnn
   % % -------------------------------------------------------------------------
   experiment_options.training_method = 'single-cnn';
+
+
+  if strcmp(projection, 'no-projection')
+    something = 'larpV0P0SF'; % or 'larpV0P0ST'
+  else
+    something = projection(19:end); %'projected-through-XXX'
+  end
+  conv_arch = getMatchingConvArchitectureForLarpArchitecture(something, 'v1');
+  experiment_options.network_arch = conv_arch;
+  experiment_options.backprop_depth = getFullBackPropDepthForConvArchitecture(conv_arch);
+
+  experiment_options.batch_size = 100;
+
+  % base_learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)];
+  base_learning_rate = [0.1 * ones(1,5)];
+  for learning_rate_divider = [1, 3, 10, 30]
+    experiment_options.learning_rate = base_learning_rate / learning_rate_divider;
+    for weight_decay = [0.01, 0.001, 0.0001]
+      experiment_options.weight_decay = weight_decay;
+      testKFold(experiment_options);
+    end
+  end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   % % -------------------------------------------------
   % experiment_options.network_arch = 'lenet';

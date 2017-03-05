@@ -55,7 +55,7 @@ function network_opts = cnnInit(input_opts)
       case 'larp'
         net = getLarpArchitecture(opts.dataset, opts.network_arch);
       case 'conv'
-        net = getConvArchitecture(opts.dataset, opts.network_arch)
+        net = getConvArchitecture(opts.dataset, opts.network_arch);
       otherwise
         throwException('[ERROR] architecture type can only be `larp` or `conv`.')
     end
