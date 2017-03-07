@@ -34,7 +34,7 @@ function runTempTests()
   % -------------------------------------------------------------------------
   %                                                                opts.train
   % -------------------------------------------------------------------------
-  opts.train.gpus = 4;
+  opts.train.gpus = 2;
 
 
   % -------------------------------------------------------------------------
@@ -61,9 +61,9 @@ function runTempTests()
   saveStruct2File(opts, opts.paths.options_file_path, 0);
 
 
-  dataset_name = sprintf('%s-multi-class-subsampled', opts.general.dataset);
-  balance_name = 'balanced-38';
-  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'no-projection',                opts.train.gpus);
+  % dataset_name = sprintf('%s-multi-class-subsampled', opts.general.dataset);
+  % balance_name = 'balanced-38';
+  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'no-projection',                opts.train.gpus);
 
   % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'projected-through-larpV1P0SF', opts.train.gpus);
   % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'projected-through-larpV1P1SF', opts.train.gpus);
@@ -81,21 +81,21 @@ function runTempTests()
   % -------------------------------------------------------------------------s
 
 
-  % dataset_name = sprintf('%s', opts.general.dataset);
-  % balance_name = 'whatever';
-  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'no-projection',                opts.train.gpus);
+  dataset_name = sprintf('%s', opts.general.dataset);
+  balance_name = 'whatever';
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'no-projection',                opts.train.gpus);
 
-  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'projected-through-larpV1P0SF', opts.train.gpus);
-  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'projected-through-larpV1P1SF', opts.train.gpus);
-  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'projected-through-larpV3P0SF', opts.train.gpus);
-  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'projected-through-larpV3P1SF', opts.train.gpus);
-  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'projected-through-larpV3P3SF', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'projected-through-larpV1P0SF', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'projected-through-larpV1P1SF', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'projected-through-larpV3P0SF', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'projected-through-larpV3P1SF', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'projected-through-larpV3P3SF', opts.train.gpus);
 
-  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'projected-through-larpV1P0ST', opts.train.gpus);
-  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'projected-through-larpV1P1ST', opts.train.gpus);
-  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'projected-through-larpV3P0ST', opts.train.gpus);
-  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'projected-through-larpV3P1ST', opts.train.gpus);
-  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'projected-through-larpV3P3ST', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'projected-through-larpV1P0ST', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'projected-through-larpV1P1ST', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'projected-through-larpV3P0ST', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'projected-through-larpV3P1ST', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'projected-through-larpV3P3ST', opts.train.gpus);
 
 
 
