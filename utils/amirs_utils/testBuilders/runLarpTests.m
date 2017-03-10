@@ -182,32 +182,34 @@ function runLarpTests(experiment_parent_dir, dataset, posneg_balance, projection
   % end
 
 
-  if strcmp(projection, 'no-projection')
-    something = 'larpV0P0SF'; % or 'larpV0P0ST'
-  else
-    something = projection(19:end); %'projected-through-XXX'
-  end
-  experiment_options.network_arch = strcat(something, '+convV0P0+fcV1');
-  % conv_arch = getMatchingConvArchitectureForLarpArchitecture(something, 'v1');
-  % experiment_options.network_arch = conv_arch;
-  % experiment_options.backprop_depth = getFullBackPropDepthForConvArchitecture(conv_arch);
-  % network_arch = projection;
+  % if strcmp(projection, 'no-projection')
+  %   something = 'larpV0P0SF'; % or 'larpV0P0ST'
+  % else
+  %   something = projection(19:end); %'projected-through-XXX'
+  % end
+  % experiment_options.network_arch = strcat(something, '+convV0P0+fcV1');
+  % % conv_arch = getMatchingConvArchitectureForLarpArchitecture(something, 'v1');
+  % % experiment_options.network_arch = conv_arch;
+  % % experiment_options.backprop_depth = getFullBackPropDepthForConvArchitecture(conv_arch);
+  % % network_arch = projection;
 
+  % experiment_options.batch_size = 100;
+
+  % base_learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,50)];
+  % % base_learning_rate = [0.1 * ones(1,5)];
+  % for learning_rate_divider = [3] % [1, 3, 10, 30]
+  %   experiment_options.learning_rate = base_learning_rate / learning_rate_divider;
+  %   for weight_decay = [0.0001] % [0.01, 0.001, 0.0001]
+  %     experiment_options.weight_decay = weight_decay;
+  %     testKFold(experiment_options);
+  %   end
+  % end
+
+
+
+  experiment_options.learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,50)] / 10;
+  experiment_options.weight_decay = 0.0001;
   experiment_options.batch_size = 100;
-
-  base_learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,50)];
-  % base_learning_rate = [0.1 * ones(1,5)];
-  for learning_rate_divider = [3] % [1, 3, 10, 30]
-    experiment_options.learning_rate = base_learning_rate / learning_rate_divider;
-    for weight_decay = [0.0001] % [0.01, 0.001, 0.0001]
-      experiment_options.weight_decay = weight_decay;
-      testKFold(experiment_options);
-    end
-  end
-
-
-
-
 
 
 
@@ -240,99 +242,99 @@ function runLarpTests(experiment_parent_dir, dataset, posneg_balance, projection
   % testKFold(experiment_options);
 
 
+  % -------------------------------------------------
+  SF experiment_options.network_arch = 'larpV0P0+convV0P0+fcV1';
+  % -------------------------------------------------
+  % Exp. 1
+  experiment_options.backprop_depth = 4;
+  testKFold(experiment_options);
+
+  % -------------------------------------------------
+  experiment_options.network_arch = 'larpV1P0SF+convV0P0+fcV1';
+  % -------------------------------------------------
+  % Exp. 1
+  experiment_options.backprop_depth = 4;
+  testKFold(experiment_options);
+
+  % -------------------------------------------------
+  experiment_options.network_arch = 'larpV1P1SF+convV0P0+fcV1';
+  % -------------------------------------------------
+  % Exp. 1
+  experiment_options.backprop_depth = 4;
+  testKFold(experiment_options);
+
+  % -------------------------------------------------
+  experiment_options.network_arch = 'larpV3P0SF+convV0P0+fcV1';
+  % -------------------------------------------------
+  % Exp. 1
+  experiment_options.backprop_depth = 4;
+  testKFold(experiment_options);
+
+  % -------------------------------------------------
+  experiment_options.network_arch = 'larpV3P1SF+convV0P0+fcV1';
+  % -------------------------------------------------
+  % Exp. 1
+  experiment_options.backprop_depth = 4;
+  testKFold(experiment_options);
+
+  % -------------------------------------------------
+  experiment_options.network_arch = 'larpV3P3SF+convV0P0+fcV1';
+  % -------------------------------------------------
+  % Exp. 1
+  experiment_options.backprop_depth = 4;
+  testKFold(experiment_options);
+
   % % -------------------------------------------------
-  % experiment_options.network_arch = 'larpV0P0+convV0P0+fcV1';
+  % experiment_options.network_arch = 'larpV5hP0SF+convV0P0+fcV1';
   % % -------------------------------------------------
   % % Exp. 1
   % experiment_options.backprop_depth = 4;
   % testKFold(experiment_options);
 
   % % -------------------------------------------------
-  % experiment_options.network_arch = 'larpV1P0+convV0P0+fcV1';
+  % experiment_options.network_arch = 'larpV5hP1SF+convV0P0+fcV1';
   % % -------------------------------------------------
   % % Exp. 1
   % experiment_options.backprop_depth = 4;
   % testKFold(experiment_options);
 
   % % -------------------------------------------------
-  % experiment_options.network_arch = 'larpV1P1+convV0P0+fcV1';
+  % experiment_options.network_arch = 'larpV5hP3SF+convV0P0+fcV1';
   % % -------------------------------------------------
   % % Exp. 1
   % experiment_options.backprop_depth = 4;
   % testKFold(experiment_options);
 
   % % -------------------------------------------------
-  % experiment_options.network_arch = 'larpV3P0+convV0P0+fcV1';
+  % experiment_options.network_arch = 'larpV5hP5SF+convV0P0+fcV1';
   % % -------------------------------------------------
   % % Exp. 1
   % experiment_options.backprop_depth = 4;
   % testKFold(experiment_options);
 
   % % -------------------------------------------------
-  % experiment_options.network_arch = 'larpV3P1+convV0P0+fcV1';
+  % experiment_options.network_arch = 'larpV5aP0SF+convV0P0+fcV1';
   % % -------------------------------------------------
   % % Exp. 1
   % experiment_options.backprop_depth = 4;
   % testKFold(experiment_options);
 
   % % -------------------------------------------------
-  % experiment_options.network_arch = 'larpV3P3+convV0P0+fcV1';
+  % experiment_options.network_arch = 'larpV5aP1SF+convV0P0+fcV1';
   % % -------------------------------------------------
   % % Exp. 1
   % experiment_options.backprop_depth = 4;
   % testKFold(experiment_options);
 
   % % -------------------------------------------------
-  % experiment_options.network_arch = 'larpV5hP0+convV0P0+fcV1';
+  % experiment_options.network_arch = 'larpV5aP3SF+convV0P0+fcV1';
   % % -------------------------------------------------
   % % Exp. 1
   % experiment_options.backprop_depth = 4;
   % testKFold(experiment_options);
 
   % % -------------------------------------------------
-  % experiment_options.network_arch = 'larpV5hP1+convV0P0+fcV1';
-  % % -------------------------------------------------
-  % % Exp. 1
-  % experiment_options.backprop_depth = 4;
-  % testKFold(experiment_options);
-
-  % % -------------------------------------------------
-  % experiment_options.network_arch = 'larpV5hP3+convV0P0+fcV1';
-  % % -------------------------------------------------
-  % % Exp. 1
-  % experiment_options.backprop_depth = 4;
-  % testKFold(experiment_options);
-
-  % % -------------------------------------------------
-  % experiment_options.network_arch = 'larpV5hP5+convV0P0+fcV1';
-  % % -------------------------------------------------
-  % % Exp. 1
-  % experiment_options.backprop_depth = 4;
-  % testKFold(experiment_options);
-
-  % % -------------------------------------------------
-  % experiment_options.network_arch = 'larpV5aP0+convV0P0+fcV1';
-  % % -------------------------------------------------
-  % % Exp. 1
-  % experiment_options.backprop_depth = 4;
-  % testKFold(experiment_options);
-
-  % % -------------------------------------------------
-  % experiment_options.network_arch = 'larpV5aP1+convV0P0+fcV1';
-  % % -------------------------------------------------
-  % % Exp. 1
-  % experiment_options.backprop_depth = 4;
-  % testKFold(experiment_options);
-
-  % % -------------------------------------------------
-  % experiment_options.network_arch = 'larpV5aP3+convV0P0+fcV1';
-  % % -------------------------------------------------
-  % % Exp. 1
-  % experiment_options.backprop_depth = 4;
-  % testKFold(experiment_options);
-
-  % % -------------------------------------------------
-  % experiment_options.network_arch = 'larpV5aP5+convV0P0+fcV1';
+  % experiment_options.network_arch = 'larpV5aP5SF+convV0P0+fcV1';
   % % -------------------------------------------------
   % % Exp. 1
   % experiment_options.backprop_depth = 4;
@@ -344,42 +346,42 @@ function runLarpTests(experiment_parent_dir, dataset, posneg_balance, projection
 
 
   % % -------------------------------------------------
-  % experiment_options.network_arch = 'larpV0P0+convV0P0+fcV2';
+  % experiment_options.network_arch = 'larpV0P0SF+convV0P0+fcV2';
   % % -------------------------------------------------
   % % Exp. 1
   % experiment_options.backprop_depth = 6;
   % testKFold(experiment_options);
 
   % % -------------------------------------------------
-  % experiment_options.network_arch = 'larpV1P0+convV0P0+fcV2';
+  % experiment_options.network_arch = 'larpV1P0SF+convV0P0+fcV2';
   % % -------------------------------------------------
   % % Exp. 1
   % experiment_options.backprop_depth = 6;
   % testKFold(experiment_options);
 
   % % -------------------------------------------------
-  % experiment_options.network_arch = 'larpV1P1+convV0P0+fcV2';
+  % experiment_options.network_arch = 'larpV1P1SF+convV0P0+fcV2';
   % % -------------------------------------------------
   % % Exp. 1
   % experiment_options.backprop_depth = 6;
   % testKFold(experiment_options);
 
   % % -------------------------------------------------
-  % experiment_options.network_arch = 'larpV3P0+convV0P0+fcV2';
+  % experiment_options.network_arch = 'larpV3P0SF+convV0P0+fcV2';
   % % -------------------------------------------------
   % % Exp. 1
   % experiment_options.backprop_depth = 6;
   % testKFold(experiment_options);
 
   % % -------------------------------------------------
-  % experiment_options.network_arch = 'larpV3P1+convV0P0+fcV2';
+  % experiment_options.network_arch = 'larpV3P1SF+convV0P0+fcV2';
   % % -------------------------------------------------
   % % Exp. 1
   % experiment_options.backprop_depth = 6;
   % testKFold(experiment_options);
 
   % % -------------------------------------------------
-  % experiment_options.network_arch = 'larpV3P3+convV0P0+fcV2';
+  % experiment_options.network_arch = 'larpV3P3SF+convV0P0+fcV2';
   % % -------------------------------------------------
   % % Exp. 1
   % experiment_options.backprop_depth = 6;
@@ -391,35 +393,35 @@ function runLarpTests(experiment_parent_dir, dataset, posneg_balance, projection
 
 
   % % -------------------------------------------------
-  % experiment_options.network_arch = 'larpV0sP0+convV1sP1+fcV1';
+  % experiment_options.network_arch = 'larpV0sP0SF+convV1sP1+fcV1';
   % % -------------------------------------------------
   % % Exp. 1
   % experiment_options.backprop_depth = 7;
   % testKFold(experiment_options);
 
   % % -------------------------------------------------
-  % experiment_options.network_arch = 'larpV1sP0+convV1sP1+fcV1';
+  % experiment_options.network_arch = 'larpV1sP0SF+convV1sP1+fcV1';
   % % -------------------------------------------------
   % % Exp. 1
   % experiment_options.backprop_depth = 7;
   % testKFold(experiment_options);
 
   % % -------------------------------------------------
-  % experiment_options.network_arch = 'larpV2sP0+convV1sP1+fcV1';
+  % experiment_options.network_arch = 'larpV2sP0SF+convV1sP1+fcV1';
   % % -------------------------------------------------
   % % Exp. 1
   % experiment_options.backprop_depth = 7;
   % testKFold(experiment_options);
 
   % % -------------------------------------------------
-  % experiment_options.network_arch = 'larpV1lP0+convV1lP1+fcV1';
+  % experiment_options.network_arch = 'larpV1lP0SF+convV1lP1+fcV1';
   % % -------------------------------------------------
   % % Exp. 1
   % experiment_options.backprop_depth = 7;
   % testKFold(experiment_options);
 
   % % -------------------------------------------------
-  % experiment_options.network_arch = 'larpV2lP0+convV1lP1+fcV1';
+  % experiment_options.network_arch = 'larpV2lP0SF+convV1lP1+fcV1';
   % % -------------------------------------------------
   % % Exp. 1
   % experiment_options.backprop_depth = 7;
@@ -431,21 +433,21 @@ function runLarpTests(experiment_parent_dir, dataset, posneg_balance, projection
 
 
   % % -------------------------------------------------
-  % experiment_options.network_arch = 'larpV0P0+convV3lP1+fcV1';
+  % experiment_options.network_arch = 'larpV0P0SF+convV3lP1+fcV1';
   % % -------------------------------------------------
   % % Exp. 1
   % experiment_options.backprop_depth = 11;
   % testKFold(experiment_options);
 
   % % -------------------------------------------------
-  % experiment_options.network_arch = 'larpV1lP0+convV3lP1+fcV1';
+  % experiment_options.network_arch = 'larpV1lP0SF+convV3lP1+fcV1';
   % % -------------------------------------------------
   % % Exp. 1
   % experiment_options.backprop_depth = 11;
   % testKFold(experiment_options);
 
   % % -------------------------------------------------
-  % experiment_options.network_arch = 'larpV2lP0+convV3lP1+fcV1';
+  % experiment_options.network_arch = 'larpV2lP0SF+convV3lP1+fcV1';
   % % -------------------------------------------------
   % % Exp. 1
   % experiment_options.backprop_depth = 11;
@@ -456,42 +458,42 @@ function runLarpTests(experiment_parent_dir, dataset, posneg_balance, projection
 %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %%
 
   % % -------------------------------------------------
-  % experiment_options.network_arch = 'larpV0P0+convV3P3+fcV1';
+  % experiment_options.network_arch = 'larpV0P0SF+convV3P3+fcV1';
   % % -------------------------------------------------
   % % Exp. 1
   % experiment_options.backprop_depth = 13;
   % testKFold(experiment_options);
 
   % % -------------------------------------------------
-  % experiment_options.network_arch = 'larpV1lP0+convV3P3+fcV1';
+  % experiment_options.network_arch = 'larpV1lP0SF+convV3P3+fcV1';
   % % -------------------------------------------------
   % % Exp. 1
   % experiment_options.backprop_depth = 13;
   % testKFold(experiment_options);
 
   % % -------------------------------------------------
-  % experiment_options.network_arch = 'larpV1lP1+convV3P3+fcV1';
+  % experiment_options.network_arch = 'larpV1lP1SF+convV3P3+fcV1';
   % % -------------------------------------------------
   % % Exp. 1
   % experiment_options.backprop_depth = 13;
   % testKFold(experiment_options);
 
   % % -------------------------------------------------
-  % experiment_options.network_arch = 'larpV2lP0+convV3P3+fcV1';
+  % experiment_options.network_arch = 'larpV2lP0SF+convV3P3+fcV1';
   % % -------------------------------------------------
   % % Exp. 1
   % experiment_options.backprop_depth = 13;
   % testKFold(experiment_options);
 
   % % -------------------------------------------------
-  % experiment_options.network_arch = 'larpV2lP1+convV3P3+fcV1';
+  % experiment_options.network_arch = 'larpV2lP1SF+convV3P3+fcV1';
   % % -------------------------------------------------
   % % Exp. 1
   % experiment_options.backprop_depth = 13;
   % testKFold(experiment_options);
 
   % % -------------------------------------------------
-  % experiment_options.network_arch = 'larpV2lP2+convV3P3+fcV1';
+  % experiment_options.network_arch = 'larpV2lP2SF+convV3P3+fcV1';
   % % -------------------------------------------------
   % % Exp. 1
   % experiment_options.backprop_depth = 13;
