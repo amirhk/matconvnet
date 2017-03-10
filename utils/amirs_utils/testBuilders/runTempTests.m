@@ -105,7 +105,7 @@ function runTempTests()
 
   dataset_name = sprintf('%s', opts.general.dataset);
   balance_name = 'whatever';
-  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'no-projection', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'no-projection', opts.train.gpus);
 
   runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'projected-through-larpV1P0SF', opts.train.gpus);
   runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'projected-through-larpV1P1SF', opts.train.gpus);
