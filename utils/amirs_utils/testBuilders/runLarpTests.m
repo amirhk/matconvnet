@@ -182,7 +182,7 @@ function runLarpTests(experiment_parent_dir, dataset, posneg_balance, projection
   % end
 
 
-  % if strcmp(projection, 'no-projection')
+% if strcmp(projection, 'no-projection')
   %   something = 'larpV0P0SF'; % or 'larpV0P0ST'
   % else
   %   something = projection(19:end); %'projected-through-XXX'
@@ -221,6 +221,8 @@ function runLarpTests(experiment_parent_dir, dataset, posneg_balance, projection
 
 
 
+
+
   % % -------------------------------------------------
   % experiment_options.network_arch = 'lenet';
   % % -------------------------------------------------
@@ -243,7 +245,7 @@ function runLarpTests(experiment_parent_dir, dataset, posneg_balance, projection
 
 
   % -------------------------------------------------
-  SF experiment_options.network_arch = 'larpV0P0+convV0P0+fcV1';
+  experiment_options.network_arch = 'larpV0P0SF+convV0P0+fcV1';
   % -------------------------------------------------
   % Exp. 1
   experiment_options.backprop_depth = 4;
