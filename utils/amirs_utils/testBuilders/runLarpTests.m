@@ -165,7 +165,7 @@ function runLarpTests(experiment_parent_dir, dataset, posneg_balance, projection
   else
     something = projection(19:end); %'projected-through-XXX'
   end
-  conv_arch = getMatchingConvArchitectureForLarpArchitecture(something, 'v1');
+  conv_arch = getMatchingConvArchitectureForLarpArchitecture(something, 'v2');
   experiment_options.network_arch = conv_arch;
   experiment_options.backprop_depth = getFullBackPropDepthForConvArchitecture(conv_arch);
 
