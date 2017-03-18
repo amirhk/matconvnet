@@ -62,14 +62,16 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
           layerWeights{1} = smoothed_random_kernels;
           layerWeights{2} = zeros(1, n, 'single');
         case 'bernoulli'
-          random_kernels = init_multiplier * randn(k, k, m, n, 'single');
-          bernoulli_random_kernels = (random_kernels < 0.5);
+          random_kernels = randn(k, k, m, n, 'single');
+          tmp = init_multiplier * (random_kernels < 0); % < 0 because randn()
+          bernoulli_random_kernels = tmp .* sign(randn(size(tmp)));
           layerWeights{1} = bernoulli_random_kernels;
           layerWeights{2} = zeros(1, n, 'single');
         case 'bernoulliSmoothed'
           gaussian_filter = fspecial('gaussian', [3,3], 1);
-          random_kernels = init_multiplier * randn(k, k, m, n, 'single');
-          bernoulli_random_kernels = (random_kernels < 0.5);
+          random_kernels = randn(k, k, m, n, 'single');
+          tmp = init_multiplier * (random_kernels < 0); % < 0 because randn()
+          bernoulli_random_kernels = tmp .* sign(randn(size(tmp)));
           smoothed_bernoulli_random_kernels = imfilter(bernoulli_random_kernels, gaussian_filter);
           layerWeights{1} = smoothed_bernoulli_random_kernels;
           layerWeights{2} = zeros(1, n, 'single');
