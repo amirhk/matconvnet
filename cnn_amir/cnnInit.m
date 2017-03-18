@@ -88,7 +88,7 @@ function network_opts = cnnInit(input_opts)
       % LOSS LAYER
       net.layers{end+1} = fh.softmaxlossLayer();
       % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-    case 'larpV3P1SF+convV0P0+fcV1'
+    case 'larpV3P1+convV0P0+fcV1'
       layer_number = 1;
       net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 3, 32, 1/100, 2, char(opts.weight_init_sequence{1}), 'gen');
       % net.layers{end+1} = fh.poolingLayerLeNetMax(layer_number);
