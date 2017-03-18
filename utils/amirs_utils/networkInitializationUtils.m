@@ -85,7 +85,7 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
           end
           layerWeights{1} = kernels * init_multiplier * 10; % x 10 because I feel it shouldn't get toooo small
           layerWeights{2} = zeros(1, n, 'single');
-        case 'gaussian2DNormalized'
+        case 'gaussian2DMeanSubtracted'
           kernels = zeros(k, k, m, n, 'single');
           for j = 1:n
             for i = 1:m
@@ -96,7 +96,7 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
           end
           layerWeights{1} = kernels * init_multiplier * 10; % x 10 because I feel it shouldn't get toooo small
           layerWeights{2} = zeros(1, n, 'single');
-        case 'gaussian2DNormalizedRandomlyFlipped'
+        case 'gaussian2DMeanSubtractedRandomlyFlipped'
           kernels = zeros(k, k, m, n, 'single');
           for j = 1:n
             for i = 1:m
