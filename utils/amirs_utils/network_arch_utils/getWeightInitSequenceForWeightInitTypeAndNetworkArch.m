@@ -30,7 +30,11 @@ function weight_init_sequence = getWeightInitSequenceForWeightInitTypeAndNetwork
 
   switch network_arch
     case 'larpV0P0+convV0P0+fcV1'
-      weight_init_sequence = {'compRand'};
+      weight_init_sequence = {'compRand', 'compRand'};
     case 'larpV3P1+convV0P0+fcV1'
-      weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, 'compRand'};
+      weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, 'compRand', 'compRand'};
+    case 'larpV0P0+convV0P0+fcV1'
+      weight_init_sequence = {'compRand', 'compRand', 'compRand'};
+    case 'larpV3P1+convV0P0+fcV1'
+      weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, 'compRand', 'compRand', 'compRand'};
   end

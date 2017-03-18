@@ -29,12 +29,12 @@ function runTempTests()
   % -------------------------------------------------------------------------
   %                                                              opts.general
   % -------------------------------------------------------------------------
-  opts.general.dataset = 'cifar';
+  opts.general.dataset = 'mnist';
 
   % -------------------------------------------------------------------------
   %                                                                opts.train
   % -------------------------------------------------------------------------
-  opts.train.gpus = 3;
+  opts.train.gpus = 2;
 
 
   % -------------------------------------------------------------------------
@@ -122,11 +122,14 @@ function runTempTests()
 
   dataset_name = sprintf('%s', opts.general.dataset);
   balance_name = 'whatever';
-  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV0P0+convV0P0+fcV1', 'NA', opts.train.gpus);
-  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV3P1+convV0P0+fcV1', 'compRand', opts.train.gpus);
-  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV3P1+convV0P0+fcV1', 'compRandSmoothed', opts.train.gpus);
-  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV3P1+convV0P0+fcV1', 'bernoulli', opts.train.gpus);
-  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV3P1+convV0P0+fcV1', 'bernoulliSmoothed', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV0P0+convV0P0+fcV2', 'NA', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV3P1+convV0P0+fcV2', 'compRand', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV3P1+convV0P0+fcV2', 'compRandSmoothed', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV3P1+convV0P0+fcV2', 'bernoulli', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV3P1+convV0P0+fcV2', 'bernoulliSmoothed', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV3P1+convV0P0+fcV2', 'gaussian2D', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV3P1+convV0P0+fcV2', 'gaussian2DNormalized', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV3P1+convV0P0+fcV2', 'gaussian2DNormalizedRandomlyFlipped', opts.train.gpus);
 
 
 

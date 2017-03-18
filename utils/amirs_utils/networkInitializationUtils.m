@@ -75,6 +75,40 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
           smoothed_bernoulli_random_kernels = imfilter(bernoulli_random_kernels, gaussian_filter);
           layerWeights{1} = smoothed_bernoulli_random_kernels;
           layerWeights{2} = zeros(1, n, 'single');
+        case 'gaussian2D'
+          kernels = zeros(k, k, m, n, 'single');
+          for j = 1:n
+            for i = 1:m
+              tmp = gen2DGaussianFilter(k,1);
+              kernels(:,:,i,j) = tmp;
+            end
+          end
+          layerWeights{1} = kernels * init_multiplier * 10; % x 10 because I feel it shouldn't get toooo small
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'gaussian2DNormalized'
+          kernels = zeros(k, k, m, n, 'single');
+          for j = 1:n
+            for i = 1:m
+              tmp = gen2DGaussianFilter(k,1);
+              tmp = tmp - mean(tmp(:));
+              kernels(:,:,i,j) = tmp;
+            end
+          end
+          layerWeights{1} = kernels * init_multiplier * 10; % x 10 because I feel it shouldn't get toooo small
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'gaussian2DNormalizedRandomlyFlipped'
+          kernels = zeros(k, k, m, n, 'single');
+          for j = 1:n
+            for i = 1:m
+              tmp = gen2DGaussianFilter(k,1);
+              tmp = tmp - mean(tmp(:));
+              kernels(:,:,i,j) = tmp;
+            end
+            % WARNING... you want to possibly flip each kernel with all its channels (not each channel of each kernel, and not all kernels together)
+            kernels(:,:,:,j) = kernels(:,:,:,j) * sign(randn());
+          end
+          layerWeights{1} = kernels * init_multiplier * 10; % x 10 because I feel it shouldn't get toooo small
+          layerWeights{2} = zeros(1, n, 'single');
 
 
         % case 'quasiRandSobol'
