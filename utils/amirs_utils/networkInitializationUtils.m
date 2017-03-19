@@ -79,7 +79,8 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
           kernels = zeros(k, k, m, n, 'single');
           for j = 1:n
             for i = 1:m
-              tmp = gen2DGaussianFilter(k,1);
+              random_std = rand() * 3;
+              tmp = gen2DGaussianFilter(k, random_std);
               kernels(:,:,i,j) = tmp;
             end
           end
@@ -89,7 +90,8 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
           kernels = zeros(k, k, m, n, 'single');
           for j = 1:n
             for i = 1:m
-              tmp = gen2DGaussianFilter(k,1);
+              random_std = rand() * 3;
+              tmp = gen2DGaussianFilter(k, random_std);
               tmp = tmp - mean(tmp(:));
               kernels(:,:,i,j) = tmp;
             end
@@ -100,7 +102,8 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
           kernels = zeros(k, k, m, n, 'single');
           for j = 1:n
             for i = 1:m
-              tmp = gen2DGaussianFilter(k,1);
+              random_std = rand() * 3;
+              tmp = gen2DGaussianFilter(k, random_std);
               tmp = tmp - mean(tmp(:));
               kernels(:,:,i,j) = tmp;
             end

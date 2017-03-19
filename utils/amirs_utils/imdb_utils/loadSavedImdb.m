@@ -83,12 +83,6 @@ function imdb = loadSavedImdb(input_opts)
         case 'cifar-multi-class-subsampled'
           % currently fold number is not implemented.
           switch posneg_balance
-            case 'balanced-1'
-              tmp = load(fullfile(path_to_imdbs, 'cifar', 'saved-multi-class-cifar-train-balance-1-test-balance-default.mat'));
-            case 'balanced-5'
-              tmp = load(fullfile(path_to_imdbs, 'cifar', 'saved-multi-class-cifar-train-balance-5-test-balance-20'));
-            case 'balanced-50'
-              tmp = load(fullfile(path_to_imdbs, 'cifar', 'saved-multi-class-cifar-train-balance-50-test-balance-50'));
             case 'balanced-38'
               tmp = load(fullfile(path_to_imdbs, 'cifar', 'saved-multi-class-cifar-train-balance-38-test-balance-default.mat'));
             case 'balanced-100'
