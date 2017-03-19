@@ -38,6 +38,12 @@ function runLarpTests(experiment_parent_dir, dataset, posneg_balance, network_ar
   % opts.imdb.projection = projection;
 
   % -------------------------------------------------------------------------
+  %                                                         opts.network_arch
+  % -------------------------------------------------------------------------
+  opts.net.network_arch = network_arch;
+  opts.net.larp_weight_init_type = larp_weight_init_type;
+
+  % -------------------------------------------------------------------------
   %                                                                opts.train
   % -------------------------------------------------------------------------
   opts.train.gpus = gpus;
