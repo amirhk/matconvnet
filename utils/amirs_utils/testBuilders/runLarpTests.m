@@ -1,6 +1,6 @@
 % -------------------------------------------------------------------------
 % function runLarpTests(experiment_parent_dir, dataset, posneg_balance, projection_arch, projection_kernel_generation, gpus)
-function runLarpTests(experiment_parent_dir, dataset, posneg_balance, network_arch, larp_weight_init_type, gpus)
+function runLarpTests(experiment_parent_dir, dataset, posneg_balance, network_arch, larp_weight_init_type, projection, gpus)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -35,7 +35,7 @@ function runLarpTests(experiment_parent_dir, dataset, posneg_balance, network_ar
   %                                                                 opts.imdb
   % -------------------------------------------------------------------------
   opts.imdb.posneg_balance = posneg_balance;
-  % opts.imdb.projection = projection;
+  opts.imdb.projection = projection;
 
   % -------------------------------------------------------------------------
   %                                                         opts.network_arch
@@ -81,7 +81,7 @@ function runLarpTests(experiment_parent_dir, dataset, posneg_balance, network_ar
   experiment_options.experiment_parent_dir = opts.paths.experiment_dir;
   experiment_options.dataset = opts.general.dataset;
   experiment_options.posneg_balance = opts.imdb.posneg_balance;
-  % experiment_options.projection = opts.imdb.projection;
+  experiment_options.projection = opts.imdb.projection;
   experiment_options.gpus = opts.train.gpus;
 
 
