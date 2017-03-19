@@ -29,7 +29,7 @@ function runTempTests()
   % -------------------------------------------------------------------------
   %                                                              opts.general
   % -------------------------------------------------------------------------
-  opts.general.dataset = 'mnist';
+  opts.general.dataset = 'cifar';
 
   % -------------------------------------------------------------------------
   %                                                                opts.train
@@ -148,8 +148,8 @@ function runTempTests()
 
   dataset_name = sprintf('%s-multi-class-subsampled', opts.general.dataset);
   balance_name = 'balanced-1';
-  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV3P1+convV0P0+fcV1', 'NA',                         'no-projection', opts.train.gpus);
-  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'convV0P0+fcV1RF16CH64',  'projected-through-larpV3P1', 'no-projection', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV3P1+convV0P0+fcV1', 'compRand', 'no-projection',              opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'convV0P0+fcV1RF16CH64',  'compRand', 'projected-through-larpV3P1', opts.train.gpus);
 
 
 
