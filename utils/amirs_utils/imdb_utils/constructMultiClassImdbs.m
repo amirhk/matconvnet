@@ -51,13 +51,13 @@ function constructMultiClassImdbs(dataset, network_arch)
 
   % logspace(1 + log10(3.76), 3 + log10(5), 6)
   % -------------------------------------------------------------------------
-  % createImdbWithBalance(dataset, all_class_imdb, 5, 20); % 750);
-  createImdbWithBalance(dataset, all_class_imdb, 38, 'default'); % 750);
-  createImdbWithBalance(dataset, all_class_imdb, 100, 'default'); % 750);
-  createImdbWithBalance(dataset, all_class_imdb, 266, 'default'); % 750);
-  createImdbWithBalance(dataset, all_class_imdb, 707, 'default'); % 750);
-  createImdbWithBalance(dataset, all_class_imdb, 1880, 'default'); % 750);
-  createImdbWithBalance(dataset, all_class_imdb, 5000, 'default'); % 750);
+  createImdbWithBalance(dataset, all_class_imdb, 50, 50); % 750);
+  % createImdbWithBalance(dataset, all_class_imdb, 38, 'default'); % 750);
+  % createImdbWithBalance(dataset, all_class_imdb, 100, 'default'); % 750);
+  % createImdbWithBalance(dataset, all_class_imdb, 266, 'default'); % 750);
+  % createImdbWithBalance(dataset, all_class_imdb, 707, 'default'); % 750);
+  % createImdbWithBalance(dataset, all_class_imdb, 1880, 'default'); % 750);
+  % createImdbWithBalance(dataset, all_class_imdb, 5000, 'default'); % 750);
 
   % createImdbWithBalance(dataset, all_class_imdb, 500, 750);
 
@@ -70,7 +70,7 @@ function createImdbWithBalance(dataset, imdb, train_balance_count, test_balance_
   afprintf(sprintf('[INFO] INITIAL IMDB INFO...\n'));
   fh_imdb_utils.getImdbInfo(imdb, 1);
   imdb = fh_imdb_utils.balanceAllClassesInImdb(imdb, 'train', train_balance_count);
-  % imdb = fh_imdb_utils.balanceAllClassesInImdb(imdb, 'test', test_balance_count);
+  imdb = fh_imdb_utils.balanceAllClassesInImdb(imdb, 'test', test_balance_count);
   afprintf(sprintf('[INFO] FINAL IMDB INFO...\n'));
   fh_imdb_utils.getImdbInfo(imdb, 1);
   % Save
