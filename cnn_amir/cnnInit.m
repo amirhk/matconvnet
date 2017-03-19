@@ -173,12 +173,12 @@ function network_opts = cnnInit(input_opts)
     case 'convV0P0+fcV1RF16CH64'
       % FULLY CONNECTED
       layer_number = 1;
-      net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 16, 64, 64, 5/100, 0, 'compRand', 'gen');
+      net.layers{end+1} = fh.convLayer(dataset, opts.network_arch, layer_number, 16, 64, 64, 5/100, 0, 'compRand', 'gen');
       net.layers{end+1} = fh.reluLayer(layer_number);
 
       layer_number = layer_number + 2;
       number_of_output_nodes = getNumberOfOutputNodes(dataset);
-      net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 1, 64, number_of_output_nodes, 5/100, 0, 'compRand', 'gen');
+      net.layers{end+1} = fh.convLayer(dataset, opts.network_arch, layer_number, 1, 64, number_of_output_nodes, 5/100, 0, 'compRand', 'gen');
 
       % LOSS LAYER
       net.layers{end+1} = fh.softmaxlossLayer();
