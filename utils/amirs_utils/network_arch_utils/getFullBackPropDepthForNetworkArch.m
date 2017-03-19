@@ -28,12 +28,17 @@ function backprop_depth = getFullBackPropDepthForNetworkArch(network_arch)
   % Note, full bpd skips the larp layers. that is all. get back to work.
 
   switch network_arch
+
     case 'larpV0P0+convV0P0+fcV1'
       backprop_depth = 4;
     case 'larpV3P1+convV0P0+fcV1'
       backprop_depth = 4;
+    case 'convV0P0+fcV1RF16CH64'
+      backprop_depth = 4;
+
     case 'larpV0P0+convV0P0+fcV2'
       backprop_depth = 7;
     case 'larpV3P1+convV0P0+fcV2'
       backprop_depth = 7;
+
   end
