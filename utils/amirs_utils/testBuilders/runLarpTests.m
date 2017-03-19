@@ -216,15 +216,15 @@ function runLarpTests(experiment_parent_dir, dataset, posneg_balance, network_ar
   experiment_options.backprop_depth = getFullBackPropDepthForNetworkArch(network_arch);
   experiment_options.weight_init_sequence = getWeightInitSequenceForWeightInitTypeAndNetworkArch(larp_weight_init_type, network_arch);
 
-  experiment_options.learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,50)] / 10;
-  experiment_options.weight_decay = 0.0001;
+  % experiment_options.learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,50)] / 10;
+  % experiment_options.weight_decay = 0.0001;
   experiment_options.batch_size = 100;
 
   base_learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,50)];
   % base_learning_rate = [0.1 * ones(1,5)];
-  for learning_rate_divider = [1, 3, 10, 30]
+  for learning_rate_divider = [10] % [1, 3, 10, 30]
     experiment_options.learning_rate = base_learning_rate / learning_rate_divider;
-    for weight_decay = [0.01, 0.001, 0.0001]
+    for weight_decay = [0.0001] % [0.01, 0.001, 0.0001]
       experiment_options.weight_decay = weight_decay;
       testKFold(experiment_options);
     end
