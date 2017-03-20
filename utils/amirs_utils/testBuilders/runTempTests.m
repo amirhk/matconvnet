@@ -151,7 +151,10 @@ function runTempTests()
   dataset_name = sprintf('%s', opts.general.dataset);
   balance_name = 'whatever';
   % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV3P1+convV0P0+fcV1', 'compRand', 'no-projection',                opts.train.gpus);
-  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'convV0P0+fcV1RF16CH64',  'compRand', 'projected-through-larpV3P1SF', opts.train.gpus);
+  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'convV0P0+fcV1RF16CH64',  'compRand', 'projected-through-larpV3P1SF', opts.train.gpus);
+
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'convV0P0+fcV1RF16CH64',  'compRand', 'projected-through-larpV3P1SF-noflag', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'convV0P0+fcV1RF16CH64',  'compRand', 'projected-through-larpV3P1SF-73flag', opts.train.gpus);
 
 
 
