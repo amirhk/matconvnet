@@ -95,9 +95,9 @@ function projected_imdb = projectAndSaveImdbThroughNetworkArch(dataset, posneg_b
     dataset, ...
     posneg_balance, ...
     network_arch);
-  save(save_file_name, 'imdb');
+  % save(save_file_name, 'imdb');
   % save(save_file_name, 'imdb', '-v7.3');
-  % save(save_file_name, 'imdb', '-v7.3', '-nocompression');
+  save(save_file_name, 'imdb', '-v7.3', '-nocompression');
 
 
 % -------------------------------------------------------------------------
