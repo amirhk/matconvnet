@@ -4,7 +4,7 @@ fh = projectionUtils;
 
 
 % fh.projectAndSaveImdbThroughNetworkArch('mnist-multi-class-subsampled', 'balanced-38', 'larpV0P0+convV0P0+fcV1', 0);
-% fh.projectAndSaveImdbThroughNetworkArch('mnist-multi-class-subsampled', 'balanced-38', 'TESTINGlarpV1P0+convV0P0+fcV1', 1);
+fh.projectAndSaveImdbThroughNetworkArch('mnist-multi-class-subsampled', 'balanced-38', 'TESTINGlarpV1P0+convV0P0+fcV1', 2);
 
 
 
@@ -29,7 +29,7 @@ fh = projectionUtils;
 % fh.projectAndSaveImdbThroughNetworkArch('cifar-multi-class-subsampled', 'balanced-38', 'larpV3P3ST', 9);
 
 % fh.projectAndSaveImdbThroughNetworkArch('cifar',                          'whatever', 'larpV3P1+convV0P0+fcV1', 7);
-fh.projectAndSaveImdbThroughNetworkArch('cifar',                          'whatever', 'larpV3P3+convV0P0+fcV1', 9);
+% fh.projectAndSaveImdbThroughNetworkArch('cifar',                          'whatever', 'larpV3P3+convV0P0+fcV1', 9);
 % fh.projectAndSaveImdbThroughNetworkArch('cifar',                        'whatever',    'larpV1P0ST', 2);
 % fh.projectAndSaveImdbThroughNetworkArch('cifar',                        'whatever',    'larpV1P1ST', 3);
 % fh.projectAndSaveImdbThroughNetworkArch('cifar',                        'whatever',    'larpV3P0ST', 6);

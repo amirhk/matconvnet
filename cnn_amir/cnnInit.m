@@ -210,7 +210,12 @@ function network_opts = cnnInit(input_opts)
     % TODO: remove
     case 'TESTINGlarpV1P0+convV0P0+fcV1'
       layer_number = 1;
-      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 3, 1, 1, 1/100, 0, 'testing', 'gen');
+      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 3, 3, 1, 1/100, 1, 'testing', 'gen');
+      % net.layers{end+1} = fh.poolingLayerLeNetMax(layer_number);
+      % net.layers{end+1} = fh.reluLayer(layer_number);
+
+      % layer_number = layer_number + 1;
+      % net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 3, 1, 1, 1/100, 1, 'testing', 'gen');
       % net.layers{end+1} = fh.poolingLayerLeNetMax(layer_number);
       % net.layers{end+1} = fh.reluLayer(layer_number);
 

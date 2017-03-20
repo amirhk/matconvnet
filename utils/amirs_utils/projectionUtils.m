@@ -40,25 +40,33 @@ function projected_imdb = projectAndSaveImdbThroughNetworkArch(dataset, posneg_b
   test_imdb = filterImdbForSet(input_imdb, 3);
 
 
+  % train_imdb.images.data = zeros(5,5,3,10, 'single');
+  % for i = 1:10
+  %   train_imdb.images.data(:,:,:,i) = i * ones(5,5,3,1, 'single');
+  % end
+  % train_imdb.images.labels = 1:10;
+  % train_imdb.images.set = 3 * ones(1,10);
 
+  train_imdb.images.data = 10 * ones(5,5,3,2, 'single');
+  train_imdb.images.data(:,:,:,1) = 1 * ones(5,5,3,1, 'single');
+  train_imdb.images.labels = [1,2];
+  train_imdb.images.set = [3,3];
 
-  % train_imdb.images.data = ones(5,5,1,2, 'single');
-  % train_imdb.images.data(:,:,:,1) = zeros(5,5,1,1, 'single');
-  % train_imdb.images.labels = [1,2];
-  % train_imdb.images.set = [3,3];
-
-  % test_imdb.images.data = 3 * ones(5,5,1,2, 'single');
-  % test_imdb.images.data(:,:,:,1) = 3 * zeros(5,5,1,1, 'single');
-  % test_imdb.images.labels = [1,2];
-  % test_imdb.images.set = [3,3];
+  test_imdb.images.data = 3 * ones(5,5,3,2, 'single');
+  test_imdb.images.data(:,:,:,1) = 3 * zeros(5,5,3,1, 'single');
+  test_imdb.images.labels = [1,2];
+  test_imdb.images.set = [3,3];
 
 
   % get net
   net = getNetworkObjectFromNetworkArchWithoutLearningRate(dataset, network_arch);
 
-  % train_imdb.images.data
-  % all_train_samples_forward_pass_results = getProjectedImdbSamplesOnNet(train_imdb, net, forward_pass_depth)
-  % keyboard
+  train_imdb.images.data
+  all_train_samples_forward_pass_results = getProjectedImdbSamplesOnNet(train_imdb, net, 1)
+  % all_train_samples_forward_pass_results = getProjectedImdbSamplesOnNet(train_imdb, net, 2)
+  % all_train_samples_forward_pass_results = getProjectedImdbSamplesOnNet(train_imdb, net, 3)
+  % all_train_samples_forward_pass_results = getProjectedImdbSamplesOnNet(train_imdb, net, 4)
+  keyboard
 
   % get resulting matrix from forward pass for all samples
   all_train_samples_forward_pass_results = getProjectedImdbSamplesOnNet(train_imdb, net, forward_pass_depth);
@@ -118,7 +126,6 @@ function projected_samples = getProjectedImdbSamplesOnNet(imdb, net, depth)
 % -------------------------------------------------------------------------
 function net = getNetworkObjectFromNetworkArchWithoutLearningRate(dataset, network_arch)
 % -------------------------------------------------------------------------
-
   opts.general.dataset = dataset;
   opts.general.network_arch = network_arch;
   opts.net.weight_init_source = 'gen';
