@@ -146,15 +146,18 @@ function runTempTests()
 
 
 
-  dataset_name = sprintf('%s-multi-class-subsampled', opts.general.dataset);
-  balance_name = 'balanced-38';
-  % dataset_name = sprintf('%s', opts.general.dataset);
-  % balance_name = 'whatever';
+  % dataset_name = sprintf('%s-multi-class-subsampled', opts.general.dataset);
+  % balance_name = 'balanced-38';
+  dataset_name = sprintf('%s', opts.general.dataset);
+  balance_name = 'whatever';
   % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV3P1+convV0P0+fcV1', 'compRand', 'no-projection',                opts.train.gpus);
   % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'convV0P0+fcV1RF16CH64',  'compRand', 'projected-through-larpV3P1SF', opts.train.gpus);
 
-  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'convV0P0+fcV1RF16CH64',  'compRand', 'projected-through-larpV3P1SF-noflag', opts.train.gpus);
-  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'convV0P0+fcV1RF16CH64',  'compRand', 'projected-through-larpV3P1SF-73flag', opts.train.gpus);
+  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'convV0P0+fcV1RF16CH64',  'compRand', 'projected-through-larpV3P1SF-noflag', opts.train.gpus);
+  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'convV0P0+fcV1RF16CH64',  'compRand', 'projected-through-larpV3P1SF-73flag', opts.train.gpus);
+
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'convV0P0+fcV1RF16CH64',  'compRand', 'projected-through-larpV3P3SF-noflag', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'convV0P0+fcV1RF16CH64',  'compRand', 'projected-through-larpV3P3SF-73flag', opts.train.gpus);
 
 
 
