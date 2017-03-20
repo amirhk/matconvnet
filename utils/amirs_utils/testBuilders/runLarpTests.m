@@ -221,7 +221,7 @@ function runLarpTests(experiment_parent_dir, dataset, posneg_balance, network_ar
   experiment_options.batch_size = 100;
 
   % base_learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,50)];
-  base_learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,10)];
+  base_learning_rate = [0.1 * ones(1,25) 0.03*ones(1,25) 0.01*ones(1,25)];
   % base_learning_rate = [0.1 * ones(1,5)];
   for learning_rate_divider = [10] % [1, 3, 10, 30]
   % for learning_rate_divider = [1, 3, 10, 30]

@@ -3,31 +3,17 @@ fh = projectionUtils;
 
 
 
-fh.projectAndSaveImdbThroughNetworkArch('cifar', 'whatever', 'larpV1P1+convV0P0+fcV1', 'compRand', 3);
-% fh.projectAndSaveImdbThroughNetworkArch('cifar', 'whatever', 'larpV3P1+convV0P0+fcV1', 'compRandSmoothed', 7);
-% fh.projectAndSaveImdbThroughNetworkArch('cifar', 'whatever', 'larpV3P1+convV0P0+fcV1', 'bernoulli', 7);
-% fh.projectAndSaveImdbThroughNetworkArch('cifar', 'whatever', 'larpV3P1+convV0P0+fcV1', 'bernoulliSmoothed', 7);
-% fh.projectAndSaveImdbThroughNetworkArch('cifar', 'whatever', 'larpV3P1+convV0P0+fcV1', 'gaussian2D', 7);
-% fh.projectAndSaveImdbThroughNetworkArch('cifar', 'whatever', 'larpV3P1+convV0P0+fcV1', 'gaussian2DMeanSubtracted', 7);
-% fh.projectAndSaveImdbThroughNetworkArch('cifar', 'whatever', 'larpV3P1+convV0P0+fcV1', 'gaussian2DMeanSubtractedRandomlyFlipped', 7);
+% fh.projectAndSaveImdbThroughNetworkArch('cifar', 'whatever', 'larpV1P1+convV0P0+fcV1', 'compRand', 3);
 
+% fh.projectAndSaveImdbThroughNetworkArch('cifar', 'whatever', 'larpV3P1+convV0P0+fcV1', 'compRand', 7);
+fh.projectAndSaveImdbThroughNetworkArch('cifar', 'whatever', 'larpV3P1+convV0P0+fcV1', 'compRandSmoothed', 7);
+fh.projectAndSaveImdbThroughNetworkArch('cifar', 'whatever', 'larpV3P1+convV0P0+fcV1', 'bernoulli', 7);
+fh.projectAndSaveImdbThroughNetworkArch('cifar', 'whatever', 'larpV3P1+convV0P0+fcV1', 'bernoulliSmoothed', 7);
+fh.projectAndSaveImdbThroughNetworkArch('cifar', 'whatever', 'larpV3P1+convV0P0+fcV1', 'gaussian2D', 7);
+fh.projectAndSaveImdbThroughNetworkArch('cifar', 'whatever', 'larpV3P1+convV0P0+fcV1', 'gaussian2DMeanSubtracted', 7);
+fh.projectAndSaveImdbThroughNetworkArch('cifar', 'whatever', 'larpV3P1+convV0P0+fcV1', 'gaussian2DMeanSubtractedRandomlyFlipped', 7);
 
-fh.projectAndSaveImdbThroughNetworkArch('cifar', 'whatever', 'larpV3P1+convV0P0+fcV1', 'compRand', 7);
-% fh.projectAndSaveImdbThroughNetworkArch('cifar', 'whatever', 'larpV3P1+convV0P0+fcV1', 'compRandSmoothed', 7);
-% fh.projectAndSaveImdbThroughNetworkArch('cifar', 'whatever', 'larpV3P1+convV0P0+fcV1', 'bernoulli', 7);
-% fh.projectAndSaveImdbThroughNetworkArch('cifar', 'whatever', 'larpV3P1+convV0P0+fcV1', 'bernoulliSmoothed', 7);
-% fh.projectAndSaveImdbThroughNetworkArch('cifar', 'whatever', 'larpV3P1+convV0P0+fcV1', 'gaussian2D', 7);
-% fh.projectAndSaveImdbThroughNetworkArch('cifar', 'whatever', 'larpV3P1+convV0P0+fcV1', 'gaussian2DMeanSubtracted', 7);
-% fh.projectAndSaveImdbThroughNetworkArch('cifar', 'whatever', 'larpV3P1+convV0P0+fcV1', 'gaussian2DMeanSubtractedRandomlyFlipped', 7);
-
-
-fh.projectAndSaveImdbThroughNetworkArch('cifar', 'whatever', 'larpV3P3+convV0P0+fcV1', 'compRand', 9);
-% fh.projectAndSaveImdbThroughNetworkArch('cifar', 'whatever', 'larpV3P1+convV0P0+fcV1', 'compRandSmoothed', 7);
-% fh.projectAndSaveImdbThroughNetworkArch('cifar', 'whatever', 'larpV3P1+convV0P0+fcV1', 'bernoulli', 7);
-% fh.projectAndSaveImdbThroughNetworkArch('cifar', 'whatever', 'larpV3P1+convV0P0+fcV1', 'bernoulliSmoothed', 7);
-% fh.projectAndSaveImdbThroughNetworkArch('cifar', 'whatever', 'larpV3P1+convV0P0+fcV1', 'gaussian2D', 7);
-% fh.projectAndSaveImdbThroughNetworkArch('cifar', 'whatever', 'larpV3P1+convV0P0+fcV1', 'gaussian2DMeanSubtracted', 7);
-% fh.projectAndSaveImdbThroughNetworkArch('cifar', 'whatever', 'larpV3P1+convV0P0+fcV1', 'gaussian2DMeanSubtractedRandomlyFlipped', 7);
+% fh.projectAndSaveImdbThroughNetworkArch('cifar', 'whatever', 'larpV3P3+convV0P0+fcV1', 'compRand', 9);
 
 
 
