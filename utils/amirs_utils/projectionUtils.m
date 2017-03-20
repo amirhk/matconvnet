@@ -39,8 +39,26 @@ function projected_imdb = projectAndSaveImdbThroughNetworkArch(dataset, posneg_b
   train_imdb = filterImdbForSet(input_imdb, 1);
   test_imdb = filterImdbForSet(input_imdb, 3);
 
+
+
+
+  % train_imdb.images.data = ones(5,5,1,2, 'single');
+  % train_imdb.images.data(:,:,:,1) = zeros(5,5,1,1, 'single');
+  % train_imdb.images.labels = [1,2];
+  % train_imdb.images.set = [3,3];
+
+  % test_imdb.images.data = 3 * ones(5,5,1,2, 'single');
+  % test_imdb.images.data(:,:,:,1) = 3 * zeros(5,5,1,1, 'single');
+  % test_imdb.images.labels = [1,2];
+  % test_imdb.images.set = [3,3];
+
+
   % get net
   net = getNetworkObjectFromNetworkArchWithoutLearningRate(dataset, network_arch);
+
+  % train_imdb.images.data
+  % all_train_samples_forward_pass_results = getProjectedImdbSamplesOnNet(train_imdb, net, forward_pass_depth)
+  % keyboard
 
   % get resulting matrix from forward pass for all samples
   all_train_samples_forward_pass_results = getProjectedImdbSamplesOnNet(train_imdb, net, forward_pass_depth);
@@ -54,6 +72,7 @@ function projected_imdb = projectAndSaveImdbThroughNetworkArch(dataset, posneg_b
   data = single(cat(4, data_train, data_test));
   labels = single(cat(2, labels_train, labels_test));
   set = single(cat(2, 1 * ones(1, size(labels_train, 2)), 3 * ones(1, size(labels_test, 2))));
+  keyboard
 
   % shuffle
   ix = randperm(size(data, 4));
@@ -77,8 +96,9 @@ function projected_imdb = projectAndSaveImdbThroughNetworkArch(dataset, posneg_b
     dataset, ...
     posneg_balance, ...
     network_arch);
-  % save(save_file_name, 'imdb');
-  save(save_file_name, 'imdb', '-v7.3');
+  save(save_file_name, 'imdb');
+  % save(save_file_name, 'imdb', '-v7.3');
+  % save(save_file_name, 'imdb', '-v7.3', '-nocompression');
 
 
 % -------------------------------------------------------------------------

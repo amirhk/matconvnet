@@ -52,6 +52,9 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
       layerWeights = loadWeights(dataset, network_arch, layer_number, weight_init_type);
     case 'gen'
       switch weight_init_type
+        case 'testing'
+          layerWeights{1} = init_multiplier * ones(k, k, m, n, 'single');
+          layerWeights{2} = zeros(1, n, 'single');
         case 'compRand'
           layerWeights{1} = init_multiplier * randn(k, k, m, n, 'single');
           layerWeights{2} = zeros(1, n, 'single');
