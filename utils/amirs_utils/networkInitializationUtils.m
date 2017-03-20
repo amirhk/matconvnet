@@ -52,18 +52,29 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
       layerWeights = loadWeights(dataset, network_arch, layer_number, weight_init_type);
     case 'gen'
       switch weight_init_type
+
         case 'testing'
           layerWeights{1} = init_multiplier * ones(k, k, m, n, 'single');
           layerWeights{2} = zeros(1, n, 'single');
+
+
         case 'compRand'
           layerWeights{1} = init_multiplier * randn(k, k, m, n, 'single');
           layerWeights{2} = zeros(1, n, 'single');
         case 'compRandSmoothed'
           gaussian_filter = fspecial('gaussian', [3,3], 1);
-          random_kernels = init_multiplier * randn(k, k, m, n, 'single');
-          smoothed_random_kernels = imfilter(random_kernels, gaussian_filter);
-          layerWeights{1} = smoothed_random_kernels;
+          gaussian_random_kernels = init_multiplier * randn(k, k, m, n, 'single');
+          smoothed_gaussian_random_kernels = imfilter(gaussian_random_kernels, gaussian_filter);
+          layerWeights{1} = smoothed_gaussian_random_kernels;
           layerWeights{2} = zeros(1, n, 'single');
+        case 'compRandAnisoDiffed'
+          gaussian_filter = fspecial('gaussian', [3,3], 1);
+          gaussian_random_kernels = init_multiplier * randn(k, k, m, n, 'single');
+          anisodiffed_gaussian_random_kernels = anisodiff2D(gaussian_random_kernels, 2, 1/7, 30, 2);
+          layerWeights{1} = anisodiffed_gaussian_random_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+
+
         case 'bernoulli'
           random_kernels = randn(k, k, m, n, 'single');
           tmp = init_multiplier * (random_kernels < 0); % < 0 because randn()
@@ -78,6 +89,16 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
           smoothed_bernoulli_random_kernels = imfilter(bernoulli_random_kernels, gaussian_filter);
           layerWeights{1} = smoothed_bernoulli_random_kernels;
           layerWeights{2} = zeros(1, n, 'single');
+        case 'bernoulliAnisoDiffed'
+          gaussian_filter = fspecial('gaussian', [3,3], 1);
+          random_kernels = randn(k, k, m, n, 'single');
+          tmp = init_multiplier * (random_kernels < 0); % < 0 because randn()
+          bernoulli_random_kernels = single(tmp .* sign(randn(size(tmp))));
+          anisodiffed_bernoulli_random_kernels = anisodiff2D(bernoulli_random_kernels, 2, 1/7, 30, 2);
+          layerWeights{1} = anisodiffed_bernoulli_random_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+
+
         case 'gaussian2D'
           kernels = zeros(k, k, m, n, 'single');
           for j = 1:n
