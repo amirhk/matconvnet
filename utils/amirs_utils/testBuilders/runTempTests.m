@@ -34,7 +34,7 @@ function runTempTests()
   % -------------------------------------------------------------------------
   %                                                                opts.train
   % -------------------------------------------------------------------------
-  opts.train.gpus = 1;
+  opts.train.gpus = 4;
 
 
   % -------------------------------------------------------------------------
@@ -133,31 +133,34 @@ function runTempTests()
 
 
 
-  % dataset_name = sprintf('%s', opts.general.dataset);
-  % balance_name = 'whatever';
+  dataset_name = sprintf('%s', opts.general.dataset);
+  balance_name = 'whatever';
   % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV0P0+convV0P0+fcV2', 'NA', opts.train.gpus);
   % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV3P1+convV0P0+fcV2', 'compRand', opts.train.gpus);
   % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV3P1+convV0P0+fcV2', 'compRandSmoothed', opts.train.gpus);
   % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV3P1+convV0P0+fcV2', 'bernoulli', opts.train.gpus);
   % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV3P1+convV0P0+fcV2', 'bernoulliSmoothed', opts.train.gpus);
-  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV3P1+convV0P0+fcV2', 'gaussian2D', opts.train.gpus);
-  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV3P1+convV0P0+fcV2', 'gaussian2DMeanSubtracted', opts.train.gpus);
-  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV3P1+convV0P0+fcV2', 'gaussian2DMeanSubtractedRandomlyFlipped', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV3P1+convV0P0+fcV2', 'gaussian2D', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV3P1+convV0P0+fcV2', 'gaussian2DMeanSubtracted', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV3P1+convV0P0+fcV2', 'gaussian2DMeanSubtractedRandomlyFlipped', opts.train.gpus);
 
 
 
-  % dataset_name = sprintf('%s-multi-class-subsampled', opts.general.dataset);
-  % balance_name = 'balanced-38';
-  dataset_name = sprintf('%s', opts.general.dataset);
-  balance_name = 'whatever';
-  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV3P1+convV0P0+fcV1', 'compRand', 'no-projection',                opts.train.gpus);
+  % % dataset_name = sprintf('%s-multi-class-subsampled', opts.general.dataset);
+  % % balance_name = 'balanced-38';
+  % dataset_name = sprintf('%s', opts.general.dataset);
+  % balance_name = 'whatever';
+  % % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV3P1+convV0P0+fcV1', 'compRand', 'no-projection',                opts.train.gpus);
+  % % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'convV0P0+fcV1RF16CH64',  'compRand', 'projected-through-larpV3P1SF', opts.train.gpus);
+  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'convV0P0+fcV1RF16CH64',  'compRand', 'projected-through-larpV1P1SF', opts.train.gpus);
   % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'convV0P0+fcV1RF16CH64',  'compRand', 'projected-through-larpV3P1SF', opts.train.gpus);
+  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'convV0P0+fcV1RF4CH64',   'compRand', 'projected-through-larpV3P3SF', opts.train.gpus);
 
-  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'convV0P0+fcV1RF16CH64',  'compRand', 'projected-through-larpV3P1SF-noflag', opts.train.gpus);
-  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'convV0P0+fcV1RF16CH64',  'compRand', 'projected-through-larpV3P1SF-73flag', opts.train.gpus);
+  % % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'convV0P0+fcV1RF16CH64',  'compRand', 'projected-through-larpV3P1SF-noflag', opts.train.gpus);
+  % % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'convV0P0+fcV1RF16CH64',  'compRand', 'projected-through-larpV3P1SF-73flag', opts.train.gpus);
 
-  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'convV0P0+fcV1RF4CH64',  'compRand', 'projected-through-larpV3P3SF-noflag', opts.train.gpus);
-  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'convV0P0+fcV1RF4CH64',  'compRand', 'projected-through-larpV3P3SF-73flag', opts.train.gpus);
+  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'convV0P0+fcV1RF4CH64',  'compRand', 'projected-through-larpV3P3SF-noflag', opts.train.gpus);
+  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'convV0P0+fcV1RF4CH64',  'compRand', 'projected-through-larpV3P3SF-73flag', opts.train.gpus);
 
 
 
