@@ -156,8 +156,8 @@ function runTempTests()
   % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'convV0P0+fcV1RF16CH64',  'compRand', 'projected-through-larpV3P1SF-noflag', opts.train.gpus);
   % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'convV0P0+fcV1RF16CH64',  'compRand', 'projected-through-larpV3P1SF-73flag', opts.train.gpus);
 
-  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'convV0P0+fcV1RF16CH64',  'compRand', 'projected-through-larpV3P3SF-noflag', opts.train.gpus);
-  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'convV0P0+fcV1RF16CH64',  'compRand', 'projected-through-larpV3P3SF-73flag', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'convV0P0+fcV1RF4CH64',  'compRand', 'projected-through-larpV3P3SF-noflag', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'convV0P0+fcV1RF4CH64',  'compRand', 'projected-through-larpV3P3SF-73flag', opts.train.gpus);
 
 
 
