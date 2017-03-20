@@ -36,6 +36,8 @@ function weight_init_sequence = getWeightInitSequenceForWeightInitTypeAndNetwork
       weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, 'compRand', 'compRand'};
     case 'convV0P0+fcV1RF16CH64'
       weight_init_sequence = {'compRand', 'compRand'};
+    case 'convV0P0+fcV1RF4CH64'
+      weight_init_sequence = {'compRand', 'compRand'};
 
     case 'larpV0P0+convV0P0+fcV2'
       weight_init_sequence = {'compRand', 'compRand', 'compRand'};
