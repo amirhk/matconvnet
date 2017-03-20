@@ -72,7 +72,6 @@ function projected_imdb = projectAndSaveImdbThroughNetworkArch(dataset, posneg_b
   data = single(cat(4, data_train, data_test));
   labels = single(cat(2, labels_train, labels_test));
   set = single(cat(2, 1 * ones(1, size(labels_train, 2)), 3 * ones(1, size(labels_test, 2))));
-  keyboard
 
   % shuffle
   ix = randperm(size(data, 4));
@@ -96,9 +95,9 @@ function projected_imdb = projectAndSaveImdbThroughNetworkArch(dataset, posneg_b
     dataset, ...
     posneg_balance, ...
     network_arch);
-  save(save_file_name, 'imdb');
+  % save(save_file_name, 'imdb');
   % save(save_file_name, 'imdb', '-v7.3');
-  % save(save_file_name, 'imdb', '-v7.3', '-nocompression');
+  save(save_file_name, 'imdb', '-v7.3', '-nocompression');
 
 
 % -------------------------------------------------------------------------
