@@ -70,8 +70,9 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
         case 'compRandAnisoDiffed'
           gaussian_filter = fspecial('gaussian', [3,3], 1);
           gaussian_random_kernels = init_multiplier * randn(k, k, m, n, 'single');
+          % confirmed... this runs on every 2D plane separately (on 3D and 4D matrices)
           anisodiffed_gaussian_random_kernels = anisodiff2D(gaussian_random_kernels, 2, 1/7, 30, 2);
-          layerWeights{1} = anisodiffed_gaussian_random_kernels;
+          layerWeights{1} = single(anisodiffed_gaussian_random_kernels);
           layerWeights{2} = zeros(1, n, 'single');
 
 
@@ -94,8 +95,9 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
           random_kernels = randn(k, k, m, n, 'single');
           tmp = init_multiplier * (random_kernels < 0); % < 0 because randn()
           bernoulli_random_kernels = single(tmp .* sign(randn(size(tmp))));
+          % confirmed... this runs on every 2D plane separately (on 3D and 4D matrices)
           anisodiffed_bernoulli_random_kernels = anisodiff2D(bernoulli_random_kernels, 2, 1/7, 30, 2);
-          layerWeights{1} = anisodiffed_bernoulli_random_kernels;
+          layerWeights{1} = single(anisodiffed_bernoulli_random_kernels);
           layerWeights{2} = zeros(1, n, 'single');
 
 
