@@ -34,7 +34,7 @@ function runTempTests()
   % -------------------------------------------------------------------------
   %                                                                opts.train
   % -------------------------------------------------------------------------
-  opts.train.gpus = 3;
+  opts.train.gpus = 4;
 
 
   % -------------------------------------------------------------------------
@@ -144,8 +144,8 @@ function runTempTests()
   % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV3P1+convV0P0+fcV2', 'gaussianAnisoDiffed-6',                   'no-projection', opts.train.gpus);
   % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV3P1+convV0P0+fcV2', 'gaussianAnisoDiffed-8',                   'no-projection', opts.train.gpus);
   % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV3P1+convV0P0+fcV2', 'gaussian-mult2DGaussian',                 'no-projection', opts.train.gpus);
-  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV3P1+convV0P0+fcV2', 'gaussianSmoothed-3-mult2DGaussian',       'no-projection', opts.train.gpus);
-  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV3P1+convV0P0+fcV2', 'gaussianAnisoDiffed-2-mult2DGaussian',    'no-projection', opts.train.gpus);
+  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV3P1+convV0P0+fcV2', 'gaussianSmoothed-3-mult2DGaussian',       'no-projection', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV3P1+convV0P0+fcV2', 'gaussianAnisoDiffed-2-mult2DGaussian',    'no-projection', opts.train.gpus);
   % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV3P1+convV0P0+fcV2', 'bernoulli',                               'no-projection', opts.train.gpus);
   % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV3P1+convV0P0+fcV2', 'bernoulliSmoothed-3',                     'no-projection', opts.train.gpus);
   % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV3P1+convV0P0+fcV2', 'bernoulliAnisoDiffed-2',                   'no-projection', opts.train.gpus);
