@@ -58,38 +58,50 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
           layerWeights{2} = zeros(1, n, 'single');
 
 
-        case 'compRand'
+        case 'gaussian'
           layerWeights{1} = init_multiplier * randn(k, k, m, n, 'single');
           layerWeights{2} = zeros(1, n, 'single');
-        case 'compRandSmoothed'
-          gaussian_filter = fspecial('gaussian', [3,3], 1);
+        case 'gaussianSmoothed-3'
+          filter_width = 3;
+          gaussian_filter = fspecial('gaussian', [filter_width, filter_width], 1);
           gaussian_random_kernels = init_multiplier * randn(k, k, m, n, 'single');
           smoothed_gaussian_random_kernels = imfilter(gaussian_random_kernels, gaussian_filter);
           layerWeights{1} = smoothed_gaussian_random_kernels;
           layerWeights{2} = zeros(1, n, 'single');
-        case 'compRandAnisoDiffed2'
-          gaussian_filter = fspecial('gaussian', [3,3], 1);
+        case 'gaussianSmoothed-3-Cov'
+          filter_width = 3;
+          sigma = getCovarianceMatrixOfSmoothedKernel(k, filter_width);
+          mu = zeros(k * k, 1);
+          generated_samples = mvnrnd(mu, sigma, m * n);
+          layerWeights{1} = init_multiplier * reshape(generated_samples', k, k, m, n) * 10; % x 10 because I feel it shouldn't get toooo small
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'gaussianAnisoDiffed2'
+          filter_width = 3;
+          gaussian_filter = fspecial('gaussian', [filter_width, filter_width], 1);
           gaussian_random_kernels = init_multiplier * randn(k, k, m, n, 'single');
           % confirmed... this runs on every 2D plane separately (on 3D and 4D matrices)
           anisodiffed_gaussian_random_kernels = anisodiff2D(gaussian_random_kernels, 2, 1/7, 30, 2);
           layerWeights{1} = single(anisodiffed_gaussian_random_kernels);
           layerWeights{2} = zeros(1, n, 'single');
-        case 'compRandAnisoDiffed4'
-          gaussian_filter = fspecial('gaussian', [3,3], 1);
+        case 'gaussianAnisoDiffed4'
+          filter_width = 3;
+          gaussian_filter = fspecial('gaussian', [filter_width, filter_width], 1);
           gaussian_random_kernels = init_multiplier * randn(k, k, m, n, 'single');
           % confirmed... this runs on every 2D plane separately (on 3D and 4D matrices)
           anisodiffed_gaussian_random_kernels = anisodiff2D(gaussian_random_kernels, 4, 1/7, 30, 2);
           layerWeights{1} = single(anisodiffed_gaussian_random_kernels);
           layerWeights{2} = zeros(1, n, 'single');
-        case 'compRandAnisoDiffed6'
-          gaussian_filter = fspecial('gaussian', [3,3], 1);
+        case 'gaussianAnisoDiffed6'
+          filter_width = 3;
+          gaussian_filter = fspecial('gaussian', [filter_width, filter_width], 1);
           gaussian_random_kernels = init_multiplier * randn(k, k, m, n, 'single');
           % confirmed... this runs on every 2D plane separately (on 3D and 4D matrices)
           anisodiffed_gaussian_random_kernels = anisodiff2D(gaussian_random_kernels, 6, 1/7, 30, 2);
           layerWeights{1} = single(anisodiffed_gaussian_random_kernels);
           layerWeights{2} = zeros(1, n, 'single');
-        case 'compRandAnisoDiffed8'
-          gaussian_filter = fspecial('gaussian', [3,3], 1);
+        case 'gaussianAnisoDiffed8'
+          filter_width = 3;
+          gaussian_filter = fspecial('gaussian', [filter_width, filter_width], 1);
           gaussian_random_kernels = init_multiplier * randn(k, k, m, n, 'single');
           % confirmed... this runs on every 2D plane separately (on 3D and 4D matrices)
           anisodiffed_gaussian_random_kernels = anisodiff2D(gaussian_random_kernels, 8, 1/7, 30, 2);
@@ -103,8 +115,9 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
           bernoulli_random_kernels = single(tmp .* sign(randn(size(tmp))));
           layerWeights{1} = bernoulli_random_kernels;
           layerWeights{2} = zeros(1, n, 'single');
-        case 'bernoulliSmoothed'
-          gaussian_filter = fspecial('gaussian', [3,3], 1);
+        case 'bernoulliSmoothed-3'
+          filter_width = 3;
+          gaussian_filter = fspecial('gaussian', [filter_width, filter_width], 1);
           random_kernels = randn(k, k, m, n, 'single');
           tmp = init_multiplier * (random_kernels < 0); % < 0 because randn()
           bernoulli_random_kernels = single(tmp .* sign(randn(size(tmp))));
@@ -112,7 +125,8 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
           layerWeights{1} = smoothed_bernoulli_random_kernels;
           layerWeights{2} = zeros(1, n, 'single');
         case 'bernoulliAnisoDiffed'
-          gaussian_filter = fspecial('gaussian', [3,3], 1);
+          filter_width = 3;
+          gaussian_filter = fspecial('gaussian', [filter_width, filter_width], 1);
           random_kernels = randn(k, k, m, n, 'single');
           tmp = init_multiplier * (random_kernels < 0); % < 0 because randn()
           bernoulli_random_kernels = single(tmp .* sign(randn(size(tmp))));
@@ -177,7 +191,7 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
           % keyboard
           layerWeights{2} = zeros(1, n, 'single');
         otherwise
-          throwException('[ERROR] Generating non-compRand weights not supported from this code.');
+          throwException('[ERROR] Generating non-gaussian weights not supported from this code.');
       end
   end
   structuredLayer = constructConvLayer(network_arch, layer_number, layerWeights, pad, weight_init_type, weight_init_source);
@@ -316,6 +330,22 @@ function structuredLayer = softmaxlossLayer()
   structuredLayer = struct('type', 'softmaxloss');
 
 
+% --------------------------------------------------------------------
+function sigma = getCovarianceMatrixOfSmoothedKernel(k, filter_width);
+% --------------------------------------------------------------------
+  large_number = 100000;
+  gaussian_filter = fspecial('gaussian', [filter_width, filter_width], 1);
+  gaussian_random_kernels = randn(k, k, large_number, 'single');
+  smoothed_gaussian_random_kernels = imfilter(gaussian_random_kernels, gaussian_filter);
+  vectorized = reshape(smoothed_gaussian_random_kernels, [k * k, large_number])';
+
+  % mean matrix (matricized)
+  % tmp = reshape(mean(vectorized), [k, k]);
+
+  % cov matrix
+  sigma = cov(vectorized);
+
+
 % % --------------------------------------------------------------------
 % function conv_layer_indices = getConvLayerIndices(net)
 % % --------------------------------------------------------------------
@@ -335,5 +365,5 @@ function structuredLayer = softmaxlossLayer()
 %   input_size = conv_layer_sizes(3);
 %   output_size = conv_layer_sizes(4);
 %   pad = layer_object.pad;
-%   pre_layer = convLayer(opts.dataset, opts.network_arch, layer_number, filter_size, input_size, bottleneck_size, 5/100, pad, 'compRand', 'gen');
-%   post_layer = convLayer(opts.dataset, opts.network_arch, layer_number, filter_size, bottleneck_size, output_size, 5/100, pad, 'compRand', 'gen');
+%   pre_layer = convLayer(opts.dataset, opts.network_arch, layer_number, filter_size, input_size, bottleneck_size, 5/100, pad, 'gaussian', 'gen');
+%   post_layer = convLayer(opts.dataset, opts.network_arch, layer_number, filter_size, bottleneck_size, output_size, 5/100, pad, 'gaussian', 'gen');
