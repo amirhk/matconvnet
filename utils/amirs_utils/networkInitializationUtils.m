@@ -73,9 +73,9 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
           sigma = getCovarianceMatrixOfSmoothedKernel(k, filter_width);
           mu = zeros(k * k, 1);
           generated_samples = mvnrnd(mu, sigma, m * n);
-          layerWeights{1} = init_multiplier * reshape(generated_samples', k, k, m, n) * 10; % x 10 because I feel it shouldn't get toooo small
+          layerWeights{1} = init_multiplier * reshape(generated_samples', k, k, m, n);
           layerWeights{2} = zeros(1, n, 'single');
-        case 'gaussianAnisoDiffed2'
+        case 'gaussianAnisoDiffed-2'
           filter_width = 3;
           gaussian_filter = fspecial('gaussian', [filter_width, filter_width], 1);
           gaussian_random_kernels = init_multiplier * randn(k, k, m, n, 'single');
@@ -83,7 +83,7 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
           anisodiffed_gaussian_random_kernels = anisodiff2D(gaussian_random_kernels, 2, 1/7, 30, 2);
           layerWeights{1} = single(anisodiffed_gaussian_random_kernels);
           layerWeights{2} = zeros(1, n, 'single');
-        case 'gaussianAnisoDiffed4'
+        case 'gaussianAnisoDiffed-4'
           filter_width = 3;
           gaussian_filter = fspecial('gaussian', [filter_width, filter_width], 1);
           gaussian_random_kernels = init_multiplier * randn(k, k, m, n, 'single');
@@ -91,7 +91,7 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
           anisodiffed_gaussian_random_kernels = anisodiff2D(gaussian_random_kernels, 4, 1/7, 30, 2);
           layerWeights{1} = single(anisodiffed_gaussian_random_kernels);
           layerWeights{2} = zeros(1, n, 'single');
-        case 'gaussianAnisoDiffed6'
+        case 'gaussianAnisoDiffed-6'
           filter_width = 3;
           gaussian_filter = fspecial('gaussian', [filter_width, filter_width], 1);
           gaussian_random_kernels = init_multiplier * randn(k, k, m, n, 'single');
@@ -99,13 +99,58 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
           anisodiffed_gaussian_random_kernels = anisodiff2D(gaussian_random_kernels, 6, 1/7, 30, 2);
           layerWeights{1} = single(anisodiffed_gaussian_random_kernels);
           layerWeights{2} = zeros(1, n, 'single');
-        case 'gaussianAnisoDiffed8'
+        case 'gaussianAnisoDiffed-8'
           filter_width = 3;
           gaussian_filter = fspecial('gaussian', [filter_width, filter_width], 1);
           gaussian_random_kernels = init_multiplier * randn(k, k, m, n, 'single');
           % confirmed... this runs on every 2D plane separately (on 3D and 4D matrices)
           anisodiffed_gaussian_random_kernels = anisodiff2D(gaussian_random_kernels, 8, 1/7, 30, 2);
           layerWeights{1} = single(anisodiffed_gaussian_random_kernels);
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'gaussian-mult2DGaussian'
+          tmp_kernels = zeros(k, k, m, n, 'single');
+          for j = 1:n
+            for i = 1:m
+              random_std = rand() * 3;
+              tmp = gen2DGaussianFilter(k, random_std);
+              tmp_kernels(:,:,i,j) = tmp;
+            end
+          end
+          layerWeights{1} = init_multiplier * randn(k, k, m, n, 'single');
+          layerWeights{1} = layerWeights{1} .* tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'gaussianSmoothed-3-mult2DGaussian'
+          tmp_kernels = zeros(k, k, m, n, 'single');
+          for j = 1:n
+            for i = 1:m
+              random_std = rand() * 3;
+              tmp = gen2DGaussianFilter(k, random_std);
+              tmp_kernels(:,:,i,j) = tmp;
+            end
+          end
+          filter_width = 3;
+          gaussian_filter = fspecial('gaussian', [filter_width, filter_width], 1);
+          gaussian_random_kernels = init_multiplier * randn(k, k, m, n, 'single');
+          smoothed_gaussian_random_kernels = imfilter(gaussian_random_kernels, gaussian_filter);
+          layerWeights{1} = smoothed_gaussian_random_kernels;
+          layerWeights{1} = layerWeights{1} .* tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'gaussianAnisoDiffed-2-mult2DGaussian'
+          tmp_kernels = zeros(k, k, m, n, 'single');
+          for j = 1:n
+            for i = 1:m
+              random_std = rand() * 3;
+              tmp = gen2DGaussianFilter(k, random_std);
+              tmp_kernels(:,:,i,j) = tmp;
+            end
+          end
+          filter_width = 3;
+          gaussian_filter = fspecial('gaussian', [filter_width, filter_width], 1);
+          gaussian_random_kernels = init_multiplier * randn(k, k, m, n, 'single');
+          % confirmed... this runs on every 2D plane separately (on 3D and 4D matrices)
+          anisodiffed_gaussian_random_kernels = anisodiff2D(gaussian_random_kernels, 2, 1/7, 30, 2);
+          layerWeights{1} = single(anisodiffed_gaussian_random_kernels);
+          layerWeights{1} = layerWeights{1} .* tmp_kernels;
           layerWeights{2} = zeros(1, n, 'single');
 
 
@@ -124,7 +169,7 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
           smoothed_bernoulli_random_kernels = imfilter(bernoulli_random_kernels, gaussian_filter);
           layerWeights{1} = smoothed_bernoulli_random_kernels;
           layerWeights{2} = zeros(1, n, 'single');
-        case 'bernoulliAnisoDiffed'
+        case 'bernoulliAnisoDiffed-2'
           filter_width = 3;
           gaussian_filter = fspecial('gaussian', [filter_width, filter_width], 1);
           random_kernels = randn(k, k, m, n, 'single');
