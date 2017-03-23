@@ -38,7 +38,7 @@ for number_of_examples = number_of_examples_list
     tmp = cov(vectorized);
 
     subplot(5,5,index);
-    imshow(tmp,[]);
+    imshow(tmp, []);
     title(sprintf('num. exmpl.: %d, filter width: %d', number_of_examples, filter_width));
     index = index + 1;
   end
