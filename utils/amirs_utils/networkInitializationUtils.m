@@ -85,7 +85,7 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
           layerWeights{2} = zeros(1, n, 'single');
         case 'gaussianSmoothed-3-Cov-TEST'
           filter_width = 3;
-          [mu, sigma] = getMeanVectorAndCovarianceMatrixOfSmoothedKSTrnelTET(k, filter_width, init_multiplier);
+          [mu, sigma] = getMeanVectorAndCovarianceMatrixOfSmoothedKernelTEST(k, filter_width, init_multiplier);
           % mu = zeros(k * k, 1);
           generated_samples = mvnrnd(mu, sigma, m * n);
           % need the transpose below so each of the generated samples gets reshaped into it's own k x k surface
