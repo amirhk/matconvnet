@@ -70,7 +70,7 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
           layerWeights{2} = zeros(1, n, 'single');
         case 'gaussianSmoothed-3-Cov'
           filter_width = 3;
-          [mu, sigma] = getMeanAndCovarianceMatrixOfSmoothedKernel(k, filter_width);
+          [mu, sigma] = getMeanVectorAndCovarianceMatrixOfSmoothedKernel(k, filter_width);
           % mu = zeros(k * k, 1);
           generated_samples = mvnrnd(mu, sigma, m * n);
           % need the transpose below so each of the generated samples gets reshaped into it's own k x k surface
@@ -377,7 +377,7 @@ function structuredLayer = softmaxlossLayer()
 
 
 % --------------------------------------------------------------------
-function [mu, sigma] = getMeanAndCovarianceMatrixOfSmoothedKernel(k, filter_width);
+function [mu, sigma] = getMeanVectorAndCovarianceMatrixOfSmoothedKernel(k, filter_width);
 % --------------------------------------------------------------------
   large_number = 100000;
   gaussian_filter = fspecial('gaussian', [filter_width, filter_width], 1);
@@ -392,6 +392,7 @@ function [mu, sigma] = getMeanAndCovarianceMatrixOfSmoothedKernel(k, filter_widt
 
   % cov matrix
   sigma = cov(vectorized);
+  % keyboard
 
 
 % % --------------------------------------------------------------------
