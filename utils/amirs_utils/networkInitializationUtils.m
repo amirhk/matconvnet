@@ -83,6 +83,15 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
           % need the transpose below so each of the generated samples gets reshaped into it's own k x k surface
           layerWeights{1} = init_multiplier * reshape(generated_samples', k, k, m, n);
           layerWeights{2} = zeros(1, n, 'single');
+        case 'gaussianSmoothed-3-Cov-TEST'
+          filter_width = 3;
+          [mu, sigma] = getMeanVectorAndCovarianceMatrixOfSmoothedKSTrnelTET(k, filter_width, init_multiplier);
+          % mu = zeros(k * k, 1);
+          generated_samples = mvnrnd(mu, sigma, m * n);
+          % need the transpose below so each of the generated samples gets reshaped into it's own k x k surface
+          % layerWeights{1} = init_multiplier * reshape(generated_samples', k, k, m, n);
+          layerWeights{1} = reshape(generated_samples', k, k, m, n);
+          layerWeights{2} = zeros(1, n, 'single');
         case 'gaussianSmoothed-4-Cov'
           filter_width = 4;
           [mu, sigma] = getMeanVectorAndCovarianceMatrixOfSmoothedKernel(k, filter_width);
@@ -397,6 +406,24 @@ function [mu, sigma] = getMeanVectorAndCovarianceMatrixOfSmoothedKernel(k, filte
   large_number = 100000;
   gaussian_filter = fspecial('gaussian', [filter_width, filter_width], 1);
   gaussian_random_kernels = randn(k, k, large_number, 'single');
+  smoothed_gaussian_random_kernels = imfilter(gaussian_random_kernels, gaussian_filter);
+  % note the transpose at the end of the line below!! reshape(..., [large_number, k * k]) is WRONG!
+  vectorized = reshape(smoothed_gaussian_random_kernels, [k * k, large_number])';
+
+  % mean matrix (matricized)
+  mu = mean(vectorized);
+  % tmp = reshape(mean(vectorized), [k, k]);
+
+  % cov matrix
+  sigma = cov(vectorized);
+  % keyboard
+
+% --------------------------------------------------------------------
+function [mu, sigma] = getMeanVectorAndCovarianceMatrixOfSmoothedKernelTEST(k, filter_width, init_multiplier);
+% --------------------------------------------------------------------
+  large_number = 100000;
+  gaussian_filter = fspecial('gaussian', [filter_width, filter_width], 1);
+  gaussian_random_kernels = init_multiplier * randn(k, k, large_number, 'single');
   smoothed_gaussian_random_kernels = imfilter(gaussian_random_kernels, gaussian_filter);
   % note the transpose at the end of the line below!! reshape(..., [large_number, k * k]) is WRONG!
   vectorized = reshape(smoothed_gaussian_random_kernels, [k * k, large_number])';
