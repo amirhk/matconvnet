@@ -68,8 +68,23 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
           smoothed_gaussian_random_kernels = imfilter(gaussian_random_kernels, gaussian_filter);
           layerWeights{1} = smoothed_gaussian_random_kernels;
           layerWeights{2} = zeros(1, n, 'single');
+        case 'gaussianSmoothed-4'
+          filter_width = 4;
+          gaussian_filter = fspecial('gaussian', [filter_width, filter_width], 1);
+          gaussian_random_kernels = init_multiplier * randn(k, k, m, n, 'single');
+          smoothed_gaussian_random_kernels = imfilter(gaussian_random_kernels, gaussian_filter);
+          layerWeights{1} = smoothed_gaussian_random_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
         case 'gaussianSmoothed-3-Cov'
           filter_width = 3;
+          [mu, sigma] = getMeanVectorAndCovarianceMatrixOfSmoothedKernel(k, filter_width);
+          % mu = zeros(k * k, 1);
+          generated_samples = mvnrnd(mu, sigma, m * n);
+          % need the transpose below so each of the generated samples gets reshaped into it's own k x k surface
+          layerWeights{1} = init_multiplier * reshape(generated_samples', k, k, m, n);
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'gaussianSmoothed-4-Cov'
+          filter_width = 4;
           [mu, sigma] = getMeanVectorAndCovarianceMatrixOfSmoothedKernel(k, filter_width);
           % mu = zeros(k * k, 1);
           generated_samples = mvnrnd(mu, sigma, m * n);
