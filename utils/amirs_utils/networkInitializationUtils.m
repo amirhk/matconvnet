@@ -73,7 +73,8 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
           sigma = getCovarianceMatrixOfSmoothedKernel(k, filter_width);
           mu = zeros(k * k, 1);
           generated_samples = mvnrnd(mu, sigma, m * n);
-          layerWeights{1} = init_multiplier * reshape(generated_samples', k, k, m, n);
+          % need the transpose below so each of the generated samples gets reshaped into it's own k x k surface
+          layerWeights{1} = init_multiplier * reshape(generated_samples', k, k, m, n) / 10;
           layerWeights{2} = zeros(1, n, 'single');
         case 'gaussianAnisoDiffed-2'
           filter_width = 3;
@@ -382,7 +383,7 @@ function sigma = getCovarianceMatrixOfSmoothedKernel(k, filter_width);
   gaussian_filter = fspecial('gaussian', [filter_width, filter_width], 1);
   gaussian_random_kernels = randn(k, k, large_number, 'single');
   smoothed_gaussian_random_kernels = imfilter(gaussian_random_kernels, gaussian_filter);
-  vectorized = reshape(smoothed_gaussian_random_kernels, [k * k, large_number])';
+  vectorized = reshape(smoothed_gaussian_random_kernels, [k * k, large_number])'; % note the transpose at the end of the line here!!
 
   % mean matrix (matricized)
   % tmp = reshape(mean(vectorized), [k, k]);

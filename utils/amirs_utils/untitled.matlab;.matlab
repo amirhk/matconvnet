@@ -3,7 +3,7 @@ k = 5;
 
 
 
-close all
+% close all
 figure
 index = 1;
 
@@ -23,9 +23,10 @@ for number_of_examples = number_of_examples_list
     rotated_eye_filter = rot90(eye(filter_width));
     % horiz_filter = zeros()
     prewitt_filter = fspecial('prewitt');
+    sobel_filter = fspecial('sobel');
 
 
-    tmp_filter = prewitt_filter;
+    tmp_filter = gaussian_filter;
     gaussian_random_kernels = init_multiplier * randn(k, k, m, n, 'single');
     filtered_gaussian_random_kernels = imfilter(gaussian_random_kernels, tmp_filter);
     vectorized = reshape(filtered_gaussian_random_kernels, [k*k,m*n])';
@@ -37,7 +38,7 @@ for number_of_examples = number_of_examples_list
     tmp = cov(vectorized);
 
     subplot(5,5,index);
-    imshow(tmp);
+    imshow(tmp,[]);
     title(sprintf('num. exmpl.: %d, filter width: %d', number_of_examples, filter_width));
     index = index + 1;
   end
