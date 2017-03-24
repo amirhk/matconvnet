@@ -134,8 +134,8 @@ function runTempTests()
   balance_name = 'balanced-707';
   % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV0P0+convV0P0+fcV1', 'NA',                                      'no-projection', opts.train.gpus);
   % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV1P1+convV0P0+fcV1', 'gaussian',                                'no-projection', opts.train.gpus);
-  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV1P1+convV0P0+fcV1', 'gaussianSmoothed-3',                      'no-projection', opts.train.gpus);
-  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV1P1+convV0P0+fcV1', 'gaussianSmoothed-3-Cov',                  'no-projection', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV1P1+convV0P0+fcV1', 'gaussianSmoothed-3',                      'no-projection', opts.train.gpus);
+  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV1P1+convV0P0+fcV1', 'gaussianSmoothed-3-Cov',                  'no-projection', opts.train.gpus);
   % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV1P1+convV0P0+fcV1', 'gaussianSmoothed-3-Cov-TEST',             'no-projection', opts.train.gpus);
   % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV1P1+convV0P0+fcV1', 'gaussianSmoothed-4',                      'no-projection', opts.train.gpus);
   % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV1P1+convV0P0+fcV1', 'gaussianSmoothed-4-Cov',                  'no-projection', opts.train.gpus);
