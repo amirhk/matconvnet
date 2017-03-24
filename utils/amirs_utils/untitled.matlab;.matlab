@@ -7,11 +7,11 @@ k = 5;
 figure
 index = 1;
 
-number_of_examples_list = [10, 100, 1000, 10000, 100000];
-filter_widths = [1,2,3,4,5];
+% number_of_examples_list = [10, 100, 1000, 10000, 100000];
+% filter_widths = [1,2,3,4,5];
 
-% number_of_examples_list = [10000];
-% filter_widths = [2]
+number_of_examples_list = [10000];
+filter_widths = [1,2,3,4,5];
 
 for number_of_examples = number_of_examples_list
   for filter_width = filter_widths
@@ -22,11 +22,13 @@ for number_of_examples = number_of_examples_list
     eye_filter = eye(filter_width);
     rotated_eye_filter = rot90(eye(filter_width));
     % horiz_filter = zeros()
-    prewitt_filter = fspecial('prewitt');
-    sobel_filter = fspecial('sobel');
+    prewitt_horiz_filter = fspecial('prewitt');
+    prewitt_vert_filter = fspecial('prewitt')';
+    sobel_horiz_filter = fspecial('sobel');
+    sobel_vert_filter = fspecial('sobel')';
 
 
-    tmp_filter = gaussian_filter;
+    tmp_filter = sobel_vert_filter;
     gaussian_random_kernels = init_multiplier * randn(k, k, m, n, 'single');
     filtered_gaussian_random_kernels = imfilter(gaussian_random_kernels, tmp_filter);
     vectorized = reshape(filtered_gaussian_random_kernels, [k*k,m*n])';
@@ -37,7 +39,7 @@ for number_of_examples = number_of_examples_list
     % cov matrix
     tmp = cov(vectorized);
 
-    subplot(5,5,index);
+    subplot(numel(number_of_examples_list), numel(filter_widths), index);
     imshow(tmp, []);
     title(sprintf('num. exmpl.: %d, filter width: %d', number_of_examples, filter_width));
     index = index + 1;

@@ -102,7 +102,6 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
           layerWeights{2} = zeros(1, n, 'single');
         case 'gaussianAnisoDiffed-2'
           filter_width = 3;
-          gaussian_filter = fspecial('gaussian', [filter_width, filter_width], 1);
           gaussian_random_kernels = init_multiplier * randn(k, k, m, n, 'single');
           % confirmed... this runs on every 2D plane separately (on 3D and 4D matrices)
           anisodiffed_gaussian_random_kernels = anisodiff2D(gaussian_random_kernels, 2, 1/7, 30, 2);
@@ -110,7 +109,6 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
           layerWeights{2} = zeros(1, n, 'single');
         case 'gaussianAnisoDiffed-4'
           filter_width = 3;
-          gaussian_filter = fspecial('gaussian', [filter_width, filter_width], 1);
           gaussian_random_kernels = init_multiplier * randn(k, k, m, n, 'single');
           % confirmed... this runs on every 2D plane separately (on 3D and 4D matrices)
           anisodiffed_gaussian_random_kernels = anisodiff2D(gaussian_random_kernels, 4, 1/7, 30, 2);
@@ -118,7 +116,6 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
           layerWeights{2} = zeros(1, n, 'single');
         case 'gaussianAnisoDiffed-6'
           filter_width = 3;
-          gaussian_filter = fspecial('gaussian', [filter_width, filter_width], 1);
           gaussian_random_kernels = init_multiplier * randn(k, k, m, n, 'single');
           % confirmed... this runs on every 2D plane separately (on 3D and 4D matrices)
           anisodiffed_gaussian_random_kernels = anisodiff2D(gaussian_random_kernels, 6, 1/7, 30, 2);
@@ -126,7 +123,6 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
           layerWeights{2} = zeros(1, n, 'single');
         case 'gaussianAnisoDiffed-8'
           filter_width = 3;
-          gaussian_filter = fspecial('gaussian', [filter_width, filter_width], 1);
           gaussian_random_kernels = init_multiplier * randn(k, k, m, n, 'single');
           % confirmed... this runs on every 2D plane separately (on 3D and 4D matrices)
           anisodiffed_gaussian_random_kernels = anisodiff2D(gaussian_random_kernels, 8, 1/7, 30, 2);
