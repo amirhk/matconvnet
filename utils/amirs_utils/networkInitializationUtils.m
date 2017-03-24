@@ -83,6 +83,15 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
           % need the transpose below so each of the generated samples gets reshaped into it's own k x k surface
           layerWeights{1} = init_multiplier * reshape(generated_samples', k, k, m, n);
           layerWeights{2} = zeros(1, n, 'single');
+        case 'gaussianSmoothed-3-Cov-Sampling-ScaleUp-3'
+          scale_times = 3;
+          filter_width = 3;
+          [mu, sigma] = getMeanVectorAndCovarianceMatrixOfSmoothedKernel(k, filter_width);
+          % mu = zeros(k * k, 1);
+          generated_samples = mvnrnd(mu, sigma * scale_times, m * n);
+          % need the transpose below so each of the generated samples gets reshaped into it's own k x k surface
+          layerWeights{1} = init_multiplier * reshape(generated_samples', k, k, m, n);
+          layerWeights{2} = zeros(1, n, 'single');
         case 'gaussianSmoothed-3-Cov-Sampling-ScaleDown-3'
           scale_times = 1/3;
           filter_width = 3;
