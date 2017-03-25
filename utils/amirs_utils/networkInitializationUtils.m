@@ -282,6 +282,47 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
 
 
 
+        case 'mixedKernelsWithGaussianSmoothedCovariance-MuDivide-1-SigmaDivide-1'
+          tmp_kernels = getMixedKernelsWithGaussianSmoothedCovariance(k, m, n, 1, 1);
+          % generated_samples = mvnrnd(mu, sigma, m * n);
+          % need the transpose below so each of the generated samples gets reshaped into it's own k x k surface
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'mixedKernelsWithGaussianSmoothedCovariance-MuDivide-1-SigmaDivide-10'
+          tmp_kernels = getMixedKernelsWithGaussianSmoothedCovariance(k, m, n, 1, 10);
+          % generated_samples = mvnrnd(mu, sigma, m * n);
+          % need the transpose below so each of the generated samples gets reshaped into it's own k x k surface
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'mixedKernelsWithGaussianSmoothedCovariance-MuDivide-1-SigmaDivide-100'
+          tmp_kernels = getMixedKernelsWithGaussianSmoothedCovariance(k, m, n, 1, 100);
+          % generated_samples = mvnrnd(mu, sigma, m * n);
+          % need the transpose below so each of the generated samples gets reshaped into it's own k x k surface
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'mixedKernelsWithGaussianSmoothedCovariance-MuDivide-10-SigmaDivide-1'
+          tmp_kernels = getMixedKernelsWithGaussianSmoothedCovariance(k, m, n, 10, 1);
+          % generated_samples = mvnrnd(mu, sigma, m * n);
+          % need the transpose below so each of the generated samples gets reshaped into it's own k x k surface
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'mixedKernelsWithGaussianSmoothedCovariance-MuDivide-10-SigmaDivide-10'
+          tmp_kernels = getMixedKernelsWithGaussianSmoothedCovariance(k, m, n, 10, 10);
+          % generated_samples = mvnrnd(mu, sigma, m * n);
+          % need the transpose below so each of the generated samples gets reshaped into it's own k x k surface
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'mixedKernelsWithGaussianSmoothedCovariance-MuDivide-10-SigmaDivide-100'
+          tmp_kernels = getMixedKernelsWithGaussianSmoothedCovariance(k, m, n, 10, 100);
+          % generated_samples = mvnrnd(mu, sigma, m * n);
+          % need the transpose below so each of the generated samples gets reshaped into it's own k x k surface
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+
+
+
+
+
         case 'bernoulli'
           random_kernels = randn(k, k, m, n, 'single');
           tmp = init_multiplier * (random_kernels < 0); % < 0 because randn()
@@ -570,10 +611,22 @@ function filter = get5x5SobelHoriz()
 % --------------------------------------------------------------------
 function tmp_kernels = getMixedKernelsWithGaussianIdentityCovariance(k, m, n, mu_divider, sigma_divider)
 % --------------------------------------------------------------------
-  % filter_width = 3;
-  % [mu, sigma] = getMeanVectorAndCovarianceMatrixOfSmoothedKernel(k, filter_width);
   mu = zeros(1, 25);
   sigma = eye(25);
+  tmp_kernels = getMixedKernelsHelper(k, m, n, mu, sigma, mu_divider, sigma_divider)
+
+
+% --------------------------------------------------------------------
+function tmp_kernels = getMixedKernelsWithGaussianSmoothedCovariance(k, m, n, mu_divider, sigma_divider)
+% --------------------------------------------------------------------
+  filter_width = 3;
+  [mu, sigma] = getMeanVectorAndCovarianceMatrixOfSmoothedKernel(k, filter_width);
+  tmp_kernels = getMixedKernelsHelper(k, m, n, mu, sigma, mu_divider, sigma_divider)
+
+
+% --------------------------------------------------------------------
+function tmp_kernels = getMixedKernelsHelper(k, m, n, mu, sigma, mu_divider, sigma_divider)
+% --------------------------------------------------------------------
   tmp_kernels = zeros(k, k, m, n, 'single');
   for j = 1:n
     for i = 1:m

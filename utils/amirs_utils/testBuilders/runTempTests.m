@@ -34,7 +34,7 @@ function runTempTests()
   % -------------------------------------------------------------------------
   %                                                                opts.train
   % -------------------------------------------------------------------------
-  opts.train.gpus = 4;
+  opts.train.gpus = 3;
 
 
   % -------------------------------------------------------------------------
@@ -150,9 +150,25 @@ function runTempTests()
   % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV1P1+convV0P0+fcV1', 'mixedKernelsWithGaussianIdentityCovariance-MuDivide-1-SigmaDivide-10',   'no-projection', opts.train.gpus);
   % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV1P1+convV0P0+fcV1', 'mixedKernelsWithGaussianIdentityCovariance-MuDivide-1-SigmaDivide-100',  'no-projection', opts.train.gpus);
 
-  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV1P1+convV0P0+fcV1', 'mixedKernelsWithGaussianIdentityCovariance-MuDivide-10-SigmaDivide-1',   'no-projection', opts.train.gpus);
-  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV1P1+convV0P0+fcV1', 'mixedKernelsWithGaussianIdentityCovariance-MuDivide-10-SigmaDivide-10',  'no-projection', opts.train.gpus);
-  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV1P1+convV0P0+fcV1', 'mixedKernelsWithGaussianIdentityCovariance-MuDivide-10-SigmaDivide-100', 'no-projection', opts.train.gpus);
+  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV1P1+convV0P0+fcV1', 'mixedKernelsWithGaussianIdentityCovariance-MuDivide-10-SigmaDivide-1',   'no-projection', opts.train.gpus);
+  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV1P1+convV0P0+fcV1', 'mixedKernelsWithGaussianIdentityCovariance-MuDivide-10-SigmaDivide-10',  'no-projection', opts.train.gpus);
+  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV1P1+convV0P0+fcV1', 'mixedKernelsWithGaussianIdentityCovariance-MuDivide-10-SigmaDivide-100', 'no-projection', opts.train.gpus);
+
+
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV1P1+convV0P0+fcV1', 'mixedKernelsWithGaussianSmoothedCovariance-MuDivide-1-SigmaDivide-1',    'no-projection', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV1P1+convV0P0+fcV1', 'mixedKernelsWithGaussianSmoothedCovariance-MuDivide-1-SigmaDivide-10',   'no-projection', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV1P1+convV0P0+fcV1', 'mixedKernelsWithGaussianSmoothedCovariance-MuDivide-1-SigmaDivide-100',  'no-projection', opts.train.gpus);
+
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV1P1+convV0P0+fcV1', 'mixedKernelsWithGaussianSmoothedCovariance-MuDivide-10-SigmaDivide-1',   'no-projection', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV1P1+convV0P0+fcV1', 'mixedKernelsWithGaussianSmoothedCovariance-MuDivide-10-SigmaDivide-10',  'no-projection', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV1P1+convV0P0+fcV1', 'mixedKernelsWithGaussianSmoothedCovariance-MuDivide-10-SigmaDivide-100', 'no-projection', opts.train.gpus);
+
+
+
+
+
+
+
 
 
 
