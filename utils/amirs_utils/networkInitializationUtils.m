@@ -570,8 +570,10 @@ function filter = get5x5SobelHoriz()
 % --------------------------------------------------------------------
 function tmp_kernels = getMixedKernelsWithGaussianIdentityCovariance(k, m, n, mu_divider, sigma_divider)
 % --------------------------------------------------------------------
-  filter_width = 3;
-  [mu, sigma] = getMeanVectorAndCovarianceMatrixOfSmoothedKernel(k, filter_width);
+  % filter_width = 3;
+  % [mu, sigma] = getMeanVectorAndCovarianceMatrixOfSmoothedKernel(k, filter_width);
+  mu = zeros(1, 25);
+  sigma = eye(25);
   tmp_kernels = zeros(k, k, m, n, 'single');
   for j = 1:n
     for i = 1:m
