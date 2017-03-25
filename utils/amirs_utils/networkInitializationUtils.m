@@ -110,6 +110,42 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
           % need the transpose below so each of the generated samples gets reshaped into it's own k x k surface
           layerWeights{1} = init_multiplier * reshape(generated_samples', k, k, m, n);
           layerWeights{2} = zeros(1, n, 'single');
+        case 'gaussianSmoothed-3-Cov-Sampling-ScaleDown-100'
+          scale_times = 1/100;
+          filter_width = 3;
+          [mu, sigma] = getMeanVectorAndCovarianceMatrixOfSmoothedKernel(k, filter_width);
+          % mu = zeros(k * k, 1);
+          generated_samples = mvnrnd(mu, sigma * scale_times, m * n);
+          % need the transpose below so each of the generated samples gets reshaped into it's own k x k surface
+          layerWeights{1} = init_multiplier * reshape(generated_samples', k, k, m, n);
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'gaussianSmoothed-3-Cov-Sampling-ScaleDown-1000'
+          scale_times = 1/1000;
+          filter_width = 3;
+          [mu, sigma] = getMeanVectorAndCovarianceMatrixOfSmoothedKernel(k, filter_width);
+          % mu = zeros(k * k, 1);
+          generated_samples = mvnrnd(mu, sigma * scale_times, m * n);
+          % need the transpose below so each of the generated samples gets reshaped into it's own k x k surface
+          layerWeights{1} = init_multiplier * reshape(generated_samples', k, k, m, n);
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'gaussianSmoothed-3-Cov-Sampling-ScaleDown-10000'
+          scale_times = 1/10000;
+          filter_width = 3;
+          [mu, sigma] = getMeanVectorAndCovarianceMatrixOfSmoothedKernel(k, filter_width);
+          % mu = zeros(k * k, 1);
+          generated_samples = mvnrnd(mu, sigma * scale_times, m * n);
+          % need the transpose below so each of the generated samples gets reshaped into it's own k x k surface
+          layerWeights{1} = init_multiplier * reshape(generated_samples', k, k, m, n);
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'gaussianSmoothed-3-Cov-Sampling-ScaleDown-100000'
+          scale_times = 1/100000;
+          filter_width = 3;
+          [mu, sigma] = getMeanVectorAndCovarianceMatrixOfSmoothedKernel(k, filter_width);
+          % mu = zeros(k * k, 1);
+          generated_samples = mvnrnd(mu, sigma * scale_times, m * n);
+          % need the transpose below so each of the generated samples gets reshaped into it's own k x k surface
+          layerWeights{1} = init_multiplier * reshape(generated_samples', k, k, m, n);
+          layerWeights{2} = zeros(1, n, 'single');
         case 'gaussianSmoothed-3-Cov-Sampling-TEST'
           filter_width = 3;
           [mu, sigma] = getMeanVectorAndCovarianceMatrixOfSmoothedKernelTEST(k, filter_width, init_multiplier);
@@ -203,38 +239,48 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
 
 
 
-        case 'mixedKernelsWithGaussianCovarianceSmoothed-3'
-          filter_width = 3;
-          [mu, sigma] = getMeanVectorAndCovarianceMatrixOfSmoothedKernel(k, filter_width);
-          tmp_kernels = zeros(k, k, m, n, 'single');
-          for j = 1:n
-            for i = 1:m
-              % randomly choose a kernel class to use as mu
-              switch ceil(rand() * 5)
-                case 1
-                  mu = mu + 0;
-                case 2
-                  mu = mu + reshape(get5x5PrewittHoriz(), 1, k * k); % mu must be row vector
-                case 3
-                  mu = mu + reshape(get5x5PrewittVert(), 1, k * k); % mu must be row vector
-                case 4
-                  mu = mu + reshape(get5x5SobelVert(), 1, k * k); % mu must be row vector
-                case 5
-                  mu = mu + reshape(get5x5SobelHoriz(), 1, k * k); % mu must be row vector
-              end
-              mu = mu / 30;
-              single_generated_kernel = mvnrnd(mu, sigma,1);
-              tmp_kernels(:,:,i,j) = reshape(single_generated_kernel, k, k);
-              % random_std = rand() * 3;
-              % tmp = gen2DGaussianFilter(k, random_std);
-              % tmp_kernels(:,:,i,j) = tmp;
-            end
-          end
 
+
+        case 'mixedKernelsWithGaussianIdentityCovariance-MuDivide-1-SigmaDivide-1'
+          tmp_kernels = getMixedKernelsWithGaussianIdentityCovariance(k, m, n, 1, 1);
           % generated_samples = mvnrnd(mu, sigma, m * n);
           % need the transpose below so each of the generated samples gets reshaped into it's own k x k surface
           layerWeights{1} = init_multiplier * tmp_kernels;
           layerWeights{2} = zeros(1, n, 'single');
+        case 'mixedKernelsWithGaussianIdentityCovariance-MuDivide-1-SigmaDivide-10'
+          tmp_kernels = getMixedKernelsWithGaussianIdentityCovariance(k, m, n, 1, 10);
+          % generated_samples = mvnrnd(mu, sigma, m * n);
+          % need the transpose below so each of the generated samples gets reshaped into it's own k x k surface
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'mixedKernelsWithGaussianIdentityCovariance-MuDivide-1-SigmaDivide-100'
+          tmp_kernels = getMixedKernelsWithGaussianIdentityCovariance(k, m, n, 1, 100);
+          % generated_samples = mvnrnd(mu, sigma, m * n);
+          % need the transpose below so each of the generated samples gets reshaped into it's own k x k surface
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'mixedKernelsWithGaussianIdentityCovariance-MuDivide-10-SigmaDivide-1'
+          tmp_kernels = getMixedKernelsWithGaussianIdentityCovariance(k, m, n, 10, 1);
+          % generated_samples = mvnrnd(mu, sigma, m * n);
+          % need the transpose below so each of the generated samples gets reshaped into it's own k x k surface
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'mixedKernelsWithGaussianIdentityCovariance-MuDivide-10-SigmaDivide-10'
+          tmp_kernels = getMixedKernelsWithGaussianIdentityCovariance(k, m, n, 10, 10);
+          % generated_samples = mvnrnd(mu, sigma, m * n);
+          % need the transpose below so each of the generated samples gets reshaped into it's own k x k surface
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'mixedKernelsWithGaussianIdentityCovariance-MuDivide-10-SigmaDivide-100'
+          tmp_kernels = getMixedKernelsWithGaussianIdentityCovariance(k, m, n, 10, 100);
+          % generated_samples = mvnrnd(mu, sigma, m * n);
+          % need the transpose below so each of the generated samples gets reshaped into it's own k x k surface
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+
+
+
+
 
         case 'bernoulli'
           random_kernels = randn(k, k, m, n, 'single');
@@ -475,39 +521,39 @@ function [mu, sigma] = getMeanVectorAndCovarianceMatrixOfSmoothedKernel(k, filte
   sigma = cov(vectorized);
   % keyboard
 
-% --------------------------------------------------------------------
-function [mu, sigma] = getMeanVectorAndCovarianceMatrixOfSmoothedKernelTEST(k, filter_width, init_multiplier);
-% --------------------------------------------------------------------
-  large_number = 100000;
-  gaussian_filter = fspecial('gaussian', [filter_width, filter_width], 1);
-  gaussian_random_kernels = init_multiplier * randn(k, k, large_number, 'single');
-  smoothed_gaussian_random_kernels = imfilter(gaussian_random_kernels, gaussian_filter);
-  % note the transpose at the end of the line below!! reshape(..., [large_number, k * k]) is WRONG!
-  vectorized = reshape(smoothed_gaussian_random_kernels, [k * k, large_number])';
+% % --------------------------------------------------------------------
+% function [mu, sigma] = getMeanVectorAndCovarianceMatrixOfSmoothedKernelTEST(k, filter_width, init_multiplier);
+% % --------------------------------------------------------------------
+%   large_number = 100000;
+%   gaussian_filter = fspecial('gaussian', [filter_width, filter_width], 1);
+%   gaussian_random_kernels = init_multiplier * randn(k, k, large_number, 'single');
+%   smoothed_gaussian_random_kernels = imfilter(gaussian_random_kernels, gaussian_filter);
+%   % note the transpose at the end of the line below!! reshape(..., [large_number, k * k]) is WRONG!
+%   vectorized = reshape(smoothed_gaussian_random_kernels, [k * k, large_number])';
 
-  % mean matrix (matricized)
-  mu = mean(vectorized);
-  % tmp = reshape(mean(vectorized), [k, k]);
+%   % mean matrix (matricized)
+%   mu = mean(vectorized);
+%   % tmp = reshape(mean(vectorized), [k, k]);
 
-  % cov matrix
-  sigma = cov(vectorized);
-  % keyboard
+%   % cov matrix
+%   sigma = cov(vectorized);
+%   % keyboard
 
 % --------------------------------------------------------------------
-function filter = get5x5PrewittHoriz();
+function filter = get5x5PrewittHoriz()
 % --------------------------------------------------------------------
   filter = [2,2,2,2,2;1,1,1,1,1;0,0,0,0,0;-1,-1,-1,-1,-1;-2,-2,-2,-2,-2];
 
 
 % --------------------------------------------------------------------
-function filter = get5x5PrewittVert();
+function filter = get5x5PrewittVert()
 % --------------------------------------------------------------------
   filter = [2,2,2,2,2;1,1,1,1,1;0,0,0,0,0;-1,-1,-1,-1,-1;-2,-2,-2,-2,-2];
   filter = fliplr(filter)';
 
 
 % --------------------------------------------------------------------
-function filter = get5x5SobelVert();
+function filter = get5x5SobelVert()
 % --------------------------------------------------------------------
   filter = [2, 1, 0, -1, -2;
             3, 2, 0, -2, -3;
@@ -516,9 +562,46 @@ function filter = get5x5SobelVert();
             2, 1, 0, -1, -2];
 
 % --------------------------------------------------------------------
-function filter = get5x5SobelHoriz();
+function filter = get5x5SobelHoriz()
 % --------------------------------------------------------------------
   filter = get5x5PrewittVert()';
+
+
+% --------------------------------------------------------------------
+function tmp_kernels = getMixedKernelsWithGaussianIdentityCovariance(k, m, n, mu_divider, sigma_divider)
+% --------------------------------------------------------------------
+  filter_width = 3;
+  [mu, sigma] = getMeanVectorAndCovarianceMatrixOfSmoothedKernel(k, filter_width);
+  tmp_kernels = zeros(k, k, m, n, 'single');
+  for j = 1:n
+    for i = 1:m
+      % randomly choose a kernel class to use as mu
+      switch ceil(rand() * 5)
+        case 1
+          mu = mu + 0;
+          sigma = sigma / sigma_divider / 100;
+        case 2
+          mu = mu + reshape(get5x5PrewittHoriz(), 1, k * k); % mu must be row vector
+          sigma = sigma / sigma_divider / 1;
+        case 3
+          mu = mu + reshape(get5x5PrewittVert(), 1, k * k); % mu must be row vector
+          sigma = sigma / sigma_divider / 1;
+        case 4
+          mu = mu + reshape(get5x5SobelVert(), 1, k * k); % mu must be row vector
+          sigma = sigma / sigma_divider / 1;
+        case 5
+          mu = mu + reshape(get5x5SobelHoriz(), 1, k * k); % mu must be row vector
+          sigma = sigma / sigma_divider / 1;
+      end
+      mu = mu / mu_divider;
+      single_generated_kernel = mvnrnd(mu, sigma,1);
+      tmp_kernels(:,:,i,j) = reshape(single_generated_kernel, k, k);
+      % random_std = rand() * 3;
+      % tmp = gen2DGaussianFilter(k, random_std);
+      % tmp_kernels(:,:,i,j) = tmp;
+    end
+  end
+
 
 
 % % --------------------------------------------------------------------
