@@ -214,7 +214,8 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
                 case 1
                   mu = mu + 0;
                 case 2
-                  mu = mu + reshape(get5x5PrewittHoriz(), 1, k * k); % mu must be row vector
+                  mu = mu + reshape(get5x5PrewittHoriz(), 1, k * k) / 10; % mu must be row vector
+                  keyboard
                 case 3
                   mu = mu + reshape(get5x5PrewittVert(), 1, k * k); % mu must be row vector
                 case 4
