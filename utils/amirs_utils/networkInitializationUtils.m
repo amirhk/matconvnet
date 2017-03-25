@@ -210,7 +210,7 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
           for j = 1:n
             for i = 1:m
               % randomly choose a kernel class to use as mu
-              switch ceil(rand() * 2)
+              switch ceil(rand() * 5)
                 case 1
                   mu = mu + 0;
                 case 2
