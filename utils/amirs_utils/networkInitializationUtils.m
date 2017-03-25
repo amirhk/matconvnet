@@ -222,7 +222,7 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
                 case 5
                   mu = mu + reshape(get5x5SobelHoriz(), 1, k * k); % mu must be row vector
               end
-              mu = mu / 10;
+              mu = mu / 3;
               single_generated_kernel = mvnrnd(mu, sigma,1);
               tmp_kernels(:,:,i,j) = reshape(single_generated_kernel, k, k);
               % random_std = rand() * 3;
