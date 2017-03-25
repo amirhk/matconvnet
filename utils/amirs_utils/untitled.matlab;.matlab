@@ -11,7 +11,7 @@ index = 1;
 % filter_widths = [1,2,3,4,5];
 
 number_of_examples_list = [10000];
-filter_widths = [1,2,3,4,5];
+filter_widths = [3];
 
 for number_of_examples = number_of_examples_list
   for filter_width = filter_widths
@@ -19,6 +19,7 @@ for number_of_examples = number_of_examples_list
     n = 1;
 
     gaussian_filter = fspecial('gaussian', [filter_width,filter_width], 1);
+    % oriented_gaussian_filter =
     eye_filter = eye(filter_width);
     rotated_eye_filter = rot90(eye(filter_width));
     % horiz_filter = zeros()
@@ -28,7 +29,7 @@ for number_of_examples = number_of_examples_list
     sobel_vert_filter = fspecial('sobel')';
 
 
-    tmp_filter = sobel_vert_filter;
+    tmp_filter = gaussian_filter;
     gaussian_random_kernels = init_multiplier * randn(k, k, m, n, 'single');
     filtered_gaussian_random_kernels = imfilter(gaussian_random_kernels, tmp_filter);
     vectorized = reshape(filtered_gaussian_random_kernels, [k*k,m*n])';
@@ -39,10 +40,10 @@ for number_of_examples = number_of_examples_list
     % cov matrix
     tmp = cov(vectorized);
 
-    subplot(numel(number_of_examples_list), numel(filter_widths), index);
-    imshow(tmp, []);
-    title(sprintf('num. exmpl.: %d, filter width: %d', number_of_examples, filter_width));
-    index = index + 1;
+    % subplot(numel(number_of_examples_list), numel(filter_widths), index);
+    % imshow(tmp, []);
+    % title(sprintf('num. exmpl.: %d, filter width: %d', number_of_examples, filter_width));
+    % index = index + 1;
   end
 end
 
@@ -53,16 +54,22 @@ end
 
 
 
-% tmp
-figure, imshow(tmp, [])
 
-mu = zeros(25, 1);
-sigma = tmp;
-r = mvnrnd(mu,sigma,1);
+% tmp
+% figure, imshow(tmp, [])
+
+% mu = zeros(25, 1);
+% sigma = tmp;
+% r = mvnrnd(mu,sigma,1);
 
 close all
-imagesc(reshape(mvnrnd(mu,sigma,1),5,5)); colorbar
+figure
 colormap gray
+for i = 1:100
+  imagesc(reshape(mvnrnd(mu,sigma,1),5,5)); colorbar
+  pause(0.01);
+end
+
 
 
 

@@ -202,6 +202,39 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
           layerWeights{2} = zeros(1, n, 'single');
 
 
+
+        case 'mixedKernelsWithGaussianCovarianceSmoothed-3'
+          filter_width = 3;
+          [mu, sigma] = getMeanVectorAndCovarianceMatrixOfSmoothedKernel(k, filter_width);
+          tmp_kernels = zeros(k, k, m, n, 'single');
+          for j = 1:n
+            for i = 1:m
+              % randomly choose a kernel class to use as mu
+              switch ceil(rand() * 5)
+                case 1
+                  mu = mu + 0;
+                case 2
+                  mu = mu + reshape(get5x5PrewittHoriz(), k * k, 1);
+                case 3
+                  mu = mu + reshape(get5x5PrewittVert(), k * k, 1);
+                case 4
+                  mu = mu + reshape(get5x5PrewittVert(), k * k, 1);
+                case 5
+                  mu = mu + reshape(get5x5PrewittHoriz(), k * k, 1);
+              end
+              single_generated_kernel = mvnrnd(mu, sigma,1);
+              tmp_kernels(:,:,i,j) = reshape(single_generated_kernel, k, k);
+              % random_std = rand() * 3;
+              % tmp = gen2DGaussianFilter(k, random_std);
+              % tmp_kernels(:,:,i,j) = tmp;
+            end
+          end
+
+          % generated_samples = mvnrnd(mu, sigma, m * n);
+          % need the transpose below so each of the generated samples gets reshaped into it's own k x k surface
+          layerWeights{1} = init_multiplier * single_generated_kernel
+          layerWeights{2} = zeros(1, n, 'single');
+
         case 'bernoulli'
           random_kernels = randn(k, k, m, n, 'single');
           tmp = init_multiplier * (random_kernels < 0); % < 0 because randn()
@@ -458,6 +491,33 @@ function [mu, sigma] = getMeanVectorAndCovarianceMatrixOfSmoothedKernelTEST(k, f
   % cov matrix
   sigma = cov(vectorized);
   % keyboard
+
+% --------------------------------------------------------------------
+function filter = get5x5PrewittHoriz();
+% --------------------------------------------------------------------
+  filter = [2,2,2,2,2;1,1,1,1,1;0,0,0,0,0;-1,-1,-1,-1,-1;-2,-2,-2,-2,-2];
+
+
+% --------------------------------------------------------------------
+function filter = get5x5PrewittVert();
+% --------------------------------------------------------------------
+  filter = [2,2,2,2,2;1,1,1,1,1;0,0,0,0,0;-1,-1,-1,-1,-1;-2,-2,-2,-2,-2];
+  filter = fliplr(a)';
+
+
+% --------------------------------------------------------------------
+function filter = get5x5PrewittVert();
+% --------------------------------------------------------------------
+  filter = [2, 1, 0, -1, -2;
+            3, 2, 0, -2, -3;
+            4, 3, 0, -3, -4;
+            3, 2, 0, -2, -3;
+            2, 1, 0, -1, -2];
+
+% --------------------------------------------------------------------
+function filter = get5x5PrewittHoriz();
+% --------------------------------------------------------------------
+  filter = get5x5PrewittVert()';
 
 
 % % --------------------------------------------------------------------
