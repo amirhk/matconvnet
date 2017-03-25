@@ -241,81 +241,107 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
 
 
 
-        case 'mixedKernelsWithGaussianIdentityCovariance-MuDivide-1-SigmaDivide-1'
-          tmp_kernels = getMixedKernelsWithGaussianIdentityCovariance(k, m, n, 1, 1);
-          % generated_samples = mvnrnd(mu, sigma, m * n);
-          % need the transpose below so each of the generated samples gets reshaped into it's own k x k surface
+
+
+% ------------------------------------------------------------------------------------------
+
+        case 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1'
+          tmp_kernels = getGaussianKernelsWithIdentityCovariance(k, m, n, 1, 1);
           layerWeights{1} = init_multiplier * tmp_kernels;
           layerWeights{2} = zeros(1, n, 'single');
-        case 'mixedKernelsWithGaussianIdentityCovariance-MuDivide-1-SigmaDivide-10'
-          tmp_kernels = getMixedKernelsWithGaussianIdentityCovariance(k, m, n, 1, 10);
-          % generated_samples = mvnrnd(mu, sigma, m * n);
-          % need the transpose below so each of the generated samples gets reshaped into it's own k x k surface
+        case 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-10'
+          tmp_kernels = getGaussianKernelsWithIdentityCovariance(k, m, n, 1, 10);
           layerWeights{1} = init_multiplier * tmp_kernels;
           layerWeights{2} = zeros(1, n, 'single');
-        case 'mixedKernelsWithGaussianIdentityCovariance-MuDivide-1-SigmaDivide-100'
-          tmp_kernels = getMixedKernelsWithGaussianIdentityCovariance(k, m, n, 1, 100);
-          % generated_samples = mvnrnd(mu, sigma, m * n);
-          % need the transpose below so each of the generated samples gets reshaped into it's own k x k surface
+        case 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-100'
+          tmp_kernels = getGaussianKernelsWithIdentityCovariance(k, m, n, 1, 100);
           layerWeights{1} = init_multiplier * tmp_kernels;
           layerWeights{2} = zeros(1, n, 'single');
-        case 'mixedKernelsWithGaussianIdentityCovariance-MuDivide-10-SigmaDivide-1'
-          tmp_kernels = getMixedKernelsWithGaussianIdentityCovariance(k, m, n, 10, 1);
-          % generated_samples = mvnrnd(mu, sigma, m * n);
-          % need the transpose below so each of the generated samples gets reshaped into it's own k x k surface
-          layerWeights{1} = init_multiplier * tmp_kernels;
-          layerWeights{2} = zeros(1, n, 'single');
-        case 'mixedKernelsWithGaussianIdentityCovariance-MuDivide-10-SigmaDivide-10'
-          tmp_kernels = getMixedKernelsWithGaussianIdentityCovariance(k, m, n, 10, 10);
-          % generated_samples = mvnrnd(mu, sigma, m * n);
-          % need the transpose below so each of the generated samples gets reshaped into it's own k x k surface
-          layerWeights{1} = init_multiplier * tmp_kernels;
-          layerWeights{2} = zeros(1, n, 'single');
-        case 'mixedKernelsWithGaussianIdentityCovariance-MuDivide-10-SigmaDivide-100'
-          tmp_kernels = getMixedKernelsWithGaussianIdentityCovariance(k, m, n, 10, 100);
-          % generated_samples = mvnrnd(mu, sigma, m * n);
-          % need the transpose below so each of the generated samples gets reshaped into it's own k x k surface
+        case 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1000'
+          tmp_kernels = getGaussianKernelsWithIdentityCovariance(k, m, n, 1, 1000);
           layerWeights{1} = init_multiplier * tmp_kernels;
           layerWeights{2} = zeros(1, n, 'single');
 
+% ------------------------------------------------------------------------------------------
 
+        case 'gaussian-SmoothedCovariance-3-MuDivide-1-SigmaDivide-1'
+          tmp_kernels = getGaussianKernelsWithSmoothedCovariance(k, m, n, 1, 1);
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'gaussian-SmoothedCovariance-3-MuDivide-1-SigmaDivide-10'
+          tmp_kernels = getGaussianKernelsWithSmoothedCovariance(k, m, n, 1, 10);
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'gaussian-SmoothedCovariance-3-MuDivide-1-SigmaDivide-100'
+          tmp_kernels = getGaussianKernelsWithSmoothedCovariance(k, m, n, 1, 100);
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'gaussian-SmoothedCovariance-3-MuDivide-1-SigmaDivide-1000'
+          tmp_kernels = getGaussianKernelsWithSmoothedCovariance(k, m, n, 1, 1000);
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'gaussian-SmoothedCovariance-3-MuDivide-1-SigmaDivide-10000'
+          tmp_kernels = getGaussianKernelsWithSmoothedCovariance(k, m, n, 1, 10000);
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'gaussian-SmoothedCovariance-3-MuDivide-1-SigmaDivide-100000'
+          tmp_kernels = getGaussianKernelsWithSmoothedCovariance(k, m, n, 1, 100000);
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
 
+% ------------------------------------------------------------------------------------------
 
+        case 'mixedKernels-IdentityCovariance-MuDivide-1-SigmaDivide-1'
+          tmp_kernels = getMixedKernelsWithIdentityCovariance(k, m, n, 1, 1);
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'mixedKernels-IdentityCovariance-MuDivide-1-SigmaDivide-10'
+          tmp_kernels = getMixedKernelsWithIdentityCovariance(k, m, n, 1, 10);
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'mixedKernels-IdentityCovariance-MuDivide-1-SigmaDivide-100'
+          tmp_kernels = getMixedKernelsWithIdentityCovariance(k, m, n, 1, 100);
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
 
-        case 'mixedKernelsWithGaussianSmoothedCovariance-MuDivide-1-SigmaDivide-1'
-          tmp_kernels = getMixedKernelsWithGaussianSmoothedCovariance(k, m, n, 1, 1);
-          % generated_samples = mvnrnd(mu, sigma, m * n);
-          % need the transpose below so each of the generated samples gets reshaped into it's own k x k surface
+        case 'mixedKernels-IdentityCovariance-MuDivide-10-SigmaDivide-1'
+          tmp_kernels = getMixedKernelsWithIdentityCovariance(k, m, n, 10, 1);
           layerWeights{1} = init_multiplier * tmp_kernels;
           layerWeights{2} = zeros(1, n, 'single');
-        case 'mixedKernelsWithGaussianSmoothedCovariance-MuDivide-1-SigmaDivide-10'
-          tmp_kernels = getMixedKernelsWithGaussianSmoothedCovariance(k, m, n, 1, 10);
-          % generated_samples = mvnrnd(mu, sigma, m * n);
-          % need the transpose below so each of the generated samples gets reshaped into it's own k x k surface
+        case 'mixedKernels-IdentityCovariance-MuDivide-10-SigmaDivide-10'
+          tmp_kernels = getMixedKernelsWithIdentityCovariance(k, m, n, 10, 10);
           layerWeights{1} = init_multiplier * tmp_kernels;
           layerWeights{2} = zeros(1, n, 'single');
-        case 'mixedKernelsWithGaussianSmoothedCovariance-MuDivide-1-SigmaDivide-100'
-          tmp_kernels = getMixedKernelsWithGaussianSmoothedCovariance(k, m, n, 1, 100);
-          % generated_samples = mvnrnd(mu, sigma, m * n);
-          % need the transpose below so each of the generated samples gets reshaped into it's own k x k surface
+        case 'mixedKernels-IdentityCovariance-MuDivide-10-SigmaDivide-100'
+          tmp_kernels = getMixedKernelsWithIdentityCovariance(k, m, n, 10, 100);
           layerWeights{1} = init_multiplier * tmp_kernels;
           layerWeights{2} = zeros(1, n, 'single');
-        case 'mixedKernelsWithGaussianSmoothedCovariance-MuDivide-10-SigmaDivide-1'
-          tmp_kernels = getMixedKernelsWithGaussianSmoothedCovariance(k, m, n, 10, 1);
-          % generated_samples = mvnrnd(mu, sigma, m * n);
-          % need the transpose below so each of the generated samples gets reshaped into it's own k x k surface
+
+% ------------------------------------------------------------------------------------------
+
+        case 'mixedKernels-SmoothedCovariance-3-MuDivide-1-SigmaDivide-1'
+          tmp_kernels = getMixedKernelsWithSmoothedCovariance(k, m, n, 1, 1);
           layerWeights{1} = init_multiplier * tmp_kernels;
           layerWeights{2} = zeros(1, n, 'single');
-        case 'mixedKernelsWithGaussianSmoothedCovariance-MuDivide-10-SigmaDivide-10'
-          tmp_kernels = getMixedKernelsWithGaussianSmoothedCovariance(k, m, n, 10, 10);
-          % generated_samples = mvnrnd(mu, sigma, m * n);
-          % need the transpose below so each of the generated samples gets reshaped into it's own k x k surface
+        case 'mixedKernels-SmoothedCovariance-3-MuDivide-1-SigmaDivide-10'
+          tmp_kernels = getMixedKernelsWithSmoothedCovariance(k, m, n, 1, 10);
           layerWeights{1} = init_multiplier * tmp_kernels;
           layerWeights{2} = zeros(1, n, 'single');
-        case 'mixedKernelsWithGaussianSmoothedCovariance-MuDivide-10-SigmaDivide-100'
-          tmp_kernels = getMixedKernelsWithGaussianSmoothedCovariance(k, m, n, 10, 100);
-          % generated_samples = mvnrnd(mu, sigma, m * n);
-          % need the transpose below so each of the generated samples gets reshaped into it's own k x k surface
+        case 'mixedKernels-SmoothedCovariance-3-MuDivide-1-SigmaDivide-100'
+          tmp_kernels = getMixedKernelsWithSmoothedCovariance(k, m, n, 1, 100);
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+
+        case 'mixedKernels-SmoothedCovariance-3-MuDivide-10-SigmaDivide-1'
+          tmp_kernels = getMixedKernelsWithSmoothedCovariance(k, m, n, 10, 1);
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'mixedKernels-SmoothedCovariance-3-MuDivide-10-SigmaDivide-10'
+          tmp_kernels = getMixedKernelsWithSmoothedCovariance(k, m, n, 10, 10);
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'mixedKernels-SmoothedCovariance-3-MuDivide-10-SigmaDivide-100'
+          tmp_kernels = getMixedKernelsWithSmoothedCovariance(k, m, n, 10, 100);
           layerWeights{1} = init_multiplier * tmp_kernels;
           layerWeights{2} = zeros(1, n, 'single');
 
@@ -609,19 +635,19 @@ function filter = get5x5SobelHoriz()
 
 
 % --------------------------------------------------------------------
-function tmp_kernels = getMixedKernelsWithGaussianIdentityCovariance(k, m, n, mu_divider, sigma_divider)
+function tmp_kernels = getMixedKernelsWithIdentityCovariance(k, m, n, mu_divider, sigma_divider)
 % --------------------------------------------------------------------
   mu = zeros(1, 25);
   sigma = eye(25);
-  tmp_kernels = getMixedKernelsHelper(k, m, n, mu, sigma, mu_divider, sigma_divider)
+  tmp_kernels = getMixedKernelsHelper(k, m, n, mu, sigma, mu_divider, sigma_divider);
 
 
 % --------------------------------------------------------------------
-function tmp_kernels = getMixedKernelsWithGaussianSmoothedCovariance(k, m, n, mu_divider, sigma_divider)
+function tmp_kernels = getMixedKernelsWithSmoothedCovariance(k, m, n, mu_divider, sigma_divider)
 % --------------------------------------------------------------------
   filter_width = 3;
   [mu, sigma] = getMeanVectorAndCovarianceMatrixOfSmoothedKernel(k, filter_width);
-  tmp_kernels = getMixedKernelsHelper(k, m, n, mu, sigma, mu_divider, sigma_divider)
+  tmp_kernels = getMixedKernelsHelper(k, m, n, mu, sigma, mu_divider, sigma_divider);
 
 
 % --------------------------------------------------------------------
@@ -656,6 +682,29 @@ function tmp_kernels = getMixedKernelsHelper(k, m, n, mu, sigma, mu_divider, sig
       % tmp_kernels(:,:,i,j) = tmp;
     end
   end
+
+% --------------------------------------------------------------------
+function tmp_kernels = getGaussianKernelsWithIdentityCovariance(k, m, n, mu_divider, sigma_divider)
+% --------------------------------------------------------------------
+  mu = zeros(1, 25);
+  sigma = eye(25);
+  tmp_kernels = getGaussianKernelsHelper(k, m, n, mu, sigma, mu_divider, sigma_divider);
+
+% --------------------------------------------------------------------
+function tmp_kernels = getGaussianKernelsWithSmoothedCovariance(k, m, n, mu_divider, sigma_divider)
+% --------------------------------------------------------------------
+  filter_width = 3;
+  [mu, sigma] = getMeanVectorAndCovarianceMatrixOfSmoothedKernel(k, filter_width);
+  tmp_kernels = getGaussianKernelsHelper(k, m, n, mu, sigma, mu_divider, sigma_divider);
+
+% --------------------------------------------------------------------
+function tmp_kernels = getGaussianKernelsHelper(k, m, n, mu, sigma, mu_divider, sigma_divider)
+% --------------------------------------------------------------------
+  generated_samples = mvnrnd(mu / mu_divider, sigma / sigma_divider, m * n);
+  % need the transpose below so each of the generated samples gets reshaped into it's own k x k surface
+  tmp_kernels = reshape(generated_samples', k, k, m, n);
+
+
 
 
 
