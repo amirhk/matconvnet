@@ -214,8 +214,7 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
                 case 1
                   mu = mu + 0;
                 case 2
-                  mu = mu + reshape(get5x5PrewittHoriz(), 1, k * k) / 10; % mu must be row vector
-                  keyboard
+                  mu = mu + reshape(get5x5PrewittHoriz(), 1, k * k); % mu must be row vector
                 case 3
                   mu = mu + reshape(get5x5PrewittVert(), 1, k * k); % mu must be row vector
                 case 4
@@ -223,6 +222,7 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
                 case 5
                   mu = mu + reshape(get5x5SobelHoriz(), 1, k * k); % mu must be row vector
               end
+              mu = mu / 10;
               single_generated_kernel = mvnrnd(mu, sigma,1);
               tmp_kernels(:,:,i,j) = reshape(single_generated_kernel, k, k);
               % random_std = rand() * 3;
