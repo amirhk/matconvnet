@@ -214,13 +214,13 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
                 case 1
                   mu = mu + 0;
                 case 2
-                  mu = mu + reshape(get5x5PrewittHoriz(), k * k, 1);
+                  mu = mu + reshape(get5x5PrewittHoriz(), 1, k * k); % mu must be row vector
                 case 3
-                  mu = mu + reshape(get5x5PrewittVert(), k * k, 1);
+                  mu = mu + reshape(get5x5PrewittVert(), 1, k * k); % mu must be row vector
                 case 4
-                  mu = mu + reshape(get5x5PrewittVert(), k * k, 1);
+                  mu = mu + reshape(get5x5SobelVert(), 1, k * k); % mu must be row vector
                 case 5
-                  mu = mu + reshape(get5x5PrewittHoriz(), k * k, 1);
+                  mu = mu + reshape(get5x5SobelHoriz(), 1, k * k); % mu must be row vector
               end
               single_generated_kernel = mvnrnd(mu, sigma,1);
               tmp_kernels(:,:,i,j) = reshape(single_generated_kernel, k, k);
@@ -232,7 +232,7 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
 
           % generated_samples = mvnrnd(mu, sigma, m * n);
           % need the transpose below so each of the generated samples gets reshaped into it's own k x k surface
-          layerWeights{1} = init_multiplier * single_generated_kernel
+          layerWeights{1} = init_multiplier * tmp_kernels;
           layerWeights{2} = zeros(1, n, 'single');
 
         case 'bernoulli'
@@ -502,11 +502,11 @@ function filter = get5x5PrewittHoriz();
 function filter = get5x5PrewittVert();
 % --------------------------------------------------------------------
   filter = [2,2,2,2,2;1,1,1,1,1;0,0,0,0,0;-1,-1,-1,-1,-1;-2,-2,-2,-2,-2];
-  filter = fliplr(a)';
+  filter = fliplr(filter)';
 
 
 % --------------------------------------------------------------------
-function filter = get5x5PrewittVert();
+function filter = get5x5SobelVert();
 % --------------------------------------------------------------------
   filter = [2, 1, 0, -1, -2;
             3, 2, 0, -2, -3;
@@ -515,7 +515,7 @@ function filter = get5x5PrewittVert();
             2, 1, 0, -1, -2];
 
 % --------------------------------------------------------------------
-function filter = get5x5PrewittHoriz();
+function filter = get5x5SobelHoriz();
 % --------------------------------------------------------------------
   filter = get5x5PrewittVert()';
 
