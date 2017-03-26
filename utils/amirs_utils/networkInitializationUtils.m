@@ -704,7 +704,7 @@ function tmp_kernels = getGaussianKernelsHelper(k, m, n, mu, sigma, mu_divider, 
 % --------------------------------------------------------------------
   generated_samples = mvnrnd(mu / mu_divider, sigma / sigma_divider, m * n);
   % need the transpose below so each of the generated samples gets reshaped into it's own k x k surface
-  tmp_kernels = reshape(generated_samples', k, k, m, n);
+  tmp_kernels = single(reshape(generated_samples', k, k, m, n));
 
 
 
