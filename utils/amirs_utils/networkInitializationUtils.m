@@ -666,21 +666,51 @@ function tmp_kernels = getMixedKernelsHelper(k, m, n, mu, sigma, mu_divider, sig
   for j = 1:n
     for i = 1:m
       % randomly choose a kernel class to use as mu
-      switch ceil(rand() * 5)
+      % switch ceil(rand() * 5)
+      %   case 1
+      %     mu = mu + 0;
+      %     % sigma = sigma / sigma_divider / 100;
+      %     sigma = sigma / sigma_divider / 1;
+      %   case 2
+      %     mu = mu + reshape(get5x5PrewittHoriz(), 1, k * k); % mu must be row vector
+      %     sigma = sigma / sigma_divider / 1;
+      %   case 3
+      %     mu = mu + reshape(get5x5PrewittVert(), 1, k * k); % mu must be row vector
+      %     sigma = sigma / sigma_divider / 1;
+      %   case 4
+      %     mu = mu + reshape(get5x5SobelVert(), 1, k * k); % mu must be row vector
+      %     sigma = sigma / sigma_divider / 1;
+      %   case 5
+      %     mu = mu + reshape(get5x5SobelHoriz(), 1, k * k); % mu must be row vector
+      %     sigma = sigma / sigma_divider / 1;
+      % end
+      switch ceil(rand() * 8)
         case 1
           mu = mu + 0;
           % sigma = sigma / sigma_divider / 100;
           sigma = sigma / sigma_divider / 1;
         case 2
-          mu = mu + reshape(get5x5PrewittHoriz(), 1, k * k); % mu must be row vector
+          mu = mu + 0;
+          % sigma = sigma / sigma_divider / 100;
           sigma = sigma / sigma_divider / 1;
         case 3
-          mu = mu + reshape(get5x5PrewittVert(), 1, k * k); % mu must be row vector
+          mu = mu + 0;
+          % sigma = sigma / sigma_divider / 100;
           sigma = sigma / sigma_divider / 1;
         case 4
-          mu = mu + reshape(get5x5SobelVert(), 1, k * k); % mu must be row vector
+          mu = mu + 0;
+          % sigma = sigma / sigma_divider / 100;
           sigma = sigma / sigma_divider / 1;
         case 5
+          mu = mu + reshape(get5x5PrewittHoriz(), 1, k * k); % mu must be row vector
+          sigma = sigma / sigma_divider / 1;
+        case 6
+          mu = mu + reshape(get5x5PrewittVert(), 1, k * k); % mu must be row vector
+          sigma = sigma / sigma_divider / 1;
+        case 7
+          mu = mu + reshape(get5x5SobelVert(), 1, k * k); % mu must be row vector
+          sigma = sigma / sigma_divider / 1;
+        case 8
           mu = mu + reshape(get5x5SobelHoriz(), 1, k * k); % mu must be row vector
           sigma = sigma / sigma_divider / 1;
       end
