@@ -304,6 +304,7 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
           layerWeights{1} = init_multiplier * tmp_kernels;
           layerWeights{2} = zeros(1, n, 'single');
 
+
         case 'mixedKernels-IdentityCovariance-MuDivide-10-SigmaDivide-1'
           tmp_kernels = getMixedKernelsWithIdentityCovariance(k, m, n, 10, 1);
           layerWeights{1} = init_multiplier * tmp_kernels;
@@ -332,6 +333,7 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
           layerWeights{1} = init_multiplier * tmp_kernels;
           layerWeights{2} = zeros(1, n, 'single');
 
+
         case 'mixedKernels-SmoothedCovariance-3-MuDivide-10-SigmaDivide-1'
           tmp_kernels = getMixedKernelsWithSmoothedCovariance(k, m, n, 10, 1);
           layerWeights{1} = init_multiplier * tmp_kernels;
@@ -345,8 +347,7 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
           layerWeights{1} = init_multiplier * tmp_kernels;
           layerWeights{2} = zeros(1, n, 'single');
 
-
-
+% ------------------------------------------------------------------------------------------
 
 
         case 'bernoulli'
@@ -660,7 +661,8 @@ function tmp_kernels = getMixedKernelsHelper(k, m, n, mu, sigma, mu_divider, sig
       switch ceil(rand() * 5)
         case 1
           mu = mu + 0;
-          sigma = sigma / sigma_divider / 100;
+          % sigma = sigma / sigma_divider / 100;
+          sigma = sigma / sigma_divider / 1;
         case 2
           mu = mu + reshape(get5x5PrewittHoriz(), 1, k * k); % mu must be row vector
           sigma = sigma / sigma_divider / 1;
