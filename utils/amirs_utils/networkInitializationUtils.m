@@ -164,28 +164,24 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
           layerWeights{1} = init_multiplier * reshape(generated_samples', k, k, m, n);
           layerWeights{2} = zeros(1, n, 'single');
         case 'gaussianAnisoDiffed-2'
-          filter_width = 3;
           gaussian_random_kernels = init_multiplier * randn(k, k, m, n, 'single');
           % confirmed... this runs on every 2D plane separately (on 3D and 4D matrices)
           anisodiffed_gaussian_random_kernels = anisodiff2D(gaussian_random_kernels, 2, 1/7, 30, 2);
           layerWeights{1} = single(anisodiffed_gaussian_random_kernels);
           layerWeights{2} = zeros(1, n, 'single');
         case 'gaussianAnisoDiffed-4'
-          filter_width = 3;
           gaussian_random_kernels = init_multiplier * randn(k, k, m, n, 'single');
           % confirmed... this runs on every 2D plane separately (on 3D and 4D matrices)
           anisodiffed_gaussian_random_kernels = anisodiff2D(gaussian_random_kernels, 4, 1/7, 30, 2);
           layerWeights{1} = single(anisodiffed_gaussian_random_kernels);
           layerWeights{2} = zeros(1, n, 'single');
         case 'gaussianAnisoDiffed-6'
-          filter_width = 3;
           gaussian_random_kernels = init_multiplier * randn(k, k, m, n, 'single');
           % confirmed... this runs on every 2D plane separately (on 3D and 4D matrices)
           anisodiffed_gaussian_random_kernels = anisodiff2D(gaussian_random_kernels, 6, 1/7, 30, 2);
           layerWeights{1} = single(anisodiffed_gaussian_random_kernels);
           layerWeights{2} = zeros(1, n, 'single');
         case 'gaussianAnisoDiffed-8'
-          filter_width = 3;
           gaussian_random_kernels = init_multiplier * randn(k, k, m, n, 'single');
           % confirmed... this runs on every 2D plane separately (on 3D and 4D matrices)
           anisodiffed_gaussian_random_kernels = anisodiff2D(gaussian_random_kernels, 8, 1/7, 30, 2);
@@ -272,30 +268,221 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
 
 % ------------------------------------------------------------------------------------------
 
+        case 'gaussian-SmoothedCovariance-2-MuDivide-1-SigmaDivide-1'
+          tmp_kernels = getGaussianKernelsWithSmoothedCovariance(k, m, n, 1, 1, 2);
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'gaussian-SmoothedCovariance-2-MuDivide-1-SigmaDivide-10'
+          tmp_kernels = getGaussianKernelsWithSmoothedCovariance(k, m, n, 1, 10, 2);
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'gaussian-SmoothedCovariance-2-MuDivide-1-SigmaDivide-100'
+          tmp_kernels = getGaussianKernelsWithSmoothedCovariance(k, m, n, 1, 100, 2);
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'gaussian-SmoothedCovariance-2-MuDivide-1-SigmaDivide-1000'
+          tmp_kernels = getGaussianKernelsWithSmoothedCovariance(k, m, n, 1, 1000, 2);
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'gaussian-SmoothedCovariance-2-MuDivide-1-SigmaDivide-10000'
+          tmp_kernels = getGaussianKernelsWithSmoothedCovariance(k, m, n, 1, 10000, 2);
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'gaussian-SmoothedCovariance-2-MuDivide-1-SigmaDivide-100000'
+          tmp_kernels = getGaussianKernelsWithSmoothedCovariance(k, m, n, 1, 100000, 2);
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+
+% ------------------------------------------------------------------------------------------
+
         case 'gaussian-SmoothedCovariance-3-MuDivide-1-SigmaDivide-1'
-          tmp_kernels = getGaussianKernelsWithSmoothedCovariance(k, m, n, 1, 1);
+          tmp_kernels = getGaussianKernelsWithSmoothedCovariance(k, m, n, 1, 1, 3);
           layerWeights{1} = init_multiplier * tmp_kernels;
           layerWeights{2} = zeros(1, n, 'single');
         case 'gaussian-SmoothedCovariance-3-MuDivide-1-SigmaDivide-10'
-          tmp_kernels = getGaussianKernelsWithSmoothedCovariance(k, m, n, 1, 10);
+          tmp_kernels = getGaussianKernelsWithSmoothedCovariance(k, m, n, 1, 10, 3);
           layerWeights{1} = init_multiplier * tmp_kernels;
           layerWeights{2} = zeros(1, n, 'single');
         case 'gaussian-SmoothedCovariance-3-MuDivide-1-SigmaDivide-100'
-          tmp_kernels = getGaussianKernelsWithSmoothedCovariance(k, m, n, 1, 100);
+          tmp_kernels = getGaussianKernelsWithSmoothedCovariance(k, m, n, 1, 100, 3);
           layerWeights{1} = init_multiplier * tmp_kernels;
           layerWeights{2} = zeros(1, n, 'single');
         case 'gaussian-SmoothedCovariance-3-MuDivide-1-SigmaDivide-1000'
-          tmp_kernels = getGaussianKernelsWithSmoothedCovariance(k, m, n, 1, 1000);
+          tmp_kernels = getGaussianKernelsWithSmoothedCovariance(k, m, n, 1, 1000, 3);
           layerWeights{1} = init_multiplier * tmp_kernels;
           layerWeights{2} = zeros(1, n, 'single');
         case 'gaussian-SmoothedCovariance-3-MuDivide-1-SigmaDivide-10000'
-          tmp_kernels = getGaussianKernelsWithSmoothedCovariance(k, m, n, 1, 10000);
+          tmp_kernels = getGaussianKernelsWithSmoothedCovariance(k, m, n, 1, 10000, 3);
           layerWeights{1} = init_multiplier * tmp_kernels;
           layerWeights{2} = zeros(1, n, 'single');
         case 'gaussian-SmoothedCovariance-3-MuDivide-1-SigmaDivide-100000'
-          tmp_kernels = getGaussianKernelsWithSmoothedCovariance(k, m, n, 1, 100000);
+          tmp_kernels = getGaussianKernelsWithSmoothedCovariance(k, m, n, 1, 100000, 3);
           layerWeights{1} = init_multiplier * tmp_kernels;
           layerWeights{2} = zeros(1, n, 'single');
+
+% ------------------------------------------------------------------------------------------
+
+        case 'gaussian-SmoothedCovariance-4-MuDivide-1-SigmaDivide-1'
+          tmp_kernels = getGaussianKernelsWithSmoothedCovariance(k, m, n, 1, 1, 4);
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'gaussian-SmoothedCovariance-4-MuDivide-1-SigmaDivide-10'
+          tmp_kernels = getGaussianKernelsWithSmoothedCovariance(k, m, n, 1, 10, 4);
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'gaussian-SmoothedCovariance-4-MuDivide-1-SigmaDivide-100'
+          tmp_kernels = getGaussianKernelsWithSmoothedCovariance(k, m, n, 1, 100, 4);
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'gaussian-SmoothedCovariance-4-MuDivide-1-SigmaDivide-1000'
+          tmp_kernels = getGaussianKernelsWithSmoothedCovariance(k, m, n, 1, 1000, 4);
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'gaussian-SmoothedCovariance-4-MuDivide-1-SigmaDivide-10000'
+          tmp_kernels = getGaussianKernelsWithSmoothedCovariance(k, m, n, 1, 10000, 4);
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'gaussian-SmoothedCovariance-4-MuDivide-1-SigmaDivide-100000'
+          tmp_kernels = getGaussianKernelsWithSmoothedCovariance(k, m, n, 1, 100000, 4);
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+
+% ------------------------------------------------------------------------------------------
+
+        case 'gaussian-SmoothedCovariance-5-MuDivide-1-SigmaDivide-1'
+          tmp_kernels = getGaussianKernelsWithSmoothedCovariance(k, m, n, 1, 1, 5);
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'gaussian-SmoothedCovariance-5-MuDivide-1-SigmaDivide-10'
+          tmp_kernels = getGaussianKernelsWithSmoothedCovariance(k, m, n, 1, 10, 5);
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'gaussian-SmoothedCovariance-5-MuDivide-1-SigmaDivide-100'
+          tmp_kernels = getGaussianKernelsWithSmoothedCovariance(k, m, n, 1, 100, 5);
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'gaussian-SmoothedCovariance-5-MuDivide-1-SigmaDivide-1000'
+          tmp_kernels = getGaussianKernelsWithSmoothedCovariance(k, m, n, 1, 1000, 5);
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'gaussian-SmoothedCovariance-5-MuDivide-1-SigmaDivide-10000'
+          tmp_kernels = getGaussianKernelsWithSmoothedCovariance(k, m, n, 1, 10000, 5);
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'gaussian-SmoothedCovariance-5-MuDivide-1-SigmaDivide-100000'
+          tmp_kernels = getGaussianKernelsWithSmoothedCovariance(k, m, n, 1, 100000, 5);
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+% ------------------------------------------------------------------------------------------
+
+        case 'gaussian-CentreSurroundCovariance-randomDivide-1000-MuDivide-1-SigmaDivide-1'
+          tmp_kernels = getGaussianKernelsWithCentreSurroundCovariance(k, m, n, 1, 1, 1000);
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'gaussian-CentreSurroundCovariance-randomDivide-1000-MuDivide-1-SigmaDivide-10'
+          tmp_kernels = getGaussianKernelsWithCentreSurroundCovariance(k, m, n, 1, 10, 1000);
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'gaussian-CentreSurroundCovariance-randomDivide-1000-MuDivide-1-SigmaDivide-100'
+          tmp_kernels = getGaussianKernelsWithCentreSurroundCovariance(k, m, n, 1, 100, 1000);
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'gaussian-CentreSurroundCovariance-randomDivide-1000-MuDivide-1-SigmaDivide-1000'
+          tmp_kernels = getGaussianKernelsWithCentreSurroundCovariance(k, m, n, 1, 1000, 1000);
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+
+% ------------------------------------------------------------------------------------------
+
+        case 'gaussian-CentreSurroundCovariance-randomDivide-100-MuDivide-1-SigmaDivide-1'
+          tmp_kernels = getGaussianKernelsWithCentreSurroundCovariance(k, m, n, 1, 1, 100);
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'gaussian-CentreSurroundCovariance-randomDivide-100-MuDivide-1-SigmaDivide-10'
+          tmp_kernels = getGaussianKernelsWithCentreSurroundCovariance(k, m, n, 1, 10, 100);
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'gaussian-CentreSurroundCovariance-randomDivide-100-MuDivide-1-SigmaDivide-100'
+          tmp_kernels = getGaussianKernelsWithCentreSurroundCovariance(k, m, n, 1, 100, 100);
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'gaussian-CentreSurroundCovariance-randomDivide-100-MuDivide-1-SigmaDivide-1000'
+          tmp_kernels = getGaussianKernelsWithCentreSurroundCovariance(k, m, n, 1, 1000, 100);
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+
+% ------------------------------------------------------------------------------------------
+
+        case 'gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1'
+          tmp_kernels = getGaussianKernelsWithCentreSurroundCovariance(k, m, n, 1, 1, 10);
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-10'
+          tmp_kernels = getGaussianKernelsWithCentreSurroundCovariance(k, m, n, 1, 10, 10);
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-100'
+          tmp_kernels = getGaussianKernelsWithCentreSurroundCovariance(k, m, n, 1, 100, 10);
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1000'
+          tmp_kernels = getGaussianKernelsWithCentreSurroundCovariance(k, m, n, 1, 1000, 10);
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+
+% ------------------------------------------------------------------------------------------
+
+        case 'gaussian-CentreSurroundCovariance-randomDivide-1-MuDivide-1-SigmaDivide-1'
+          tmp_kernels = getGaussianKernelsWithCentreSurroundCovariance(k, m, n, 1, 1, 1);
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'gaussian-CentreSurroundCovariance-randomDivide-1-MuDivide-1-SigmaDivide-10'
+          tmp_kernels = getGaussianKernelsWithCentreSurroundCovariance(k, m, n, 1, 10, 1);
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'gaussian-CentreSurroundCovariance-randomDivide-1-MuDivide-1-SigmaDivide-100'
+          tmp_kernels = getGaussianKernelsWithCentreSurroundCovariance(k, m, n, 1, 100, 1);
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'gaussian-CentreSurroundCovariance-randomDivide-1-MuDivide-1-SigmaDivide-1000'
+          tmp_kernels = getGaussianKernelsWithCentreSurroundCovariance(k, m, n, 1, 1000, 1);
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 % ------------------------------------------------------------------------------------------
 
@@ -374,8 +561,8 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
           layerWeights{1} = smoothed_bernoulli_random_kernels;
           layerWeights{2} = zeros(1, n, 'single');
         case 'bernoulliAnisoDiffed-2'
-          filter_width = 3;
-          gaussian_filter = fspecial('gaussian', [filter_width, filter_width], 1);
+          % filter_width = 3;
+          % gaussian_filter = fspecial('gaussian', [filter_width, filter_width], 1);
           random_kernels = randn(k, k, m, n, 'single');
           tmp = init_multiplier * (random_kernels < 0); % < 0 because randn()
           bernoulli_random_kernels = single(tmp .* sign(randn(size(tmp))));
@@ -731,9 +918,9 @@ function tmp_kernels = getGaussianKernelsWithIdentityCovariance(k, m, n, mu_divi
   tmp_kernels = getGaussianKernelsHelper(k, m, n, mu, sigma, mu_divider, sigma_divider);
 
 % --------------------------------------------------------------------
-function tmp_kernels = getGaussianKernelsWithSmoothedCovariance(k, m, n, mu_divider, sigma_divider)
+function tmp_kernels = getGaussianKernelsWithSmoothedCovariance(k, m, n, mu_divider, sigma_divider, filter_width)
 % --------------------------------------------------------------------
-  filter_width = 3;
+  % filter_width = 3;
   [mu, sigma] = getMeanVectorAndCovarianceMatrixOfSmoothedKernel(k, filter_width);
   tmp_kernels = getGaussianKernelsHelper(k, m, n, mu, sigma, mu_divider, sigma_divider);
 
@@ -744,6 +931,26 @@ function tmp_kernels = getGaussianKernelsHelper(k, m, n, mu, sigma, mu_divider, 
   % need the transpose below so each of the generated samples gets reshaped into it's own k x k surface
   tmp_kernels = single(reshape(generated_samples', k, k, m, n));
 
+
+
+% --------------------------------------------------------------------
+function tmp_kernels = getGaussianKernelsWithCentreSurroundCovariance(k, m, n, mu_divider, sigma_divider, additive_random_divider)
+% --------------------------------------------------------------------
+  d = 100;
+  large_number = 100000;
+  vectorized = zeros(large_number, k * k);
+  for i = 1 : large_number
+    g1 = gen2DGaussianFilter(k,1);
+    g2 = g1 - mean(g1(:));
+    g3 = g2 * sign(randn());
+    g4 = g3 + randn(k,k) / additive_random_divider;
+    vectorized(i,:) = reshape(g4, 1, k * k);
+  end
+
+  mu = mean(vectorized);
+  sigma = cov(vectorized);
+
+  tmp_kernels = getGaussianKernelsHelper(k, m, n, mu, sigma, mu_divider, sigma_divider);
 
 
 
