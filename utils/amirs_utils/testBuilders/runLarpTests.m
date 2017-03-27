@@ -77,7 +77,7 @@ function runLarpTests(experiment_parent_dir, dataset, posneg_balance, network_ar
   % -------------------------------------------------------------------------
   %                                                            shared options
   % -------------------------------------------------------------------------
-  experiment_options.number_of_folds = 5;
+  experiment_options.number_of_folds = 3;
   experiment_options.experiment_parent_dir = opts.paths.experiment_dir;
   experiment_options.dataset = opts.general.dataset;
   experiment_options.posneg_balance = opts.imdb.posneg_balance;
@@ -222,7 +222,7 @@ function runLarpTests(experiment_parent_dir, dataset, posneg_balance, network_ar
   % batch_sizes = [50, 100];
   % weight_decays = [0.01, 0.001, 0.0001];
 
-  learning_rate_dividers = [3];
+  learning_rate_dividers = [1, 3, 10];
   batch_sizes = [50, 100];
   weight_decays = [0.01];
 
