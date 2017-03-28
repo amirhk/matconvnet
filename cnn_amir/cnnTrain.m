@@ -474,7 +474,7 @@ function [net,res] = accumulate_gradients(opts, lr, batch_size, net, res, mmap)
 
 
         % net.layers{l}.weights{j} = (net.layers{l}.weights{j} + thisLR * net.layers{l}.momentum{j}); % I changed this line
-        net.layers{l}.weights{j} = (net.layers{l}.weights{j} .* exp(thisLR * net.layers{l}.momentum{j})); % I changed this line
+        net.layers{l}.weights{j} = (net.layers{l}.weights{j} .* exp(thisLR * 100 * net.layers{l}.momentum{j})); % I changed this line
 
         % net.layers{l}.weights{j} = (net.layers{l}.weights{j} + thisLR * net.layers{l}.momentum{j}).*net.layers{l}.sparseMaps; % I changed this line (from Javad)
       else
