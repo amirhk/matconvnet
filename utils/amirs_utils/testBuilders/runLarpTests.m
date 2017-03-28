@@ -222,8 +222,8 @@ function runLarpTests(experiment_parent_dir, dataset, posneg_balance, network_ar
   % batch_sizes = [50, 100];
   % weight_decays = [0.01, 0.001, 0.0001];
 
-  learning_rate_dividers = [1, 3, 10];
-  batch_sizes = [50, 100];
+  learning_rate_dividers = [10];
+  batch_sizes = [50];
   weight_decays = [0.01];
 
   for learning_rate_divider = learning_rate_dividers

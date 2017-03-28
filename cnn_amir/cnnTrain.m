@@ -550,8 +550,6 @@ function [all_samples_top_class_predictions, all_samples_all_class_predictions, 
   all_labels = all_labels_1;
 
 
-
-
 % -------------------------------------------------------------------------
 function [all_samples_forward_pass_results] = get_resulting_forward_pass_matrix_from_network_for_all_samples(opts, getBatch, epoch, subset, learning_rate, imdb, net_cpu, forward_pass_only_depth)
 % -------------------------------------------------------------------------
