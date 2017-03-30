@@ -54,281 +54,281 @@ function net = getLarpArchitecture(dataset, network_arch)
 
     % ------------------------------------------------------------------------------------------------------------------------------------------------------------
     case 'larpV1P0'
-      layer_number = 1;
+      layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 3, 64, 1/100, 2, weight_init_type, 'gen');
       % net.layers{end+1} = fh.poolingLayerLeNetMax(layer_number);
       net.layers{end+1} = fh.reluLayer(layer_number);
 
     % ------------------------------------------------------------------------------------------------------------------------------------------------------------
     case 'larpV1P1'
-      layer_number = 1;
+      layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 3, 64, 1/100, 2, weight_init_type, 'gen');
       net.layers{end+1} = fh.poolingLayerLeNetMax(layer_number);
       net.layers{end+1} = fh.reluLayer(layer_number);
 
     % ------------------------------------------------------------------------------------------------------------------------------------------------------------
     case 'larpV3P0'
-      layer_number = 1;
+      layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 3, 32, 1/100, 2, weight_init_type, 'gen');
       % net.layers{end+1} = fh.poolingLayerLeNetMax(layer_number);
       net.layers{end+1} = fh.reluLayer(layer_number);
 
-      layer_number = layer_number + 2;
+      layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 32, 32, 5/100, 2, weight_init_type, 'gen');
       net.layers{end+1} = fh.reluLayer(layer_number);
       % net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
 
-      layer_number = layer_number + 2;
+      layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 32, 64, 5/100, 2, weight_init_type, 'gen');
       net.layers{end+1} = fh.reluLayer(layer_number);
       % net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
 
     % ------------------------------------------------------------------------------------------------------------------------------------------------------------
     case 'larpV3P1'
-      layer_number = 1;
+      layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 3, 32, 1/100, 2, weight_init_type, 'gen');
       % net.layers{end+1} = fh.poolingLayerLeNetMax(layer_number);
       net.layers{end+1} = fh.reluLayer(layer_number);
 
-      layer_number = layer_number + 2;
+      layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 32, 32, 5/100, 2, weight_init_type, 'gen');
       net.layers{end+1} = fh.reluLayer(layer_number);
       net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
 
-      layer_number = layer_number + 2;
+      layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 32, 64, 5/100, 2, weight_init_type, 'gen');
       net.layers{end+1} = fh.reluLayer(layer_number);
       % net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
 
     % ------------------------------------------------------------------------------------------------------------------------------------------------------------
     case 'larpV3P3'
-      layer_number = 1;
+      layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 3, 32, 1/100, 2, weight_init_type, 'gen');
       net.layers{end+1} = fh.poolingLayerLeNetMax(layer_number);
       net.layers{end+1} = fh.reluLayer(layer_number);
 
-      layer_number = layer_number + 3;
+      layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 32, 32, 5/100, 2, weight_init_type, 'gen');
       net.layers{end+1} = fh.reluLayer(layer_number);
       net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
 
-      layer_number = layer_number + 3;
+      layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 32, 64, 5/100, 2, weight_init_type, 'gen');
       net.layers{end+1} = fh.reluLayer(layer_number);
       net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
 
     % ------------------------------------------------------------------------------------------------------------------------------------------------------------
     case 'larpV5aP0'
-      layer_number = 1;
+      layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 3, 96, 5/1000, 2, weight_init_type, 'gen');
       net.layers{end+1} = fh.reluLayer(layer_number);
       % net.layers{end+1} = fh.poolingLayerAlexNet(layer_number);
 
-      layer_number = layer_number + 2;
+      layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 96, 256, 5/1000, 2, weight_init_type, 'gen');
       net.layers{end+1} = fh.reluLayer(layer_number);
       % net.layers{end+1} = fh.poolingLayerAlexNet(layer_number);
 
-      layer_number = layer_number + 2;
+      layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 3, 256, 384, 5/1000, 1, weight_init_type, 'gen');
       net.layers{end+1} = fh.reluLayer(layer_number);
       % net.layers{end+1} = fh.poolingLayerAlexNet(layer_number);
 
-      layer_number = layer_number + 2;
+      layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 3, 384, 384, 5/1000, 1, weight_init_type, 'gen');
       net.layers{end+1} = fh.reluLayer(layer_number);
       % net.layers{end+1} = fh.poolingLayerAlexNet(layer_number);
 
-      layer_number = layer_number + 2;
+      layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 3, 384, 64, 5/1000, 1, weight_init_type, 'gen');
       net.layers{end+1} = fh.reluLayer(layer_number);
       % net.layers{end+1} = fh.poolingLayerAlexNet(layer_number);
 
     % ------------------------------------------------------------------------------------------------------------------------------------------------------------
     case 'larpV5aP1'
-      layer_number = 1;
+      layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 3, 96, 5/1000, 2, weight_init_type, 'gen');
       net.layers{end+1} = fh.reluLayer(layer_number);
       % net.layers{end+1} = fh.poolingLayerAlexNet(layer_number);
 
-      layer_number = layer_number + 2;
+      layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 96, 256, 5/1000, 2, weight_init_type, 'gen');
       net.layers{end+1} = fh.reluLayer(layer_number);
       % net.layers{end+1} = fh.poolingLayerAlexNet(layer_number);
 
-      layer_number = layer_number + 2;
+      layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 3, 256, 384, 5/1000, 1, weight_init_type, 'gen');
       net.layers{end+1} = fh.reluLayer(layer_number);
       net.layers{end+1} = fh.poolingLayerAlexNet(layer_number);
 
-      layer_number = layer_number + 3;
+      layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 3, 384, 384, 5/1000, 1, weight_init_type, 'gen');
       net.layers{end+1} = fh.reluLayer(layer_number);
       % net.layers{end+1} = fh.poolingLayerAlexNet(layer_number);
 
-      layer_number = layer_number + 2;
+      layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 3, 384, 64, 5/1000, 1, weight_init_type, 'gen');
       net.layers{end+1} = fh.reluLayer(layer_number);
       % net.layers{end+1} = fh.poolingLayerAlexNet(layer_number);
 
     % ------------------------------------------------------------------------------------------------------------------------------------------------------------
     case 'larpV5aP3'
-      layer_number = 1;
+      layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 3, 96, 5/1000, 2, weight_init_type, 'gen');
       net.layers{end+1} = fh.reluLayer(layer_number);
       net.layers{end+1} = fh.poolingLayerAlexNet(layer_number);
 
-      layer_number = layer_number + 3;
+      layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 96, 256, 5/1000, 2, weight_init_type, 'gen');
       net.layers{end+1} = fh.reluLayer(layer_number);
       % net.layers{end+1} = fh.poolingLayerAlexNet(layer_number);
 
-      layer_number = layer_number + 2;
+      layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 3, 256, 384, 5/1000, 1, weight_init_type, 'gen');
       net.layers{end+1} = fh.reluLayer(layer_number);
       net.layers{end+1} = fh.poolingLayerAlexNet(layer_number);
 
-      layer_number = layer_number + 3;
+      layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 3, 384, 384, 5/1000, 1, weight_init_type, 'gen');
       net.layers{end+1} = fh.reluLayer(layer_number);
       % net.layers{end+1} = fh.poolingLayerAlexNet(layer_number);
 
-      layer_number = layer_number + 2;
+      layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 3, 384, 64, 5/1000, 1, weight_init_type, 'gen');
       net.layers{end+1} = fh.reluLayer(layer_number);
       net.layers{end+1} = fh.poolingLayerAlexNet(layer_number);
 
     % ------------------------------------------------------------------------------------------------------------------------------------------------------------
     case 'larpV5aP5'
-      layer_number = 1;
+      layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 3, 96, 5/1000, 2, weight_init_type, 'gen');
       net.layers{end+1} = fh.reluLayer(layer_number);
       net.layers{end+1} = fh.poolingLayerAlexNet(layer_number);
 
-      layer_number = layer_number + 3;
+      layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 96, 256, 5/1000, 2, weight_init_type, 'gen');
       net.layers{end+1} = fh.reluLayer(layer_number);
       net.layers{end+1} = fh.poolingLayerAlexNet(layer_number);
 
-      layer_number = layer_number + 3;
+      layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 3, 256, 384, 5/1000, 1, weight_init_type, 'gen');
       net.layers{end+1} = fh.reluLayer(layer_number);
       net.layers{end+1} = fh.poolingLayerAlexNet(layer_number);
 
-      layer_number = layer_number + 3;
+      layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 3, 384, 384, 5/1000, 1, weight_init_type, 'gen');
       net.layers{end+1} = fh.reluLayer(layer_number);
       net.layers{end+1} = fh.poolingLayerAlexNet(layer_number);
 
-      layer_number = layer_number + 3;
+      layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 3, 384, 64, 5/1000, 1, weight_init_type, 'gen');
       net.layers{end+1} = fh.reluLayer(layer_number);
       net.layers{end+1} = fh.poolingLayerAlexNet(layer_number);
 
     % ------------------------------------------------------------------------------------------------------------------------------------------------------------
     case 'larpV5hP0'
-      layer_number = 1;
+      layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 3, 64, 1/100, 2, weight_init_type, 'gen');
       % net.layers{end+1} = fh.poolingLayerLeNetMax(layer_number);
       net.layers{end+1} = fh.reluLayer(layer_number);
 
-      layer_number = layer_number + 2;
+      layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 64, 64, 5/100, 2, weight_init_type, 'gen');
       net.layers{end+1} = fh.reluLayer(layer_number);
       % net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
 
-      layer_number = layer_number + 2;
+      layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 64, 64, 5/100, 2, weight_init_type, 'gen');
       net.layers{end+1} = fh.reluLayer(layer_number);
       % net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
 
-      layer_number = layer_number + 2;
+      layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 64, 64, 5/100, 2, weight_init_type, 'gen');
       net.layers{end+1} = fh.reluLayer(layer_number);
       % net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
 
-      layer_number = layer_number + 2;
+      layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 64, 64, 5/100, 2, weight_init_type, 'gen');
       net.layers{end+1} = fh.reluLayer(layer_number);
       % net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
 
     % ------------------------------------------------------------------------------------------------------------------------------------------------------------
     case 'larpV5hP1'
-      layer_number = 1;
+      layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 3, 64, 1/100, 2, weight_init_type, 'gen');
       % net.layers{end+1} = fh.poolingLayerLeNetMax(layer_number);
       net.layers{end+1} = fh.reluLayer(layer_number);
 
-      layer_number = layer_number + 2;
+      layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 64, 64, 5/100, 2, weight_init_type, 'gen');
       net.layers{end+1} = fh.reluLayer(layer_number);
       % net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
 
-      layer_number = layer_number + 2;
+      layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 64, 64, 5/100, 2, weight_init_type, 'gen');
       net.layers{end+1} = fh.reluLayer(layer_number);
       net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
 
-      layer_number = layer_number + 2;
+      layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 64, 64, 5/100, 2, weight_init_type, 'gen');
       net.layers{end+1} = fh.reluLayer(layer_number);
       % net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
 
-      layer_number = layer_number + 2;
+      layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 64, 64, 5/100, 2, weight_init_type, 'gen');
       net.layers{end+1} = fh.reluLayer(layer_number);
       % net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
 
     % ------------------------------------------------------------------------------------------------------------------------------------------------------------
     case 'larpV5hP3'
-      layer_number = 1;
+      layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 3, 64, 1/100, 2, weight_init_type, 'gen');
       net.layers{end+1} = fh.poolingLayerLeNetMax(layer_number);
       net.layers{end+1} = fh.reluLayer(layer_number);
 
-      layer_number = layer_number + 2;
+      layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 64, 64, 5/100, 2, weight_init_type, 'gen');
       net.layers{end+1} = fh.reluLayer(layer_number);
       % net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
 
-      layer_number = layer_number + 2;
+      layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 64, 64, 5/100, 2, weight_init_type, 'gen');
       net.layers{end+1} = fh.reluLayer(layer_number);
       net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
 
-      layer_number = layer_number + 2;
+      layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 64, 64, 5/100, 2, weight_init_type, 'gen');
       net.layers{end+1} = fh.reluLayer(layer_number);
       % net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
 
-      layer_number = layer_number + 2;
+      layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 64, 64, 5/100, 2, weight_init_type, 'gen');
       net.layers{end+1} = fh.reluLayer(layer_number);
       net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
 
     % ------------------------------------------------------------------------------------------------------------------------------------------------------------
     case 'larpV5hP5'
-      layer_number = 1;
+      layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 3, 64, 1/100, 2, weight_init_type, 'gen');
       net.layers{end+1} = fh.poolingLayerLeNetMax(layer_number);
       net.layers{end+1} = fh.reluLayer(layer_number);
 
-      layer_number = layer_number + 2;
+      layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 64, 64, 5/100, 2, weight_init_type, 'gen');
       net.layers{end+1} = fh.reluLayer(layer_number);
       net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
 
-      layer_number = layer_number + 2;
+      layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 64, 64, 5/100, 2, weight_init_type, 'gen');
       net.layers{end+1} = fh.reluLayer(layer_number);
       net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
 
-      layer_number = layer_number + 2;
+      layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 64, 64, 5/100, 2, weight_init_type, 'gen');
       net.layers{end+1} = fh.reluLayer(layer_number);
       net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
 
-      layer_number = layer_number + 2;
+      layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 64, 64, 5/100, 2, weight_init_type, 'gen');
       net.layers{end+1} = fh.reluLayer(layer_number);
       net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
