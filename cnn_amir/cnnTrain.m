@@ -478,6 +478,7 @@ function [net,res] = accumulate_gradients(opts, lr, batch_size, net, res, mmap)
           sum_w_i = sum(net.layers{l}.weights{j}(:));
           sum_delta_i = sum(thisLR * net.layers{l}.momentum{j}(:));
           multiplier = (sum_w_i + sum_delta_i) / sum_w_i;
+          disp(multiplier);
           % a = net.layers{l}.weights{j};
           % b = net.layers{l}.weights{j} * multiplier;
           % b ./ a
