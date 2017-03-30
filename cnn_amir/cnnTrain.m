@@ -472,7 +472,7 @@ function [net,res] = accumulate_gradients(opts, lr, batch_size, net, res, mmap)
           - (1 / batch_size) * res(l).dzdw{j};
         % net.layers{l}.momentum{j} = - (1 / batch_size) * res(l).dzdw{j};
 
-        keyboard
+        % keyboard
         % TODO: FUCKED UP,... remove
         if size(net.layers{l}.weights{j}, 1) == 5 && size(net.layers{l}.weights{j}, 2) == 5
           sum_w_i = sum(net.layers{l}.weights{j}(:));
