@@ -493,12 +493,12 @@ function [net,res] = accumulate_gradients(opts, lr, batch_size, net, res, mmap)
         % end
 
 
-        % if size(net.layers{l}.weights{j}, 1) ~= 5
-        %   % don't update weights of 5x5 kernels.. only FC layers, and the 1x1 a-layer mask on top of each 5x5 kernel
-        %   net.layers{l}.weights{j} = (net.layers{l}.weights{j} + thisLR * net.layers{l}.momentum{j}); % I changed this line (initial)
-        % end
+        if size(net.layers{l}.weights{j}, 1) ~= 5
+          % don't update weights of 5x5 kernels.. only FC layers, and the 1x1 a-layer mask on top of each 5x5 kernel
+          net.layers{l}.weights{j} = (net.layers{l}.weights{j} + thisLR * net.layers{l}.momentum{j}); % I changed this line (initial)
+        end
 
-        net.layers{l}.weights{j} = (net.layers{l}.weights{j} + thisLR * net.layers{l}.momentum{j}); % I changed this line (initial)
+        % net.layers{l}.weights{j} = (net.layers{l}.weights{j} + thisLR * net.layers{l}.momentum{j}); % I changed this line (initial)
 
 
 
