@@ -475,16 +475,19 @@ function [net,res] = accumulate_gradients(opts, lr, batch_size, net, res, mmap)
         % keyboard
         % TODO: FUCKED UP,... remove
         if size(net.layers{l}.weights{j}, 1) == 5 && size(net.layers{l}.weights{j}, 2) == 5
-          sum_w_i = sum(net.layers{l}.weights{j}(:));
-          sum_delta_i = sum(thisLR * net.layers{l}.momentum{j}(:));
-          multiplier = (sum_w_i + sum_delta_i) / sum_w_i;
-          disp(multiplier);
-          % a = net.layers{l}.weights{j};
-          % b = net.layers{l}.weights{j} * multiplier;
-          % b ./ a
-          net.layers{l}.weights{j} = net.layers{l}.weights{j} * multiplier; % I changed this line (initial)
-          % net.layers{l}.weights{j} = (net.layers{l}.weights{j} + thisLR * net.layers{l}.momentum{j}); % I changed this line (initial)
-          % net.layers{l}.weights{j} = net.layers{l}.weights{j} ./ net.layers{l}.weights{j} .* (net.layers{l}.weights{j} + thisLR * net.layers{l}.momentum{j}); % I changed this line
+          % sum_w_i = sum(net.layers{l}.weights{j}(:));
+          % sum_delta_i = sum(thisLR * net.layers{l}.momentum{j}(:));
+          % multiplier = (sum_w_i + sum_delta_i) / sum_w_i;
+          % disp(multiplier);
+          % % a = net.layers{l}.weights{j};
+          % % b = net.layers{l}.weights{j} * multiplier;
+          % % b ./ a
+          % net.layers{l}.weights{j} = net.layers{l}.weights{j} * multiplier; % I changed this line (initial)
+          % % net.layers{l}.weights{j} = (net.layers{l}.weights{j} + thisLR * net.layers{l}.momentum{j}); % I changed this line (initial)
+          % % net.layers{l}.weights{j} = net.layers{l}.weights{j} ./ net.layers{l}.weights{j} .* (net.layers{l}.weights{j} + thisLR * net.layers{l}.momentum{j}); % I changed this line
+          % keyboard
+          net.layers{l}.weights{j} = net.layers{l}.weights{j} .* exp(sign(net.layers{l}.weights{j}) .* thisLR * net.layers{l}.momentum{j}); % I changed this line
+
         else
           net.layers{l}.weights{j} = (net.layers{l}.weights{j} + thisLR * net.layers{l}.momentum{j}); % I changed this line (initial)
         end
