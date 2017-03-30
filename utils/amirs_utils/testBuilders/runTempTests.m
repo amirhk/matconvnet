@@ -34,7 +34,7 @@ function runTempTests()
   % -------------------------------------------------------------------------
   %                                                                opts.train
   % -------------------------------------------------------------------------
-  opts.train.gpus = 1;
+  opts.train.gpus = 2;
 
 
   % -------------------------------------------------------------------------
@@ -139,11 +139,11 @@ function runTempTests()
 
 
 
-  % dataset_name = sprintf('%s', opts.general.dataset);
-  % balance_name = 'whatever';
-  dataset_name = sprintf('%s-multi-class-subsampled', opts.general.dataset);
+  dataset_name = sprintf('%s', opts.general.dataset);
+  balance_name = 'whatever';
+  % dataset_name = sprintf('%s-multi-class-subsampled', opts.general.dataset);
   % balance_name = 'balanced-38';
-  balance_name = 'balanced-707';
+  % balance_name = 'balanced-707';
   % balance_name = 'balanced-1880';
   % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV0P0+convV1P1+fcV1', 'gaussian',                                         'no-projection', opts.train.gpus);
   % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV0P0+convV0P0+fcV1', 'NA',                                               'no-projection', opts.train.gpus);
