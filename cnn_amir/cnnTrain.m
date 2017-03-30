@@ -486,7 +486,7 @@ function [net,res] = accumulate_gradients(opts, lr, batch_size, net, res, mmap)
           % % net.layers{l}.weights{j} = (net.layers{l}.weights{j} + thisLR * net.layers{l}.momentum{j}); % I changed this line (initial)
           % % net.layers{l}.weights{j} = net.layers{l}.weights{j} ./ net.layers{l}.weights{j} .* (net.layers{l}.weights{j} + thisLR * net.layers{l}.momentum{j}); % I changed this line
           % keyboard
-          net.layers{l}.weights{j} = net.layers{l}.weights{j} .* exp(sign(net.layers{l}.weights{j}) .* thisLR * net.layers{l}.momentum{j}); % I changed this line
+          net.layers{l}.weights{j} = net.layers{l}.weights{j} .* exp(thisLR * sign(net.layers{l}.weights{j}) .* net.layers{l}.momentum{j}); % I changed this line
 
         else
           net.layers{l}.weights{j} = (net.layers{l}.weights{j} + thisLR * net.layers{l}.momentum{j}); % I changed this line (initial)
