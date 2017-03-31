@@ -42,12 +42,16 @@ function weight_init_sequence = getWeightInitSequenceForWeightInitTypeAndNetwork
       weight_init_sequence = {larp_weight_init_type, 'gaussian', 'gaussian'};
     case 'larpV1M1P1+convV0P0+fcV1'
       weight_init_sequence = {larp_weight_init_type, 'gaussian', 'gaussian'};
+
     case 'larpV3M0P1+convV0P0+fcV1'
       weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, 'gaussian', 'gaussian', 'gaussian'};
     case 'larpV3M1P1+convV0P0+fcV1'
       weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, 'gaussian', 'gaussian', 'gaussian'};
+    case 'larpV3M2P1+convV0P0+fcV1'
+      weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, 'gaussian', 'gaussian', 'gaussian'};
     case 'larpV3M3P1+convV0P0+fcV1'
       weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, 'gaussian', 'gaussian', 'gaussian'};
+
     case 'larpV3M0P3+convV0P0+fcV1'
       weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, 'gaussian', 'gaussian', 'gaussian'};
     case 'larpV3M1P3+convV0P0+fcV1'

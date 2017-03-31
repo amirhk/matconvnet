@@ -40,15 +40,20 @@ function backprop_depth = getFullBackPropDepthForNetworkArch(network_arch)
     case 'larpV1M1P1+convV0P0+fcV1'
       backprop_depth = 8;
       % backprop_depth = 4;
+
     case 'larpV3M0P1+convV0P0+fcV1'
       backprop_depth = 11;
       % backprop_depth = 4;
     case 'larpV3M1P1+convV0P0+fcV1'
-      % backprop_depth = 12;
+      backprop_depth = 12;
+      % backprop_depth = 4;
+    case 'larpV3M2P1+convV0P0+fcV1'
+      % backprop_depth = 13;
       backprop_depth = 4;
     case 'larpV3M3P1+convV0P0+fcV1'
       backprop_depth = 14;
       % backprop_depth = 4;
+
     case 'larpV3M0P3+convV0P0+fcV1'
       backprop_depth = 13;
       % backprop_depth = 4;

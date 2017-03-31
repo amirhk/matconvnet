@@ -30,6 +30,14 @@ function net = getNetworkWithMasksArchitecture(dataset, network_arch, weight_ini
 
 
   switch network_arch
+
+
+
+
+
+
+
+
     case 'larpV1M0P1+convV0P0+fcV1'
       layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 3, 64, 1/100, 2, char(weight_init_sequence{1}), 'gen');
@@ -68,6 +76,14 @@ function net = getNetworkWithMasksArchitecture(dataset, network_arch, weight_ini
       % LOSS LAYER
       net.layers{end+1} = fh.softmaxlossLayer();
       % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
+
+
+
+
+
+
+
     case 'larpV3M0P1+convV0P0+fcV1'
       layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 3, 32, 1/100, 2, char(weight_init_sequence{1}), 'gen');
@@ -130,6 +146,37 @@ function net = getNetworkWithMasksArchitecture(dataset, network_arch, weight_ini
       % LOSS LAYER
       net.layers{end+1} = fh.softmaxlossLayer();
       % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+    case 'larpV3M1P1+convV0P0+fcV1'
+      layer_number = numel(net.layers) + 1;
+      net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 3, 32, 1/100, 2, char(weight_init_sequence{1}), 'gen');
+      net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 1, 32, 32, 1/100, 0, 'gaussian', 'gen');
+      % net.layers{end+1} = fh.poolingLayerLeNetMax(layer_number);
+      net.layers{end+1} = fh.reluLayer(layer_number);
+
+      layer_number = numel(net.layers) + 1;
+      net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 32, 32, 5/100, 2, char(weight_init_sequence{2}), 'gen');
+      % net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 1, 32, 32, 1/100, 0, 'gaussian', 'gen');
+      net.layers{end+1} = fh.reluLayer(layer_number);
+      net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
+
+      layer_number = numel(net.layers) + 1;
+      net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 32, 64, 5/100, 2, char(weight_init_sequence{3}), 'gen');
+      net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 1, 64, 64, 1/100, 0, 'gaussian', 'gen');
+      net.layers{end+1} = fh.reluLayer(layer_number);
+      % net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
+
+      % FULLY CONNECTED
+      layer_number = numel(net.layers) + 1;
+      net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 16, 64, 64, 5/100, 0, 'gaussian', 'gen');
+      net.layers{end+1} = fh.reluLayer(layer_number);
+
+      layer_number = numel(net.layers) + 1;
+      number_of_output_nodes = getNumberOfOutputNodes(dataset);
+      net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 1, 64, number_of_output_nodes, 5/100, 0, 'gaussian', 'gen');
+
+      % LOSS LAYER
+      net.layers{end+1} = fh.softmaxlossLayer();
+      % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
     case 'larpV3M3P1+convV0P0+fcV1'
       layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 3, 32, 1/100, 2, char(weight_init_sequence{1}), 'gen');
@@ -161,6 +208,14 @@ function net = getNetworkWithMasksArchitecture(dataset, network_arch, weight_ini
       % LOSS LAYER
       net.layers{end+1} = fh.softmaxlossLayer();
       % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
+
+
+
+
+
+
+
     case 'larpV3M0P3+convV0P0+fcV1'
       layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 3, 32, 1/100, 2, char(weight_init_sequence{1}), 'gen');
@@ -254,6 +309,14 @@ function net = getNetworkWithMasksArchitecture(dataset, network_arch, weight_ini
       % LOSS LAYER
       net.layers{end+1} = fh.softmaxlossLayer();
       % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
+
+
+
+
+
+
+
   end
 
 function number_of_output_nodes = getNumberOfOutputNodes(dataset)
