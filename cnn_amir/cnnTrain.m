@@ -491,7 +491,7 @@ function [net,res] = accumulate_gradients(opts, lr, batch_size, net, res, mmap)
         %   net.layers{l}.weights{j} = (net.layers{l}.weights{j} + thisLR * net.layers{l}.momentum{j}); % I changed this line (initial)
         % end
 
-        train_mask_only = 0;
+        train_mask_only = 1;
 
         if train_mask_only
           if size(net.layers{l}.weights{j}, 1) ~= 5

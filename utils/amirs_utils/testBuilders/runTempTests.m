@@ -34,7 +34,7 @@ function runTempTests()
   % -------------------------------------------------------------------------
   %                                                                opts.train
   % -------------------------------------------------------------------------
-  opts.train.gpus = 4;
+  opts.train.gpus = 1;
 
 
   % -------------------------------------------------------------------------
@@ -166,8 +166,8 @@ function runTempTests()
   % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV1M1P1+convV0P0+fcV1', 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1',      'no-projection', opts.train.gpus);
 
   % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV3M0P1+convV0P0+fcV1', 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1',      'no-projection', opts.train.gpus);
-  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV3M1P1+convV0P0+fcV1', 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1',      'no-projection', opts.train.gpus);
-  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV3M2P1+convV0P0+fcV1', 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1',      'no-projection', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV3M1P1+convV0P0+fcV1', 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1',      'no-projection', opts.train.gpus);
+  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV3M2P1+convV0P0+fcV1', 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1',      'no-projection', opts.train.gpus);
   % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV3M3P1+convV0P0+fcV1', 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1',      'no-projection', opts.train.gpus);
 
   % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, 'larpV3M0P3+convV0P0+fcV1', 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1',      'no-projection', opts.train.gpus);
