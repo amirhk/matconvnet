@@ -146,7 +146,7 @@ function net = getNetworkWithMasksArchitecture(dataset, network_arch, weight_ini
       % LOSS LAYER
       net.layers{end+1} = fh.softmaxlossLayer();
       % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-    case 'larpV3M1P1+convV0P0+fcV1'
+    case 'larpV3M2P1+convV0P0+fcV1'
       layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 3, 32, 1/100, 2, char(weight_init_sequence{1}), 'gen');
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 1, 32, 32, 1/100, 0, 'gaussian', 'gen');
