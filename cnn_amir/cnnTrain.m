@@ -491,16 +491,19 @@ function [net,res] = accumulate_gradients(opts, lr, batch_size, net, res, mmap)
         %   net.layers{l}.weights{j} = (net.layers{l}.weights{j} + thisLR * net.layers{l}.momentum{j}); % I changed this line (initial)
         % end
 
-        train_mask_only = 0;
 
-        if train_mask_only
-          if size(net.layers{l}.weights{j}, 1) ~= 5
-            % don't update weights of 5x5 kernels.. only FC layers, and the 1x1 a-layer mask on top of each 5x5 kernel
-            net.layers{l}.weights{j} = (net.layers{l}.weights{j} + thisLR * net.layers{l}.momentum{j}); % I changed this line (initial)
-          end
-        else
-          net.layers{l}.weights{j} = (net.layers{l}.weights{j} + thisLR * net.layers{l}.momentum{j}); % I changed this line (initial)
-        end
+        % train_mask_only = 1;
+
+        % if train_mask_only
+        %   if size(net.layers{l}.weights{j}, 1) ~= 5
+        %     % don't update weights of 5x5 kernels.. only FC layers, and the 1x1 a-layer mask on top of each 5x5 kernel
+        %     net.layers{l}.weights{j} = (net.layers{l}.weights{j} + thisLR * net.layers{l}.momentum{j}); % I changed this line (initial)
+        %   end
+        % else
+        %   net.layers{l}.weights{j} = (net.layers{l}.weights{j} + thisLR * net.layers{l}.momentum{j}); % I changed this line (initial)
+        % end
+
+        net.layers{l}.weights{j} = (net.layers{l}.weights{j} + thisLR * net.layers{l}.momentum{j}); % I changed this line (initial)
 
 
 

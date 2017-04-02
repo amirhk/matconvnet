@@ -49,7 +49,7 @@ function network_opts = cnnInit(input_opts)
 
   fh = networkInitializationUtils;
   flag = false;
-  flag2 = true;
+  flag2 = false;
   if flag
     architecture_type = opts.network_arch(1:4);
     switch architecture_type
