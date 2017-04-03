@@ -1034,7 +1034,6 @@ function tmp_kernels = getGaussianKernelsHelper(k, m, n, mu, sigma, mu_divider, 
 % --------------------------------------------------------------------
 function tmp_kernels = getGaussianKernelsWithCentreSurroundCovariance(k, m, n, mu_divider, sigma_divider, additive_random_divider)
 % --------------------------------------------------------------------
-  d = 100;
   large_number = 100000;
   vectorized = zeros(large_number, k * k);
   for i = 1 : large_number
@@ -1042,7 +1041,7 @@ function tmp_kernels = getGaussianKernelsWithCentreSurroundCovariance(k, m, n, m
     g2 = g1 - mean(g1(:));
     % g3 = g2 * sign(randn());
     % g4 = g3 + randn(k,k) / additive_random_divider;
-    g4 = g2 + randn(k,k) / additive_random_divider;
+    g4 = g2;
     vectorized(i,:) = reshape(g4, 1, k * k);
   end
 

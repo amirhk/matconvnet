@@ -777,7 +777,7 @@ mu = reshape(zero_filter, 1, 25);
 close all
 figure
 colormap gray
-for i = 1:1
+for i = 1:
   subplot(5, 6, 1 + 6 * (1 - 1)), imagesc(sigma_identity),                                                       title('sigma idenity');
   subplot(5, 6, 2 + 6 * (1 - 1)), imagesc(reshape(mvnrnd(mu, sigma_identity, 1), 5, 5)),                         title('sigma identity var / 1');
   subplot(5, 6, 3 + 6 * (1 - 1)), imagesc(reshape(mvnrnd(mu, sigma_identity / 10, 1), 5, 5)),                    title('sigma identity var / 10');
