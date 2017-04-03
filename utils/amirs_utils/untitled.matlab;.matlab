@@ -647,3 +647,171 @@ end
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+k = 5;
+m = 1;
+n = 1;
+filter_width = 3;
+init_multiplier = 1;
+
+large_number = 100000;
+gaussian_random_kernels = init_multiplier * randn(k, k, large_number, 'single');
+
+% ------------------------------------------------------------------------------
+
+d = 10;
+vectorized_1 = zeros(large_number, k * k);
+for i = 1 : large_number
+  g1 = gen2DGaussianFilter(5,1);
+  g2 = g1 - mean(g1(:));
+  g3 = g2 * sign(randn());
+  g4 = g3 + randn(5,5) / d;
+  vectorized_1(i,:) = reshape(g4, 1, k * k);
+end
+
+% mean matrix (matricized)
+mu_1 = mean(vectorized_1);
+
+% cov matrix
+sigma_centre_surround_d_1000 = cov(vectorized_1);
+
+% ------------------------------------------------------------------------------
+
+% d = 100;
+vectorized_2 = zeros(large_number, k * k);
+for i = 1 : large_number
+  g1 = gen2DGaussianFilter(5,1);
+  g2 = g1 - mean(g1(:));
+  g3 = g2 * sign(randn());
+  g4 = g3;
+  vectorized_2(i,:) = reshape(g4, 1, k * k);
+end
+
+% mean matrix (matricized)
+mu_2 = mean(vectorized_2);
+
+% cov matrix
+sigma_centre_surround_d_100 = cov(vectorized_2);
+
+% ------------------------------------------------------------------------------
+
+% d = 10;
+vectorized_3 = zeros(large_number, k * k);
+for i = 1 : large_number
+  g1 = gen2DGaussianFilter(5,1);
+  g2 = g1 - mean(g1(:));
+  % g3 = g2 * sign(randn());
+  g4 = g2;
+  vectorized_3(i,:) = reshape(g4, 1, k * k);
+end
+
+% mean matrix (matricized)
+mu_3 = mean(vectorized_3);
+
+% cov matrix
+sigma_centre_surround_d_10 = cov(vectorized_3);
+
+% ------------------------------------------------------------------------------
+
+% d = 1;
+vectorized_4 = zeros(large_number, k * k);
+for i = 1 : large_number
+  g1 = gen2DGaussianFilter(5,1);
+  g2 = g1 - mean(g1(:));
+  g3 = g2 * sign(randn());
+  g4 = g3 + randn(5,5) / 3;
+  vectorized_4(i,:) = reshape(g4, 1, k * k);
+end
+
+% mean matrix (matricized)
+mu_4 = mean(vectorized_4);
+
+% cov matrix
+sigma_centre_surround_d_1 = cov(vectorized_4);
+
+% ------------------------------------------------------------------------------
+
+% for reference
+sigma_identity = eye(25);
+
+% setting mu
+zero_filter = zeros(5,5);
+mu = reshape(zero_filter, 1, 25);
+
+close all
+figure
+colormap gray
+for i = 1:1
+  subplot(5, 6, 1 + 6 * (1 - 1)), imagesc(sigma_identity),                                                       title('sigma idenity');
+  subplot(5, 6, 2 + 6 * (1 - 1)), imagesc(reshape(mvnrnd(mu, sigma_identity, 1), 5, 5)),                         title('sigma identity var / 1');
+  subplot(5, 6, 3 + 6 * (1 - 1)), imagesc(reshape(mvnrnd(mu, sigma_identity / 10, 1), 5, 5)),                    title('sigma identity var / 10');
+  subplot(5, 6, 4 + 6 * (1 - 1)), imagesc(reshape(mvnrnd(mu, sigma_identity / 100, 1), 5, 5)),                   title('sigma identity var / 100');
+  subplot(5, 6, 5 + 6 * (1 - 1)), imagesc(reshape(mvnrnd(mu, sigma_identity / 1000, 1), 5, 5)),                  title('sigma identity var / 1000');
+  subplot(5, 6, 6 + 6 * (1 - 1)), imagesc(reshape(mvnrnd(mu, sigma_identity / 10000, 1), 5, 5)),                 title('sigma identity var / 10000');
+
+  subplot(5, 6, 1 + 6 * (2 - 1)), imagesc(sigma_centre_surround_d_1000),                                         title('sigma centre surround - d 1000');
+  subplot(5, 6, 2 + 6 * (2 - 1)), imagesc(reshape(mvnrnd(mu_1, sigma_centre_surround_d_1000, 1), 5, 5)),         title('sigma centre surround var / 1');
+  subplot(5, 6, 3 + 6 * (2 - 1)), imagesc(reshape(mvnrnd(mu_1, sigma_centre_surround_d_1000 / 10, 1), 5, 5)),    title('sigma centre surround var / 10');
+  subplot(5, 6, 4 + 6 * (2 - 1)), imagesc(reshape(mvnrnd(mu_1, sigma_centre_surround_d_1000 / 100, 1), 5, 5)),   title('sigma centre surround var / 100');
+  subplot(5, 6, 5 + 6 * (2 - 1)), imagesc(reshape(mvnrnd(mu_1, sigma_centre_surround_d_1000 / 1000, 1), 5, 5)),  title('sigma centre surround var / 1000');
+  subplot(5, 6, 6 + 6 * (2 - 1)), imagesc(reshape(mvnrnd(mu_1, sigma_centre_surround_d_1000 / 10000, 1), 5, 5)), title('sigma centre surround var / 10000');
+
+  subplot(5, 6, 1 + 6 * (3 - 1)), imagesc(sigma_centre_surround_d_100),                                          title('sigma centre surround - d 100');
+  subplot(5, 6, 2 + 6 * (3 - 1)), imagesc(reshape(mvnrnd(mu_2, sigma_centre_surround_d_100, 1), 5, 5)),          title('sigma centre surround var / 1');
+  subplot(5, 6, 3 + 6 * (3 - 1)), imagesc(reshape(mvnrnd(mu_2, sigma_centre_surround_d_100 / 10, 1), 5, 5)),     title('sigma centre surround var / 10');
+  subplot(5, 6, 4 + 6 * (3 - 1)), imagesc(reshape(mvnrnd(mu_2, sigma_centre_surround_d_100 / 100, 1), 5, 5)),    title('sigma centre surround var / 100');
+  subplot(5, 6, 5 + 6 * (3 - 1)), imagesc(reshape(mvnrnd(mu_2, sigma_centre_surround_d_100 / 1000, 1), 5, 5)),   title('sigma centre surround var / 1000');
+  subplot(5, 6, 6 + 6 * (3 - 1)), imagesc(reshape(mvnrnd(mu_2, sigma_centre_surround_d_100 / 10000, 1), 5, 5)),  title('sigma centre surround var / 10000');
+
+  subplot(5, 6, 1 + 6 * (4 - 1)), imagesc(sigma_centre_surround_d_10),                                           title('sigma centre surround - d 10');
+  subplot(5, 6, 2 + 6 * (4 - 1)), imagesc(reshape(mvnrnd(mu_3, sigma_centre_surround_d_10, 1), 5, 5)),           title('sigma centre surround var / 1');
+  subplot(5, 6, 3 + 6 * (4 - 1)), imagesc(reshape(mvnrnd(mu_3, sigma_centre_surround_d_10 / 10, 1), 5, 5)),      title('sigma centre surround var / 10');
+  subplot(5, 6, 4 + 6 * (4 - 1)), imagesc(reshape(mvnrnd(mu_3, sigma_centre_surround_d_10 / 100, 1), 5, 5)),     title('sigma centre surround var / 100');
+  subplot(5, 6, 5 + 6 * (4 - 1)), imagesc(reshape(mvnrnd(mu_3, sigma_centre_surround_d_10 / 1000, 1), 5, 5)),    title('sigma centre surround var / 1000');
+  subplot(5, 6, 6 + 6 * (4 - 1)), imagesc(reshape(mvnrnd(mu_3, sigma_centre_surround_d_10 / 10000, 1), 5, 5)),   title('sigma centre surround var / 10000');
+
+  subplot(5, 6, 1 + 6 * (5 - 1)), imagesc(sigma_centre_surround_d_1),                                            title('sigma centre surround - d 1');
+  subplot(5, 6, 2 + 6 * (5 - 1)), imagesc(reshape(mvnrnd(mu_4, sigma_centre_surround_d_1, 1), 5, 5)),            title('sigma centre surround var / 1');
+  subplot(5, 6, 3 + 6 * (5 - 1)), imagesc(reshape(mvnrnd(mu_4, sigma_centre_surround_d_1 / 10, 1), 5, 5)),       title('sigma centre surround var / 10');
+  subplot(5, 6, 4 + 6 * (5 - 1)), imagesc(reshape(mvnrnd(mu_4, sigma_centre_surround_d_1 / 100, 1), 5, 5)),      title('sigma centre surround var / 100');
+  subplot(5, 6, 5 + 6 * (5 - 1)), imagesc(reshape(mvnrnd(mu_4, sigma_centre_surround_d_1 / 1000, 1), 5, 5)),     title('sigma centre surround var / 1000');
+  subplot(5, 6, 6 + 6 * (5 - 1)), imagesc(reshape(mvnrnd(mu_4, sigma_centre_surround_d_1 / 10000, 1), 5, 5)),    title('sigma centre surround var / 10000');
+  pause(0.05);
+end
+
