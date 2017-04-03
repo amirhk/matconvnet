@@ -253,6 +253,22 @@ end
 
 
 
+h = figure; imagesc(sigma_identity); saveas(h, 'sigma_identity', 'epsc');
+h = figure; imagesc(sigma_smoothed_2); saveas(h, 'sigma_smoothed_2', 'epsc');
+h = figure; imagesc(sigma_smoothed_3); saveas(h, 'sigma_smoothed_3', 'epsc');
+h = figure; imagesc(sigma_smoothed_4); saveas(h, 'sigma_smoothed_4', 'epsc');
+h = figure; imagesc(sigma_smoothed_5); saveas(h, 'sigma_smoothed_5', 'epsc');
+
+
+
+
+h = figure; imagesc(reshape(mvnrnd(mu, sigma_identity, 1), 5, 5)), saveas(h, 'sample_sigma_identity', 'epsc');
+h = figure; imagesc(reshape(mvnrnd(mu_1, sigma_smoothed_2, 1), 5, 5)), saveas(h, 'sample_sigma_smoothed_2', 'epsc');
+h = figure; imagesc(reshape(mvnrnd(mu_2, sigma_smoothed_3, 1), 5, 5)), saveas(h, 'sample_sigma_smoothed_3', 'epsc');
+h = figure; imagesc(reshape(mvnrnd(mu_3, sigma_smoothed_4, 1), 5, 5)), saveas(h, 'sample_sigma_smoothed_4', 'epsc');
+h = figure; imagesc(reshape(mvnrnd(mu_4, sigma_smoothed_5, 1), 5, 5)), saveas(h, 'sample_sigma_smoothed_5', 'epsc');
+
+
 
 
 
