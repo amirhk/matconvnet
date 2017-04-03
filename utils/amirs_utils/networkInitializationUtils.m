@@ -1039,9 +1039,9 @@ function tmp_kernels = getGaussianKernelsWithCentreSurroundCovariance(k, m, n, m
   for i = 1 : large_number
     g1 = gen2DGaussianFilter(k,1);
     g2 = g1 - mean(g1(:));
-    % g3 = g2 * sign(randn());
+    g3 = g2 * sign(randn());
     % g4 = g3 + randn(k,k) / additive_random_divider;
-    g4 = g2;
+    g4 = g3;
     vectorized(i,:) = reshape(g4, 1, k * k);
   end
 
