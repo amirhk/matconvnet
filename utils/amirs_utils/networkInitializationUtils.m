@@ -399,6 +399,7 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
               end
             end
           end
+          tmp_kernels = single(tmp_kernels);
           layerWeights{1} = init_multiplier * tmp_kernels;
           layerWeights{2} = zeros(1, n, 'single');
 
