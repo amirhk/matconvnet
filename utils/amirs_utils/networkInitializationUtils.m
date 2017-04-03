@@ -374,14 +374,33 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
           layerWeights{1} = init_multiplier * tmp_kernels;
           layerWeights{2} = zeros(1, n, 'single');
 
+% ------------------------------------------------------------------------------------------
 
-
-
-
-
-
-
-
+        case 'gaussian-MixedCovariance-MuDivide-1-SigmaDivide-10'
+          tmp_kernels_1 = getGaussianKernelsWithIdentityCovariance(k, m, n, 1, 10);
+          tmp_kernels_2 = getGaussianKernelsWithSmoothedCovariance(k, m, n, 1, 10, 2);
+          tmp_kernels_3 = getGaussianKernelsWithSmoothedCovariance(k, m, n, 1, 10, 3);
+          tmp_kernels_4 = getGaussianKernelsWithSmoothedCovariance(k, m, n, 1, 10, 4);
+          tmp_kernels_5 = getGaussianKernelsWithSmoothedCovariance(k, m, n, 1, 10, 5);
+          tmp_kernels = zeros(size(tmp_kernels_1));
+          for i = 1:m
+            for j = 1:n
+              switch ceil(rand() * 5)
+                case 1
+                  tmp_kernels(:,:,i,j) = tmp_kernels_1(:,:,i,j);
+                case 2
+                  tmp_kernels(:,:,i,j) = tmp_kernels_2(:,:,i,j);
+                case 3
+                  tmp_kernels(:,:,i,j) = tmp_kernels_3(:,:,i,j);
+                case 4
+                  tmp_kernels(:,:,i,j) = tmp_kernels_4(:,:,i,j);
+                case 5
+                  tmp_kernels(:,:,i,j) = tmp_kernels_5(:,:,i,j);
+              end
+            end
+          end
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
 
 
 
