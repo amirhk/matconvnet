@@ -29,12 +29,12 @@ function runTempTests()
   % -------------------------------------------------------------------------
   %                                                              opts.general
   % -------------------------------------------------------------------------
-  opts.general.dataset = 'coil-100';
+  opts.general.dataset = 'cifar';
 
   % -------------------------------------------------------------------------
   %                                                                opts.train
   % -------------------------------------------------------------------------
-  opts.train.gpus = 3;
+  opts.train.gpus = 2;
 
 
   % -------------------------------------------------------------------------
@@ -66,7 +66,7 @@ function runTempTests()
   % balance_name = 'balanced-38';
   % balance_name = 'balanced-707';
   % network_arch = 'larpV1P1+convV0P0+fcV1';
-  network_arch = 'larpV3P1+convV0P0+fcV1';
+  network_arch = 'larpV3P3+convV0P0+fcV1';
 
   runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-MixedSmoothedCovariance-MuDivide-1-SigmaDivide-1',      'no-projection', opts.train.gpus);
   runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-MixedSmoothedCovariance-MuDivide-1-SigmaDivide-10',     'no-projection', opts.train.gpus);
