@@ -65,8 +65,8 @@ function runTempTests()
   % dataset_name = sprintf('%s-multi-class-subsampled', opts.general.dataset);
   % balance_name = 'balanced-38';
   % balance_name = 'balanced-707';
-  % larp_network_arch = 'larpV1P1';
-  larp_network_arch = 'larpV3P3';
+  larp_network_arch = 'larpV1P1';
+  % larp_network_arch = 'larpV3P3';
   non_larp_network_arch = 'convV0P0+fcV1';
 
   runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, larp_network_arch, 'gaussian-MixedSmoothedCovariance-MuDivide-1-SigmaDivide-1',      non_larp_network_arch, opts.train.gpus);
