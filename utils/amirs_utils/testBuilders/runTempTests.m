@@ -34,7 +34,7 @@ function runTempTests()
   % -------------------------------------------------------------------------
   %                                                                opts.train
   % -------------------------------------------------------------------------
-  opts.train.gpus = 4;
+  opts.train.gpus = 2;
 
 
   % -------------------------------------------------------------------------
@@ -60,50 +60,50 @@ function runTempTests()
   % -------------------------------------------------------------------------
   saveStruct2File(opts, opts.paths.options_file_path, 0);
 
-  % dataset_name = sprintf('%s', opts.general.dataset);
-  % balance_name = 'whatever';
-  dataset_name = sprintf('%s-multi-class-subsampled', opts.general.dataset);
+  dataset_name = sprintf('%s', opts.general.dataset);
+  balance_name = 'whatever';
+  % dataset_name = sprintf('%s-multi-class-subsampled', opts.general.dataset);
   % balance_name = 'balanced-38';
-  balance_name = 'balanced-707';
-  network_arch = 'larpV1P1+convV0P0+fcV1';
-  % network_arch = 'larpV3P1+convV0P0+fcV1';
+  % balance_name = 'balanced-707';
+  % network_arch = 'larpV1P1+convV0P0+fcV1';
+  network_arch = 'larpV3P1+convV0P0+fcV1';
 
-  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1',      'no-projection', opts.train.gpus);
-  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-10',     'no-projection', opts.train.gpus);
-  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-100',    'no-projection', opts.train.gpus);
-  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1000',   'no-projection', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-MixedSmoothedCovariance-MuDivide-1-SigmaDivide-1',      'no-projection', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-MixedSmoothedCovariance-MuDivide-1-SigmaDivide-10',     'no-projection', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-MixedSmoothedCovariance-MuDivide-1-SigmaDivide-100',    'no-projection', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-MixedSmoothedCovariance-MuDivide-1-SigmaDivide-1000',   'no-projection', opts.train.gpus);
 
-  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-SmoothedCovariance-2-MuDivide-1-SigmaDivide-1',      'no-projection', opts.train.gpus);
-  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-SmoothedCovariance-2-MuDivide-1-SigmaDivide-10',     'no-projection', opts.train.gpus);
-  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-SmoothedCovariance-2-MuDivide-1-SigmaDivide-100',    'no-projection', opts.train.gpus);
-  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-SmoothedCovariance-2-MuDivide-1-SigmaDivide-1000',   'no-projection', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1',      'no-projection', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-10',     'no-projection', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-100',    'no-projection', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1000',   'no-projection', opts.train.gpus);
 
-  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-SmoothedCovariance-3-MuDivide-1-SigmaDivide-1',      'no-projection', opts.train.gpus);
-  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-SmoothedCovariance-3-MuDivide-1-SigmaDivide-10',     'no-projection', opts.train.gpus);
-  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-SmoothedCovariance-3-MuDivide-1-SigmaDivide-100',    'no-projection', opts.train.gpus);
-  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-SmoothedCovariance-3-MuDivide-1-SigmaDivide-1000',   'no-projection', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-SmoothedCovariance-2-MuDivide-1-SigmaDivide-1',      'no-projection', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-SmoothedCovariance-2-MuDivide-1-SigmaDivide-10',     'no-projection', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-SmoothedCovariance-2-MuDivide-1-SigmaDivide-100',    'no-projection', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-SmoothedCovariance-2-MuDivide-1-SigmaDivide-1000',   'no-projection', opts.train.gpus);
 
-  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-SmoothedCovariance-4-MuDivide-1-SigmaDivide-1',      'no-projection', opts.train.gpus);
-  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-SmoothedCovariance-4-MuDivide-1-SigmaDivide-10',     'no-projection', opts.train.gpus);
-  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-SmoothedCovariance-4-MuDivide-1-SigmaDivide-100',    'no-projection', opts.train.gpus);
-  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-SmoothedCovariance-4-MuDivide-1-SigmaDivide-1000',   'no-projection', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-SmoothedCovariance-3-MuDivide-1-SigmaDivide-1',      'no-projection', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-SmoothedCovariance-3-MuDivide-1-SigmaDivide-10',     'no-projection', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-SmoothedCovariance-3-MuDivide-1-SigmaDivide-100',    'no-projection', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-SmoothedCovariance-3-MuDivide-1-SigmaDivide-1000',   'no-projection', opts.train.gpus);
 
-  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-SmoothedCovariance-5-MuDivide-1-SigmaDivide-1',      'no-projection', opts.train.gpus);
-  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-SmoothedCovariance-5-MuDivide-1-SigmaDivide-10',     'no-projection', opts.train.gpus);
-  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-SmoothedCovariance-5-MuDivide-1-SigmaDivide-100',    'no-projection', opts.train.gpus);
-  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-SmoothedCovariance-5-MuDivide-1-SigmaDivide-1000',   'no-projection', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-SmoothedCovariance-4-MuDivide-1-SigmaDivide-1',      'no-projection', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-SmoothedCovariance-4-MuDivide-1-SigmaDivide-10',     'no-projection', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-SmoothedCovariance-4-MuDivide-1-SigmaDivide-100',    'no-projection', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-SmoothedCovariance-4-MuDivide-1-SigmaDivide-1000',   'no-projection', opts.train.gpus);
 
-  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-MixedSmoothedCovariance-MuDivide-1-SigmaDivide-1',      'no-projection', opts.train.gpus);
-  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-MixedSmoothedCovariance-MuDivide-1-SigmaDivide-10',     'no-projection', opts.train.gpus);
-  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-MixedSmoothedCovariance-MuDivide-1-SigmaDivide-100',    'no-projection', opts.train.gpus);
-  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-MixedSmoothedCovariance-MuDivide-1-SigmaDivide-1000',   'no-projection', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-SmoothedCovariance-5-MuDivide-1-SigmaDivide-1',      'no-projection', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-SmoothedCovariance-5-MuDivide-1-SigmaDivide-10',     'no-projection', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-SmoothedCovariance-5-MuDivide-1-SigmaDivide-100',    'no-projection', opts.train.gpus);
+  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-SmoothedCovariance-5-MuDivide-1-SigmaDivide-1000',   'no-projection', opts.train.gpus);
 
   % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1',      'no-projection', opts.train.gpus);
   % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-10',     'no-projection', opts.train.gpus);
   % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-100',    'no-projection', opts.train.gpus);
   % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1000',   'no-projection', opts.train.gpus);
 
-  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1',      'no-projection', opts.train.gpus);
+  % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, network_arch, 'gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1',      'no-projection', opts.train.gpus);
 
 
 

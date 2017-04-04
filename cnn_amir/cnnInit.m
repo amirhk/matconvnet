@@ -160,17 +160,17 @@ function network_opts = cnnInit(input_opts)
       % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
     case 'larpV3P3+convV0P0+fcV1'
       layer_number = numel(net.layers) + 1;
-      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 3, 32, 1/100, 2, 'gaussian', 'gen');
+      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 3, 32, 1/100, 2, char(opts.weight_init_sequence{1}), 'gen');
       net.layers{end+1} = fh.poolingLayerLeNetMax(layer_number);
       net.layers{end+1} = fh.reluLayer(layer_number);
 
       layer_number = numel(net.layers) + 1;
-      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 32, 32, 5/100, 2, 'gaussian', 'gen');
+      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 32, 32, 5/100, 2, char(opts.weight_init_sequence{2}), 'gen');
       net.layers{end+1} = fh.reluLayer(layer_number);
       net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
 
       layer_number = numel(net.layers) + 1;
-      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 32, 64, 5/100, 2, 'gaussian', 'gen');
+      net.layers{end+1} = fh.convLayer(opts.dataset, opts.network_arch, layer_number, 5, 32, 64, 5/100, 2, char(opts.weight_init_sequence{3}), 'gen');
       net.layers{end+1} = fh.reluLayer(layer_number);
       net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
 
