@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function matching_conv_architecture = getMatchingConvArchitectureForLarpArchitecture(larp_architecture, mlp_version)
+function matching_conv_architecture = getMatchingConvArchitectureForLarpArchitecture(larp_network_arch, mlp_version)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -26,9 +26,10 @@ function matching_conv_architecture = getMatchingConvArchitectureForLarpArchitec
 % POSSIBILITY OF SUCH DAMAGE.
 
   matching_conv_architecture = '';
-  index_of_smooth_boolean = findstr(larp_architecture, 'S');
+  % index_of_smooth_boolean = findstr(larp_network_arch, 'S');
+  % larp_network_arch = larp_network_arch(1:index_of_smooth_boolean - 1);
   if strcmp(mlp_version, 'v1')
-    switch larp_architecture(1:index_of_smooth_boolean - 1)
+    switch larp_network_arch
       case 'larpV0P0'
         matching_conv_architecture = 'convV0P0+fcV1RF32CH3';
       case 'larpV1P0'
@@ -43,7 +44,7 @@ function matching_conv_architecture = getMatchingConvArchitectureForLarpArchitec
         matching_conv_architecture = 'convV0P0+fcV1RF4CH64';
     end
   elseif strcmp(mlp_version, 'v2')
-    switch larp_architecture(1:index_of_smooth_boolean - 1)
+    switch larp_network_arch
       case 'larpV0P0'
         matching_conv_architecture = 'convV0P0+fcV2RF32CH3';
       case 'larpV1P0'

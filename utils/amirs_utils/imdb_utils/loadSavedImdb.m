@@ -28,13 +28,15 @@ function imdb = loadSavedImdb(input_opts)
   dataset = getValueFromFieldOrDefault(input_opts, 'dataset', 'mnist-two-class-9-4');
   network_arch = getValueFromFieldOrDefault(input_opts, 'network_arch', 'lenet');
   posneg_balance = getValueFromFieldOrDefault(input_opts, 'posneg_balance', 'balanced-low');
-  projection = getValueFromFieldOrDefault(input_opts, 'projection', 'no-projection');
+  % projection = getValueFromFieldOrDefault(input_opts, 'projection', 'no-projection');
+  larp_network_arch = getValueFromFieldOrDefault(input_opts, 'larp_network_arch', 'v0p0');
+  larp_weight_init_sequence = getValueFromFieldOrDefault(input_opts, 'larp_weight_init_sequence', {});
   fold_number = getValueFromFieldOrDefault(input_opts, 'fold_number', 1); % currently only implemented for prostate data
 
   if ~isTwoClassImdb(dataset) && ~isSubsampledMultiClassImdb(dataset)
-    if ~strcmp(projection, 'no-projection')
-      tmp = loadSavedProjectedImdb(dataset, posneg_balance, projection);
-      imdb = tmp.imdb;
+    % if ~strcmp(projection, 'no-projection')
+    if numel(larp_weight_init_sequence) > 0
+      imdb = getProjectedImdb(dataset, posneg_balance, larp_network_arch, larp_weight_init_sequence);
     else
       afprintf(sprintf('[INFO] Loading all-class imdb (dataset: %s, network_arch: %s)\n', dataset, network_arch));
       imdb = load(fullfile(getDevPath(), 'data', 'imdb', sprintf('%s-%s', dataset, network_arch), 'imdb.mat'));
@@ -44,8 +46,9 @@ function imdb = loadSavedImdb(input_opts)
     end
   elseif isSubsampledMultiClassImdb(dataset)
     path_to_imdbs = fullfile(getDevPath(), 'data', 'multi_class_subsampled_imdbs');
-    if ~strcmp(projection, 'no-projection')
-      tmp = loadSavedProjectedImdb(dataset, posneg_balance, projection);
+    % if ~strcmp(projection, 'no-projection')
+    if numel(larp_weight_init_sequence) > 0
+      imdb = getProjectedImdb(dataset, posneg_balance, larp_network_arch, larp_weight_init_sequence);
     else
       switch dataset
         case 'mnist-multi-class-subsampled'
@@ -125,8 +128,8 @@ function imdb = loadSavedImdb(input_opts)
               tmp = load(fullfile(path_to_imdbs, 'stl-10', 'saved-multi-class-stl-10-train-balance-500-test-balance-default.mat'));
           end
       end
+      imdb = tmp.imdb;
     end
-    imdb = tmp.imdb;
   else
     assert(isTwoClassImdb(dataset))
     afprintf(sprintf('[INFO] Loading two-class imdb (dataset: %s, posneg_balance: %s)\n', dataset, posneg_balance));
@@ -276,4 +279,14 @@ function imdb = loadSavedImdb(input_opts)
   fh_imdb_utils = imdbTwoClassUtils;
   fh_imdb_utils.getImdbInfo(imdb, 1);
   printConsoleOutputSeparator();
+
+
+
+% -------------------------------------------------------------------------
+function imdb = getProjectedImdb(dataset, posneg_balance, larp_network_arch, larp_weight_init_sequence);
+% -------------------------------------------------------------------------
+  % instead of saving huge ass files, I'm just going to project on the fly (we're not comparing between MLP and SVMs anymore anyways...)
+  % tmp = loadSavedProjectedImdb(dataset, posneg_balance, projection);
+  fh_projection_utils = projectionUtils;
+  imdb = fh_projection_utils.projectImdbThroughNetworkArch(dataset, posneg_balance, larp_network_arch, larp_weight_init_sequence, -1);
 

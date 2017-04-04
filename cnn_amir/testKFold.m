@@ -41,36 +41,38 @@ function folds = testKFold(input_opts)
   %                                                                 opts.imdb
   % -------------------------------------------------------------------------
   opts.imdb.posneg_balance = getValueFromFieldOrDefault(input_opts, 'posneg_balance', 'balanced-38');
-  opts.imdb.projection = getValueFromFieldOrDefault(input_opts, 'projection', 'no-projection');
-  if strcmp(opts.general.dataset, 'prostate-v2-20-patients')
-    switch opts.imdb.posneg_balance
-      case 'k=5-fold-unbalanced'
-        opts.k_fold_options.number_of_folds == 5;
-      case 'k=5-fold-balanced-high'
-        opts.k_fold_options.number_of_folds == 5;
-      case 'leave-one-out-balanced-640-640'
-        opts.k_fold_options.number_of_folds = 20;
-      case 'leave-one-out-balanced-1280-1280'
-        opts.k_fold_options.number_of_folds = 20;
-      case 'leave-one-out-balanced-low'
-        opts.k_fold_options.number_of_folds = 20;
-      case 'leave-one-out-unbalanced'
-        opts.k_fold_options.number_of_folds = 20;
-      case 'leave-one-out-balanced-high'
-        opts.k_fold_options.number_of_folds = 20;
-      otherwise
-        assert(false);
-    end
-  elseif strcmp(opts.general.dataset, 'prostate-v3-104-patients')
-    switch opts.imdb.posneg_balance
-      case 'leave-one-out-balanced-low'
-        opts.k_fold_options.number_of_folds = 104;
-      case 'leave-one-out-unbalanced'
-        opts.k_fold_options.number_of_folds = 104;
-      case 'leave-one-out-balanced-high'
-        opts.k_fold_options.number_of_folds = 104;
-    end
-  end
+  % opts.imdb.projection = getValueFromFieldOrDefault(input_opts, 'projection', 'no-projection');
+  opts.imdb.larp_network_arch = getValueFromFieldOrDefault(input_opts, 'larp_network_arch', 'v0p0');
+  opts.imdb.larp_weight_init_sequence = getValueFromFieldOrDefault(input_opts, 'larp_weight_init_sequence', {});
+  % if strcmp(opts.general.dataset, 'prostate-v2-20-patients')
+  %   switch opts.imdb.posneg_balance
+  %     case 'k=5-fold-unbalanced'
+  %       opts.k_fold_options.number_of_folds == 5;
+  %     case 'k=5-fold-balanced-high'
+  %       opts.k_fold_options.number_of_folds == 5;
+  %     case 'leave-one-out-balanced-640-640'
+  %       opts.k_fold_options.number_of_folds = 20;
+  %     case 'leave-one-out-balanced-1280-1280'
+  %       opts.k_fold_options.number_of_folds = 20;
+  %     case 'leave-one-out-balanced-low'
+  %       opts.k_fold_options.number_of_folds = 20;
+  %     case 'leave-one-out-unbalanced'
+  %       opts.k_fold_options.number_of_folds = 20;
+  %     case 'leave-one-out-balanced-high'
+  %       opts.k_fold_options.number_of_folds = 20;
+  %     otherwise
+  %       assert(false);
+  %   end
+  % elseif strcmp(opts.general.dataset, 'prostate-v3-104-patients')
+  %   switch opts.imdb.posneg_balance
+  %     case 'leave-one-out-balanced-low'
+  %       opts.k_fold_options.number_of_folds = 104;
+  %     case 'leave-one-out-unbalanced'
+  %       opts.k_fold_options.number_of_folds = 104;
+  %     case 'leave-one-out-balanced-high'
+  %       opts.k_fold_options.number_of_folds = 104;
+  %   end
+  % end
 
   % -------------------------------------------------------------------------
   %                                                                opts.paths
@@ -199,7 +201,9 @@ function folds = testKFold(input_opts)
     afprintf(sprintf('[INFO] Loading imdb for fold #%d...\n', i));
     tmp_opts.dataset = opts.general.dataset;
     tmp_opts.posneg_balance = opts.imdb.posneg_balance;
-    tmp_opts.projection = opts.imdb.projection;
+    % tmp_opts.projection = opts.imdb.projection;
+    tmp_opts.larp_network_arch = opts.imdb.larp_network_arch;
+    tmp_opts.larp_weight_init_sequence = opts.imdb.larp_weight_init_sequence;
     tmp_opts.fold_number = i; % currently only implemented for prostate data
     imdbs{i} = loadSavedImdb(tmp_opts);
     afprintf(sprintf('[INFO] done!\n'));
@@ -266,9 +270,11 @@ function saveIncrementalKFoldResults(folds, results_file_path)
     %  * train.accuracy
     %  * train.sensitivity
     %  * train.specificity
+    %  * train.duration
     %  * test.accuracy
     %  * test.sensitivity
     %  * test.specificity
+    %  * test.duration
     for fn = fieldnames(performance_summary_for_fold)'
       k_fold_results.(sprintf('fold_%d', i)).(fn{1}) = performance_summary_for_fold.(fn{1});
     end

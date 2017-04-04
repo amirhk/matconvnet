@@ -25,12 +25,29 @@ function fh = projectionUtils()
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
 
+  fh.projectImdbThroughNetworkArch = @projectImdbThroughNetworkArch;
   fh.projectAndSaveImdbThroughNetworkArch = @projectAndSaveImdbThroughNetworkArch;
   fh.getProjectedImdbSamplesOnNetworkArch = @getProjectedImdbSamplesOnNetworkArch;
   fh.getNetworkObjectFromNetworkArchWithoutLearningRate = @getNetworkObjectFromNetworkArchWithoutLearningRate;
 
+% % -------------------------------------------------------------------------
+% function projected_imdb = projectAndSaveImdbThroughNetworkArch(dataset, posneg_balance, network_arch, larp_weight_init_type, forward_pass_depth)
+% % -------------------------------------------------------------------------
+%   projected_imdb = projectImdbThroughNetworkArch(dataset, posneg_balance, network_arch, larp_weight_init_type, forward_pass_depth)
+%   imdb = projected_imdb;
+%   afprintf(sprintf('[INFO] Saving imdb...\n'));
+%   save_file_name = sprintf( ...
+%     'saved-projected-%s-%s-through-%s-%s', ...
+%     dataset, ...
+%     posneg_balance, ...
+%     network_arch, ...
+%     larp_weight_init_type);
+%   % save(save_file_name, 'imdb');
+%   save(save_file_name, 'imdb', '-v7.3');
+%   % save(save_file_name, 'imdb', '-v7.3', '-nocompression');
+
 % -------------------------------------------------------------------------
-function projected_imdb = projectAndSaveImdbThroughNetworkArch(dataset, posneg_balance, network_arch, larp_weight_init_type, forward_pass_depth)
+function projected_imdb = projectImdbThroughNetworkArch(dataset, posneg_balance, larp_network_arch, larp_weight_init_sequence, forward_pass_depth)
 % -------------------------------------------------------------------------
   % get imdb
   tmp_opts.dataset = dataset;
@@ -59,7 +76,10 @@ function projected_imdb = projectAndSaveImdbThroughNetworkArch(dataset, posneg_b
 
 
   % get net
-  net = getNetworkObjectFromNetworkArchWithoutLearningRate(dataset, network_arch);
+  net = getNetworkObjectFromNetworkArchWithoutLearningRate(dataset, larp_network_arch, larp_weight_init_sequence);
+  if forward_pass_depth == -1
+    forward_pass_depth = numel(net.layers); % +1 necessary?.... guess not!
+  end
 
   % train_imdb.images.data
   % all_train_samples_forward_pass_results = getProjectedImdbSamplesOnNet(train_imdb, net, 1)
@@ -96,19 +116,6 @@ function projected_imdb = projectAndSaveImdbThroughNetworkArch(dataset, posneg_b
   % sanity
   assert(numel(input_imdb.images.set) == numel(projected_imdb.images.set))
 
-  imdb = projected_imdb;
-  afprintf(sprintf('[INFO] Saving imdb...\n'));
-  save_file_name = sprintf( ...
-    'saved-projected-%s-%s-through-%s-%s', ...
-    dataset, ...
-    posneg_balance, ...
-    network_arch, ...
-    larp_weight_init_type);
-  % save(save_file_name, 'imdb');
-  save(save_file_name, 'imdb', '-v7.3');
-  % save(save_file_name, 'imdb', '-v7.3', '-nocompression');
-
-
 % -------------------------------------------------------------------------
 function projected_samples = getProjectedImdbSamplesOnNet(imdb, net, depth)
 % -------------------------------------------------------------------------
@@ -125,12 +132,12 @@ function projected_samples = getProjectedImdbSamplesOnNet(imdb, net, depth)
 
 
 % -------------------------------------------------------------------------
-function net = getNetworkObjectFromNetworkArchWithoutLearningRate(dataset, network_arch)
+function net = getNetworkObjectFromNetworkArchWithoutLearningRate(dataset, larp_network_arch, larp_weight_init_sequence)
 % -------------------------------------------------------------------------
   opts.general.dataset = dataset;
-  opts.general.network_arch = network_arch;
+  opts.general.network_arch = larp_network_arch;
   opts.net.weight_init_source = 'gen';
-  opts.net.weight_init_sequence = {'compRand', 'compRand', 'compRand', 'compRand', 'compRand'};
+  opts.net.weight_init_sequence = larp_weight_init_sequence;
   opts.train.learning_rate = [999*ones(1,1)]; % doesn't matter, as we're not training....
   network_opts = cnnInit(opts);
   net = network_opts.net;

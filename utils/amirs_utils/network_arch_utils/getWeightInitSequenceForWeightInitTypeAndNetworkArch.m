@@ -1,5 +1,6 @@
 % -------------------------------------------------------------------------
-function weight_init_sequence = getWeightInitSequenceForWeightInitTypeAndNetworkArch(larp_weight_init_type, network_arch)
+% function weight_init_sequence = getWeightInitSequenceForWeightInitTypeAndNetworkArch(larp_weight_init_type, network_arch)
+function weight_init_sequence = getWeightInitSequenceForWeightInitTypeAndNetworkArch(larp_weight_init_type, larp_network_arch)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -28,52 +29,74 @@ function weight_init_sequence = getWeightInitSequenceForWeightInitTypeAndNetwork
   % Note, only larp layers may be `generated` with the weight_init_type.
   % Conv andmlp layers are still `initialized` using randn().
 
-  switch network_arch
+  switch larp_network_arch
 
-    case 'larpV0P0+convV0P0+fcV1'
-      weight_init_sequence = {'gaussian', 'gaussian'};
-
-
-    case 'larpV0P0+convV1P1+fcV1'
-      weight_init_sequence = {larp_weight_init_type, 'gaussian', 'gaussian'};
-
-
-    case 'larpV1M0P1+convV0P0+fcV1'
-      weight_init_sequence = {larp_weight_init_type, 'gaussian', 'gaussian'};
-    case 'larpV1M1P1+convV0P0+fcV1'
-      weight_init_sequence = {larp_weight_init_type, 'gaussian', 'gaussian'};
-
-    case 'larpV3M0P1+convV0P0+fcV1'
-      weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, 'gaussian', 'gaussian', 'gaussian'};
-    case 'larpV3M1P1+convV0P0+fcV1'
-      weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, 'gaussian', 'gaussian', 'gaussian'};
-    case 'larpV3M2P1+convV0P0+fcV1'
-      weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, 'gaussian', 'gaussian', 'gaussian'};
-    case 'larpV3M3P1+convV0P0+fcV1'
-      weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, 'gaussian', 'gaussian', 'gaussian'};
-
-    case 'larpV3M0P3+convV0P0+fcV1'
-      weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, 'gaussian', 'gaussian', 'gaussian'};
-    case 'larpV3M1P3+convV0P0+fcV1'
-      weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, 'gaussian', 'gaussian', 'gaussian'};
-    case 'larpV3M3P3+convV0P0+fcV1'
-      weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, 'gaussian', 'gaussian', 'gaussian'};
+    case 'larpV0P0'
+      weight_init_sequence = {};
+    case 'larpV1P1'
+      weight_init_sequence = {larp_weight_init_type};
+    case 'larpV3P1'
+      weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type};
+    case 'larpV3P3'
+      weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type};
 
 
 
 
+    % case 'larpV0P0+convV0P0+fcV1'
+    %   weight_init_sequence = {'gaussian', 'gaussian'};
 
+    % case 'larpV0P0+convV1P1+fcV1'
+    %   weight_init_sequence = {larp_weight_init_type, 'gaussian', 'gaussian'};
+
+
+
+    % case 'larpV1M0P1+convV0P0+fcV1'
+    %   weight_init_sequence = {larp_weight_init_type, 'gaussian', 'gaussian'};
+    % case 'larpV1M1P1+convV0P0+fcV1'
+    %   weight_init_sequence = {larp_weight_init_type, 'gaussian', 'gaussian'};
+
+    % case 'larpV3M0P1+convV0P0+fcV1'
+    %   weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, 'gaussian', 'gaussian', 'gaussian'};
+    % case 'larpV3M1P1+convV0P0+fcV1'
+    %   weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, 'gaussian', 'gaussian', 'gaussian'};
+    % case 'larpV3M2P1+convV0P0+fcV1'
+    %   weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, 'gaussian', 'gaussian', 'gaussian'};
+    % case 'larpV3M3P1+convV0P0+fcV1'
+    %   weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, 'gaussian', 'gaussian', 'gaussian'};
+
+    % case 'larpV3M0P3+convV0P0+fcV1'
+    %   weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, 'gaussian', 'gaussian', 'gaussian'};
+    % case 'larpV3M1P3+convV0P0+fcV1'
+    %   weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, 'gaussian', 'gaussian', 'gaussian'};
+    % case 'larpV3M3P3+convV0P0+fcV1'
+    %   weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, 'gaussian', 'gaussian', 'gaussian'};
+
+
+
+    % case 'larpV1P1+convV0P0+fcV1'
+    %   weight_init_sequence = {larp_weight_init_type, 'gaussian', 'gaussian'};
     case 'larpV1P1+convV0P0+fcV1'
       weight_init_sequence = {larp_weight_init_type, 'gaussian', 'gaussian'};
+    % case 'larpV3P1+convV0P0+fcV1'
+    %   weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, 'gaussian', 'gaussian'};
     case 'larpV3P1+convV0P0+fcV1'
       weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, 'gaussian', 'gaussian'};
+    % case 'convV0P0+fcV1RF16CH64'
+    %   weight_init_sequence = {'gaussian', 'gaussian'};
     case 'convV0P0+fcV1RF16CH64'
       weight_init_sequence = {'gaussian', 'gaussian'};
+    % case 'convV0P0+fcV1RF4CH64'
+    %   weight_init_sequence = {'gaussian', 'gaussian'};
     case 'convV0P0+fcV1RF4CH64'
       weight_init_sequence = {'gaussian', 'gaussian'};
 
+    % case 'larpV0P0+convV0P0+fcV2'
+    %   weight_init_sequence = {'gaussian', 'gaussian', 'gaussian'};
     case 'larpV0P0+convV0P0+fcV2'
       weight_init_sequence = {'gaussian', 'gaussian', 'gaussian'};
+    % case 'larpV3P1+convV0P0+fcV2'
+    %   weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, 'gaussian', 'gaussian', 'gaussian'};
     case 'larpV3P1+convV0P0+fcV2'
       weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, 'gaussian', 'gaussian', 'gaussian'};
 
