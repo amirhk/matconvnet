@@ -34,7 +34,7 @@ function runTempTests()
   % -------------------------------------------------------------------------
   %                                                                opts.train
   % -------------------------------------------------------------------------
-  opts.train.gpus = 2;
+  opts.train.gpus = 4;
 
 
   % -------------------------------------------------------------------------
@@ -67,7 +67,7 @@ function runTempTests()
 
 
 
-  larp_network_arch = 'larpV1P1';
+  larp_network_arch = 'larpV3P3';
   non_larp_network_arch = 'convV0P0+fcV1';
 
   dataset_name = sprintf('%s-multi-class-subsampled', opts.general.dataset);
