@@ -39,6 +39,8 @@ function weight_init_sequence = getWeightInitSequenceForWeightInitTypeAndNetwork
       weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type};
     case 'larpV3P3'
       weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type};
+    case 'larpV5P3'
+      weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, larp_weight_init_type};
 
 
 
