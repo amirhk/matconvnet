@@ -931,8 +931,8 @@ function filter = get5x5SobelHoriz()
 % --------------------------------------------------------------------
 function tmp_kernels = getMixedKernelsWithIdentityCovariance(k, m, n, mu_divider, sigma_divider)
 % --------------------------------------------------------------------
-  mu = zeros(1, 25);
-  sigma = eye(25);
+  mu = zeros(1, k * k);
+  sigma = eye(k * k);
   tmp_kernels = getMixedKernelsHelper(k, m, n, mu, sigma, mu_divider, sigma_divider);
 
 
@@ -1011,8 +1011,8 @@ function tmp_kernels = getMixedKernelsHelper(k, m, n, mu, sigma, mu_divider, sig
 % --------------------------------------------------------------------
 function tmp_kernels = getGaussianKernelsWithIdentityCovariance(k, m, n, mu_divider, sigma_divider)
 % --------------------------------------------------------------------
-  mu = zeros(1, 25);
-  sigma = eye(25);
+  mu = zeros(1, k * k);
+  sigma = eye(k * k);
   tmp_kernels = getGaussianKernelsHelper(k, m, n, mu, sigma, mu_divider, sigma_divider);
 
 % --------------------------------------------------------------------
