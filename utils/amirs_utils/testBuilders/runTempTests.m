@@ -29,12 +29,12 @@ function runTempTests()
   % -------------------------------------------------------------------------
   %                                                              opts.general
   % -------------------------------------------------------------------------
-  opts.general.dataset = 'mnist';
+  opts.general.dataset = 'stl-10';
 
   % -------------------------------------------------------------------------
   %                                                                opts.train
   % -------------------------------------------------------------------------
-  opts.train.gpus = 1;
+  opts.train.gpus = 4;
 
 
   % -------------------------------------------------------------------------
@@ -67,11 +67,11 @@ function runTempTests()
 
 
 
-  % larp_network_arch = 'larpV1P1';
-  % non_larp_network_arch = 'convV0P0+fcV1';
-
-  larp_network_arch = 'larpV3P1';
+  larp_network_arch = 'larpV1P1';
   non_larp_network_arch = 'convV0P0+fcV1';
+
+  % larp_network_arch = 'larpV3P1';
+  % non_larp_network_arch = 'convV0P0+fcV1';
 
   % larp_network_arch = 'larpV3P3';
   % non_larp_network_arch = 'convV0P0+fcV1';
