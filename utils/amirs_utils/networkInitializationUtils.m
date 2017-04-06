@@ -1025,7 +1025,14 @@ function tmp_kernels = getGaussianKernelsWithSmoothedCovariance(k, m, n, mu_divi
 % --------------------------------------------------------------------
 function tmp_kernels = getGaussianKernelsHelper(k, m, n, mu, sigma, mu_divider, sigma_divider)
 % --------------------------------------------------------------------
-  generated_samples = mvnrnd(mu / mu_divider, sigma / sigma_divider, m * n);
+  mu = mu / mu_divider;
+  d = size(sigma, 1);
+  sigma_mask = ones(d) - eye(d) + eye(d) * 1 / sigma_divider;
+  sigma = sigma .* simga_mask;
+
+  % mu = mu / mu_divider
+  % sigma = sigma / sigma_divider
+  generated_samples = mvnrnd(mu, sigma, m * n);
   % need the transpose below so each of the generated samples gets reshaped into it's own k x k surface
   tmp_kernels = single(reshape(generated_samples', k, k, m, n));
 
