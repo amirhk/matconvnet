@@ -67,11 +67,11 @@ function runTempTests()
 
 
 
-  % larp_network_arch = 'larpV1P1';
-  % non_larp_network_arch = 'convV0P0+fcV1';
-
-  larp_network_arch = 'larpV3P3';
+  larp_network_arch = 'larpV1P1';
   non_larp_network_arch = 'convV0P0+fcV1';
+
+  % larp_network_arch = 'larpV3P3';
+  % non_larp_network_arch = 'convV0P0+fcV1';
 
   % larp_network_arch = 'larpV5P3';
   % non_larp_network_arch = 'convV0P0+fcV1';

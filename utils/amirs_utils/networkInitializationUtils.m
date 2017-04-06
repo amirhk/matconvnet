@@ -1028,7 +1028,7 @@ function tmp_kernels = getGaussianKernelsHelper(k, m, n, mu, sigma, mu_divider, 
   mu = mu / mu_divider;
   d = size(sigma, 1);
   sigma_mask = ones(d) - eye(d) + eye(d) * 1 / sigma_divider;
-  sigma = sigma .* simga_mask;
+  sigma = sigma .* sigma_mask;
 
   % mu = mu / mu_divider
   % sigma = sigma / sigma_divider
