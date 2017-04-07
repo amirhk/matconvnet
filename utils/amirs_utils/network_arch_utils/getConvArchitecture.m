@@ -25,38 +25,6 @@ function net = getConvArchitecture(dataset, network_arch)
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
 
-      % FULLY CONNECTED
-      layer_number = numel(net.layers) + 1;
-      net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 4, 256, 128, 5/1000, 0, 'gaussian', 'gen');
-      net.layers{end+1} = fh.reluLayer(layer_number);
-
-      layer_number = numel(net.layers) + 1;
-      net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 1, 128, 64, 5/100, 0, 'gaussian', 'gen');
-      net.layers{end+1} = fh.reluLayer(layer_number);
-
-      layer_number = numel(net.layers) + 1;
-      number_of_output_nodes = getNumberOfOutputNodes(dataset);
-      net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 1, 64, number_of_output_nodes, 5/100, 0, 'gaussian', 'gen');
-
-      % LOSS LAYER
-      net.layers{end+1} = fh.softmaxlossLayer();
-
-      % FULLY CONNECTED
-      layer_number = numel(net.layers) + 1;
-      net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 4, 64, 500, 5/100, 0, 'gaussian', 'gen');
-      net.layers{end+1} = fh.reluLayer(layer_number);
-
-      layer_number = numel(net.layers) + 1;
-      net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 1, 500, 100, 5/100, 0, 'gaussian', 'gen');
-      net.layers{end+1} = fh.reluLayer(layer_number);
-
-      layer_number = numel(net.layers) + 1;
-      number_of_output_nodes = getNumberOfOutputNodes(dataset);
-      net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 1, 100, number_of_output_nodes, 5/100, 0, 'gaussian', 'gen');
-
-      % LOSS LAYER
-      net.layers{end+1} = fh.softmaxlossLayer();
-
   fh = networkInitializationUtils;
   net.layers = {};
   switch network_arch
