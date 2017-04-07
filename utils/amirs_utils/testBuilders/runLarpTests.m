@@ -142,8 +142,9 @@ function runLarpTests(experiment_parent_dir, dataset, posneg_balance, larp_netwo
   % learning_rate_dividers = [1, 3, 10] / 3; % svhn
   learning_rate_dividers = [1, 3, 10]; % other
   batch_sizes = [50, 100];
-  % weight_decays = [0.01, 0.001, 0.0001];
-  weight_decays = [0.01];
+  % weight_decays = [0.01];
+  weight_decays = [0.01, 0.001, 0.0001];
+
 
   for learning_rate_divider = learning_rate_dividers
     experiment_options.learning_rate = base_learning_rate / learning_rate_divider;
