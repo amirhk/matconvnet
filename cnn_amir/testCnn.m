@@ -42,7 +42,7 @@ function [trained_model, performance_summary] = testCnn(input_opts)
   % -------------------------------------------------------------------------
   opts.net.net = getValueFromFieldOrDefault(input_opts, 'net', struct()); % may optionally pass in the network
   opts.net.weight_init_source = getValueFromFieldOrDefault(input_opts, 'weight_init_source', 'gen');
-  opts.net.weight_init_sequence = getValueFromFieldOrDefault(input_opts, 'weight_init_sequence', {'compRand', 'compRand', 'compRand', 'compRand', 'compRand'});
+  opts.net.weight_init_sequence = getValueFromFieldOrDefault(input_opts, 'weight_init_sequence', {'gaussian', 'gaussian', 'gaussian', 'gaussian', 'gaussian'});
   opts.net.bottleneck_structure = getValueFromFieldOrDefault(input_opts, 'bottleneck_structure', []);
 
   % -------------------------------------------------------------------------

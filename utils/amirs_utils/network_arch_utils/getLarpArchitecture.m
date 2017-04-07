@@ -28,15 +28,15 @@ function net = getLarpArchitecture(dataset, network_arch)
   fh = networkInitializationUtils;
   net.layers = {};
   index_of_smooth_boolean = findstr(network_arch, 'S');
-  weight_init_type = 'compRand';
+  weight_init_type = 'gaussian';
   if index_of_smooth_boolean < length(network_arch) % if the S# flag even exists in the architecture.
     switch network_arch(index_of_smooth_boolean + 1)
       case 'T'
         smoothed_kernels = true;
-        weight_init_type = 'compRandSmoothed';
+        weight_init_type = 'gaussianSmoothed';
       case 'F'
         smoothed_kernels = false;
-        weight_init_type = 'compRand';
+        weight_init_type = 'gaussian';
       otherwise
         throwException('[ERROR] unrecognizable flag for smoothness of kernels.');
     end

@@ -77,7 +77,7 @@ function [trained_model, performance_summary] = testCommittee(input_opts)
       opts.single_model_options.gpus = ifNotMacSetGpu(getValueFromFieldOrDefault(input_opts, 'gpus', 1));
       opts.single_model_options.debug_flag = getValueFromFieldOrDefault(input_opts, 'debug_flag', false);
       opts.single_model_options.learning_rate = getValueFromFieldOrDefault(input_opts, 'learning_rate', 'default_keyword');
-      opts.single_model_options.weight_init_sequence = getValueFromFieldOrDefault(input_opts, 'weight_init_sequence', {'compRand', 'compRand', 'compRand'});
+      opts.single_model_options.weight_init_sequence = getValueFromFieldOrDefault(input_opts, 'weight_init_sequence', {'gaussian', 'gaussian', 'gaussian'});
   end
 
   % -------------------------------------------------------------------------

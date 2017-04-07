@@ -45,23 +45,23 @@ function matching_conv_architecture = getMatchingConvArchitectureForLarpArchitec
       case 'larpV5P3'
         matching_conv_architecture = 'convV0P0+fcV1RF4CH64';
     end
-  elseif strcmp(mlp_version, 'v2')
-    switch larp_network_arch
-      case 'larpV0P0'
-        matching_conv_architecture = 'convV0P0+fcV2RF32CH3';
-      case 'larpV1P0'
-        matching_conv_architecture = 'convV0P0+fcV2RF32CH64';
-      case 'larpV1P1'
-        matching_conv_architecture = 'convV0P0+fcV2RF16CH64';
-      case 'larpV3P0'
-        matching_conv_architecture = 'convV0P0+fcV2RF32CH64';
-      case 'larpV3P1'
-        matching_conv_architecture = 'convV0P0+fcV2RF16CH64';
-      case 'larpV3P3'
-        matching_conv_architecture = 'convV0P0+fcV2RF4CH64';
-      case 'larpV5P3'
-        matching_conv_architecture = 'convV0P0+fcV2RF4CH64';
-    end
+  % elseif strcmp(mlp_version, 'v2')
+  %   switch larp_network_arch
+  %     case 'larpV0P0'
+  %       matching_conv_architecture = 'convV0P0+fcV2RF32CH3';
+  %     case 'larpV1P0'
+  %       matching_conv_architecture = 'convV0P0+fcV2RF32CH64';
+  %     case 'larpV1P1'
+  %       matching_conv_architecture = 'convV0P0+fcV2RF16CH64';
+  %     case 'larpV3P0'
+  %       matching_conv_architecture = 'convV0P0+fcV2RF32CH64';
+  %     case 'larpV3P1'
+  %       matching_conv_architecture = 'convV0P0+fcV2RF16CH64';
+  %     case 'larpV3P3'
+  %       matching_conv_architecture = 'convV0P0+fcV2RF4CH64';
+  %     case 'larpV5P3'
+  %       matching_conv_architecture = 'convV0P0+fcV2RF4CH64';
+  %   end
   else
     throwException('[ERROR] `mlp_version` not recongized.');
   end

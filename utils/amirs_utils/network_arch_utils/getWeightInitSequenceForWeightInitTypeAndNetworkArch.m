@@ -33,6 +33,8 @@ function weight_init_sequence = getWeightInitSequenceForWeightInitTypeAndNetwork
 
     case 'larpV0P0'
       weight_init_sequence = {};
+    case 'larpV1P0'
+      weight_init_sequence = {larp_weight_init_type};
     case 'larpV1P1'
       weight_init_sequence = {larp_weight_init_type};
     case 'larpV3P1'
