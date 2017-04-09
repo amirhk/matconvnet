@@ -159,11 +159,28 @@ function runLarpTests(experiment_parent_dir, dataset, posneg_balance, larp_netwo
 
 
 
+  % % CIFAR: [1,4,9]
+  % experiment_options.learning_rate = base_learning_rate / 1;
+  % experiment_options.batch_size = 50;
+  % experiment_options.weight_decay = 0.01;
+  % testKFold(experiment_options);
+
+  % experiment_options.learning_rate = base_learning_rate / 1;
+  % experiment_options.batch_size = 100;
+  % experiment_options.weight_decay = 0.01;
+  % testKFold(experiment_options);
+
+  % experiment_options.learning_rate = base_learning_rate / 3;
+  % experiment_options.batch_size = 50;
+  % experiment_options.weight_decay = 0.0001;
+  % testKFold(experiment_options);
+
+
+  % STL-10: [3,4,9]
   experiment_options.learning_rate = base_learning_rate / 1;
   experiment_options.batch_size = 50;
-  experiment_options.weight_decay = 0.01;
+  experiment_options.weight_decay = 0.0001;
   testKFold(experiment_options);
-
 
   experiment_options.learning_rate = base_learning_rate / 1;
   experiment_options.batch_size = 100;
