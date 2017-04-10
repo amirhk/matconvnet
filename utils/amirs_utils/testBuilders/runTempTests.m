@@ -34,7 +34,7 @@ function runTempTests()
   % -------------------------------------------------------------------------
   %                                                                opts.train
   % -------------------------------------------------------------------------
-  opts.train.gpus = 4;
+  opts.train.gpus = 3;
 
 
   % -------------------------------------------------------------------------
@@ -62,14 +62,14 @@ function runTempTests()
 
 
 
-  larp_network_arch = 'larpV0P0-dense-rp';
-  non_larp_network_arch = 'convV0P0+fcV1';
+  % larp_network_arch = 'larpV0P0-dense-rp';
+  % non_larp_network_arch = 'convV0P0+fcV1';
 
   % larp_network_arch = 'larpV1P0-single-no-nl';
   % non_larp_network_arch = 'convV0P0+fcV1';
 
-  % larp_network_arch = 'larpV1P0-ensemble-no-nl';
-  % non_larp_network_arch = 'convV0P0+fcV1';
+  larp_network_arch = 'larpV1P0-ensemble-no-nl';
+  non_larp_network_arch = 'convV0P0+fcV1';
 
 
 
@@ -93,11 +93,11 @@ function runTempTests()
 
 
 
-  dataset_name = sprintf('%s-multi-class-subsampled', opts.general.dataset);
-  balance_name = 'balanced-38';
-
   % dataset_name = sprintf('%s-multi-class-subsampled', opts.general.dataset);
-  % balance_name = 'balanced-707';
+  % balance_name = 'balanced-38';
+
+  dataset_name = sprintf('%s-multi-class-subsampled', opts.general.dataset);
+  balance_name = 'balanced-707';
 
   % dataset_name = sprintf('%s', opts.general.dataset);
   % balance_name = 'whatever';
