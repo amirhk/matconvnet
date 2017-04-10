@@ -32,11 +32,12 @@ function weight_init_sequence = getWeightInitSequenceForWeightInitTypeAndNetwork
   switch larp_network_arch
 
 
-    case 'larpV0P0-RP'
+    case 'larpV0P0-dense-rp'
       weight_init_sequence = {};
-    case 'larpV1P0-no-nl'
+    case 'larpV1P0-single-no-nl'
       weight_init_sequence = {larp_weight_init_type};
-
+    case 'larpV1P0-ensemble-no-nl'
+      weight_init_sequence = {larp_weight_init_type};
 
     case 'larpV0P0'
       weight_init_sequence = {};

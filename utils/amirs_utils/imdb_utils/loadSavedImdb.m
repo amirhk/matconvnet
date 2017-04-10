@@ -129,6 +129,26 @@ function imdb = loadSavedImdb(input_opts)
           end
       end
       imdb = tmp.imdb;
+      if strcmp(larp_network_arch, 'larpV0P0-dense-rp')
+        projected_data = zeros(size(imdb.images.data));
+        s1 = size(imdb.images.data, 1);
+        s2 = size(imdb.images.data, 2);
+        s3 = size(imdb.images.data, 3);
+        s4 = size(imdb.images.data, 4);
+        % use a consistent random projection matrix; output of random projection
+        % should be same size as input(so we need N random projections, where N
+        % is dimension of vectorized image)
+        random_projection_matrix = randn(s1 * s2 * s3, s1 * s2 * s3);
+        for j = 1 : s4
+          tmp = imdb.images.data(:,:,:,j);
+          vectorized = reshape(tmp, s1 * s2 * s3, 1);
+          projected = random_projection_matrix * vectorized;
+          matricized = reshape(projected, s1, s2, s3);
+          projected_data(:,:,:,j) = matricized;
+          keyboard
+        end
+        imdb.images.data = projected_data;
+      end
     end
   else
     assert(isTwoClassImdb(dataset))
@@ -283,7 +303,7 @@ function imdb = loadSavedImdb(input_opts)
 
 
 % -------------------------------------------------------------------------
-function imdb = getProjectedImdb(dataset, posneg_balance, larp_network_arch, larp_weight_init_sequence);
+function imdb = getProjectedImdb(dataset, posneg_balance, larp_network_arch, larp_weight_init_sequence)
 % -------------------------------------------------------------------------
   % instead of saving huge ass files, I'm just going to project on the fly (we're not comparing between MLP and SVMs anymore anyways...)
   % tmp = loadSavedProjectedImdb(dataset, posneg_balance, projection);
