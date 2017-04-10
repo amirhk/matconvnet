@@ -139,15 +139,19 @@ function imdb = loadSavedImdb(input_opts)
         % should be same size as input(so we need N random projections, where N
         % is dimension of vectorized image)
         random_projection_matrix = randn(s1 * s2 * s3, s1 * s2 * s3);
-        for j = 1 : s4
-          tmp = imdb.images.data(:,:,:,j);
-          vectorized = reshape(tmp, s1 * s2 * s3, 1);
-          projected = random_projection_matrix * vectorized;
-          matricized = reshape(projected, s1, s2, s3);
-          projected_data(:,:,:,j) = matricized;
-          keyboard
-        end
-        imdb.images.data = projected_data;
+        all_data_original_vectorized = reshape(imdb.images.data, s1 * s2 * s3, []); % [] = s4
+        all_data_projected_vectorized = random_projection_matrix * all_data_original_vectorized; % 3072x3072 * 3072xnumber_of_images
+        all_data_projected_matricized = reshape(all_data_projected_vectorized, s1, s2, s3, s4);
+        imdb.images.data = all_data_projected_matricized;
+        % for j = 1 : s4
+        %   tmp = imdb.images.data(:,:,:,j);
+        %   vectorized = reshape(tmp, s1 * s2 * s3, 1);
+        %   projected = random_projection_matrix * vectorized;
+        %   matricized = reshape(projected, s1, s2, s3);
+        %   projected_data(:,:,:,j) = matricized;
+        %   keyboard
+        % end
+        % imdb.images.data = projected_data;
       end
     end
   else
