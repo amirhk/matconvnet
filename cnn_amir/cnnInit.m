@@ -76,11 +76,11 @@ function network_opts = cnnInit(input_opts)
       case 'larpV0P0'
         % empty
 
-      % case 'larpV1P0-no-nl'
-      %   layer_number = numel(net.layers) + 1;
-      %   net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 3, 64, 1/100, 2, char(weight_init_sequence{1}), 'gen');
-      %   % net.layers{end+1} = fh.poolingLayerLeNetMax(layer_number);
-      %   % net.layers{end+1} = fh.reluLayer(layer_number);
+      case 'larpV1P0-no-nl'
+        layer_number = numel(net.layers) + 1;
+        net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 3, 64, 1/100, 2, char(weight_init_sequence{1}), 'gen');
+        % net.layers{end+1} = fh.poolingLayerLeNetMax(layer_number);
+        % net.layers{end+1} = fh.reluLayer(layer_number);
 
       case 'larpV1P0'
         layer_number = numel(net.layers) + 1;

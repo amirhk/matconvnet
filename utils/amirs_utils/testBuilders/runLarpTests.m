@@ -139,8 +139,8 @@ function runLarpTests(experiment_parent_dir, dataset, posneg_balance, larp_netwo
   % weight_decays = [0.01, 0.001, 0.0001];
 
   % learning_rate_dividers = [1, 3, 10] / 10; % stl-10
-  learning_rate_dividers = [1, 3, 10] / 3; % svhn
-  % learning_rate_dividers = [1, 3, 10]; % other
+  % learning_rate_dividers = [1, 3, 10] / 3; % svhn
+  learning_rate_dividers = [1, 3, 10]; % other
   batch_sizes = [50, 100];
   % weight_decays = [0.01];
   weight_decays = [0.01, 0.001, 0.0001];
@@ -160,6 +160,7 @@ function runLarpTests(experiment_parent_dir, dataset, posneg_balance, larp_netwo
 
 
   % % CIFAR: [1, 4, 9]
+  % base_learning_rate = [0.1*ones(1,25) 0.03*ones(1,25) 0.01*ones(1,50)];
   % experiment_options.learning_rate = base_learning_rate / 1;
   % experiment_options.batch_size = 50;
   % experiment_options.weight_decay = 0.01;
@@ -177,23 +178,25 @@ function runLarpTests(experiment_parent_dir, dataset, posneg_balance, larp_netwo
 
 
   % % STL-10: [3, 4, 9]
-  % experiment_options.learning_rate = base_learning_rate / 1 * 10;
+  % base_learning_rate = [0.1*ones(1,25) 0.03*ones(1,25) 0.01*ones(1,50)] * 10;
+  % experiment_options.learning_rate = base_learning_rate / 1;
   % experiment_options.batch_size = 50;
   % experiment_options.weight_decay = 0.0001;
   % testKFold(experiment_options);
 
-  % experiment_options.learning_rate = base_learning_rate / 1 * 10;
+  % experiment_options.learning_rate = base_learning_rate / 1;
   % experiment_options.batch_size = 100;
   % experiment_options.weight_decay = 0.01;
   % testKFold(experiment_options);
 
-  % experiment_options.learning_rate = base_learning_rate / 3 * 10;
+  % experiment_options.learning_rate = base_learning_rate / 3;
   % experiment_options.batch_size = 50;
   % experiment_options.weight_decay = 0.0001;
   % testKFold(experiment_options);
 
 
   % % MNIST: [6, 11, 17]
+  % base_learning_rate = [0.1*ones(1,25) 0.03*ones(1,25) 0.01*ones(1,50)];
   % experiment_options.learning_rate = base_learning_rate / 1;
   % experiment_options.batch_size = 100;
   % experiment_options.weight_decay = 0.0001;
