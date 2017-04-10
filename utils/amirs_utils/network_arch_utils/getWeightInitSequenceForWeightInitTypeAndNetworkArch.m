@@ -31,10 +31,15 @@ function weight_init_sequence = getWeightInitSequenceForWeightInitTypeAndNetwork
 
   switch larp_network_arch
 
-    case 'larpV0P0'
+
+    case 'larpV0P0-RP'
       weight_init_sequence = {};
     case 'larpV1P0-no-nl'
       weight_init_sequence = {larp_weight_init_type};
+
+
+    case 'larpV0P0'
+      weight_init_sequence = {};
     case 'larpV1P0'
       weight_init_sequence = {larp_weight_init_type};
     case 'larpV1P1'

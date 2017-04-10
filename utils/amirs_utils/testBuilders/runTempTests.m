@@ -34,7 +34,7 @@ function runTempTests()
   % -------------------------------------------------------------------------
   %                                                                opts.train
   % -------------------------------------------------------------------------
-  opts.train.gpus = 1;
+  opts.train.gpus = 2;
 
 
   % -------------------------------------------------------------------------
@@ -62,15 +62,16 @@ function runTempTests()
 
 
 
+  % larp_network_arch = 'larpV0P0-RP'
+  % non_larp_network_arch = 'convV0P0+fcV1';
 
+  larp_network_arch = 'larpV1P0-no-nl'
+  non_larp_network_arch = 'convV0P0+fcV1';
 
 
 
   % larp_network_arch = 'larpV1P0';
   % non_larp_network_arch = 'convV0P0+fcV1';
-
-  larp_network_arch = 'larpV1P0-no-nl'
-  non_larp_network_arch = 'convV0P0+fcV1';
 
   % larp_network_arch = 'larpV1P1';
   % non_larp_network_arch = 'convV0P0+fcV1';
