@@ -62,7 +62,7 @@ function runTempTests()
 
 
 
-  % larp_network_arch = 'larpV0P0-dense-rp';
+  % larp_network_arch = 'larpV0P0-single-dense-rp';
   % non_larp_network_arch = 'convV0P0+fcV1';
 
   % larp_network_arch = 'larpV1P0-single-no-nl';
@@ -73,11 +73,14 @@ function runTempTests()
 
 
 
-  larp_network_arch = 'larpV1P0';
-  non_larp_network_arch = 'convV0P0+fcV1';
+  % larp_network_arch = 'larpV1P0';
+  % non_larp_network_arch = 'convV0P0+fcV1';
 
   % larp_network_arch = 'larpV1P1';
   % non_larp_network_arch = 'convV0P0+fcV1';
+
+  larp_network_arch = 'larpV1P1-non-decimated-pooling';
+  non_larp_network_arch = 'convV0P0+fcV1';
 
   % larp_network_arch = 'larpV3P1';
   % non_larp_network_arch = 'convV0P0+fcV1';

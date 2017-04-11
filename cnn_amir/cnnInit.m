@@ -76,7 +76,7 @@ function network_opts = cnnInit(input_opts)
       case 'larpV0P0'
         % empty
 
-      case 'larpV0P0-dense-rp'
+      case 'larpV0P0-single-dense-rp'
         % empty... doesn't even use convolutions... uses dense random projection matrix in loadSavedImdb.
 
       case 'larpV1P0-single-no-nl'
@@ -95,6 +95,12 @@ function network_opts = cnnInit(input_opts)
         layer_number = numel(net.layers) + 1;
         net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 3, 64, 1/100, 2, char(weight_init_sequence{1}), 'gen');
         % net.layers{end+1} = fh.poolingLayerLeNetMax(layer_number);
+        net.layers{end+1} = fh.reluLayer(layer_number);
+
+      case 'larpV1P1-non-decimated-pooling'
+        layer_number = numel(net.layers) + 1;
+        net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 3, 64, 1/100, 2, char(weight_init_sequence{1}), 'gen');
+        net.layers{end+1} = fh.poolingLayerLeNetMaxNonDecimated(layer_number);
         net.layers{end+1} = fh.reluLayer(layer_number);
 
       case 'larpV1P1'

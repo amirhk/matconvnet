@@ -129,7 +129,7 @@ function imdb = loadSavedImdb(input_opts)
           end
       end
       imdb = tmp.imdb;
-      if strcmp(larp_network_arch, 'larpV0P0-dense-rp')
+      if strcmp(larp_network_arch, 'larpV0P0-single-dense-rp')
         projected_data = zeros(size(imdb.images.data));
         s1 = size(imdb.images.data, 1);
         s2 = size(imdb.images.data, 2);
