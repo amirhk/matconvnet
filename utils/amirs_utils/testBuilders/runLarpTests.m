@@ -77,7 +77,7 @@ function runLarpTests(experiment_parent_dir, dataset, posneg_balance, larp_netwo
   % -------------------------------------------------------------------------
   %                                                            shared options
   % -------------------------------------------------------------------------
-  experiment_options.number_of_folds = 1;
+  experiment_options.number_of_folds = 3;
   experiment_options.experiment_parent_dir = opts.paths.experiment_dir;
   experiment_options.dataset = opts.general.dataset;
   experiment_options.posneg_balance = opts.imdb.posneg_balance;
@@ -132,8 +132,7 @@ function runLarpTests(experiment_parent_dir, dataset, posneg_balance, larp_netwo
   % experiment_options.backprop_depth = getFullBackPropDepthForNetworkArch(non_larp_network_arch);
 
 
-  % base_learning_rate = [0.1*ones(1,25) 0.03*ones(1,25) 0.01*ones(1,50)];
-  base_learning_rate = [0.1*ones(1,3)];
+  base_learning_rate = [0.1*ones(1,25) 0.03*ones(1,25) 0.01*ones(1,50)];
 
   % learning_rate_dividers = [1, 3, 10, 30];
   % batch_sizes = [50, 100];
