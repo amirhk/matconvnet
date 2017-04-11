@@ -27,6 +27,7 @@ function [acc, sens, spec] = getAccSensSpecMultiClass(labels, predictions, debug
 
 
   % enforce row vector before doing sum(...)
+  keyboard
   labels = reshape(labels, 1, prod(size(labels)));
   predictions = reshape(predictions, 1, prod(size(predictions)));
   assert(length(labels) == length(predictions));
