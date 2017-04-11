@@ -195,40 +195,40 @@ function runLarpTests(experiment_parent_dir, dataset, posneg_balance, larp_netwo
   % testKFold(experiment_options);
 
 
-  % MNIST: [6, 11, 17]
-  base_learning_rate = [0.1*ones(1,25) 0.03*ones(1,25) 0.01*ones(1,50)];
-  experiment_options.learning_rate = base_learning_rate / 1;
-  experiment_options.batch_size = 100;
-  experiment_options.weight_decay = 0.0001;
-  testKFold(experiment_options);
-
-  experiment_options.learning_rate = base_learning_rate / 3;
-  experiment_options.batch_size = 100;
-  experiment_options.weight_decay = 0.001;
-  testKFold(experiment_options);
-
-  experiment_options.learning_rate = base_learning_rate / 10;
-  experiment_options.batch_size = 100;
-  experiment_options.weight_decay = 0.001;
-  testKFold(experiment_options);
-
-
-  % % SVHN: [1, 10, 13]
-  % base_learning_rate = [0.1*ones(1,25) 0.03*ones(1,25) 0.01*ones(1,50)] * 3;
+  % % MNIST: [6, 11, 17]
+  % base_learning_rate = [0.1*ones(1,25) 0.03*ones(1,25) 0.01*ones(1,50)];
   % experiment_options.learning_rate = base_learning_rate / 1;
-  % experiment_options.batch_size = 50;
-  % experiment_options.weight_decay = 0.01;
+  % experiment_options.batch_size = 100;
+  % experiment_options.weight_decay = 0.0001;
   % testKFold(experiment_options);
 
   % experiment_options.learning_rate = base_learning_rate / 3;
   % experiment_options.batch_size = 100;
-  % experiment_options.weight_decay = 0.01;
+  % experiment_options.weight_decay = 0.001;
   % testKFold(experiment_options);
 
   % experiment_options.learning_rate = base_learning_rate / 10;
-  % experiment_options.batch_size = 50;
-  % experiment_options.weight_decay = 0.01;
+  % experiment_options.batch_size = 100;
+  % experiment_options.weight_decay = 0.001;
   % testKFold(experiment_options);
+
+
+  % SVHN: [1, 10, 13]
+  base_learning_rate = [0.1*ones(1,25) 0.03*ones(1,25) 0.01*ones(1,50)] * 3;
+  experiment_options.learning_rate = base_learning_rate / 1;
+  experiment_options.batch_size = 50;
+  experiment_options.weight_decay = 0.01;
+  testKFold(experiment_options);
+
+  experiment_options.learning_rate = base_learning_rate / 3;
+  experiment_options.batch_size = 100;
+  experiment_options.weight_decay = 0.01;
+  testKFold(experiment_options);
+
+  experiment_options.learning_rate = base_learning_rate / 10;
+  experiment_options.batch_size = 50;
+  experiment_options.weight_decay = 0.01;
+  testKFold(experiment_options);
 
 
 
