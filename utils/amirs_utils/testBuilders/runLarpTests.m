@@ -132,7 +132,8 @@ function runLarpTests(experiment_parent_dir, dataset, posneg_balance, larp_netwo
   % experiment_options.backprop_depth = getFullBackPropDepthForNetworkArch(non_larp_network_arch);
 
 
-  base_learning_rate = [0.1*ones(1,25) 0.03*ones(1,25) 0.01*ones(1,50)];
+  % base_learning_rate = [0.1*ones(1,25) 0.03*ones(1,25) 0.01*ones(1,50)];
+  base_learning_rate = [0.1*ones(1,3)];
 
   % learning_rate_dividers = [1, 3, 10, 30];
   % batch_sizes = [50, 100];
