@@ -73,14 +73,14 @@ function runTempTests()
 
 
 
-  % larp_network_arch = 'larpV1P0';
-  % non_larp_network_arch = 'convV0P0+fcV1';
+  larp_network_arch = 'larpV1P0';
+  non_larp_network_arch = 'convV0P0+fcV1';
 
   % larp_network_arch = 'larpV1P1';
   % non_larp_network_arch = 'convV0P0+fcV1';
 
-  larp_network_arch = 'larpV1P1-non-decimated-pooling';
-  non_larp_network_arch = 'convV0P0+fcV1';
+  % larp_network_arch = 'larpV1P1-non-decimated-pooling';
+  % non_larp_network_arch = 'convV0P0+fcV1';
 
   % larp_network_arch = 'larpV3P1';
   % non_larp_network_arch = 'convV0P0+fcV1';
@@ -96,14 +96,14 @@ function runTempTests()
 
 
 
-  dataset_name = sprintf('%s-multi-class-subsampled', opts.general.dataset);
-  balance_name = 'balanced-38';
+  % dataset_name = sprintf('%s-multi-class-subsampled', opts.general.dataset);
+  % balance_name = 'balanced-38';
 
   % dataset_name = sprintf('%s-multi-class-subsampled', opts.general.dataset);
   % balance_name = 'balanced-707';
 
-  % dataset_name = sprintf('%s', opts.general.dataset);
-  % balance_name = 'whatever';
+  dataset_name = sprintf('%s', opts.general.dataset);
+  balance_name = 'whatever';
 
   runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, larp_network_arch, 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1',                          non_larp_network_arch, opts.train.gpus);
   runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, larp_network_arch, 'gaussian-SmoothedCovariance-3-MuDivide-1-SigmaDivide-1',                        non_larp_network_arch, opts.train.gpus);
