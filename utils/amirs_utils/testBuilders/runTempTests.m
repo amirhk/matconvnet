@@ -117,18 +117,11 @@ function runTempTests()
   balance_name = 'whatever';
 
   runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, larp_network_arch, 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1',                          non_larp_network_arch, opts.train.gpus);
-  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, larp_network_arch, 'gaussian-SmoothedCovariance-3-MuDivide-1-SigmaDivide-1',                        non_larp_network_arch, opts.train.gpus);
-  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, larp_network_arch, 'gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1',    non_larp_network_arch, opts.train.gpus);
 
   larp_network_arch = 'larpV1P0-ensemble-no-nl';
   non_larp_network_arch = 'convV0P0+fcV1';
 
-  dataset_name = sprintf('%s', opts.general.dataset);
-  balance_name = 'whatever';
-
   runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, larp_network_arch, 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1',                          non_larp_network_arch, opts.train.gpus);
-  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, larp_network_arch, 'gaussian-SmoothedCovariance-3-MuDivide-1-SigmaDivide-1',                        non_larp_network_arch, opts.train.gpus);
-  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, larp_network_arch, 'gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1',    non_larp_network_arch, opts.train.gpus);
 
 
 
