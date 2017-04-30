@@ -31,6 +31,8 @@ function matching_conv_architecture = getMatchingConvArchitectureForLarpArchitec
   if strcmp(mlp_version, 'v1')
     switch larp_network_arch
 
+      % case 'larpV0P0-no-rp'
+      %   matching_conv_architecture = 'convV0P0+fcV1RF32CH3';
       case 'larpV0P0-single-dense-rp'
         matching_conv_architecture = 'convV0P0+fcV1RF32CH3';
       case 'larpV1P0-single-no-nl'
