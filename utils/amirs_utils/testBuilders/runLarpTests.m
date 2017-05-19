@@ -140,17 +140,17 @@ function runLarpTests(experiment_parent_dir, dataset, posneg_balance, larp_netwo
 
 
   if strcmp(dataset, 'cifar')
-    learning_rate_dividers = [1, 3, 10, 30]; % other
-    % learning_rate_dividers = [30]; % other
+    % learning_rate_dividers = [1, 3, 10, 30]; % other
+    learning_rate_dividers = [30]; % other
   elseif strcmp(dataset, 'stl-10')
-    learning_rate_dividers = [1, 3, 10, 30] / 10; % stl-10
-    % learning_rate_dividers = [30] / 10; % stl-10
+    % learning_rate_dividers = [1, 3, 10, 30] / 10; % stl-10
+    learning_rate_dividers = [30] / 10; % stl-10
   elseif strcmp(dataset, 'mnist')
-    learning_rate_dividers = [1, 3, 10, 30]; % other
-    % learning_rate_dividers = [30]; % other
+    % learning_rate_dividers = [1, 3, 10, 30]; % other
+    learning_rate_dividers = [30]; % other
   elseif strcmp(dataset, 'svhn')
-    learning_rate_dividers = [1, 3, 10, 30] / 3; % svhn
-    % learning_rate_dividers = [30] / 3; % svhn
+    % learning_rate_dividers = [1, 3, 10, 30] / 3; % svhn
+    learning_rate_dividers = [30] / 3; % svhn
   end
 
   batch_sizes = [50, 100];
