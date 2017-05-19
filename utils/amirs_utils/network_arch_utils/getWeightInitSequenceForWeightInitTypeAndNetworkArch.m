@@ -34,11 +34,11 @@ function weight_init_sequence = getWeightInitSequenceForWeightInitTypeAndNetwork
 
     % case 'larpV0P0-no-rp'
     %   weight_init_sequence = {};
-    case 'larpV0P0-single-dense-rp'
+    case 'larpV0P0-single-dense-rp-no-nl'
       weight_init_sequence = {};
-    case 'larpV1P0-single-no-nl'
+    case 'larpV1P0-single-sparse-rp-no-nl'
       weight_init_sequence = {larp_weight_init_type};
-    case 'larpV1P0-ensemble-no-nl'
+    case 'larpV1P0-ensemble-sparse-rp-no-nl'
       weight_init_sequence = {larp_weight_init_type};
 
     case 'larpV0P0'

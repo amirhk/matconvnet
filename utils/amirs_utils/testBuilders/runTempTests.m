@@ -62,13 +62,13 @@ function runTempTests()
 
 
 
-  % larp_network_arch = 'larpV0P0-single-dense-rp';
+  % larp_network_arch = 'larpV0P0-single-dense-rp-no-nl';
   % non_larp_network_arch = 'convV0P0+fcV1';
 
-  % larp_network_arch = 'larpV1P0-single-no-nl';
+  % larp_network_arch = 'larpV1P0-single-sparse-rp-no-nl';
   % non_larp_network_arch = 'convV0P0+fcV1';
 
-  % larp_network_arch = 'larpV1P0-ensemble-no-nl';
+  % larp_network_arch = 'larpV1P0-ensemble-sparse-rp-no-nl';
   % non_larp_network_arch = 'convV0P0+fcV1';
 
 
@@ -116,7 +116,7 @@ function runTempTests()
 
 
 
-  % larp_network_arch = 'larpV0P0-single-dense-rp';
+  % larp_network_arch = 'larpV0P0-single-dense-rp-no-nl';
   % non_larp_network_arch = 'convV0P0+fcV1';
 
   % dataset_name = sprintf('%s', opts.general.dataset);
@@ -124,7 +124,7 @@ function runTempTests()
 
   % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, larp_network_arch, 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1',                          non_larp_network_arch, opts.train.gpus);
 
-  % larp_network_arch = 'larpV1P0-ensemble-no-nl';
+  % larp_network_arch = 'larpV1P0-ensemble-sparse-rp-no-nl';
   % non_larp_network_arch = 'convV0P0+fcV1';
 
   % runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, larp_network_arch, 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1',                          non_larp_network_arch, opts.train.gpus);
@@ -142,9 +142,9 @@ function runTempTests()
   opts.general.dataset = 'cifar';
   dataset_name = sprintf('%s', opts.general.dataset);
   balance_name = 'whatever';
-  % larp_network_arch = 'larpV0P0-single-dense-rp';
-  % larp_network_arch = 'larpV1P0-single-no-nl';
-  larp_network_arch = 'larpV1P0-ensemble-no-nl';
+  % larp_network_arch = 'larpV0P0-single-dense-rp-no-nl';
+  % larp_network_arch = 'larpV1P0-single-sparse-rp-no-nl';
+  larp_network_arch = 'larpV1P0-ensemble-sparse-rp-no-nl';
   % larp_network_arch = 'larpV0P0';
   non_larp_network_arch = 'convV0P0+fcV1';
   runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, larp_network_arch, 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1',                          non_larp_network_arch, opts.train.gpus);
@@ -152,9 +152,9 @@ function runTempTests()
   opts.general.dataset = 'mnist';
   dataset_name = sprintf('%s', opts.general.dataset);
   balance_name = 'whatever';
-  % larp_network_arch = 'larpV0P0-single-dense-rp';
-  % larp_network_arch = 'larpV1P0-single-no-nl';
-  larp_network_arch = 'larpV1P0-ensemble-no-nl';
+  % larp_network_arch = 'larpV0P0-single-dense-rp-no-nl';
+  % larp_network_arch = 'larpV1P0-single-sparse-rp-no-nl';
+  larp_network_arch = 'larpV1P0-ensemble-sparse-rp-no-nl';
   % larp_network_arch = 'larpV0P0';
   non_larp_network_arch = 'convV0P0+fcV1';
   runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, larp_network_arch, 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1',                          non_larp_network_arch, opts.train.gpus);
@@ -162,9 +162,9 @@ function runTempTests()
   opts.general.dataset = 'svhn';
   dataset_name = sprintf('%s', opts.general.dataset);
   balance_name = 'whatever';
-  % larp_network_arch = 'larpV0P0-single-dense-rp';
-  % larp_network_arch = 'larpV1P0-single-no-nl';
-  larp_network_arch = 'larpV1P0-ensemble-no-nl';
+  % larp_network_arch = 'larpV0P0-single-dense-rp-no-nl';
+  % larp_network_arch = 'larpV1P0-single-sparse-rp-no-nl';
+  larp_network_arch = 'larpV1P0-ensemble-sparse-rp-no-nl';
   % larp_network_arch = 'larpV0P0';
   non_larp_network_arch = 'convV0P0+fcV1';
   runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, larp_network_arch, 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1',                          non_larp_network_arch, opts.train.gpus);
@@ -172,9 +172,9 @@ function runTempTests()
   opts.general.dataset = 'stl-10';
   dataset_name = sprintf('%s', opts.general.dataset);
   balance_name = 'whatever';
-  % larp_network_arch = 'larpV0P0-single-dense-rp';
-  % larp_network_arch = 'larpV1P0-single-no-nl';
-  larp_network_arch = 'larpV1P0-ensemble-no-nl';
+  % larp_network_arch = 'larpV0P0-single-dense-rp-no-nl';
+  % larp_network_arch = 'larpV1P0-single-sparse-rp-no-nl';
+  larp_network_arch = 'larpV1P0-ensemble-sparse-rp-no-nl';
   % larp_network_arch = 'larpV0P0';
   non_larp_network_arch = 'convV0P0+fcV1';
   runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, larp_network_arch, 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1',                          non_larp_network_arch, opts.train.gpus);
