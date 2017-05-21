@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function runLarpTests(experiment_parent_dir, dataset, posneg_balance, larp_network_arch, larp_weight_init_type, non_larp_network_arch, gpus)
+function runLarpTests(experiment_parent_dir, dataset, posneg_balance, larp_network_arch, non_larp_network_arch, larp_weight_init_type, gpus)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
