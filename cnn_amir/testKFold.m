@@ -226,6 +226,7 @@ function folds = testKFold(input_opts)
   imdbs = {}; % separate so don't have to save ~1.5 GB of imdbs!!!
 
   for i = 1:opts.k_fold_options.number_of_folds
+    training_opts = opts;
     afprintf(sprintf('\n'));
     afprintf(sprintf('[INFO] Loading imdb for fold #%d / %d ...\n', i, opts.k_fold_options.number_of_folds));
     tmp_opts.dataset = opts.general.dataset;
@@ -239,19 +240,18 @@ function folds = testKFold(input_opts)
   % end
 
     % merged the for-loops!
-    tmp_imdb = loadSavedImdb(tmp_opts);
-    opts.single_training_method_options.imdb = tmp_imdb;
+    training_opts.single_training_method_options.imdb = loadSavedImdb(tmp_opts);
 
   % for i = 1:opts.k_fold_options.number_of_folds
     % -------------------------------------------------------------------------
     %                                                                train fold
     % -------------------------------------------------------------------------
     afprintf(sprintf('[INFO] Running `%s` on fold #%d...\n', opts.k_fold_options.training_method, i));
-    % opts.single_training_method_options.imdb = imdbs{i};
+    % training_opts.single_training_method_options.imdb = imdbs{i};
     % [ ...
     %   trained_model, ...
     %   performance_summary, ...
-    % ] = trainingMethodFunctionHandle(opts.single_training_method_options);
+    % ] = trainingMethodFunctionHandle(training_opts.single_training_method_options);
     % afprintf(sprintf('[INFO] done!\n'));
 
     % % -------------------------------------------------------------------------
@@ -263,7 +263,7 @@ function folds = testKFold(input_opts)
     % save(opts.paths.folds_file_path, 'folds');
     afprintf(sprintf('[INFO] done!\n\n'));
     keyboard
-    clear tmp_imdb;
+    clear training_opts;
   end
 
 % -------------------------------------------------------------------------
