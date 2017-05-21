@@ -77,12 +77,13 @@ function runLarpTests(experiment_parent_dir, dataset, posneg_balance, larp_netwo
   % -------------------------------------------------------------------------
   %                                                            shared options
   % -------------------------------------------------------------------------
-  if strcmp(larp_network_arch, 'larpV1P0-ensemble-sparse-rp-no-nl')
-    % experiment_options.number_of_folds = 1;
-    experiment_options.number_of_folds = 3;
-  else
-    experiment_options.number_of_folds = 3;
-  end
+  % if strcmp(larp_network_arch, 'larpV1P0-ensemble-sparse-rp-no-nl')
+  %   % experiment_options.number_of_folds = 1;
+  %   experiment_options.number_of_folds = 3;
+  % else
+  %   experiment_options.number_of_folds = 3;
+  % end
+  experiment_options.number_of_folds = 3;
   experiment_options.experiment_parent_dir = opts.paths.experiment_dir;
   experiment_options.dataset = opts.general.dataset;
   experiment_options.posneg_balance = opts.imdb.posneg_balance;

@@ -262,6 +262,7 @@ function folds = testKFold(input_opts)
     % saveIncrementalKFoldResults(folds, opts.paths.results_file_path);
     % save(opts.paths.folds_file_path, 'folds');
     afprintf(sprintf('[INFO] done!\n\n'));
+    keyboard
     clear tmp_imdb;
   end
 
