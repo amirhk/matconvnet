@@ -240,7 +240,7 @@ function folds = testKFold(input_opts)
 
     % merged the for-loops!
     tmp_imdb = loadSavedImdb(tmp_opts);
-    opts.single_training_method_options.imdb = loadSavedImdb(tmp_opts);
+    opts.single_training_method_options.imdb = tmp_imdb;
 
   % for i = 1:opts.k_fold_options.number_of_folds
     % -------------------------------------------------------------------------
