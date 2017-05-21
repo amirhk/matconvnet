@@ -239,7 +239,6 @@ function folds = testKFold(input_opts)
   % end
 
     % merged the for-loops!
-    clear tmp_imdb;
     tmp_imdb = loadSavedImdb(tmp_opts);
     opts.single_training_method_options.imdb = loadSavedImdb(tmp_opts);
 
@@ -263,6 +262,7 @@ function folds = testKFold(input_opts)
     % saveIncrementalKFoldResults(folds, opts.paths.results_file_path);
     % save(opts.paths.folds_file_path, 'folds');
     afprintf(sprintf('[INFO] done!\n\n'));
+    clear tmp_imdb;
   end
 
 % -------------------------------------------------------------------------
