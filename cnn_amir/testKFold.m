@@ -191,23 +191,6 @@ function folds = testKFold(input_opts)
     opts.k_fold_options.training_method, ...
     opts.k_fold_options.number_of_folds), 1);
 
-  % -------------------------------------------------------------------------
-  %                                             create the imdb for each fold
-  % -------------------------------------------------------------------------
-  imdbs = {}; % separate so don't have to save ~1.5 GB of imdbs!!!
-
-  for i = 1:opts.k_fold_options.number_of_folds
-    afprintf(sprintf('\n'));
-    afprintf(sprintf('[INFO] Loading imdb for fold #%d...\n', i));
-    tmp_opts.dataset = opts.general.dataset;
-    tmp_opts.posneg_balance = opts.imdb.posneg_balance;
-    % tmp_opts.projection = opts.imdb.projection;
-    tmp_opts.larp_network_arch = opts.imdb.larp_network_arch;
-    tmp_opts.larp_weight_init_sequence = opts.imdb.larp_weight_init_sequence;
-    tmp_opts.fold_number = i; % currently only implemented for prostate data
-    imdbs{i} = loadSavedImdb(tmp_opts);
-    afprintf(sprintf('[INFO] done!\n'));
-  end
 
   % -------------------------------------------------------------------------
   %                                                      train for each fold!
@@ -237,25 +220,48 @@ function folds = testKFold(input_opts)
       trainingMethodFunctionHandle = @testEnsembleMultiClass;
   end
 
+  % -------------------------------------------------------------------------
+  %                                             create the imdb for each fold
+  % -------------------------------------------------------------------------
+  imdbs = {}; % separate so don't have to save ~1.5 GB of imdbs!!!
+
   for i = 1:opts.k_fold_options.number_of_folds
+    afprintf(sprintf('\n'));
+    afprintf(sprintf('[INFO] Loading imdb for fold #%d / %d ...\n', i, opts.k_fold_options.number_of_folds));
+    tmp_opts.dataset = opts.general.dataset;
+    tmp_opts.posneg_balance = opts.imdb.posneg_balance;
+    % tmp_opts.projection = opts.imdb.projection;
+    tmp_opts.larp_network_arch = opts.imdb.larp_network_arch;
+    tmp_opts.larp_weight_init_sequence = opts.imdb.larp_weight_init_sequence;
+    tmp_opts.fold_number = i; % currently only implemented for prostate data
+    % imdbs{i} = loadSavedImdb(tmp_opts);
+    afprintf(sprintf('[INFO] done!\n'));
+  % end
+
+    % merged the for-loops!
+    clear tmp_imdb;
+    tmp_imdb = loadSavedImdb(tmp_opts);
+    opts.single_training_method_options.imdb = loadSavedImdb(tmp_opts);
+
+  % for i = 1:opts.k_fold_options.number_of_folds
     % -------------------------------------------------------------------------
     %                                                                train fold
     % -------------------------------------------------------------------------
     afprintf(sprintf('[INFO] Running `%s` on fold #%d...\n', opts.k_fold_options.training_method, i));
-    opts.single_training_method_options.imdb = imdbs{i};
-    [ ...
-      trained_model, ...
-      performance_summary, ...
-    ] = trainingMethodFunctionHandle(opts.single_training_method_options);
-    afprintf(sprintf('[INFO] done!\n'));
+    % opts.single_training_method_options.imdb = imdbs{i};
+    % [ ...
+    %   trained_model, ...
+    %   performance_summary, ...
+    % ] = trainingMethodFunctionHandle(opts.single_training_method_options);
+    % afprintf(sprintf('[INFO] done!\n'));
 
-    % -------------------------------------------------------------------------
-    %                        save / overwrite incremental performance summaries
-    % -------------------------------------------------------------------------
-    afprintf(sprintf('[INFO] Saving incremental k-fold results...\n'));
-    folds.(sprintf('fold_%d', i)).performance_summary = performance_summary;
-    saveIncrementalKFoldResults(folds, opts.paths.results_file_path);
-    save(opts.paths.folds_file_path, 'folds');
+    % % -------------------------------------------------------------------------
+    % %                        save / overwrite incremental performance summaries
+    % % -------------------------------------------------------------------------
+    % afprintf(sprintf('[INFO] Saving incremental k-fold results...\n'));
+    % folds.(sprintf('fold_%d', i)).performance_summary = performance_summary;
+    % saveIncrementalKFoldResults(folds, opts.paths.results_file_path);
+    % save(opts.paths.folds_file_path, 'folds');
     afprintf(sprintf('[INFO] done!\n\n'));
   end
 
