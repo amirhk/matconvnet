@@ -34,7 +34,7 @@ function runTempTests()
   % -------------------------------------------------------------------------
   %                                                                opts.train
   % -------------------------------------------------------------------------
-  opts.train.gpus = 1;
+  opts.train.gpus = 2;
 
 
   % -------------------------------------------------------------------------
@@ -142,8 +142,8 @@ function runTempTests()
   opts.general.dataset = 'cifar';
   dataset_name = sprintf('%s', opts.general.dataset);
   balance_name = 'whatever';
-  larp_network_arch = 'larpV0P0-single-dense-rp-no-nl';
-  % larp_network_arch = 'larpV1P0-single-sparse-rp-no-nl';
+  % larp_network_arch = 'larpV0P0-single-dense-rp-no-nl';
+  larp_network_arch = 'larpV1P0-single-sparse-rp-no-nl';
   % larp_network_arch = 'larpV1P0-ensemble-sparse-rp-no-nl';
   % larp_network_arch = 'larpV0P0';
   non_larp_network_arch = 'convV0P0+fcV1';
@@ -152,8 +152,8 @@ function runTempTests()
   opts.general.dataset = 'mnist';
   dataset_name = sprintf('%s', opts.general.dataset);
   balance_name = 'whatever';
-  larp_network_arch = 'larpV0P0-single-dense-rp-no-nl';
-  % larp_network_arch = 'larpV1P0-single-sparse-rp-no-nl';
+  % larp_network_arch = 'larpV0P0-single-dense-rp-no-nl';
+  larp_network_arch = 'larpV1P0-single-sparse-rp-no-nl';
   % larp_network_arch = 'larpV1P0-ensemble-sparse-rp-no-nl';
   % larp_network_arch = 'larpV0P0';
   non_larp_network_arch = 'convV0P0+fcV1';
@@ -162,8 +162,8 @@ function runTempTests()
   opts.general.dataset = 'svhn';
   dataset_name = sprintf('%s', opts.general.dataset);
   balance_name = 'whatever';
-  larp_network_arch = 'larpV0P0-single-dense-rp-no-nl';
-  % larp_network_arch = 'larpV1P0-single-sparse-rp-no-nl';
+  % larp_network_arch = 'larpV0P0-single-dense-rp-no-nl';
+  larp_network_arch = 'larpV1P0-single-sparse-rp-no-nl';
   % larp_network_arch = 'larpV1P0-ensemble-sparse-rp-no-nl';
   % larp_network_arch = 'larpV0P0';
   non_larp_network_arch = 'convV0P0+fcV1';
@@ -172,8 +172,8 @@ function runTempTests()
   opts.general.dataset = 'stl-10';
   dataset_name = sprintf('%s', opts.general.dataset);
   balance_name = 'whatever';
-  larp_network_arch = 'larpV0P0-single-dense-rp-no-nl';
-  % larp_network_arch = 'larpV1P0-single-sparse-rp-no-nl';
+  % larp_network_arch = 'larpV0P0-single-dense-rp-no-nl';
+  larp_network_arch = 'larpV1P0-single-sparse-rp-no-nl';
   % larp_network_arch = 'larpV1P0-ensemble-sparse-rp-no-nl';
   % larp_network_arch = 'larpV0P0';
   non_larp_network_arch = 'convV0P0+fcV1';
