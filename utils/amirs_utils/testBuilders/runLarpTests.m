@@ -144,16 +144,16 @@ function runLarpTests(experiment_parent_dir, dataset, posneg_balance, larp_netwo
   % weight_decays = [0.01, 0.001, 0.0001];
 
 
-  if strcmp(dataset, 'cifar')
+  if strcmp(dataset, 'cifar') || strcmp(dataset, 'cifar-multi-class-subsampled')
     % learning_rate_dividers = [1, 3, 10, 30]; % other
     learning_rate_dividers = [30]; % other
-  elseif strcmp(dataset, 'stl-10')
+  elseif strcmp(dataset, 'stl-10') || strcmp(dataset, 'stl-10-multi-class-subsampled')
     % learning_rate_dividers = [1, 3, 10, 30] / 10; % stl-10
     learning_rate_dividers = [30] / 10; % stl-10
-  elseif strcmp(dataset, 'mnist')
+  elseif strcmp(dataset, 'mnist') || strcmp(dataset, 'mnist-multi-class-subsampled')
     % learning_rate_dividers = [1, 3, 10, 30]; % other
     learning_rate_dividers = [30]; % other
-  elseif strcmp(dataset, 'svhn')
+  elseif strcmp(dataset, 'svhn') || strcmp(dataset, 'svhn-multi-class-subsampled')
     % learning_rate_dividers = [1, 3, 10, 30] / 3; % svhn
     learning_rate_dividers = [30] / 3; % svhn
   end
