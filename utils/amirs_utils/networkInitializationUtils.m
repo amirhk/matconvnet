@@ -652,7 +652,7 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
           generated_samples = generated_samples .* sign(randn(size(generated_samples)));
           % randomly make these values positive and negative
           tmp_kernels = single(reshape(generated_samples', k, k, m, n));
-          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{1} = init_multiplier * tmp_kernels * 0.1;
           layerWeights{2} = zeros(1, n, 'single');
 
 % ------------------------------------------------------------------------------------------
