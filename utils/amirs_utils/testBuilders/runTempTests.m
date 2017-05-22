@@ -34,7 +34,7 @@ function runTempTests()
   % -------------------------------------------------------------------------
   %                                                                opts.train
   % -------------------------------------------------------------------------
-  opts.train.gpus = 3;
+  opts.train.gpus = 1;
 
 
   % -------------------------------------------------------------------------
@@ -193,21 +193,39 @@ function runTempTests()
 
 
 
-  balance_name = 'whatever';
+  % balance_name = 'whatever';
+  balance_name = 'balanced-38';
+
+
+
   % larp_network_arch = 'larpV0P0';
   % larp_network_arch = 'larpV0P0-single-dense-rp-no-nl';
   % larp_network_arch = 'larpV1P0-single-sparse-rp-no-nl';
   % larp_network_arch = 'larpV1P0-ensemble-sparse-rp-no-nl';
-  larp_network_arch = 'larpV3P3';
+  % larp_network_arch = 'larpV1P1';
+  % larp_network_arch = 'larpV3P3';
+
+
+
   non_larp_network_arch = 'convV0P0+fcV1';
+
+
+
   larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
+  % larp_weight_init_type = 'gaussian-SmoothedCovariance-3-MuDivide-1-SigmaDivide-1';
+  % larp_weight_init_type = 'gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1';
+
+
 
   dataset_name = 'cifar';  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, larp_network_arch, non_larp_network_arch, larp_weight_init_type, opts.train.gpus);
   dataset_name = 'mnist';  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, larp_network_arch, non_larp_network_arch, larp_weight_init_type, opts.train.gpus);
-  dataset_name = 'svhn';   runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, larp_network_arch, non_larp_network_arch, larp_weight_init_type, opts.train.gpus);
-  dataset_name = 'stl-10'; runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, larp_network_arch, non_larp_network_arch, larp_weight_init_type, opts.train.gpus);
+  % dataset_name = 'svhn';   runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, larp_network_arch, non_larp_network_arch, larp_weight_init_type, opts.train.gpus);
+  % dataset_name = 'stl-10'; runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, larp_network_arch, non_larp_network_arch, larp_weight_init_type, opts.train.gpus);
 
 
+  % larp_network_arch = 'larpV1P1';
+  dataset_name = 'cifar';  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, larp_network_arch, non_larp_network_arch, larp_weight_init_type, opts.train.gpus);
+  dataset_name = 'mnist';  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, larp_network_arch, non_larp_network_arch, larp_weight_init_type, opts.train.gpus);
 
 
 
