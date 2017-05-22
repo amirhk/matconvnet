@@ -649,6 +649,8 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
           mu = log( (lognormal_mean ^ 2) / sqrt(lognormal_var + lognormal_mean ^ 2));
           sigma = sqrt( log( lognormal_var / (lognormal_mean ^ 2) + 1));
           generated_samples = lognrnd(mu, sigma, 1, k * k * m * n);
+          generated_samples = generated_samples .* sign(randn(size(generated_samples)));
+          % randomly make these values positive and negative
           tmp_kernels = single(reshape(generated_samples', k, k, m, n));
           layerWeights{1} = init_multiplier * tmp_kernels;
           layerWeights{2} = zeros(1, n, 'single');
