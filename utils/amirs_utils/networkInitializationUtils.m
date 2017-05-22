@@ -643,6 +643,18 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
 
 % ------------------------------------------------------------------------------------------
 
+        case 'logNormal-layer5-ratVisualCortex'
+          lognormal_mean = -0.702;
+          lognormal_var = 0.9355;
+          mu = log( (lognormal_mean ^ 2) / sqrt(lognormal_var + lognormal_mean ^ 2));
+          sigma = sqrt( log( lognormal_var / (lognormal_mean ^ 2) + 1));
+          generated_samples = lognrnd(mu, sigma, 1, k * k * m * n);
+          tmp_kernels = single(reshape(generated_samples', k, k, m, n));
+          layerWeights{1} = init_multiplier * tmp_kernels;
+          layerWeights{2} = zeros(1, n, 'single');
+
+% ------------------------------------------------------------------------------------------
+
 
         case 'bernoulli'
           random_kernels = randn(k, k, m, n, 'single');
