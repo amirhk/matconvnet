@@ -34,7 +34,7 @@ function runTempTests()
   % -------------------------------------------------------------------------
   %                                                                opts.train
   % -------------------------------------------------------------------------
-  opts.train.gpus = 1;
+  opts.train.gpus = 3;
 
 
   % -------------------------------------------------------------------------
@@ -198,11 +198,11 @@ function runTempTests()
 
 
 
-  larp_network_arch = 'larpV0P0';
+  % larp_network_arch = 'larpV0P0';
   % larp_network_arch = 'larpV0P0-single-dense-rp-no-nl';
   % larp_network_arch = 'larpV1P0-single-sparse-rp-no-nl';
   % larp_network_arch = 'larpV1P0-ensemble-sparse-rp-no-nl';
-  % larp_network_arch = 'larpV1P1';
+  larp_network_arch = 'larpV1P1';
   % larp_network_arch = 'larpV3P3';
 
 
@@ -218,10 +218,10 @@ function runTempTests()
 
 
 
-  % dataset_name = 'cifar-multi-class-subsampled';    runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, larp_network_arch, non_larp_network_arch, larp_weight_init_type, opts.train.gpus);
+  dataset_name = 'cifar-multi-class-subsampled';    runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, larp_network_arch, non_larp_network_arch, larp_weight_init_type, opts.train.gpus);
   % dataset_name = 'mnist-multi-class-subsampled';    runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, larp_network_arch, non_larp_network_arch, larp_weight_init_type, opts.train.gpus);
-  dataset_name = 'svhn-multi-class-subsampled';   runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, larp_network_arch, non_larp_network_arch, larp_weight_init_type, opts.train.gpus);
-  dataset_name = 'stl-10-multi-class-subsampled'; runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, larp_network_arch, non_larp_network_arch, larp_weight_init_type, opts.train.gpus);
+  % dataset_name = 'svhn-multi-class-subsampled';   runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, larp_network_arch, non_larp_network_arch, larp_weight_init_type, opts.train.gpus);
+  % dataset_name = 'stl-10-multi-class-subsampled'; runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, larp_network_arch, non_larp_network_arch, larp_weight_init_type, opts.train.gpus);
 
 
 
