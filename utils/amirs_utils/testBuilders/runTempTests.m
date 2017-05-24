@@ -34,7 +34,7 @@ function runTempTests()
   % -------------------------------------------------------------------------
   %                                                                opts.train
   % -------------------------------------------------------------------------
-  opts.train.gpus = 3;
+  opts.train.gpus = 1;
 
 
   % -------------------------------------------------------------------------
@@ -211,9 +211,9 @@ function runTempTests()
 
 
 
-  % larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
+  larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
   % larp_weight_init_type = 'gaussian-SmoothedCovariance-3-MuDivide-1-SigmaDivide-1';
-  larp_weight_init_type = 'gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1';
+  % larp_weight_init_type = 'gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1';
   % larp_weight_init_type = 'logNormal-layer5-ratVisualCortex';
 
 
