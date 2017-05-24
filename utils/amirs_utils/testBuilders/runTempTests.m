@@ -34,7 +34,7 @@ function runTempTests()
   % -------------------------------------------------------------------------
   %                                                                opts.train
   % -------------------------------------------------------------------------
-  opts.train.gpus = 2;
+  opts.train.gpus = 3;
 
 
   % -------------------------------------------------------------------------
@@ -224,8 +224,8 @@ function runTempTests()
 
 
   % dataset_name = 'cifar-multi-class-subsampled';    runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, larp_network_arch, non_larp_network_arch, larp_weight_init_type, opts.train.gpus);
-  dataset_name = 'mnist-multi-class-subsampled';    runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, larp_network_arch, non_larp_network_arch, larp_weight_init_type, opts.train.gpus);
-  % dataset_name = 'svhn-multi-class-subsampled';   runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, larp_network_arch, non_larp_network_arch, larp_weight_init_type, opts.train.gpus);
+  % dataset_name = 'mnist-multi-class-subsampled';    runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, larp_network_arch, non_larp_network_arch, larp_weight_init_type, opts.train.gpus);
+  dataset_name = 'svhn-multi-class-subsampled';   runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, larp_network_arch, non_larp_network_arch, larp_weight_init_type, opts.train.gpus);
   % dataset_name = 'stl-10-multi-class-subsampled'; runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, larp_network_arch, non_larp_network_arch, larp_weight_init_type, opts.train.gpus);
 
 
