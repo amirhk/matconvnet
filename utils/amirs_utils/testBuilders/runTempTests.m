@@ -34,7 +34,7 @@ function runTempTests()
   % -------------------------------------------------------------------------
   %                                                                opts.train
   % -------------------------------------------------------------------------
-  opts.train.gpus = 1;
+  opts.train.gpus = 2;
 
 
   % -------------------------------------------------------------------------
@@ -203,7 +203,8 @@ function runTempTests()
   % larp_network_arch = 'larpV1P0-single-sparse-rp-no-nl';
   % larp_network_arch = 'larpV1P0-ensemble-sparse-rp-no-nl';
   % larp_network_arch = 'larpV1P1';
-  larp_network_arch = 'larpV3P3';
+  larp_network_arch = 'larpV3P1';
+  % larp_network_arch = 'larpV3P3';
 
 
 
@@ -211,8 +212,8 @@ function runTempTests()
 
 
 
-  % larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
-  larp_weight_init_type = 'gaussian-SmoothedCovariance-3-MuDivide-1-SigmaDivide-1';
+  larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
+  % larp_weight_init_type = 'gaussian-SmoothedCovariance-3-MuDivide-1-SigmaDivide-1';
   % larp_weight_init_type = 'gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1';
   % larp_weight_init_type = 'logNormal-layer5-ratVisualCortex';
 

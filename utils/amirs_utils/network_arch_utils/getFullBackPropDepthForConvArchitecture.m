@@ -28,17 +28,17 @@ function full_backprop_depth = getFullBackPropDepthForConvArchitecture(conv_arch
   switch conv_architecture
 
     case 'convV0P0+fcV1RF32CH3'
-      full_backprop_depth = 4;
+      full_backprop_depth = 11;
     case 'convV0P0+fcV1RF32CH64'
-      full_backprop_depth = 4;
+      full_backprop_depth = 11;
     case 'convV0P0+fcV1RF16CH64'
-      full_backprop_depth = 4;
+      full_backprop_depth = 11;
     case 'convV0P0+fcV1RF4CH64'
-      full_backprop_depth = 4;
+      full_backprop_depth = 11;
     case 'convV0P0+fcV1RF2CH64'
-      full_backprop_depth = 4;
+      full_backprop_depth = 11;
     case 'convV0P0+fcV1RF1CH64'
-      full_backprop_depth = 4;
+      full_backprop_depth = 11;
 
     case 'convV0P0+fcV2RF32CH3'
       full_backprop_depth = 6;
