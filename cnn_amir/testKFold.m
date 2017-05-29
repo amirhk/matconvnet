@@ -246,6 +246,7 @@ function folds = testKFold(input_opts)
 
     % merged the for-loops!
     training_opts.single_training_method_options.imdb = loadSavedImdb(tmp_opts);
+    keyboard
 
     % -------------------------------------------------------------------------
     %                                                                train fold
