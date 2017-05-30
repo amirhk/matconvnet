@@ -82,9 +82,9 @@ function runTempTests()
   % non_larp_network_arch = 'convV0P0+fcV1';
   % non_larp_network_arch = 'convV1P0-no-nl+fcV1';
   % non_larp_network_arch = 'convV1P0+fcV1';
-  non_larp_network_arch = 'convV1P1+fcV1';
+  % non_larp_network_arch = 'convV1P1+fcV1';
   % non_larp_network_arch = 'convV3P1+fcV1';
-  % non_larp_network_arch = 'convV3P3+fcV1';
+  non_larp_network_arch = 'convV3P3+fcV1';
 
 
   larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
