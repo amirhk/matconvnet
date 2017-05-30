@@ -73,16 +73,18 @@ function runTempTests()
 
   % larp_network_arch = 'larpV0P0';
   % larp_network_arch = 'larpV0P0-single-dense-rp-no-nl';
-  larp_network_arch = 'larpV1P0-single-sparse-rp-no-nl';
+  % larp_network_arch = 'larpV1P0-single-sparse-rp-no-nl';
   % larp_network_arch = 'larpV1P0-ensemble-sparse-rp-no-nl';
   % larp_network_arch = 'larpV1P1';
   % larp_network_arch = 'larpV3P1';
   % larp_network_arch = 'larpV3P3';
+  % non_larp_network_arch = 'convV0P0+fcV1';
 
-  non_larp_network_arch = 'convV0P0+fcV1';
 
-
-  % larp_network_arch = 'larpV0P0';
+  larp_network_arch = 'larpV0P0';
+  non_larp_network_arch = 'convV1P0+fcV1';
+  % non_larp_network_arch = 'convV1P1+fcV1';
+  % non_larp_network_arch = 'convV3P1+fcV1';
   % non_larp_network_arch = 'convV3P3+fcV1';
 
 
@@ -90,7 +92,7 @@ function runTempTests()
   larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
   % larp_weight_init_type = 'gaussian-SmoothedCovariance-3-MuDivide-1-SigmaDivide-1';
   % larp_weight_init_type = 'gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1';
-  larp_weight_init_type = 'logNormal-layer5-ratVisualCortex';
+  % larp_weight_init_type = 'logNormal-layer5-ratVisualCortex';
 
 
   % dataset_name = 'cifar';  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, larp_network_arch, non_larp_network_arch, larp_weight_init_type, opts.train.gpus);

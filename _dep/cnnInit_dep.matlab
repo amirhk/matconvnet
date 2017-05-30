@@ -187,7 +187,7 @@ function network_opts = cnnInit(input_opts)
       net.layers{end+1} = fh.softmaxlossLayer();
       % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
     % ------------------------------------------------------------------------------------------------------------------------------------------------------------
-    case 'convV0P0+fcV1RF16CH64'
+    case 'convV0P0+fcV1-RF16CH64'
       % FULLY CONNECTED
       layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, opts.network_arch, layer_number, 16, 64, 64, 5/100, 0, 'gaussian', 'gen');
@@ -200,7 +200,7 @@ function network_opts = cnnInit(input_opts)
       % LOSS LAYER
       net.layers{end+1} = fh.softmaxlossLayer();
     % ------------------------------------------------------------------------------------------------------------------------------------------------------------
-    case 'convV0P0+fcV1RF4CH64'
+    case 'convV0P0+fcV1-RF4CH64'
       % FULLY CONNECTED
       layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, opts.network_arch, layer_number, 4, 64, 64, 5/100, 0, 'gaussian', 'gen');

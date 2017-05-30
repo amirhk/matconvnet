@@ -263,7 +263,6 @@ function folds = testKFold(input_opts)
     % -------------------------------------------------------------------------
     %                                                           train this fold
     % -------------------------------------------------------------------------
-    return
     afprintf(sprintf('[INFO] Running `%s` on fold #%d...\n', opts.k_fold_options.training_method, i));
     [ ...
       trained_model, ...

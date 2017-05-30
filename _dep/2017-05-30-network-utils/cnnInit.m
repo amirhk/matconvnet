@@ -189,16 +189,16 @@ function network_opts = cnnInit(input_opts)
         net.layers{end+1} = fh.poolingLayerAlexNet(layer_number);
 
 
-      case 'convV0P0+fcV1RF32CH3' % for larpV1P0-no-nl, larpV0P0-RP
+      case 'convV0P0+fcV1-RF32CH3' % for larpV1P0-no-nl, larpV0P0-RP
         net = getConvArchitecture(dataset, network_arch);
 
-      case 'convV0P0+fcV1RF32CH64' % for larpv1p0, larpv3p0
+      case 'convV0P0+fcV1-RF32CH64' % for larpv1p0, larpv3p0
         net = getConvArchitecture(dataset, network_arch);
 
-      case 'convV0P0+fcV1RF16CH64' % for larpv1p1, larpv3p1
+      case 'convV0P0+fcV1-RF16CH64' % for larpv1p1, larpv3p1
         net = getConvArchitecture(dataset, network_arch);
 
-      case 'convV0P0+fcV1RF4CH64' % for larpv3p3, larpv5p3
+      case 'convV0P0+fcV1-RF4CH64' % for larpv3p3, larpv5p3
         net = getConvArchitecture(dataset, network_arch);
 
       % case 'convV0P0+fcV2RF4CH64' % TODO: should for larpv5p3,... but ... look into getConvArch()
@@ -377,7 +377,7 @@ function network_opts = cnnInit(input_opts)
       %   net.layers{end+1} = fh.softmaxlossLayer();
       %   % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
       % % ------------------------------------------------------------------------------------------------------------------------------------------------------------
-      % % case 'convV0P0+fcV1RF16CH64'
+      % % case 'convV0P0+fcV1-RF16CH64'
       % %   % FULLY CONNECTED
       % %   layer_number = numel(net.layers) + 1;
       % %   net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 16, 64, 64, 5/100, 0, 'gaussian', 'gen');
@@ -390,7 +390,7 @@ function network_opts = cnnInit(input_opts)
       % %   % LOSS LAYER
       % %   net.layers{end+1} = fh.softmaxlossLayer();
       % % % ------------------------------------------------------------------------------------------------------------------------------------------------------------
-      % % case 'convV0P0+fcV1RF4CH64'
+      % % case 'convV0P0+fcV1-RF4CH64'
       % %   % FULLY CONNECTED
       % %   layer_number = numel(net.layers) + 1;
       % %   net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 4, 64, 64, 5/100, 0, 'gaussian', 'gen');

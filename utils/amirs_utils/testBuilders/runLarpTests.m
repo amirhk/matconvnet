@@ -99,7 +99,7 @@ function runLarpTests(experiment_parent_dir, dataset, posneg_balance, larp_netwo
   experiment_options.larp_weight_init_sequence = getLarpWeightInitSequence(larp_weight_init_type, larp_network_arch);
 
   mlp_version = lower(non_larp_network_arch(end-1:end));
-  conv_arch = getMatchingConvArchitectureForLarpArchitecture(larp_network_arch, mlp_version);
+  conv_arch = getMatchingConvArchitectureForLarpArchitecture(larp_network_arch, non_larp_network_arch, mlp_version);
   experiment_options.network_arch = conv_arch;
   experiment_options.backprop_depth = getFullBackPropDepthForConvArchitecture(conv_arch);
 
@@ -110,17 +110,13 @@ function runLarpTests(experiment_parent_dir, dataset, posneg_balance, larp_netwo
   base_learning_rate = [0.1*ones(1,25) 0.03*ones(1,25) 0.01*ones(1,50)];
 
   if strcmp(dataset, 'cifar') || strcmp(dataset, 'cifar-multi-class-subsampled')
-    learning_rate_dividers = [1, 3, 10, 30]; % other
-    % learning_rate_dividers = [30]; % other
+    learning_rate_dividers = [1, 3, 10, 30];
   elseif strcmp(dataset, 'stl-10') || strcmp(dataset, 'stl-10-multi-class-subsampled')
-    learning_rate_dividers = [1, 3, 10, 30] / 10; % stl-10
-    % learning_rate_dividers = [30] / 10; % stl-10
+    learning_rate_dividers = [1, 3, 10, 30] / 10; % stl-10 specific
   elseif strcmp(dataset, 'mnist') || strcmp(dataset, 'mnist-multi-class-subsampled')
-    learning_rate_dividers = [1, 3, 10, 30]; % other
-    % learning_rate_dividers = [30]; % other
+    learning_rate_dividers = [1, 3, 10, 30];
   elseif strcmp(dataset, 'svhn') || strcmp(dataset, 'svhn-multi-class-subsampled')
-    learning_rate_dividers = [1, 3, 10, 30] / 3; % svhn
-    % learning_rate_dividers = [30] / 3; % svhn
+    learning_rate_dividers = [1, 3, 10, 30] / 3; % svhn specific
   end
 
   batch_sizes = [50, 100];
