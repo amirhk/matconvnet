@@ -235,7 +235,7 @@ function folds = testKFold(input_opts)
     % -------------------------------------------------------------------------
     %                                                get the imdb for this fold
     % -------------------------------------------------------------------------
-    training_opts.single_training_method_options.imdb = loadSavedImdb(tmp_opts);
+    training_opts.single_training_method_options.imdb = loadSavedImdb(tmp_opts, 1);
 
     % -------------------------------------------------------------------------
     %                                                 project imdb if necessary

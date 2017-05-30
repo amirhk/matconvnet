@@ -33,15 +33,12 @@ function fh = projectionUtils()
 % -------------------------------------------------------------------------
 function projected_imdb = projectImdbThroughNetwork(imdb, net, forward_pass_depth)
 % -------------------------------------------------------------------------
-  % % get imdb
-  % tmp_opts.dataset = dataset;
-  % tmp_opts.posneg_balance = posneg_balance;
+  % get imdb
   input_imdb = imdb;
-  train_imdb = filterImdbForSet(input_imdb, 1);
-  test_imdb = filterImdbForSet(input_imdb, 3);
+  train_imdb = filterImdbForSet(input_imdb, 1, 3);
+  test_imdb = filterImdbForSet(input_imdb, 3, 3);
 
   % get net
-  % net = getProjectionNetworkObject(dataset, larp_network_arch, larp_weight_init_sequence);
   if forward_pass_depth == -1
     forward_pass_depth = numel(net.layers); % +1 necessary?.... guess not!
   end
@@ -60,7 +57,8 @@ function projected_imdb = projectImdbThroughNetwork(imdb, net, forward_pass_dept
   set = single(cat(2, 1 * ones(1, size(labels_train, 2)), 3 * ones(1, size(labels_test, 2))));
 
   % shuffle
-  ix = randperm(size(data, 4));
+  % ix = randperm(size(data, 4));
+  ix = 1:size(data, 4); %  TODO: this should be randomized!?!?!?!?!?!??!
   data = data(:,:,:,ix);
   labels = labels(ix);
   set = set(ix);
@@ -113,6 +111,7 @@ function imdb = getDenslyProjectedImdb(imdb)
   % should be same size as input(so we need N random projections, where N
   % is dimension of vectorized image)
   random_projection_matrix = randn(s1 * s2 * s3, s1 * s2 * s3) * 1/100;
+  % random_projection_matrix = eye(s1 * s2 * s3);
   all_data_original_vectorized = reshape(imdb.images.data, s1 * s2 * s3, []); % [] = s4
   all_data_projected_vectorized = random_projection_matrix * all_data_original_vectorized; % 3072x3072 * 3072xnumber_of_images
   all_data_projected_matricized = reshape(all_data_projected_vectorized, s1, s2, s3, s4);

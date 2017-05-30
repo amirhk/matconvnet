@@ -58,7 +58,9 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
           layerWeights{1} = init_multiplier * ones(k, k, m, n, 'single');
           layerWeights{2} = zeros(1, n, 'single');
 
-
+        case 'identity'
+          layerWeights{1} = ones(k, k, m, n, 'single');
+          layerWeights{2} = zeros(1, n, 'single');
         case 'gaussian'
           layerWeights{1} = init_multiplier * randn(k, k, m, n, 'single');
           layerWeights{2} = zeros(1, n, 'single');

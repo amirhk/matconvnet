@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function imdb = filterImdbForSet(imdb, set)
+function imdb = filterImdbForSet(imdb, set, output_set)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -31,5 +31,9 @@ function imdb = filterImdbForSet(imdb, set)
   imdb.images.labels = imdb.images.labels(imdb.images.set == set);
   % cnnTrain method only works if the data is in validation set.... so this must be `3`
   % TODO: but what about other methods, like ensemble????????????
-  imdb.images.set = 3 * ones(1, length(imdb.images.labels));
-  assert(numel(find(imdb.images.set == 1)) == 0);
+  imdb.images.set = output_set * ones(1, length(imdb.images.labels));
+  if output_set == 1
+    assert(numel(find(imdb.images.set == 3)) == 0);
+  else
+    assert(numel(find(imdb.images.set == 1)) == 0);
+  end

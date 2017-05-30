@@ -92,7 +92,7 @@ function visualizeNetworkLayerOutputs(input_opts)
   saveas(h, fullfile(opts.paths.experiment_dir, sprintf('%s.png%', file_name)));
 
 
-  imdb = filterImdbForSet(imdb, 1); % TODO: this is set to train.... should this change?????
+  imdb = filterImdbForSet(imdb, 1, 3); % TODO: this is set to train.... should this change?????
   conv_count = 0;
   for ii = 1:numel(net.layers)
     if strcmp(net.layers{ii}.type, 'conv')
@@ -126,7 +126,7 @@ function visualizeNetworkLayerOutputs(input_opts)
 % tmp_opts.dataset = 'mnist-two-class-9-4';
 % tmp_opts.posneg_balance = 'balanced-38';
 % tmp_opts.projection = 'no-projection';
-% imdb = loadSavedImdb(tmp_opts);
+% imdb = loadSavedImdb(tmp_opts, 0);
 
 % % visualize
 % input_opts.dataset = 'mnist-two-class-9-4';

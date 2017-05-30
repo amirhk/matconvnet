@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function imdb = loadSavedImdb(input_opts)
+function imdb = loadSavedImdb(input_opts, debug_flag)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -41,7 +41,9 @@ function imdb = loadSavedImdb(input_opts)
   end
 
   % print info
-  printConsoleOutputSeparator();
-  fh_imdb_utils = imdbMultiClassUtils;
-  fh_imdb_utils.getImdbInfo(imdb, 1);
-  printConsoleOutputSeparator();
+  if debug_flag
+    printConsoleOutputSeparator();
+    fh_imdb_utils = imdbMultiClassUtils;
+    fh_imdb_utils.getImdbInfo(imdb, 1);
+    printConsoleOutputSeparator();
+  end

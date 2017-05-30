@@ -29,53 +29,72 @@ function calculateDistances()
   % -------------------------------------------------------------------------
   %                                                                 Get IMDBs
   % -------------------------------------------------------------------------
-  dataset = 'mnist-multi-class-subsampled'; % 'cifar';
-  posneg_balance = 'balanced-38'; % 'whatever';
+  dataset = 'cifar-multi-class-subsampled'; % 'cifar';
+  posneg_balance = 'balanced-100'; % 'whatever';
+  fh_projection_utils = projectionUtils;
 
 
   afprintf(sprintf('[INFO] Loading original imdb...\n'));
   tmp_opts.dataset = dataset;
   tmp_opts.posneg_balance = posneg_balance;
-  original_imdb = loadSavedImdb(tmp_opts);
+  original_imdb = loadSavedImdb(tmp_opts, 0);
+  afprintf(sprintf('[INFO] done!\n'));
+
+  original_imdb = filterImdbForSet(original_imdb, 1, 1);
+
 
   afprintf(sprintf('[INFO] Loading projected imdb...\n'));
-  tmp_opts.larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
-  tmp_opts.larp_network_arch = 'larpV0P0-single-dense-rp-no-nl';
-  tmp_opts.larp_weight_init_sequence = getLarpWeightInitSequence(tmp_opts.larp_weight_init_type, tmp_opts.larp_network_arch);
-  projected_imdb_1 = loadSavedImdb(tmp_opts);
+  projected_imdb_1 = fh_projection_utils.getDenslyProjectedImdb(original_imdb);
+  afprintf(sprintf('[INFO] done!\n'));
+
 
   afprintf(sprintf('[INFO] Loading projected imdb...\n'));
-  tmp_opts.larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
-  tmp_opts.larp_network_arch = 'larpV1P0-ensemble-sparse-rp-no-nl';
-  tmp_opts.larp_weight_init_sequence = getLarpWeightInitSequence(tmp_opts.larp_weight_init_type, tmp_opts.larp_network_arch);
-  projected_imdb_2 = loadSavedImdb(tmp_opts);
+  larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
+  larp_network_arch = 'larpV1P0-ensemble-sparse-rp-no-nl';
+  larp_weight_init_sequence = getLarpWeightInitSequence(larp_weight_init_type, larp_network_arch);
+  projection_net = fh_projection_utils.getProjectionNetworkObject(dataset, larp_network_arch, larp_weight_init_sequence);
+  projected_imdb_2 = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, -1);
+  afprintf(sprintf('[INFO] done!\n'));
+
 
   afprintf(sprintf('[INFO] Loading projected imdb...\n'));
-  tmp_opts.larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
-  tmp_opts.larp_network_arch = 'larpV1P0-ensemble-sparse-rp-yes-nl';
-  tmp_opts.larp_weight_init_sequence = getLarpWeightInitSequence(tmp_opts.larp_weight_init_type, tmp_opts.larp_network_arch);
-  projected_imdb_3 = loadSavedImdb(tmp_opts);
+  larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
+  larp_network_arch = 'larpV1P0-ensemble-sparse-rp-yes-nl';
+  larp_weight_init_sequence = getLarpWeightInitSequence(larp_weight_init_type, larp_network_arch);
+  projection_net = fh_projection_utils.getProjectionNetworkObject(dataset, larp_network_arch, larp_weight_init_sequence);
+  projected_imdb_3 = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, -1);
+  afprintf(sprintf('[INFO] done!\n'));
 
+
+
+  % -------------------------------------------------------------------------
+  %                                                                Get ratios
+  % -------------------------------------------------------------------------
   [closest_inter_class_point_ratios_1, furthest_intra_class_point_ratios_1] = getDistanceRatios(original_imdb, projected_imdb_1);
   [closest_inter_class_point_ratios_2, furthest_intra_class_point_ratios_2] = getDistanceRatios(original_imdb, projected_imdb_2);
   [closest_inter_class_point_ratios_3, furthest_intra_class_point_ratios_3] = getDistanceRatios(original_imdb, projected_imdb_3);
 
+
+
+  % -------------------------------------------------------------------------
+  %                                                                      Plot
+  % -------------------------------------------------------------------------
   figure
 
   subplot(1,2,1)
   title('Inter-class Euclidean Distances')
   hold on
-  histogram(closest_inter_class_point_ratios_1, 0:0.01:1, 'facecolor', 'r', 'facealpha', 0.5, 'edgecolor', 'none')
-  histogram(closest_inter_class_point_ratios_2, 0:0.01:1, 'facecolor', 'g', 'facealpha', 0.5, 'edgecolor', 'none')
-  histogram(closest_inter_class_point_ratios_3, 0:0.01:1, 'facecolor', 'b', 'facealpha', 0.5, 'edgecolor', 'none')
+  histogram(closest_inter_class_point_ratios_1, 0:0.05:2, 'facecolor', 'r', 'facealpha', 0.5, 'edgecolor', 'none')
+  histogram(closest_inter_class_point_ratios_2, 0:0.05:2, 'facecolor', 'g', 'facealpha', 0.5, 'edgecolor', 'none')
+  histogram(closest_inter_class_point_ratios_3, 0:0.05:2, 'facecolor', 'b', 'facealpha', 0.5, 'edgecolor', 'none')
   hold off
 
   subplot(1,2,2)
   title('Intra-class Euclidean Distances')
   hold on
-  histogram(furthest_intra_class_point_ratios_1, 0:0.01:1, 'facecolor', 'r', 'facealpha', 0.5, 'edgecolor', 'none')
-  histogram(furthest_intra_class_point_ratios_2, 0:0.01:1, 'facecolor', 'g', 'facealpha', 0.5, 'edgecolor', 'none')
-  histogram(furthest_intra_class_point_ratios_3, 0:0.01:1, 'facecolor', 'b', 'facealpha', 0.5, 'edgecolor', 'none')
+  histogram(furthest_intra_class_point_ratios_1, 0:0.05:2, 'facecolor', 'r', 'facealpha', 0.5, 'edgecolor', 'none')
+  histogram(furthest_intra_class_point_ratios_2, 0:0.05:2, 'facecolor', 'g', 'facealpha', 0.5, 'edgecolor', 'none')
+  histogram(furthest_intra_class_point_ratios_3, 0:0.05:2, 'facecolor', 'b', 'facealpha', 0.5, 'edgecolor', 'none')
   hold off
 
   keyboard
@@ -109,7 +128,6 @@ function [closest_inter_class_point_ratios, furthest_intra_class_point_ratios] =
 
   assert(size(original_matrix_pdist, 1) == size(projected_matrix_pdist, 1));
   assert(size(original_matrix_pdist, 2) == size(projected_matrix_pdist, 2));
-
 
   % -------------------------------------------------------------------------
   %                                                  Get ratios of all points

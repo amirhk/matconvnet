@@ -29,7 +29,7 @@ function [top_predictions, all_predictions] = getPredictionsFromModelOnImdb(mode
   afprintf(sprintf('[INFO] Computing predictions from `%s` model on imdb (set `%d`)...\n', training_method, set));
   fh_imdb_utils = imdbTwoClassUtils;
   fh_imdb_utils.getImdbInfo(imdb, 1);
-  imdb = filterImdbForSet(imdb, set);
+  imdb = filterImdbForSet(imdb, set, 3);
   switch training_method
     case 'ecocsvm'
       [top_predictions, all_predictions] = getPredictionsFromEcocSvmStructOnImdb(model, imdb);

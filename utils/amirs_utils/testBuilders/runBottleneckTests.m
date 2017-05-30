@@ -40,7 +40,7 @@ function runBottleneckTests(dataset, network_arch, gpus)
   % -------------------------------------------------------------------------
   %                                                                 opts.imdb
   % -------------------------------------------------------------------------
-  imdb = loadSavedImdb(opts.imdb);
+  imdb = loadSavedImdb(opts.imdb, 1);
 
   % -------------------------------------------------------------------------
   %                                                                opts.train
