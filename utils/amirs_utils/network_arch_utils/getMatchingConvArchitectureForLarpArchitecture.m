@@ -28,6 +28,11 @@ function matching_conv_architecture = getMatchingConvArchitectureForLarpArchitec
   matching_conv_architecture = '';
   % index_of_smooth_boolean = findstr(larp_network_arch, 'S');
   % larp_network_arch = larp_network_arch(1:index_of_smooth_boolean - 1);
+
+  if ~strcmp(non_larp_network_arch, 'convV0P0+fcV1')
+    assert(strcmp(larp_network_arch, 'larpV0P0'));
+  end
+
   if strcmp(mlp_version, 'v1')
     switch larp_network_arch
 
@@ -35,6 +40,8 @@ function matching_conv_architecture = getMatchingConvArchitectureForLarpArchitec
         switch non_larp_network_arch
           case 'convV0P0+fcV1'
             matching_conv_architecture = 'convV0P0+fcV1-RF32CH3';
+          case 'convV1P0-no-nl+fcV1'
+            matching_conv_architecture = 'convV1P0-no-nl-RF32CH3+fcV1-RF32CH64';
           case 'convV1P0+fcV1'
             matching_conv_architecture = 'convV1P0-RF32CH3+fcV1-RF32CH64';
           case 'convV1P1+fcV1'
