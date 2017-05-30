@@ -80,7 +80,7 @@ function runTempTests()
 
 
   % non_larp_network_arch = 'convV0P0+fcV1';
-  non_larp_network_arch = 'convV1P0+fcV1-no-nl';
+  non_larp_network_arch = 'convV1P0-no-nl+fcV1';
   % non_larp_network_arch = 'convV1P0+fcV1';
   % non_larp_network_arch = 'convV1P1+fcV1';
   % non_larp_network_arch = 'convV3P1+fcV1';
