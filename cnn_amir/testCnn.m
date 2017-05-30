@@ -65,8 +65,6 @@ function [trained_model, performance_summary] = testCnn(input_opts)
   opts.train.num_epochs = getValueFromFieldOrDefault(input_opts, 'num_epochs', numel(opts.train.learning_rate));
   opts.train.batch_size = getValueFromFieldOrDefault(input_opts, 'batch_size', 100);
   opts.train.weight_decay = getValueFromFieldOrDefault(input_opts, 'weight_decay', 0.0001);
-  % opts.train.batch_size = 100;
-  % opts.train.weight_decay = 0.01;
 
   % -------------------------------------------------------------------------
   %                                                                opts.other
@@ -260,4 +258,4 @@ function [images, labels] = getSimpleNNBatch(imdb, batch)
 % -------------------------------------------------------------------------
   images = imdb.images.data(:,:,:,batch);
   labels = imdb.images.labels(1,batch);
-  % if rand > 0.5, images=fliplr(images); end
+  if rand > 0.5, images=fliplr(images); end

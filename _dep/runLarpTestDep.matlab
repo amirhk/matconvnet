@@ -214,7 +214,7 @@ function runLarpTests(experiment_parent_dir, dataset, posneg_balance, network_ar
 
   experiment_options.network_arch = network_arch;
   experiment_options.backprop_depth = getFullBackPropDepthForNetworkArch(network_arch);
-  experiment_options.weight_init_sequence = getWeightInitSequenceForWeightInitTypeAndNetworkArch(larp_weight_init_type, network_arch);
+  experiment_options.weight_init_sequence = getLarpWeightInitSequence(larp_weight_init_type, network_arch);
 
   base_learning_rate = [0.1*ones(1,25) 0.03*ones(1,25) 0.01*ones(1,50)];
 

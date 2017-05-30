@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function imdb = loadSavedImdb(input_opts)
+function output = isMultiClassImdb(dataset)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -25,23 +25,11 @@ function imdb = loadSavedImdb(input_opts)
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
 
-  dataset = getValueFromFieldOrDefault(input_opts, 'dataset', 'mnist-two-class-9-4');
-  network_arch = getValueFromFieldOrDefault(input_opts, 'network_arch', 'lenet'); % TODO: IMDB SHOULD NOT DEPEND ON NETWORK ARCH!
-  posneg_balance = getValueFromFieldOrDefault(input_opts, 'posneg_balance', 'balanced-low');
-  fold_number = getValueFromFieldOrDefault(input_opts, 'fold_number', 1); % currently only implemented for prostate data
-
-  if isMultiClassImdb(dataset)
-    imdb = loadSavedMultiClassImdb(dataset, network_arch);
-  elseif isSubsampledMultiClassImdb(dataset)
-    imdb = loadSavedSubsampledMultiClassImdb(dataset, posneg_balance);
-  elseif isTwoClassImdb(dataset)
-    imdb = loadSavedTwoClassImdb(dataset, posneg_balance, fold_number);
-  else
-    throwException('[ERROR] imdb not recognized, or type not supported.')
+  output = false;
+  if strcmp(dataset, 'mnist') || ...
+    strcmp(dataset, 'svhn') || ...
+    strcmp(dataset, 'cifar') || ...
+    strcmp(dataset, 'stl-10')
+    output = true;
   end
 
-  % print info
-  printConsoleOutputSeparator();
-  fh_imdb_utils = imdbMultiClassUtils;
-  fh_imdb_utils.getImdbInfo(imdb, 1);
-  printConsoleOutputSeparator();

@@ -1,6 +1,5 @@
 % -------------------------------------------------------------------------
-% function weight_init_sequence = getWeightInitSequenceForWeightInitTypeAndNetworkArch(larp_weight_init_type, network_arch)
-function weight_init_sequence = getWeightInitSequenceForWeightInitTypeAndNetworkArch(larp_weight_init_type, larp_network_arch)
+function weight_init_sequence = getLarpWeightInitSequence(larp_weight_init_type, larp_network_arch)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -31,15 +30,18 @@ function weight_init_sequence = getWeightInitSequenceForWeightInitTypeAndNetwork
 
   switch larp_network_arch
 
+    case 'larpV0P0'
+      weight_init_sequence = {};
+
     case 'larpV0P0-single-dense-rp-no-nl'
       weight_init_sequence = {};
     case 'larpV1P0-single-sparse-rp-no-nl'
       weight_init_sequence = {larp_weight_init_type};
     case 'larpV1P0-ensemble-sparse-rp-no-nl'
       weight_init_sequence = {larp_weight_init_type};
+    case 'larpV1P0-ensemble-sparse-rp-yes-nl'
+      weight_init_sequence = {larp_weight_init_type};
 
-    case 'larpV0P0'
-      weight_init_sequence = {};
     case 'larpV1P0'
       weight_init_sequence = {larp_weight_init_type};
     case 'larpV1P1-non-decimated-pooling'

@@ -63,7 +63,7 @@ function runLarpTests(experiment_parent_dir, dataset, posneg_balance, larp_netwo
     mkdir(opts.paths.experiment_dir);
   end
   opts.paths.options_file_path = fullfile(opts.paths.experiment_dir, 'options.txt');
-  % opts.paths.results_file_path = fullfile(opts.paths.experiment_dir, 'results.txt');
+  opts.paths.results_file_path = fullfile(opts.paths.experiment_dir, 'results.txt');
 
   % -------------------------------------------------------------------------
   %                                                    save experiment setup!
@@ -95,42 +95,11 @@ function runLarpTests(experiment_parent_dir, dataset, posneg_balance, larp_netwo
   % % -------------------------------------------------------------------------
   experiment_options.training_method = 'single-cnn';
 
-
-
-
-
-
-
-
-  % if strcmp(projection, 'no-projection')
-  %   something = 'larpV0P0SF'; % or 'larpV0P0ST'
-  % else
-  %   something = projection(19:end); %'projected-through-XXX' --> 'XXX'
-  % end
-  % conv_arch = getMatchingConvArchitectureForLarpArchitecture(something, 'v2');
-  % experiment_options.network_arch = conv_arch;
-  % experiment_options.backprop_depth = getFullBackPropDepthForConvArchitecture(conv_arch);
-
-  % experiment_options.batch_size = 100;
-
-  % base_learning_rate = [0.1*ones(1,25) 0.03*ones(1,25) 0.01*ones(1,50)];
-  % % base_learning_rate = [0.1*ones(1,5)];
-  % for learning_rate_divider = [1, 3, 10, 30]
-  %   experiment_options.learning_rate = base_learning_rate / learning_rate_divider;
-  %   for weight_decay = [0.01, 0.001, 0.0001]
-  %     experiment_options.weight_decay = weight_decay;
-  %     testKFold(experiment_options);
-  %   end
-  % end
-
-
-
-
   experiment_options.larp_network_arch = larp_network_arch;
-  experiment_options.larp_weight_init_sequence = getWeightInitSequenceForWeightInitTypeAndNetworkArch(larp_weight_init_type, larp_network_arch);
+  experiment_options.larp_weight_init_sequence = getLarpWeightInitSequence(larp_weight_init_type, larp_network_arch);
 
-  fc_version = lower(non_larp_network_arch(end-1:end));
-  conv_arch = getMatchingConvArchitectureForLarpArchitecture(larp_network_arch, fc_version);
+  mlp_version = lower(non_larp_network_arch(end-1:end));
+  conv_arch = getMatchingConvArchitectureForLarpArchitecture(larp_network_arch, mlp_version);
   experiment_options.network_arch = conv_arch;
   experiment_options.backprop_depth = getFullBackPropDepthForConvArchitecture(conv_arch);
 
@@ -139,11 +108,6 @@ function runLarpTests(experiment_parent_dir, dataset, posneg_balance, larp_netwo
 
 
   base_learning_rate = [0.1*ones(1,25) 0.03*ones(1,25) 0.01*ones(1,50)];
-
-  % learning_rate_dividers = [1, 3, 10, 30];
-  % batch_sizes = [50, 100];
-  % weight_decays = [0.01, 0.001, 0.0001];
-
 
   if strcmp(dataset, 'cifar') || strcmp(dataset, 'cifar-multi-class-subsampled')
     learning_rate_dividers = [1, 3, 10, 30]; % other
@@ -176,78 +140,11 @@ function runLarpTests(experiment_parent_dir, dataset, posneg_balance, larp_netwo
 
 
 
-  % if strcmp(dataset, 'cifar')
-  %   % CIFAR: [1, 4, 9]
-  %   base_learning_rate = [0.1*ones(1,25) 0.03*ones(1,25) 0.01*ones(1,50)];
-  %   experiment_options.learning_rate = base_learning_rate / 1;
-  %   experiment_options.batch_size = 50;
-  %   experiment_options.weight_decay = 0.01;
-  %   testKFold(experiment_options);
 
-  %   experiment_options.learning_rate = base_learning_rate / 1;
-  %   experiment_options.batch_size = 100;
-  %   experiment_options.weight_decay = 0.01;
-  %   testKFold(experiment_options);
 
-  %   experiment_options.learning_rate = base_learning_rate / 3;
-  %   experiment_options.batch_size = 50;
-  %   experiment_options.weight_decay = 0.0001;
-  %   testKFold(experiment_options);
 
-  % elseif strcmp(dataset, 'stl-10')
-  %   % STL-10: [3, 4, 9]
-  %   base_learning_rate = [0.1*ones(1,25) 0.03*ones(1,25) 0.01*ones(1,50)] * 10;
-  %   experiment_options.learning_rate = base_learning_rate / 1;
-  %   experiment_options.batch_size = 50;
-  %   experiment_options.weight_decay = 0.0001;
-  %   testKFold(experiment_options);
 
-  %   experiment_options.learning_rate = base_learning_rate / 1;
-  %   experiment_options.batch_size = 100;
-  %   experiment_options.weight_decay = 0.01;
-  %   testKFold(experiment_options);
 
-  %   experiment_options.learning_rate = base_learning_rate / 3;
-  %   experiment_options.batch_size = 50;
-  %   experiment_options.weight_decay = 0.0001;
-  %   testKFold(experiment_options);
-
-  % elseif strcmp(dataset, 'mnist')
-  %   % MNIST: [6, 11, 17]
-  %   base_learning_rate = [0.1*ones(1,25) 0.03*ones(1,25) 0.01*ones(1,50)];
-  %   experiment_options.learning_rate = base_learning_rate / 1;
-  %   experiment_options.batch_size = 100;
-  %   experiment_options.weight_decay = 0.0001;
-  %   testKFold(experiment_options);
-
-  %   experiment_options.learning_rate = base_learning_rate / 3;
-  %   experiment_options.batch_size = 100;
-  %   experiment_options.weight_decay = 0.001;
-  %   testKFold(experiment_options);
-
-  %   experiment_options.learning_rate = base_learning_rate / 10;
-  %   experiment_options.batch_size = 100;
-  %   experiment_options.weight_decay = 0.001;
-  %   testKFold(experiment_options);
-
-  % elseif strcmp(dataset, 'svhn')
-  %   % SVHN: [1, 10, 13]
-  %   base_learning_rate = [0.1*ones(1,25) 0.03*ones(1,25) 0.01*ones(1,50)] * 3;
-  %   experiment_options.learning_rate = base_learning_rate / 1;
-  %   experiment_options.batch_size = 50;
-  %   experiment_options.weight_decay = 0.01;
-  %   testKFold(experiment_options);
-
-  %   experiment_options.learning_rate = base_learning_rate / 3;
-  %   experiment_options.batch_size = 100;
-  %   experiment_options.weight_decay = 0.01;
-  %   testKFold(experiment_options);
-
-  %   experiment_options.learning_rate = base_learning_rate / 10;
-  %   experiment_options.batch_size = 50;
-  %   experiment_options.weight_decay = 0.01;
-  %   testKFold(experiment_options);
-  % end
 
 
 

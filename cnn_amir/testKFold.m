@@ -193,7 +193,7 @@ function folds = testKFold(input_opts)
 
 
   % -------------------------------------------------------------------------
-  %                                                      train for each fold!
+  %                                                       get training handle
   % -------------------------------------------------------------------------
   switch opts.k_fold_options.training_method
     case 'ecocsvm'
@@ -221,36 +221,49 @@ function folds = testKFold(input_opts)
   end
 
   % -------------------------------------------------------------------------
-  %                                             create the imdb for each fold
+  %                                                       beef for each fold!
   % -------------------------------------------------------------------------
-  imdbs = {}; % separate so don't have to save ~1.5 GB of imdbs!!!
-
   for i = 1:opts.k_fold_options.number_of_folds
     training_opts = opts;
     afprintf(sprintf('\n'));
     afprintf(sprintf('[INFO] Loading imdb for fold #%d / %d ...\n', i, opts.k_fold_options.number_of_folds));
     tmp_opts.dataset = opts.general.dataset;
     tmp_opts.posneg_balance = opts.imdb.posneg_balance;
-    % tmp_opts.projection = opts.imdb.projection;
-    tmp_opts.larp_network_arch = opts.imdb.larp_network_arch;
-    tmp_opts.larp_weight_init_sequence = opts.imdb.larp_weight_init_sequence;
     tmp_opts.fold_number = i; % currently only implemented for prostate data
     afprintf(sprintf('[INFO] done!\n'));
 
-
-    % DEPRECATED! imdbs{i} = loadSavedImdb(tmp_opts);
-  % end
-  % for i = 1:opts.k_fold_options.number_of_folds
-    % DEPRECATED! training_opts.single_training_method_options.imdb = imdbs{i};
-
-
-    % merged the for-loops!
+    % -------------------------------------------------------------------------
+    %                                                get the imdb for this fold
+    % -------------------------------------------------------------------------
     training_opts.single_training_method_options.imdb = loadSavedImdb(tmp_opts);
-    keyboard
 
     % -------------------------------------------------------------------------
-    %                                                                train fold
+    %                                                 project imdb if necessary
     % -------------------------------------------------------------------------
+    if numel(opts.imdb.larp_weight_init_sequence) > 0 || strcmp(opts.imdb.larp_network_arch, 'larpV0P0-single-dense-rp-no-nl')
+      afprintf(sprintf('[INFO] Projecting imdb...\n'));
+      fh_projection_utils = projectionUtils;
+      if numel(opts.imdb.larp_weight_init_sequence) > 0
+        projection_net = fh_projection_utils.getProjectionNetworkObject( ...
+          opts.general.dataset, ...
+          opts.imdb.larp_network_arch, ...
+          opts.imdb.larp_weight_init_sequence);
+        projected_imdb = fh_projection_utils.projectImdbThroughNetwork( ...
+          training_opts.single_training_method_options.imdb, ...
+          projection_net, ...
+          -1);
+      else
+        projected_imdb = fh_projection_utils.getDenslyProjectedImdb( ...
+          training_opts.single_training_method_options.imdb);
+      end
+      training_opts.single_training_method_options.imdb = projected_imdb;
+      afprintf(sprintf('[INFO] done!\n'));
+    end
+
+    % -------------------------------------------------------------------------
+    %                                                           train this fold
+    % -------------------------------------------------------------------------
+    return
     afprintf(sprintf('[INFO] Running `%s` on fold #%d...\n', opts.k_fold_options.training_method, i));
     [ ...
       trained_model, ...
@@ -342,3 +355,21 @@ function saveIncrementalKFoldResults(folds, results_file_path)
   % don't amend file, but overwrite...
   delete(results_file_path);
   saveStruct2File(k_fold_results, results_file_path, 0);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -29,7 +29,7 @@ function calculateDistances()
   % -------------------------------------------------------------------------
   %                                                                 Get IMDBs
   % -------------------------------------------------------------------------
-  dataset = 'cifar-multi-class-subsampled'; % 'cifar';
+  dataset = 'mnist-multi-class-subsampled'; % 'cifar';
   posneg_balance = 'balanced-38'; % 'whatever';
 
 
@@ -41,21 +41,24 @@ function calculateDistances()
   afprintf(sprintf('[INFO] Loading projected imdb...\n'));
   tmp_opts.larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
   tmp_opts.larp_network_arch = 'larpV0P0-single-dense-rp-no-nl';
-  tmp_opts.larp_weight_init_sequence = getWeightInitSequenceForWeightInitTypeAndNetworkArch(tmp_opts.larp_weight_init_type, tmp_opts.larp_network_arch);
+  tmp_opts.larp_weight_init_sequence = getLarpWeightInitSequence(tmp_opts.larp_weight_init_type, tmp_opts.larp_network_arch);
   projected_imdb_1 = loadSavedImdb(tmp_opts);
 
   afprintf(sprintf('[INFO] Loading projected imdb...\n'));
   tmp_opts.larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
   tmp_opts.larp_network_arch = 'larpV1P0-ensemble-sparse-rp-no-nl';
-  tmp_opts.larp_weight_init_sequence = getWeightInitSequenceForWeightInitTypeAndNetworkArch(tmp_opts.larp_weight_init_type, tmp_opts.larp_network_arch);
+  tmp_opts.larp_weight_init_sequence = getLarpWeightInitSequence(tmp_opts.larp_weight_init_type, tmp_opts.larp_network_arch);
   projected_imdb_2 = loadSavedImdb(tmp_opts);
+
+  afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  tmp_opts.larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
+  tmp_opts.larp_network_arch = 'larpV1P0-ensemble-sparse-rp-yes-nl';
+  tmp_opts.larp_weight_init_sequence = getLarpWeightInitSequence(tmp_opts.larp_weight_init_type, tmp_opts.larp_network_arch);
+  projected_imdb_3 = loadSavedImdb(tmp_opts);
 
   [closest_inter_class_point_ratios_1, furthest_intra_class_point_ratios_1] = getDistanceRatios(original_imdb, projected_imdb_1);
   [closest_inter_class_point_ratios_2, furthest_intra_class_point_ratios_2] = getDistanceRatios(original_imdb, projected_imdb_2);
-
-  keyboard
-
-
+  [closest_inter_class_point_ratios_3, furthest_intra_class_point_ratios_3] = getDistanceRatios(original_imdb, projected_imdb_3);
 
   figure
 
@@ -64,6 +67,7 @@ function calculateDistances()
   hold on
   histogram(closest_inter_class_point_ratios_1, 0:0.01:1, 'facecolor', 'r', 'facealpha', 0.5, 'edgecolor', 'none')
   histogram(closest_inter_class_point_ratios_2, 0:0.01:1, 'facecolor', 'g', 'facealpha', 0.5, 'edgecolor', 'none')
+  histogram(closest_inter_class_point_ratios_3, 0:0.01:1, 'facecolor', 'b', 'facealpha', 0.5, 'edgecolor', 'none')
   hold off
 
   subplot(1,2,2)
@@ -71,8 +75,10 @@ function calculateDistances()
   hold on
   histogram(furthest_intra_class_point_ratios_1, 0:0.01:1, 'facecolor', 'r', 'facealpha', 0.5, 'edgecolor', 'none')
   histogram(furthest_intra_class_point_ratios_2, 0:0.01:1, 'facecolor', 'g', 'facealpha', 0.5, 'edgecolor', 'none')
+  histogram(furthest_intra_class_point_ratios_3, 0:0.01:1, 'facecolor', 'b', 'facealpha', 0.5, 'edgecolor', 'none')
   hold off
 
+  keyboard
   % figure,
   % subplot(1,2,1), histogram(closest_inter_class_point_ratios);
   % subplot(1,2,2), histogram(furthest_intra_class_point_ratios);

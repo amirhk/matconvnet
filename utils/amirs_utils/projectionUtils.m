@@ -25,68 +25,26 @@ function fh = projectionUtils()
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
 
-  fh.projectImdbThroughNetworkArch = @projectImdbThroughNetworkArch;
-  fh.projectAndSaveImdbThroughNetworkArch = @projectAndSaveImdbThroughNetworkArch;
-  fh.getProjectedImdbSamplesOnNetworkArch = @getProjectedImdbSamplesOnNetworkArch;
-  fh.getNetworkObjectFromNetworkArchWithoutLearningRate = @getNetworkObjectFromNetworkArchWithoutLearningRate;
+  fh.getDenslyProjectedImdb = @getDenslyProjectedImdb;
+  fh.projectImdbThroughNetwork = @projectImdbThroughNetwork;
+  fh.getProjectionNetworkObject = @getProjectionNetworkObject;
 
-% % -------------------------------------------------------------------------
-% function projected_imdb = projectAndSaveImdbThroughNetworkArch(dataset, posneg_balance, network_arch, larp_weight_init_type, forward_pass_depth)
-% % -------------------------------------------------------------------------
-%   projected_imdb = projectImdbThroughNetworkArch(dataset, posneg_balance, network_arch, larp_weight_init_type, forward_pass_depth)
-%   imdb = projected_imdb;
-%   afprintf(sprintf('[INFO] Saving imdb...\n'));
-%   save_file_name = sprintf( ...
-%     'saved-projected-%s-%s-through-%s-%s', ...
-%     dataset, ...
-%     posneg_balance, ...
-%     network_arch, ...
-%     larp_weight_init_type);
-%   % save(save_file_name, 'imdb');
-%   save(save_file_name, 'imdb', '-v7.3');
-%   % save(save_file_name, 'imdb', '-v7.3', '-nocompression');
 
 % -------------------------------------------------------------------------
-function projected_imdb = projectImdbThroughNetworkArch(dataset, posneg_balance, larp_network_arch, larp_weight_init_sequence, forward_pass_depth)
+function projected_imdb = projectImdbThroughNetwork(imdb, net, forward_pass_depth)
 % -------------------------------------------------------------------------
-  % get imdb
-  tmp_opts.dataset = dataset;
-  tmp_opts.posneg_balance = posneg_balance;
-  input_imdb = loadSavedImdb(tmp_opts);
+  % % get imdb
+  % tmp_opts.dataset = dataset;
+  % tmp_opts.posneg_balance = posneg_balance;
+  input_imdb = imdb;
   train_imdb = filterImdbForSet(input_imdb, 1);
   test_imdb = filterImdbForSet(input_imdb, 3);
 
-
-  % train_imdb.images.data = zeros(5,5,3,10, 'single');
-  % for i = 1:10
-  %   train_imdb.images.data(:,:,:,i) = i * ones(5,5,3,1, 'single');
-  % end
-  % train_imdb.images.labels = 1:10;
-  % train_imdb.images.set = 3 * ones(1,10);
-
-  % train_imdb.images.data = 10 * ones(5,5,3,2, 'single');
-  % train_imdb.images.data(:,:,:,1) = 1 * ones(5,5,3,1, 'single');
-  % train_imdb.images.labels = [1,2];
-  % train_imdb.images.set = [3,3];
-
-  % test_imdb.images.data = 3 * ones(5,5,3,2, 'single');
-  % test_imdb.images.data(:,:,:,1) = 3 * zeros(5,5,3,1, 'single');
-  % test_imdb.images.labels = [1,2];
-  % test_imdb.images.set = [3,3];
-
-
   % get net
-  net = getNetworkObjectFromNetworkArchWithoutLearningRate(dataset, larp_network_arch, larp_weight_init_sequence);
+  % net = getProjectionNetworkObject(dataset, larp_network_arch, larp_weight_init_sequence);
   if forward_pass_depth == -1
     forward_pass_depth = numel(net.layers); % +1 necessary?.... guess not!
   end
-
-  % train_imdb.images.data
-  % all_train_samples_forward_pass_results = getProjectedImdbSamplesOnNet(train_imdb, net, 1)
-  % % all_train_samples_forward_pass_results = getProjectedImdbSamplesOnNet(train_imdb, net, 2)
-  % % all_train_samples_forward_pass_results = getProjectedImdbSamplesOnNet(train_imdb, net, 3)
-  % % all_train_samples_forward_pass_results = getProjectedImdbSamplesOnNet(train_imdb, net, 4)
-  % keyboard
 
   % get resulting matrix from forward pass for all samples
   all_train_samples_forward_pass_results = getProjectedImdbSamplesOnNet(train_imdb, net, forward_pass_depth);
@@ -117,6 +75,18 @@ function projected_imdb = projectImdbThroughNetworkArch(dataset, posneg_balance,
   assert(numel(input_imdb.images.set) == numel(projected_imdb.images.set))
 
 % -------------------------------------------------------------------------
+function net = getProjectionNetworkObject(dataset, larp_network_arch, larp_weight_init_sequence)
+% -------------------------------------------------------------------------
+  opts.general.dataset          = dataset;
+  opts.general.network_arch     = larp_network_arch;
+  opts.train.learning_rate      = [999*ones(1,1)]; % doesn't matter, as we're not training....
+  opts.net.weight_init_source   = 'gen';
+  opts.net.weight_init_sequence = larp_weight_init_sequence;
+
+  network_opts = cnnInit(opts);
+  net = network_opts.net;
+
+% -------------------------------------------------------------------------
 function projected_samples = getProjectedImdbSamplesOnNet(imdb, net, depth)
 % -------------------------------------------------------------------------
   assert(numel(find(imdb.images.set == 1)) == 0); % cnn_train only projects test data. sad, i know.
@@ -131,17 +101,32 @@ function projected_samples = getProjectedImdbSamplesOnNet(imdb, net, depth)
     'val', find(imdb.images.set == 3));
   projected_samples = info.all_samples_forward_pass_results;
 
+% -------------------------------------------------------------------------
+function imdb = getDenslyProjectedImdb(imdb)
+% -------------------------------------------------------------------------
+  projected_data = zeros(size(imdb.images.data));
+  s1 = size(imdb.images.data, 1);
+  s2 = size(imdb.images.data, 2);
+  s3 = size(imdb.images.data, 3);
+  s4 = size(imdb.images.data, 4);
+  % use a consistent random projection matrix; output of random projection
+  % should be same size as input(so we need N random projections, where N
+  % is dimension of vectorized image)
+  random_projection_matrix = randn(s1 * s2 * s3, s1 * s2 * s3) * 1/100;
+  all_data_original_vectorized = reshape(imdb.images.data, s1 * s2 * s3, []); % [] = s4
+  all_data_projected_vectorized = random_projection_matrix * all_data_original_vectorized; % 3072x3072 * 3072xnumber_of_images
+  all_data_projected_matricized = reshape(all_data_projected_vectorized, s1, s2, s3, s4);
+  imdb.images.data = all_data_projected_matricized;
+  % for j = 1 : s4
+  %   tmp = imdb.images.data(:,:,:,j);
+  %   vectorized = reshape(tmp, s1 * s2 * s3, 1);
+  %   projected = random_projection_matrix * vectorized;
+  %   matricized = reshape(projected, s1, s2, s3);
+  %   projected_data(:,:,:,j) = matricized;
+  %   keyboard
+  % end
+  % imdb.images.data = projected_data;
 
-% -------------------------------------------------------------------------
-function net = getNetworkObjectFromNetworkArchWithoutLearningRate(dataset, larp_network_arch, larp_weight_init_sequence)
-% -------------------------------------------------------------------------
-  opts.general.dataset = dataset;
-  opts.general.network_arch = larp_network_arch;
-  opts.net.weight_init_source = 'gen';
-  opts.net.weight_init_sequence = larp_weight_init_sequence;
-  opts.train.learning_rate = [999*ones(1,1)]; % doesn't matter, as we're not training....
-  network_opts = cnnInit(opts);
-  net = network_opts.net;
 
 % -------------------------------------------------------------------------
 function fn = getBatch()
@@ -154,4 +139,30 @@ function [images, labels] = getSimpleNNBatch(imdb, batch)
   images = imdb.images.data(:,:,:,batch);
   labels = imdb.images.labels(1,batch);
   if rand > 0.5, images=fliplr(images); end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
