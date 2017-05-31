@@ -117,6 +117,7 @@ function runLarpTests(experiment_parent_dir, dataset, posneg_balance, larp_netwo
     learning_rate_dividers = [1, 3, 10, 30];
   elseif strcmp(dataset, 'svhn') || strcmp(dataset, 'svhn-multi-class-subsampled')
     learning_rate_dividers = [1, 3, 10, 30] / 3; % svhn specific
+    learning_rate_dividers = [10, 30] / 3; % svhn specific
   end
 
   batch_sizes = [50, 100];
