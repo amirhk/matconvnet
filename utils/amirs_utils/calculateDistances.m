@@ -38,7 +38,6 @@ function calculateDistances()
 
   fh_projection_utils = projectionUtils;
 
-
   afprintf(sprintf('[INFO] Loading original imdb...\n'));
   tmp_opts.dataset = dataset;
   tmp_opts.posneg_balance = posneg_balance;
@@ -109,13 +108,17 @@ function calculateDistances()
   % -------------------------------------------------------------------------
   %                                                                Get ratios
   % -------------------------------------------------------------------------
-  [inter_class_point_ratios_1, intra_class_point_ratios_1] = getRandomPointDistanceRatios(original_imdb, projected_imdb_1);
-  % [inter_class_point_ratios_2, intra_class_point_ratios_2] = getRandomPointDistanceRatios(original_imdb, projected_imdb_2);
-  % [inter_class_point_ratios_3, intra_class_point_ratios_3] = getRandomPointDistanceRatios(original_imdb, projected_imdb_3);
-  % [inter_class_point_ratios_4, intra_class_point_ratios_4] = getRandomPointDistanceRatios(original_imdb, projected_imdb_4);
-  [inter_class_point_ratios_5, intra_class_point_ratios_5] = getRandomPointDistanceRatios(original_imdb, projected_imdb_5);
-  % [inter_class_point_ratios_6, intra_class_point_ratios_6] = getRandomPointDistanceRatios(original_imdb, projected_imdb_6);
-  % [inter_class_point_ratios_7, intra_class_point_ratios_7] = getRandomPointDistanceRatios(original_imdb, projected_imdb_7);
+  % distance_type = 'euclidean';
+  distance_type = 'cosine';
+  % point_type = 'border';
+  % point_type = 'random';
+  [between_class_point_ratios_1, within_class_point_ratios_1] = getRandomPointDistanceRatios(original_imdb, projected_imdb_1, distance_type);
+  % [between_class_point_ratios_2, within_class_point_ratios_2] = getRandomPointDistanceRatios(original_imdb, projected_imdb_2, distance_type);
+  % [between_class_point_ratios_3, within_class_point_ratios_3] = getRandomPointDistanceRatios(original_imdb, projected_imdb_3, distance_type);
+  % [between_class_point_ratios_4, within_class_point_ratios_4] = getRandomPointDistanceRatios(original_imdb, projected_imdb_4, distance_type);
+  [between_class_point_ratios_5, within_class_point_ratios_5] = getRandomPointDistanceRatios(original_imdb, projected_imdb_5, distance_type);
+  % [between_class_point_ratios_6, within_class_point_ratios_6] = getRandomPointDistanceRatios(original_imdb, projected_imdb_6, distance_type);
+  % [between_class_point_ratios_7, within_class_point_ratios_7] = getRandomPointDistanceRatios(original_imdb, projected_imdb_7, distance_type);
 
 
 
@@ -125,50 +128,45 @@ function calculateDistances()
   figure
 
   subplot(1,2,1)
-  title('Inter-class Euclidean Distances')
+  title('Between-class Euclidean Distances')
   hold on
-  histogram(inter_class_point_ratios_1, 0:0.05:2, 'facecolor', 'r', 'facealpha', 0.5, 'edgecolor', 'none')
-  % histogram(inter_class_point_ratios_2, 0:0.05:2, 'facecolor', 'g', 'facealpha', 0.5, 'edgecolor', 'none')
-  % histogram(inter_class_point_ratios_3, 0:0.05:2, 'facecolor', 'b', 'facealpha', 0.5, 'edgecolor', 'none')
-  % histogram(inter_class_point_ratios_4, 0:0.05:2, 'facecolor', 'c', 'facealpha', 0.5, 'edgecolor', 'none')
-  histogram(inter_class_point_ratios_5, 0:0.05:2, 'facecolor', 'b', 'facealpha', 0.5, 'edgecolor', 'none')
-  % histogram(inter_class_point_ratios_6, 0:0.05:2, 'facecolor', 'g', 'facealpha', 0.5, 'edgecolor', 'none')
-  % histogram(inter_class_point_ratios_7, 0:0.05:2, 'facecolor', 'k', 'facealpha', 0.5, 'edgecolor', 'none')
+  histogram(between_class_point_ratios_1, 0:0.05:2, 'facecolor', 'r', 'facealpha', 0.5, 'edgecolor', 'none')
+  % histogram(between_class_point_ratios_2, 0:0.05:2, 'facecolor', 'g', 'facealpha', 0.5, 'edgecolor', 'none')
+  % histogram(between_class_point_ratios_3, 0:0.05:2, 'facecolor', 'b', 'facealpha', 0.5, 'edgecolor', 'none')
+  % histogram(between_class_point_ratios_4, 0:0.05:2, 'facecolor', 'c', 'facealpha', 0.5, 'edgecolor', 'none')
+  histogram(between_class_point_ratios_5, 0:0.05:2, 'facecolor', 'b', 'facealpha', 0.5, 'edgecolor', 'none')
+  % histogram(between_class_point_ratios_6, 0:0.05:2, 'facecolor', 'g', 'facealpha', 0.5, 'edgecolor', 'none')
+  % histogram(between_class_point_ratios_7, 0:0.05:2, 'facecolor', 'k', 'facealpha', 0.5, 'edgecolor', 'none')
   hold off
   legend('Random Gaussian LeNet', 'Trained LeNet');
 
   subplot(1,2,2)
-  title('Intra-class Euclidean Distances')
+  title('Within-class Euclidean Distances')
   hold on
-  histogram(intra_class_point_ratios_1, 0:0.05:2, 'facecolor', 'r', 'facealpha', 0.5, 'edgecolor', 'none')
-  % histogram(intra_class_point_ratios_2, 0:0.05:2, 'facecolor', 'g', 'facealpha', 0.5, 'edgecolor', 'none')
-  % histogram(intra_class_point_ratios_3, 0:0.05:2, 'facecolor', 'b', 'facealpha', 0.5, 'edgecolor', 'none')
-  % histogram(intra_class_point_ratios_4, 0:0.05:2, 'facecolor', 'c', 'facealpha', 0.5, 'edgecolor', 'none')
-  histogram(intra_class_point_ratios_5, 0:0.05:2, 'facecolor', 'b', 'facealpha', 0.5, 'edgecolor', 'none')
-  % histogram(intra_class_point_ratios_6, 0:0.05:2, 'facecolor', 'g', 'facealpha', 0.5, 'edgecolor', 'none')
-  % histogram(intra_class_point_ratios_7, 0:0.05:2, 'facecolor', 'k', 'facealpha', 0.5, 'edgecolor', 'none')
+  histogram(within_class_point_ratios_1, 0:0.05:2, 'facecolor', 'r', 'facealpha', 0.5, 'edgecolor', 'none')
+  % histogram(within_class_point_ratios_2, 0:0.05:2, 'facecolor', 'g', 'facealpha', 0.5, 'edgecolor', 'none')
+  % histogram(within_class_point_ratios_3, 0:0.05:2, 'facecolor', 'b', 'facealpha', 0.5, 'edgecolor', 'none')
+  % histogram(within_class_point_ratios_4, 0:0.05:2, 'facecolor', 'c', 'facealpha', 0.5, 'edgecolor', 'none')
+  histogram(within_class_point_ratios_5, 0:0.05:2, 'facecolor', 'b', 'facealpha', 0.5, 'edgecolor', 'none')
+  % histogram(within_class_point_ratios_6, 0:0.05:2, 'facecolor', 'g', 'facealpha', 0.5, 'edgecolor', 'none')
+  % histogram(within_class_point_ratios_7, 0:0.05:2, 'facecolor', 'k', 'facealpha', 0.5, 'edgecolor', 'none')
   hold off
   legend('Random Gaussian LeNet', 'Trained LeNet');
 
   keyboard
-  % figure,
-  % subplot(1,2,1), histogram(inter_class_point_ratios);
-  % subplot(1,2,2), histogram(intra_class_point_ratios);
-
-
 
 
 
 
 
 % -------------------------------------------------------------------------
-function [closest_inter_class_point_ratios, furthest_intra_class_point_ratios] = getBorderPointDistanceRatios(original_imdb, projected_imdb)
+function [closest_between_class_point_ratios, furthest_within_class_point_ratios] = getBorderPointDistanceRatios(original_imdb, projected_imdb, distance_type)
 % -------------------------------------------------------------------------
   % -------------------------------------------------------------------------
   %                                         Get pair-wise distances of points
   % -------------------------------------------------------------------------
-  [original_matrix_pdist, original_labels_train] = getDistanceMatrixAndLabels(original_imdb);
-  [projected_matrix_pdist, projected_labels_train] = getDistanceMatrixAndLabels(projected_imdb);
+  [original_matrix_pdist, original_labels_train] = getDistanceMatrixAndLabels(original_imdb, distance_type);
+  [projected_matrix_pdist, projected_labels_train] = getDistanceMatrixAndLabels(projected_imdb, distance_type);
 
   assert(size(original_matrix_pdist, 1) == size(projected_matrix_pdist, 1));
   assert(size(original_matrix_pdist, 2) == size(projected_matrix_pdist, 2));
@@ -176,70 +174,154 @@ function [closest_inter_class_point_ratios, furthest_intra_class_point_ratios] =
   % -------------------------------------------------------------------------
   %                                                  Get ratios of all points
   % -------------------------------------------------------------------------
-  closest_inter_class_point_ratios = [];
-  furthest_intra_class_point_ratios = [];
+  closest_between_class_point_ratios = [];
+  furthest_within_class_point_ratios = [];
   for point_index = 1 : size(original_matrix_pdist, 1)
 
+    % -------------------------------------------------------------------------
+    %                                                         Get point indices
+    % -------------------------------------------------------------------------
     original_point_row = original_matrix_pdist(point_index, :);
     original_point_class = original_labels_train(point_index);
-    original_closest_inter_class_distance = findClosestInterClassPointToPoint(original_point_row, original_point_class, original_labels_train);
-    original_furthest_intra_class_distance = findFurthestIntraClassPointToPoint(original_point_row, original_point_class, original_labels_train);
+    original_closest_between_class_point_index = findClosestBetweenClassPointToPoint(original_point_row, original_point_class, original_labels_train);
+    original_furthest_within_class_point_index = findFurthestWithinClassPointToPoint(original_point_row, original_point_class, original_labels_train);
 
     projected_point_row = projected_matrix_pdist(point_index, :);
     projected_point_class = projected_labels_train(point_index);
-    projected_closest_inter_class_distance = findClosestInterClassPointToPoint(projected_point_row, projected_point_class, projected_labels_train);
-    projected_furthest_intra_class_distance = findFurthestIntraClassPointToPoint(projected_point_row, projected_point_class, projected_labels_train);
+    projected_closest_between_class_point_index = findClosestBetweenClassPointToPoint(projected_point_row, projected_point_class, projected_labels_train);
+    projected_furthest_within_class_point_index = findFurthestWithinClassPointToPoint(projected_point_row, projected_point_class, projected_labels_train);
 
-    closest_inter_class_point_ratios(end + 1) = projected_closest_inter_class_distance / original_closest_inter_class_distance;
-    furthest_intra_class_point_ratios(end + 1) = projected_furthest_intra_class_distance / original_furthest_intra_class_distance;
+
+    % -------------------------------------------------------------------------
+    %                                                     Get points themselves
+    % -------------------------------------------------------------------------
+    original_reference_point = getVectorizedSampleAtIndex(original_imdb, point_index);
+    original_closest_between_class_point = getVectorizedSampleAtIndex(original_imdb, original_closest_between_class_point_index);
+    original_furthest_within_class_point = getVectorizedSampleAtIndex(original_imdb, original_furthest_within_class_point_index);
+
+    projected_reference_point = getVectorizedSampleAtIndex(projected_imdb, point_index);
+    projected_closest_between_class_point = getVectorizedSampleAtIndex(projected_imdb, projected_closest_between_class_point_index);
+    projected_furthest_within_class_point = getVectorizedSampleAtIndex(projected_imdb, projected_furthest_within_class_point_index);
+
+
+    % -------------------------------------------------------------------------
+    %                                                        Calculate distance
+    % -------------------------------------------------------------------------
+    original_closest_between_class_distance = getDistance(original_reference_point, original_closest_between_class_point, distance_type);
+    original_furthest_within_class_distance = getDistance(original_reference_point, original_furthest_within_class_point, distance_type);
+    projected_closest_between_class_distance = getDistance(projected_reference_point, projected_closest_between_class_point, distance_type);
+    projected_furthest_within_class_distance = getDistance(projected_reference_point, projected_furthest_within_class_point, distance_type);
+
+
+    % -------------------------------------------------------------------------
+    %                                                 Finally, calculate ratios
+    % -------------------------------------------------------------------------
+    % TODO: these distances are sadly not normalized :|
+    closest_between_class_point_ratios(end + 1) = projected_closest_between_class_distance / original_closest_between_class_distance;
+    furthest_within_class_point_ratios(end + 1) = projected_furthest_within_class_distance / original_furthest_within_class_distance;
 
   end
 
 
 % -------------------------------------------------------------------------
-function [inter_class_point_ratios, intra_class_point_ratios] = getRandomPointDistanceRatios(original_imdb, projected_imdb)
+function [random_between_class_point_ratios, random_within_class_point_ratios] = getRandomPointDistanceRatios(original_imdb, projected_imdb, distance_type)
 % -------------------------------------------------------------------------
   % -------------------------------------------------------------------------
   %                                         Get pair-wise distances of points
   % -------------------------------------------------------------------------
-  [original_matrix_pdist, original_labels_train] = getDistanceMatrixAndLabels(original_imdb);
-  [projected_matrix_pdist, projected_labels_train] = getDistanceMatrixAndLabels(projected_imdb);
+  [original_matrix_pdist, original_labels_train] = getDistanceMatrixAndLabels(original_imdb, distance_type);
+  [projected_matrix_pdist, projected_labels_train] = getDistanceMatrixAndLabels(projected_imdb, distance_type);
 
   assert(size(original_matrix_pdist, 1) == size(projected_matrix_pdist, 1));
   assert(size(original_matrix_pdist, 2) == size(projected_matrix_pdist, 2));
 
+
+
   % -------------------------------------------------------------------------
   %                                                  Get ratios of all points
   % -------------------------------------------------------------------------
-  inter_class_point_ratios = [];
-  intra_class_point_ratios = [];
+  random_between_class_point_ratios = [];
+  random_within_class_point_ratios = [];
   for i = 1:10
     for point_index = 1 : size(original_matrix_pdist, 1)
 
+      % -------------------------------------------------------------------------
+      %                                                         Get point indices
+      % -------------------------------------------------------------------------
       original_point_row = original_matrix_pdist(point_index, :);
       original_point_class = original_labels_train(point_index);
-      [original_inter_class_distance, original_inter_class_random_index] = ...
-        findRandomInterClassPointToPoint(original_point_row, original_point_class, original_labels_train);
-      [original_intra_class_distance, original_intra_class_random_index] = ...
-        findRandomIntraClassPointToPoint(original_point_row, original_point_class, original_labels_train);
+      original_closest_between_class_point_index = findRandomBetweenClassPointToPoint(original_point_row, original_point_class, original_labels_train);
+      original_furthest_within_class_point_index = findRandomWithinClassPointToPoint(original_point_row, original_point_class, original_labels_train);
 
       projected_point_row = projected_matrix_pdist(point_index, :);
       projected_point_class = projected_labels_train(point_index);
-      projected_inter_class_point_row = projected_point_row(projected_labels_train ~= projected_point_class);
-      projected_intra_class_point_row = projected_point_row(projected_labels_train == projected_point_class);
-      projected_inter_class_distance = projected_inter_class_point_row(original_inter_class_random_index);
-      projected_intra_class_distance = projected_intra_class_point_row(original_intra_class_random_index);
+      projected_closest_between_class_point_index = original_closest_between_class_point_index;
+      projected_furthest_within_class_point_index = original_furthest_within_class_point_index;
 
-      inter_class_point_ratios(end + 1) = projected_inter_class_distance / original_inter_class_distance;
-      intra_class_point_ratios(end + 1) = projected_intra_class_distance / original_intra_class_distance;
 
+      % -------------------------------------------------------------------------
+      %                                                     Get points themselves
+      % -------------------------------------------------------------------------
+      original_reference_point = getVectorizedSampleAtIndex(original_imdb, point_index);
+      original_closest_between_class_point = getVectorizedSampleAtIndex(original_imdb, original_closest_between_class_point_index);
+      original_furthest_within_class_point = getVectorizedSampleAtIndex(original_imdb, original_furthest_within_class_point_index);
+
+      projected_reference_point = getVectorizedSampleAtIndex(projected_imdb, point_index);
+      projected_closest_between_class_point = getVectorizedSampleAtIndex(projected_imdb, projected_closest_between_class_point_index);
+      projected_furthest_within_class_point = getVectorizedSampleAtIndex(projected_imdb, projected_furthest_within_class_point_index);
+
+
+      % -------------------------------------------------------------------------
+      %                                                        Calculate distance
+      % -------------------------------------------------------------------------
+      original_closest_between_class_distance = getDistance(original_reference_point, original_closest_between_class_point, distance_type);
+      original_furthest_within_class_distance = getDistance(original_reference_point, original_furthest_within_class_point, distance_type);
+      projected_closest_between_class_distance = getDistance(projected_reference_point, projected_closest_between_class_point, distance_type);
+      projected_furthest_within_class_distance = getDistance(projected_reference_point, projected_furthest_within_class_point, distance_type);
+
+
+      % -------------------------------------------------------------------------
+      %                                                 Finally, calculate ratios
+      % -------------------------------------------------------------------------
+      random_between_class_point_ratios(end + 1) = projected_closest_between_class_distance / original_closest_between_class_distance;
+      random_within_class_point_ratios(end + 1) = projected_furthest_within_class_distance / original_furthest_within_class_distance;
     end
   end
 
 
 
 % -------------------------------------------------------------------------
-function [matrix_pdist, labels_train] = getDistanceMatrixAndLabels(imdb)
+function distance = getDistance(point_1, point_2, distance_type)
+% -------------------------------------------------------------------------
+  if strcmp(distance_type, 'euclidean')
+    distance = pdist([point_1; point_2]);
+  elseif strcmp(distance_type, 'cosine')
+    cos_theta = dot(point_1, point_2) / (norm(point_1) * norm(point_2));
+    theta_in_degrees = acosd(cos_theta);
+    if ~isreal(theta_in_degrees)
+      % keyboard
+      % TODO?????????????
+      theta_in_degrees = real(theta_in_degrees);
+    end
+    distance = theta_in_degrees;
+  end
+
+
+% -------------------------------------------------------------------------
+function vectorized_sample = getVectorizedSampleAtIndex(imdb, index)
+% -------------------------------------------------------------------------
+  vectorized_sample = vectorizeSample(imdb.images.data(:,:,:,index));
+
+
+% -------------------------------------------------------------------------
+function vectorized_sample = vectorizeSample(sample)
+% -------------------------------------------------------------------------
+  sample_size = size(sample, 1) * size(sample, 2) * size(sample, 3);
+  vectorized_sample = reshape(sample, sample_size, [])';
+
+
+% -------------------------------------------------------------------------
+function [matrix_pdist, labels_train] = getDistanceMatrixAndLabels(imdb, distance_type)
 % -------------------------------------------------------------------------
   data_train = imdb.images.data(:,:,:,imdb.images.set == 1);
   labels_train = imdb.images.labels(imdb.images.set == 1);
@@ -250,39 +332,31 @@ function [matrix_pdist, labels_train] = getDistanceMatrixAndLabels(imdb)
 
 
 % -------------------------------------------------------------------------
-function best_distance = findClosestInterClassPointToPoint(point_row, point_class, labels)
+function point_index = findClosestBetweenClassPointToPoint(point_row, point_class, labels)
 % -------------------------------------------------------------------------
   [sorted_point_row, indices] = sort(point_row(labels ~= point_class));
-  best_distance = sorted_point_row(1);
+  point_index = indices(1);
 
 
 % -------------------------------------------------------------------------
-function best_distance = findFurthestIntraClassPointToPoint(point_row, point_class, labels)
+function point_index = findFurthestWithinClassPointToPoint(point_row, point_class, labels)
 % -------------------------------------------------------------------------
   [sorted_point_row, indices] = sort(point_row(labels == point_class));
-  best_distance = sorted_point_row(end);
+  point_index = indices(end);
 
 
 % -------------------------------------------------------------------------
-function [distance, random_index] = findRandomInterClassPointToPoint(point_row, point_class, labels)
+function random_point_index = findRandomBetweenClassPointToPoint(point_row, point_class, labels)
 % -------------------------------------------------------------------------
-  interClassRow = point_row(labels ~= point_class);
-  random_index = ceil(rand() * length(interClassRow));
-  distance = interClassRow(random_index);
-  % [sorted_point_row, indices] = sort(interClassRow);
-  % distance = sorted_point_row(1);
-  % random_index = indices(1);
+  between_class_row = point_row(labels ~= point_class);
+  random_point_index = ceil(rand() * length(between_class_row));
 
 
 % -------------------------------------------------------------------------
-function [distance, random_index] = findRandomIntraClassPointToPoint(point_row, point_class, labels)
+function random_point_index = findRandomWithinClassPointToPoint(point_row, point_class, labels)
 % -------------------------------------------------------------------------
-  intraClassRow = point_row(labels == point_class);
-  random_index = ceil(rand() * length(intraClassRow));
-  distance = intraClassRow(random_index);
-  % [sorted_point_row, indices] = sort(intraClassRow);
-  % distance = sorted_point_row(end);
-  % random_index = indices(end);
+  within_class_row = point_row(labels == point_class);
+  random_point_index = ceil(rand() * length(within_class_row));
 
 
 
