@@ -144,13 +144,13 @@ function calculateDistances()
   subplot(1,2,1)
   title('Between-class Euclidean Distances')
   hold on
-  histogram(between_class_point_ratios_1, 0:0.05:2, 'facecolor', 'c', 'facealpha', 0.5, 'edgecolor', 'none')
-  % histogram(between_class_point_ratios_2, 0:0.05:2, 'facecolor', 'g', 'facealpha', 0.5, 'edgecolor', 'none')
-  histogram(between_class_point_ratios_3, 0:0.05:2, 'facecolor', 'r', 'facealpha', 0.5, 'edgecolor', 'none')
-  histogram(between_class_point_ratios_4, 0:0.05:2, 'facecolor', 'b', 'facealpha', 0.5, 'edgecolor', 'none')
-  histogram(between_class_point_ratios_5, 0:0.05:2, 'facecolor', 'g', 'facealpha', 0.5, 'edgecolor', 'none')
-  % histogram(between_class_point_ratios_6, 0:0.05:2, 'facecolor', 'g', 'facealpha', 0.5, 'edgecolor', 'none')
-  % histogram(between_class_point_ratios_7, 0:0.05:2, 'facecolor', 'k', 'facealpha', 0.5, 'edgecolor', 'none')
+  histogram(between_class_point_ratios_1, 0:0.05:4, 'facecolor', 'c', 'facealpha', 0.5, 'edgecolor', 'none')
+  % histogram(between_class_point_ratios_2, 0:0.05:4, 'facecolor', 'g', 'facealpha', 0.5, 'edgecolor', 'none')
+  histogram(between_class_point_ratios_3, 0:0.05:4, 'facecolor', 'r', 'facealpha', 0.5, 'edgecolor', 'none')
+  histogram(between_class_point_ratios_4, 0:0.05:4, 'facecolor', 'b', 'facealpha', 0.5, 'edgecolor', 'none')
+  histogram(between_class_point_ratios_5, 0:0.05:4, 'facecolor', 'g', 'facealpha', 0.5, 'edgecolor', 'none')
+  % histogram(between_class_point_ratios_6, 0:0.05:4, 'facecolor', 'g', 'facealpha', 0.5, 'edgecolor', 'none')
+  % histogram(between_class_point_ratios_7, 0:0.05:4, 'facecolor', 'k', 'facealpha', 0.5, 'edgecolor', 'none')
   hold off
   % legend('Dense RP', 'Random Gaussian LeNet', 'Trained LeNet');
   legend('Dense RP', 'Random Gaussian LeNet', 'Trained LeNet - 38', 'Trained LeNet - ALL');
@@ -158,13 +158,13 @@ function calculateDistances()
   subplot(1,2,2)
   title('Within-class Euclidean Distances')
   hold on
-  histogram(within_class_point_ratios_1, 0:0.05:2, 'facecolor', 'c', 'facealpha', 0.5, 'edgecolor', 'none')
-  % histogram(within_class_point_ratios_2, 0:0.05:2, 'facecolor', 'g', 'facealpha', 0.5, 'edgecolor', 'none')
-  histogram(within_class_point_ratios_3, 0:0.05:2, 'facecolor', 'r', 'facealpha', 0.5, 'edgecolor', 'none')
-  histogram(within_class_point_ratios_4, 0:0.05:2, 'facecolor', 'b', 'facealpha', 0.5, 'edgecolor', 'none')
-  histogram(within_class_point_ratios_5, 0:0.05:2, 'facecolor', 'g', 'facealpha', 0.5, 'edgecolor', 'none')
-  % histogram(within_class_point_ratios_6, 0:0.05:2, 'facecolor', 'g', 'facealpha', 0.5, 'edgecolor', 'none')
-  % histogram(within_class_point_ratios_7, 0:0.05:2, 'facecolor', 'k', 'facealpha', 0.5, 'edgecolor', 'none')
+  histogram(within_class_point_ratios_1, 0:0.05:4, 'facecolor', 'c', 'facealpha', 0.5, 'edgecolor', 'none')
+  % histogram(within_class_point_ratios_2, 0:0.05:4, 'facecolor', 'g', 'facealpha', 0.5, 'edgecolor', 'none')
+  histogram(within_class_point_ratios_3, 0:0.05:4, 'facecolor', 'r', 'facealpha', 0.5, 'edgecolor', 'none')
+  histogram(within_class_point_ratios_4, 0:0.05:4, 'facecolor', 'b', 'facealpha', 0.5, 'edgecolor', 'none')
+  histogram(within_class_point_ratios_5, 0:0.05:4, 'facecolor', 'g', 'facealpha', 0.5, 'edgecolor', 'none')
+  % histogram(within_class_point_ratios_6, 0:0.05:4, 'facecolor', 'g', 'facealpha', 0.5, 'edgecolor', 'none')
+  % histogram(within_class_point_ratios_7, 0:0.05:4, 'facecolor', 'k', 'facealpha', 0.5, 'edgecolor', 'none')
   hold off
   % legend('Dense RP', 'Random Gaussian LeNet', 'Trained LeNet');
   legend('Dense RP', 'Random Gaussian LeNet', 'Trained LeNet - 38', 'Trained LeNet - ALL');
