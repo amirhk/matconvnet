@@ -183,6 +183,7 @@ function calculateDistances()
 % -------------------------------------------------------------------------
 function [between_class_point_ratios, within_class_point_ratios] = getPointDistanceRatios(original_imdb, projected_imdb, point_type, distance_type)
 % -------------------------------------------------------------------------
+  afprintf(sprintf('[INFO] Getting point distance ratios...\n'));
   % -------------------------------------------------------------------------
   %                                         Get pair-wise distances of points
   % -------------------------------------------------------------------------
@@ -272,6 +273,7 @@ function [between_class_point_ratios, within_class_point_ratios] = getPointDista
 
     end
   end
+  afprintf(sprintf('[INFO] done!\n'));
 
 
 % -------------------------------------------------------------------------
