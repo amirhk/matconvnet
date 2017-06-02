@@ -29,10 +29,10 @@ function calculateDistances()
   % -------------------------------------------------------------------------
   %                                                                 Get IMDBs
   % -------------------------------------------------------------------------
-  % dataset = 'cifar';
-  % posneg_balance = 'whatever';
-  dataset = 'cifar-multi-class-subsampled';
-  posneg_balance = 'balanced-707';
+  dataset = 'cifar';
+  posneg_balance = 'whatever';
+  % dataset = 'cifar-multi-class-subsampled';
+  % posneg_balance = 'balanced-707';
   % dataset = 'cifar-two-class-deer-truck';
   % posneg_balance = 'balanced-707';
 
@@ -184,6 +184,7 @@ function calculateDistances()
 function [between_class_point_ratios, within_class_point_ratios] = getPointDistanceRatios(original_imdb, projected_imdb, point_type, distance_type)
 % -------------------------------------------------------------------------
   afprintf(sprintf('[INFO] Getting point distance ratios...\n'));
+  tic
   % -------------------------------------------------------------------------
   %                                         Get pair-wise distances of points
   % -------------------------------------------------------------------------
@@ -274,6 +275,7 @@ function [between_class_point_ratios, within_class_point_ratios] = getPointDista
     end
   end
   afprintf(sprintf('[INFO] done!\n'));
+  toc
 
 
 % -------------------------------------------------------------------------
