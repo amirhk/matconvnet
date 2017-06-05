@@ -71,6 +71,8 @@ function matching_conv_architecture = getMatchingConvArchitectureForLarpArchitec
         matching_conv_architecture = 'convV0P0+fcV1-RF32CH64';
       case 'larpV3P1'
         matching_conv_architecture = 'convV0P0+fcV1-RF16CH64';
+      case 'larpV3P3-no-nl'
+        matching_conv_architecture = 'convV0P0+fcV1-RF4CH64';
       case 'larpV3P3'
         matching_conv_architecture = 'convV0P0+fcV1-RF4CH64';
       case 'larpV5P3'
