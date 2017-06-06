@@ -34,7 +34,7 @@ function calculateDistances()
   % dataset = 'cifar-multi-class-subsampled';
   % posneg_balance = 'balanced-100';
   dataset = 'cifar-two-class-deer-truck';
-  posneg_balance = 'balanced-1880';
+  posneg_balance = 'balanced-5000';
 
 
   fh_projection_utils = projectionUtils;
