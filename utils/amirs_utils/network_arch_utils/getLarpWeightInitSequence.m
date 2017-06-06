@@ -30,99 +30,37 @@ function weight_init_sequence = getLarpWeightInitSequence(larp_weight_init_type,
 
   switch larp_network_arch
 
-    case 'larpV0P0'
+    case 'larpV0P0RL0'
       weight_init_sequence = {};
 
-    case 'larpV0P0-single-dense-rp-no-nl'
+    case 'larpV0P0RL0-single-dense-rp'
       weight_init_sequence = {};
-    case 'larpV1P0-single-sparse-rp-no-nl'
+    case 'larpV1P0RL0-single-sparse-rp'
       weight_init_sequence = {larp_weight_init_type};
-    case 'larpV1P0-ensemble-sparse-rp-no-nl'
+    case 'larpV1P0RL0-ensemble-sparse-rp' % = 'larpV1P0'
       weight_init_sequence = {larp_weight_init_type};
-    case 'larpV1P0-ensemble-sparse-rp-yes-nl'
+    case 'larpV1P0RL1-ensemble-sparse-rp' % = 'larpV1P0'
       weight_init_sequence = {larp_weight_init_type};
 
-    case 'larpV1P0'
+    case 'larpV1P0RL0' % = 'larpV1P0-ensemble-sparse-rp'
       weight_init_sequence = {larp_weight_init_type};
-    case 'larpV1P1-non-decimated-pooling'
+    case 'larpV1P0RL1' % = 'larpV1P0-ensemble-sparse-rp'
       weight_init_sequence = {larp_weight_init_type};
-    case 'larpV1P1'
+    case 'larpV1P1RL1-non-decimated-pooling'
       weight_init_sequence = {larp_weight_init_type};
-    case 'larpV3P0-no-nl'
+    case 'larpV1P1RL1'
+      weight_init_sequence = {larp_weight_init_type};
+    case 'larpV3P0RL0'
       weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type};
-    case 'larpV3P0'
+    case 'larpV3P0RL3'
       weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type};
-    case 'larpV3P1'
+    case 'larpV3P1RL3'
       weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type};
-    case 'larpV3P3-no-nl'
+    case 'larpV3P3RL0'
       weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type};
-    case 'larpV3P3'
+    case 'larpV3P3RL3'
       weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type};
-    case 'larpV5P3'
+    case 'larpV5P3RL5'
       weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, larp_weight_init_type};
-
-
-
-
-    % case 'larpV0P0+convV0P0+fcV1'
-    %   weight_init_sequence = {'gaussian', 'gaussian'};
-
-    % case 'larpV0P0+convV1P1+fcV1'
-    %   weight_init_sequence = {larp_weight_init_type, 'gaussian', 'gaussian'};
-
-
-
-    % case 'larpV1M0P1+convV0P0+fcV1'
-    %   weight_init_sequence = {larp_weight_init_type, 'gaussian', 'gaussian'};
-    % case 'larpV1M1P1+convV0P0+fcV1'
-    %   weight_init_sequence = {larp_weight_init_type, 'gaussian', 'gaussian'};
-
-    % case 'larpV3M0P1+convV0P0+fcV1'
-    %   weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, 'gaussian', 'gaussian', 'gaussian'};
-    % case 'larpV3M1P1+convV0P0+fcV1'
-    %   weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, 'gaussian', 'gaussian', 'gaussian'};
-    % case 'larpV3M2P1+convV0P0+fcV1'
-    %   weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, 'gaussian', 'gaussian', 'gaussian'};
-    % case 'larpV3M3P1+convV0P0+fcV1'
-    %   weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, 'gaussian', 'gaussian', 'gaussian'};
-
-    % case 'larpV3M0P3+convV0P0+fcV1'
-    %   weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, 'gaussian', 'gaussian', 'gaussian'};
-    % case 'larpV3M1P3+convV0P0+fcV1'
-    %   weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, 'gaussian', 'gaussian', 'gaussian'};
-    % case 'larpV3M3P3+convV0P0+fcV1'
-    %   weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, 'gaussian', 'gaussian', 'gaussian'};
-
-
-
-    % case 'larpV1P1+convV0P0+fcV1'
-    %   weight_init_sequence = {larp_weight_init_type, 'gaussian', 'gaussian'};
-    case 'larpV1P1+convV0P0+fcV1'
-      weight_init_sequence = {larp_weight_init_type, 'gaussian', 'gaussian'};
-    % case 'larpV3P1+convV0P0+fcV1'
-    %   weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, 'gaussian', 'gaussian'};
-    case 'larpV3P1+convV0P0+fcV1'
-      weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, 'gaussian', 'gaussian'};
-
-    case 'larpV3P3+convV0P0+fcV1'
-      weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, 'gaussian', 'gaussian'};
-
-    % case 'convV0P0+fcV1-RF16CH64'
-    %   weight_init_sequence = {'gaussian', 'gaussian'};
-    case 'convV0P0+fcV1-RF16CH64'
-      weight_init_sequence = {'gaussian', 'gaussian'};
-    % case 'convV0P0+fcV1-RF4CH64'
-    %   weight_init_sequence = {'gaussian', 'gaussian'};
-    case 'convV0P0+fcV1-RF4CH64'
-      weight_init_sequence = {'gaussian', 'gaussian'};
-
-    % case 'larpV0P0+convV0P0+fcV2'
-    %   weight_init_sequence = {'gaussian', 'gaussian', 'gaussian'};
-    case 'larpV0P0+convV0P0+fcV2'
-      weight_init_sequence = {'gaussian', 'gaussian', 'gaussian'};
-    % case 'larpV3P1+convV0P0+fcV2'
-    %   weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, 'gaussian', 'gaussian', 'gaussian'};
-    case 'larpV3P1+convV0P0+fcV2'
-      weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, 'gaussian', 'gaussian', 'gaussian'};
 
   end

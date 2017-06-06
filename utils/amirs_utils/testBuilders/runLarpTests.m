@@ -103,10 +103,6 @@ function runLarpTests(experiment_parent_dir, dataset, posneg_balance, larp_netwo
   experiment_options.network_arch = conv_arch;
   experiment_options.backprop_depth = getFullBackPropDepthForConvArchitecture(conv_arch);
 
-  % experiment_options.network_arch = network_arch;
-  % experiment_options.backprop_depth = getFullBackPropDepthForNetworkArch(non_larp_network_arch);
-
-
   base_learning_rate = [0.1*ones(1,25) 0.03*ones(1,25) 0.01*ones(1,50)];
 
   if strcmp(dataset, 'cifar') || strcmp(dataset, 'cifar-multi-class-subsampled')

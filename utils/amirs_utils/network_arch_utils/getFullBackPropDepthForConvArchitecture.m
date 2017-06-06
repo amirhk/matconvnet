@@ -27,24 +27,30 @@ function full_backprop_depth = getFullBackPropDepthForConvArchitecture(conv_arch
 
   switch conv_architecture
 
-    case 'convV0P0+fcV1-RF32CH3'
+    case 'convV0P0RL0+fcV1-RF32CH3'
       full_backprop_depth = 4;
-    case 'convV0P0+fcV1-RF32CH64'
+    case 'convV0P0RL0+fcV1-RF32CH64'
       full_backprop_depth = 4;
-    case 'convV0P0+fcV1-RF16CH64'
+    case 'convV0P0RL0+fcV1-RF16CH64'
       full_backprop_depth = 4;
-    case 'convV0P0+fcV1-RF4CH64'
+    case 'convV0P0RL0+fcV1-RF4CH64'
       full_backprop_depth = 4;
 
-    case 'convV1P0-no-nl-RF32CH3+fcV1-RF32CH64'
+    case 'convV1P0RL0-RF32CH3+fcV1-RF32CH64'
       full_backprop_depth = 5;
-    case 'convV1P0-RF32CH3+fcV1-RF32CH64'
+    case 'convV1P0RL1-RF32CH3+fcV1-RF32CH64'
       full_backprop_depth = 6;
-    case 'convV1P1-RF32CH3+fcV1-RF16CH64'
+    case 'convV1P1RL1-RF32CH3+fcV1-RF16CH64'
       full_backprop_depth = 7;
-    case 'convV3P1-RF32CH3+fcV1-RF16CH64'
+    case 'convV3P0RL0-RF32CH3+fcV1-RF32CH64'
+      full_backprop_depth = 7;
+    case 'convV3P0RL3-RF32CH3+fcV1-RF32CH64'
+      full_backprop_depth = 10;
+    case 'convV3P1RL3-RF32CH3+fcV1-RF16CH64'
       full_backprop_depth = 11;
-    case 'convV3P3-RF32CH3+fcV1-RF4CH64'
+    case 'convV3P3RL0-RF32CH3+fcV1-RF4CH64'
+      full_backprop_depth = 10;
+    case 'convV3P3RL3-RF32CH3+fcV1-RF4CH64'
       full_backprop_depth = 13;
 
   end

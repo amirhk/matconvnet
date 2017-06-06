@@ -29,54 +29,65 @@ function matching_conv_architecture = getMatchingConvArchitectureForLarpArchitec
   % index_of_smooth_boolean = findstr(larp_network_arch, 'S');
   % larp_network_arch = larp_network_arch(1:index_of_smooth_boolean - 1);
 
-  if ~strcmp(non_larp_network_arch, 'convV0P0+fcV1')
-    assert(strcmp(larp_network_arch, 'larpV0P0'));
+  if ~strcmp(non_larp_network_arch, 'convV0P0RL0+fcV1')
+    assert(strcmp(larp_network_arch, 'larpV0P0RL0'));
   end
 
   if strcmp(mlp_version, 'v1')
     switch larp_network_arch
 
-      case 'larpV0P0'
+      case 'larpV0P0RL0'
         switch non_larp_network_arch
-          case 'convV0P0+fcV1'
-            matching_conv_architecture = 'convV0P0+fcV1-RF32CH3';
-          case 'convV1P0-no-nl+fcV1'
-            matching_conv_architecture = 'convV1P0-no-nl-RF32CH3+fcV1-RF32CH64';
-          case 'convV1P0+fcV1'
-            matching_conv_architecture = 'convV1P0-RF32CH3+fcV1-RF32CH64';
-          case 'convV1P1+fcV1'
-            matching_conv_architecture = 'convV1P1-RF32CH3+fcV1-RF16CH64';
-          case 'convV3P1+fcV1'
-            matching_conv_architecture = 'convV3P1-RF32CH3+fcV1-RF16CH64';
-          case 'convV3P3+fcV1'
-            matching_conv_architecture = 'convV3P3-RF32CH3+fcV1-RF4CH64';
+          case 'convV0P0RL0+fcV1'
+            matching_conv_architecture = 'convV0P0RL0+fcV1-RF32CH3';
+          case 'convV1P0RL0+fcV1'
+            matching_conv_architecture = 'convV1P0RL0-RF32CH3+fcV1-RF32CH64';
+          case 'convV1P0RL1+fcV1'
+            matching_conv_architecture = 'convV1P0RL1-RF32CH3+fcV1-RF32CH64';
+          case 'convV1P1RL1+fcV1'
+            matching_conv_architecture = 'convV1P1RL1-RF32CH3+fcV1-RF16CH64';
+          case 'convV3P0RL0+fcV1'
+            matching_conv_architecture = 'convV3P0RL0-RF32CH3+fcV1-RF32CH64';
+          case 'convV3P0RL3+fcV1'
+            matching_conv_architecture = 'convV3P0RL3-RF32CH3+fcV1-RF32CH64';
+          case 'convV3P1RL3+fcV1'
+            matching_conv_architecture = 'convV3P1RL3-RF32CH3+fcV1-RF16CH64';
+          case 'convV3P3RL0+fcV1'
+            matching_conv_architecture = 'convV3P3RL0-RF32CH3+fcV1-RF4CH64';
+          case 'convV3P3RL3+fcV1'
+            matching_conv_architecture = 'convV3P3RL3-RF32CH3+fcV1-RF4CH64';
         end
 
-      case 'larpV0P0-single-dense-rp-no-nl'
-        matching_conv_architecture = 'convV0P0+fcV1-RF32CH3';
-      case 'larpV1P0-single-sparse-rp-no-nl'
-        matching_conv_architecture = 'convV0P0+fcV1-RF32CH3';
-      case 'larpV1P0-ensemble-sparse-rp-no-nl'
-        matching_conv_architecture = 'convV0P0+fcV1-RF32CH64';
-      case 'larpV1P0-ensemble-sparse-rp-yes-nl'
-        matching_conv_architecture = 'convV0P0+fcV1-RF32CH64';
+      case 'larpV0P0RL0-single-dense-rp'
+        matching_conv_architecture = 'convV0P0RL0+fcV1-RF32CH3';
+      case 'larpV1P0RL0-single-sparse-rp'
+        matching_conv_architecture = 'convV0P0RL0+fcV1-RF32CH3';
+      case 'larpV1P0RL0-ensemble-sparse-rp' % = 'larpV1P0'
+        matching_conv_architecture = 'convV0P0RL0+fcV1-RF32CH64';
+      case 'larpV1P0RL1-ensemble-sparse-rp' % = 'larpV1P0'
+        matching_conv_architecture = 'convV0P0RL0+fcV1-RF32CH64';
 
-      case 'larpV1P0'
-        matching_conv_architecture = 'convV0P0+fcV1-RF32CH64';
-      case 'larpV1P1-non-decimated-pooling'
-        matching_conv_architecture = 'convV0P0+fcV1-RF32CH64';
-      case 'larpV1P1'
-        matching_conv_architecture = 'convV0P0+fcV1-RF16CH64';
-      case 'larpV3P0'
-        matching_conv_architecture = 'convV0P0+fcV1-RF32CH64';
-      case 'larpV3P1'
-        matching_conv_architecture = 'convV0P0+fcV1-RF16CH64';
-      case 'larpV3P3-no-nl'
-        matching_conv_architecture = 'convV0P0+fcV1-RF4CH64';
-      case 'larpV3P3'
-        matching_conv_architecture = 'convV0P0+fcV1-RF4CH64';
-      case 'larpV5P3'
-        matching_conv_architecture = 'convV0P0+fcV1-RF4CH64';
+      case 'larpV1P0RL0' % = 'larpV1P0-ensemble-sparse-rp'
+        matching_conv_architecture = 'convV0P0RL0+fcV1-RF32CH64';
+      case 'larpV1P0RL1' % = 'larpV1P0-ensemble-sparse-rp'
+        matching_conv_architecture = 'convV0P0RL0+fcV1-RF32CH64';
+
+      case 'larpV1P1RL1-non-decimated-pooling'
+        matching_conv_architecture = 'convV0P0RL0+fcV1-RF32CH64';
+      case 'larpV1P1RL1'
+        matching_conv_architecture = 'convV0P0RL0+fcV1-RF16CH64';
+      case 'larpV3P0RL0'
+        matching_conv_architecture = 'convV0P0RL0+fcV1-RF32CH64';
+      case 'larpV3P0RL3'
+        matching_conv_architecture = 'convV0P0RL0+fcV1-RF32CH64';
+      case 'larpV3P1RL3'
+        matching_conv_architecture = 'convV0P0RL0+fcV1-RF16CH64';
+      case 'larpV3P3RL0'
+        matching_conv_architecture = 'convV0P0RL0+fcV1-RF4CH64';
+      case 'larpV3P3RL3'
+        matching_conv_architecture = 'convV0P0RL0+fcV1-RF4CH64';
+      case 'larpV5P3RL5'
+        matching_conv_architecture = 'convV0P0RL0+fcV1-RF4CH64';
     end
 
   % elseif strcmp(mlp_version, 'v2')
