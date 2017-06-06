@@ -1,4 +1,4 @@
-function [Hvalues,varargout] = mmd(dat,kern,alpha,varargin)
+function [Hvalues,varargout] = kmd(dat,kern,alpha,varargin)
 %  [HVALUES,INFO] = KMD(X,LABELS) calculates the kernel maximum mean
 %  discrepancy for samples from two distributions.
 %  [..] = KMD(X,LABELS,ALPHA) conducts a test as to whether the samples are
@@ -84,9 +84,9 @@ function [Hvalues,varargout] = mmd(dat,kern,alpha,varargin)
 %     % calculating asymptotic MMD  with RBF kernel (automatic width)
 %     % for 5% significance niveau
 %     clear all
-%     X = rand(100,3);                  % random data
+%     X = rand(100,3072);               % random data
 %     labels = 2*(rand(100,1)>0.5)-1;   % random labels in [-1,1];
-%     H = kmd(X,labels)                 % computes MMD
+%     [H,info] = kmd(X,labels)          % computes MMD
 %                                       % H should of course be [0 0] here
 %
 %  EXAMPLE2 (custom kernel):

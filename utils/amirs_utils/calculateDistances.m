@@ -31,10 +31,10 @@ function calculateDistances()
   % -------------------------------------------------------------------------
   % dataset = 'cifar';
   % posneg_balance = 'whatever';
-  dataset = 'cifar-multi-class-subsampled';
-  posneg_balance = 'balanced-707';
-  % dataset = 'cifar-two-class-deer-truck';
+  % dataset = 'cifar-multi-class-subsampled';
   % posneg_balance = 'balanced-707';
+  dataset = 'cifar-two-class-deer-truck';
+  posneg_balance = 'balanced-100';
 
   fh_projection_utils = projectionUtils;
 
@@ -46,46 +46,64 @@ function calculateDistances()
 
   original_imdb = filterImdbForSet(original_imdb, 1, 1);
 
-  % afprintf(sprintf('[INFO] Loading projected imdb...\n'));
-  % projected_imdb_1 = fh_projection_utils.getDenslyProjectedImdb(original_imdb);
-  % afprintf(sprintf('[INFO] done!\n'));
-
-  % afprintf(sprintf('[INFO] Applying LDA...\n'));
-  % tmp_size = size(original_imdb.images.data, 1) * size(original_imdb.images.data, 2) * size(original_imdb.images.data, 3);
-  % vectorized_data = reshape(original_imdb.images.data, tmp_size, [])';
-  % X = vectorized_data;
-  % Y = reshape(original_imdb.images.labels, [], 1);
-  % W = LDA(X,Y);
-  % L = [ones(length(original_imdb.images.labels),1) X] * W';
-  % projected_imdb_1 = original_imdb;
-  % projected_imdb_1.images.data = reshape(L', size(L, 2), 1, 1, []);
-  % afprintf(sprintf('[INFO] done!\n'));
+  experiments = {};
+  count = 1;
+  legend_entries = {};
 
 
-  % afprintf(sprintf('[INFO] Loading projected imdb...\n'));
-  % larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
-  % larp_network_arch = 'larpV1P0-ensemble-sparse-rp-no-nl';
-  % larp_weight_init_sequence = getLarpWeightInitSequence(larp_weight_init_type, larp_network_arch);
-  % projection_net = fh_projection_utils.getProjectionNetworkObject(dataset, larp_network_arch, larp_weight_init_sequence);
-  % projected_imdb_2 = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, -1);
-  % afprintf(sprintf('[INFO] done!\n'));
+
+  afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  projected_imdb = fh_projection_utils.getDenslyProjectedImdb(original_imdb);
+  experiments{end+1}.imdb = projected_imdb;
+  legend_entries{end+1} = 'Dense RP';
+  afprintf(sprintf('[INFO] done!\n'));
+
+
+  afprintf(sprintf('[INFO] Applying LDA...\n'));
+  tmp_size = size(original_imdb.images.data, 1) * size(original_imdb.images.data, 2) * size(original_imdb.images.data, 3);
+  vectorized_data = reshape(original_imdb.images.data, tmp_size, [])';
+  X = vectorized_data;
+  Y = reshape(original_imdb.images.labels, [], 1);
+  W = LDA(X,Y);
+  L = [ones(length(original_imdb.images.labels),1) X] * W';
+  projected_imdb = original_imdb;
+  projected_imdb.images.data = reshape(L', size(L, 2), 1, 1, []);
+  experiments{end+1}.imdb = projected_imdb;
+  legend_entries{end+1} = 'LDA';
+  afprintf(sprintf('[INFO] done!\n'));
+
+
+  afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
+  larp_network_arch = 'larpV1P0-ensemble-sparse-rp-no-nl';
+  larp_weight_init_sequence = getLarpWeightInitSequence(larp_weight_init_type, larp_network_arch);
+  projection_net = fh_projection_utils.getProjectionNetworkObject(dataset, larp_network_arch, larp_weight_init_sequence);
+  projected_imdb = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, -1);
+  experiments{end+1}.imdb = projected_imdb;
+  legend_entries{end+1} = 'Random Gaussian V1P0 w/o ReLU';
+  afprintf(sprintf('[INFO] done!\n'));
+
+
+  afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
+  larp_network_arch = 'larpV1P0-ensemble-sparse-rp-yes-nl';
+  larp_weight_init_sequence = getLarpWeightInitSequence(larp_weight_init_type, larp_network_arch);
+  projection_net = fh_projection_utils.getProjectionNetworkObject(dataset, larp_network_arch, larp_weight_init_sequence);
+  projected_imdb = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, -1);
+  experiments{end+1}.imdb = projected_imdb;
+  legend_entries{end+1} = 'Random Gaussian V1P0 w ReLU';
+  afprintf(sprintf('[INFO] done!\n'));
+
 
   afprintf(sprintf('[INFO] Loading projected imdb...\n'));
   larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
   larp_network_arch = 'larpV3P3-no-nl';
   larp_weight_init_sequence = getLarpWeightInitSequence(larp_weight_init_type, larp_network_arch);
   projection_net = fh_projection_utils.getProjectionNetworkObject(dataset, larp_network_arch, larp_weight_init_sequence);
-  projected_imdb_2 = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, -1);
+  projected_imdb = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, -1);
+  experiments{end+1}.imdb = projected_imdb;
+  legend_entries{end+1} = 'Random Gaussian LeNet w/o ReLU';
   afprintf(sprintf('[INFO] done!\n'));
-
-
-  % afprintf(sprintf('[INFO] Loading projected imdb...\n'));
-  % larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
-  % larp_network_arch = 'larpV1P0-ensemble-sparse-rp-yes-nl';
-  % larp_weight_init_sequence = getLarpWeightInitSequence(larp_weight_init_type, larp_network_arch);
-  % projection_net = fh_projection_utils.getProjectionNetworkObject(dataset, larp_network_arch, larp_weight_init_sequence);
-  % projected_imdb_3 = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, -1);
-  % afprintf(sprintf('[INFO] done!\n'));
 
 
   afprintf(sprintf('[INFO] Loading projected imdb...\n'));
@@ -93,15 +111,13 @@ function calculateDistances()
   larp_network_arch = 'larpV3P3';
   larp_weight_init_sequence = getLarpWeightInitSequence(larp_weight_init_type, larp_network_arch);
   projection_net = fh_projection_utils.getProjectionNetworkObject(dataset, larp_network_arch, larp_weight_init_sequence);
-  projected_imdb_3 = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, -1);
+  projected_imdb = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, -1);
+  experiments{end+1}.imdb = projected_imdb;
+  legend_entries{end+1} = 'Random Gaussian LeNet';
   afprintf(sprintf('[INFO] done!\n'));
 
 
   afprintf(sprintf('[INFO] Loading projected imdb...\n'));
-  % larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
-  % larp_network_arch = 'larpV1P0-ensemble-sparse-rp-yes-nl';
-  % larp_weight_init_sequence = getLarpWeightInitSequence(larp_weight_init_type, larp_network_arch);
-  % tmp = load('/Volumes/Amir/matconvnet/experiment_results/temp-test-30-May-2017-15-10-53-GPU-2/test-larp-tests-30-May-2017-15-10-53-cifar-multi-class-subsampled-balanced-38-GPU-2/k=3-fold-cifar-multi-class-subsampled-30-May-2017-17-46-46-single-cnn/cnn-30-May-2017-17-46-48-cifar-multi-class-subsampled-convV1P1-RF32CH3+fcV1-RF16CH64-batch-size-100-weight-decay-0.0100-GPU-2-bpd-07/net-epoch-100.mat');
 
   if ispc
     datapath = 'H:\Amir\';
@@ -114,17 +130,17 @@ function calculateDistances()
 
   % tmp = load(path_1);
   % projection_net = tmp.net;
-  % projected_imdb_4 = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, 9);
-  % afprintf(sprintf('[INFO] done!\n'));
-  tmp = load(path_2);
-  projection_net = tmp.net;
-  projected_imdb_5 = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, 9);
-  afprintf(sprintf('[INFO] done!\n'));
-  % projected_imdb_6 = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, 10);
-  % afprintf(sprintf('[INFO] done!\n'));
-  % projected_imdb_7 = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, 12);
+  % projected_imdb = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, 9);
+  % experiments{end+1}.imdb = projected_imdb;
+  % legend_entries{end+1} = 'Trained LeNet - 38';
   % afprintf(sprintf('[INFO] done!\n'));
 
+  tmp = load(path_2);
+  projection_net = tmp.net;
+  projected_imdb = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, 9);
+  experiments{end+1}.imdb = projected_imdb;
+  legend_entries{end+1} = 'Trained LeNet - ALL';
+  afprintf(sprintf('[INFO] done!\n'));
 
 
   % -------------------------------------------------------------------------
@@ -135,51 +151,57 @@ function calculateDistances()
   distance_type = 'euclidean';
   % distance_type = 'cosine';
 
-  % [between_class_point_ratios_1, within_class_point_ratios_1] = getPointDistanceRatios(original_imdb, projected_imdb_1, point_type, distance_type);
-  [between_class_point_ratios_2, within_class_point_ratios_2] = getPointDistanceRatios(original_imdb, projected_imdb_2, point_type, distance_type);
-  [between_class_point_ratios_3, within_class_point_ratios_3] = getPointDistanceRatios(original_imdb, projected_imdb_3, point_type, distance_type);
-  % [between_class_point_ratios_4, within_class_point_ratios_4] = getPointDistanceRatios(original_imdb, projected_imdb_4, point_type, distance_type);
-  [between_class_point_ratios_5, within_class_point_ratios_5] = getPointDistanceRatios(original_imdb, projected_imdb_5, point_type, distance_type);
-  % [between_class_point_ratios_6, within_class_point_ratios_6] = getPointDistanceRatios(original_imdb, projected_imdb_6, point_type, distance_type);
-  % [between_class_point_ratios_7, within_class_point_ratios_7] = getPointDistanceRatios(original_imdb, projected_imdb_7, point_type, distance_type);
-
-
+  for i = 1 : numel(experiments)
+    projected_imdb = experiments{i}.imdb;
+    [between_class_point_ratios, within_class_point_ratios] = getPointDistanceRatios(original_imdb, projected_imdb, point_type, distance_type);
+    experiments{i}.between_class_point_ratios = between_class_point_ratios;
+    experiments{i}.within_class_point_ratios = within_class_point_ratios;
+  end
 
   % -------------------------------------------------------------------------
   %                                                                      Plot
   % -------------------------------------------------------------------------
   figure
-  % title(sprintf('%s points', point_type));
+  color_palette = {'c', 'r', 'g', 'b', 'k'};
+  % legend_entries = {'Random Gaussian LeNet w/o ReLU', 'Random Gaussian LeNet w/ ReLU', 'Trained LeNet'};
+  % legend_entries = {'Dense RP', 'Random Gaussian LeNet', 'Trained LeNet'};
+  % legend_entries = {'Dense RP', 'Random Gaussian LeNet w/o NL', 'Random Gaussian LeNet', 'Trained LeNet - 38', 'Trained LeNet - ALL'};
+
 
   subplot(1,2,1)
   title('Between-class Euclidean Distances')
   hold on
-  % histogram(between_class_point_ratios_1, 0:0.05:2.5, 'facecolor', 'c', 'facealpha', 0.4, 'edgecolor', 'none')
-  histogram(between_class_point_ratios_2, 0:0.05:2.5, 'facecolor', 'k', 'facealpha', 0.4, 'edgecolor', 'none')
-  histogram(between_class_point_ratios_3, 0:0.05:2.5, 'facecolor', 'r', 'facealpha', 0.4, 'edgecolor', 'none')
-  % histogram(between_class_point_ratios_4, 0:0.05:2.5, 'facecolor', 'b', 'facealpha', 0.4, 'edgecolor', 'none')
-  histogram(between_class_point_ratios_5, 0:0.05:2.5, 'facecolor', 'g', 'facealpha', 0.4, 'edgecolor', 'none')
-  % histogram(between_class_point_ratios_6, 0:0.05:2.5, 'facecolor', 'g', 'facealpha', 0.4, 'edgecolor', 'none')
-  % histogram(between_class_point_ratios_7, 0:0.05:2.5, 'facecolor', 'k', 'facealpha', 0.4, 'edgecolor', 'none')
+  for i = 1 : numel(experiments)
+    histogram( ...
+      experiments{i}.between_class_point_ratios, ...
+      0:0.05:2.5, ...
+      'facecolor', ...
+      color_palette{mod(i - 1,numel(color_palette)) + 1}, ...
+      'facealpha', ...
+      0.4, ...
+      'edgecolor', ...
+      'none');
+  end
   hold off
-  legend('Random Gaussian LeNet w/o ReLU', 'Random Gaussian LeNet w/ ReLU', 'Trained LeNet');%
-  % legend('Dense RP', 'Random Gaussian LeNet', 'Trained LeNet');
-  % legend('Dense RP', 'Random Gaussian LeNet w/o NL', 'Random Gaussian LeNet', 'Trained LeNet - 38', 'Trained LeNet - ALL');
+  legend(legend_entries);
+
 
   subplot(1,2,2)
   title('Within-class Euclidean Distances')
   hold on
-  % histogram(within_class_point_ratios_1, 0:0.05:2.5, 'facecolor', 'c', 'facealpha', 0.4, 'edgecolor', 'none')
-  histogram(within_class_point_ratios_2, 0:0.05:2.5, 'facecolor', 'k', 'facealpha', 0.4, 'edgecolor', 'none')
-  histogram(within_class_point_ratios_3, 0:0.05:2.5, 'facecolor', 'r', 'facealpha', 0.4, 'edgecolor', 'none')
-  % histogram(within_class_point_ratios_4, 0:0.05:2.5, 'facecolor', 'b', 'facealpha', 0.4, 'edgecolor', 'none')
-  histogram(within_class_point_ratios_5, 0:0.05:2.5, 'facecolor', 'g', 'facealpha', 0.4, 'edgecolor', 'none')
-  % histogram(within_class_point_ratios_6, 0:0.05:2.5, 'facecolor', 'g', 'facealpha', 0.4, 'edgecolor', 'none')
-  % histogram(within_class_point_ratios_7, 0:0.05:2.5, 'facecolor', 'k', 'facealpha', 0.4, 'edgecolor', 'none')
+  for i = 1 : numel(experiments)
+    histogram( ...
+      experiments{i}.within_class_point_ratios, ...
+      0:0.05:2.5, ...
+      'facecolor', ...
+      color_palette{mod(i - 1,numel(color_palette)) + 1}, ...
+      'facealpha', ...
+      0.4, ...
+      'edgecolor', ...
+      'none');
+  end
   hold off
-  legend('Random Gaussian LeNet w/o ReLU', 'Random Gaussian LeNet w/ ReLU', 'Trained LeNet');%
-  % legend('Dense RP', 'Random Gaussian LeNet', 'Trained LeNet');
-  % legend('Dense RP', 'Random Gaussian LeNet w/o NL', 'Random Gaussian LeNet', 'Trained LeNet - 38', 'Trained LeNet - ALL');
+  legend(legend_entries);
 
   suptitle(sprintf('%s points', point_type));
 
