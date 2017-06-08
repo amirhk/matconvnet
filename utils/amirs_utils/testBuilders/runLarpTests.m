@@ -97,42 +97,45 @@ function runLarpTests(experiment_parent_dir, dataset, posneg_balance, larp_netwo
   experiment_options.backprop_depth = getFullBackPropDepthForConvArchitecture(conv_arch);
 
   % base_learning_rate = [0.1*ones(1,25) 0.03*ones(1,25) 0.01*ones(1,50)];
+  base_learning_rate = [0.1*ones(1,15) 0.03*ones(1,15) 0.01*ones(1,15)];
 
-  % if strcmp(dataset, 'cifar') || strcmp(dataset, 'cifar-multi-class-subsampled')
-  %   learning_rate_dividers = [1, 3, 10, 30];
-  % elseif strcmp(dataset, 'stl-10') || strcmp(dataset, 'stl-10-multi-class-subsampled')
-  %   learning_rate_dividers = [1, 3, 10, 30] / 10; % stl-10 specific
-  % elseif strcmp(dataset, 'mnist') || strcmp(dataset, 'mnist-multi-class-subsampled')
-  %   learning_rate_dividers = [1, 3, 10, 30];
-  % elseif strcmp(dataset, 'svhn') || strcmp(dataset, 'svhn-multi-class-subsampled')
-  %   learning_rate_dividers = [1, 3, 10, 30] / 3; % svhn specific
-  %   learning_rate_dividers = [10, 30] / 3; % svhn specific
-  % end
+  if strcmp(dataset, 'cifar') || strcmp(dataset, 'cifar-multi-class-subsampled')
+    learning_rate_dividers = [1, 3, 10, 30];
+  elseif strcmp(dataset, 'stl-10') || strcmp(dataset, 'stl-10-multi-class-subsampled')
+    learning_rate_dividers = [1, 3, 10, 30] / 10; % stl-10 specific
+  elseif strcmp(dataset, 'mnist') || strcmp(dataset, 'mnist-multi-class-subsampled')
+    learning_rate_dividers = [1, 3, 10, 30];
+  elseif strcmp(dataset, 'svhn') || strcmp(dataset, 'svhn-multi-class-subsampled')
+    learning_rate_dividers = [1, 3, 10, 30] / 3; % svhn specific
+    learning_rate_dividers = [10, 30] / 3; % svhn specific
+  end
 
-  % batch_sizes = [50, 100];
-  % weight_decays = [0.01, 0.001, 0.0001];
+  batch_sizes = [50, 100];
+  weight_decays = [0.01, 0.001, 0.0001];
 
-  % for learning_rate_divider = learning_rate_dividers
-  %   experiment_options.learning_rate = base_learning_rate / learning_rate_divider;
-  %   for batch_size = batch_sizes
-  %     experiment_options.batch_size = batch_size;
-  %     for weight_decay = weight_decays
-  %       experiment_options.weight_decay = weight_decay;
-  %       testKFold(experiment_options);
-  %     end
-  %   end
-  % end
+  for learning_rate_divider = learning_rate_dividers
+    experiment_options.learning_rate = base_learning_rate / learning_rate_divider;
+    for batch_size = batch_sizes
+      experiment_options.batch_size = batch_size;
+      for weight_decay = weight_decays
+        experiment_options.weight_decay = weight_decay;
+        testKFold(experiment_options);
+      end
+    end
+  end
 
 
+  % FOR 'convV3P3RL3+fcV1' (from Javad):
   % experiment_options.learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,5)];
   % experiment_options.batch_size = 100;
   % experiment_options.weight_decay = 0.0001;
   % testKFold(experiment_options);
 
-  experiment_options.learning_rate = [0.1*ones(1,15) 0.03*ones(1,15) 0.01*ones(1,15)] / 10;
-  experiment_options.batch_size = 50;
-  experiment_options.weight_decay = 0.001;
-  testKFold(experiment_options);
+  % FOR 'convV3P3RL0+fcV1':
+  % experiment_options.learning_rate = [0.1*ones(1,15) 0.03*ones(1,15) 0.01*ones(1,15)] / 10;
+  % experiment_options.batch_size = 50;
+  % experiment_options.weight_decay = 0.001;
+  % testKFold(experiment_options);
 
 
 
