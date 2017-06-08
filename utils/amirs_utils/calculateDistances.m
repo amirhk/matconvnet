@@ -34,7 +34,7 @@ function calculateDistances()
   % dataset = 'cifar-multi-class-subsampled';
   % posneg_balance = 'balanced-100';
   dataset = 'cifar-two-class-deer-truck';
-  posneg_balance = 'balanced-5000';
+  posneg_balance = 'balanced-100';
 
 
   fh_projection_utils = projectionUtils;
@@ -48,11 +48,11 @@ function calculateDistances()
   afprintf(sprintf('[INFO] done!\n'));
 
 
-  % afprintf(sprintf('[INFO] Loading projected imdb...\n'));
-  % projected_imdb = fh_projection_utils.getDenslyProjectedImdb(original_imdb);
-  % experiments{end+1}.imdb = projected_imdb;
-  % experiments{end}.title = 'Dense Random Projection Matrix';
-  % afprintf(sprintf('[INFO] done!\n'));
+  afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  projected_imdb = fh_projection_utils.getDenslyProjectedImdb(original_imdb);
+  experiments{end+1}.imdb = projected_imdb;
+  experiments{end}.title = 'Dense Random Projection Matrix';
+  afprintf(sprintf('[INFO] done!\n'));
 
 
   % afprintf(sprintf('[INFO] Applying LDA...\n'));
@@ -69,64 +69,64 @@ function calculateDistances()
   % afprintf(sprintf('[INFO] done!\n'));
 
 
-  afprintf(sprintf('[INFO] Loading projected imdb...\n'));
-  larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
-  larp_network_arch = 'larpV1P0-ensemble-sparse-rp-no-nl';
-  larp_weight_init_sequence = getLarpWeightInitSequence(larp_weight_init_type, larp_network_arch);
-  projection_net = fh_projection_utils.getProjectionNetworkObject(dataset, larp_network_arch, larp_weight_init_sequence);
-  projected_imdb = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, -1);
-  experiments{end+1}.imdb = projected_imdb;
-  experiments{end}.title = 'Random Gaussian V1P0 w/o ReLU';
-  afprintf(sprintf('[INFO] done!\n'));
+  % afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  % larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
+  % larp_network_arch = 'larpV1P0RL0-ensemble-sparse-rp';
+  % larp_weight_init_sequence = getLarpWeightInitSequence(larp_weight_init_type, larp_network_arch);
+  % projection_net = fh_projection_utils.getProjectionNetworkObject(dataset, larp_network_arch, larp_weight_init_sequence);
+  % projected_imdb = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, -1);
+  % experiments{end+1}.imdb = projected_imdb;
+  % experiments{end}.title = 'Random Gaussian V1P0 w/o ReLU';
+  % afprintf(sprintf('[INFO] done!\n'));
+
+
+  % afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  % larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
+  % larp_network_arch = 'larpV1P0RL1-ensemble-sparse-rp';
+  % larp_weight_init_sequence = getLarpWeightInitSequence(larp_weight_init_type, larp_network_arch);
+  % projection_net = fh_projection_utils.getProjectionNetworkObject(dataset, larp_network_arch, larp_weight_init_sequence);
+  % projected_imdb = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, -1);
+  % experiments{end+1}.imdb = projected_imdb;
+  % experiments{end}.title = 'Random Gaussian V1P0 w ReLU';
+  % afprintf(sprintf('[INFO] done!\n'));
+
+
+  % afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  % larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
+  % larp_network_arch = 'larpV3P0RL0';
+  % larp_weight_init_sequence = getLarpWeightInitSequence(larp_weight_init_type, larp_network_arch);
+  % projection_net = fh_projection_utils.getProjectionNetworkObject(dataset, larp_network_arch, larp_weight_init_sequence);
+  % projected_imdb = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, -1);
+  % experiments{end+1}.imdb = projected_imdb;
+  % experiments{end}.title = 'Random Gaussian V3P0 w/o ReLU';
+  % afprintf(sprintf('[INFO] done!\n'));
+
+
+  % afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  % larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
+  % larp_network_arch = 'larpV3P0RL3';
+  % larp_weight_init_sequence = getLarpWeightInitSequence(larp_weight_init_type, larp_network_arch);
+  % projection_net = fh_projection_utils.getProjectionNetworkObject(dataset, larp_network_arch, larp_weight_init_sequence);
+  % projected_imdb = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, -1);
+  % experiments{end+1}.imdb = projected_imdb;
+  % experiments{end}.title = 'Random Gaussian V3P0 w/ ReLU';
+  % afprintf(sprintf('[INFO] done!\n'));
+
+
+  % afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  % larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
+  % larp_network_arch = 'larpV3P3RL0';
+  % larp_weight_init_sequence = getLarpWeightInitSequence(larp_weight_init_type, larp_network_arch);
+  % projection_net = fh_projection_utils.getProjectionNetworkObject(dataset, larp_network_arch, larp_weight_init_sequence);
+  % projected_imdb = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, -1);
+  % experiments{end+1}.imdb = projected_imdb;
+  % experiments{end}.title = 'Random Gaussian V3P3 (LeNet) w/o ReLU';
+  % afprintf(sprintf('[INFO] done!\n'));
 
 
   afprintf(sprintf('[INFO] Loading projected imdb...\n'));
   larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
-  larp_network_arch = 'larpV1P0-ensemble-sparse-rp-yes-nl';
-  larp_weight_init_sequence = getLarpWeightInitSequence(larp_weight_init_type, larp_network_arch);
-  projection_net = fh_projection_utils.getProjectionNetworkObject(dataset, larp_network_arch, larp_weight_init_sequence);
-  projected_imdb = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, -1);
-  experiments{end+1}.imdb = projected_imdb;
-  experiments{end}.title = 'Random Gaussian V1P0 w ReLU';
-  afprintf(sprintf('[INFO] done!\n'));
-
-
-  afprintf(sprintf('[INFO] Loading projected imdb...\n'));
-  larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
-  larp_network_arch = 'larpV3P0-no-nl';
-  larp_weight_init_sequence = getLarpWeightInitSequence(larp_weight_init_type, larp_network_arch);
-  projection_net = fh_projection_utils.getProjectionNetworkObject(dataset, larp_network_arch, larp_weight_init_sequence);
-  projected_imdb = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, -1);
-  experiments{end+1}.imdb = projected_imdb;
-  experiments{end}.title = 'Random Gaussian V3P0 w/o ReLU';
-  afprintf(sprintf('[INFO] done!\n'));
-
-
-  afprintf(sprintf('[INFO] Loading projected imdb...\n'));
-  larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
-  larp_network_arch = 'larpV3P0';
-  larp_weight_init_sequence = getLarpWeightInitSequence(larp_weight_init_type, larp_network_arch);
-  projection_net = fh_projection_utils.getProjectionNetworkObject(dataset, larp_network_arch, larp_weight_init_sequence);
-  projected_imdb = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, -1);
-  experiments{end+1}.imdb = projected_imdb;
-  experiments{end}.title = 'Random Gaussian V3P0 w/ ReLU';
-  afprintf(sprintf('[INFO] done!\n'));
-
-
-  afprintf(sprintf('[INFO] Loading projected imdb...\n'));
-  larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
-  larp_network_arch = 'larpV3P3-no-nl';
-  larp_weight_init_sequence = getLarpWeightInitSequence(larp_weight_init_type, larp_network_arch);
-  projection_net = fh_projection_utils.getProjectionNetworkObject(dataset, larp_network_arch, larp_weight_init_sequence);
-  projected_imdb = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, -1);
-  experiments{end+1}.imdb = projected_imdb;
-  experiments{end}.title = 'Random Gaussian V3P3 (LeNet) w/o ReLU';
-  afprintf(sprintf('[INFO] done!\n'));
-
-
-  afprintf(sprintf('[INFO] Loading projected imdb...\n'));
-  larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
-  larp_network_arch = 'larpV3P3';
+  larp_network_arch = 'larpV3P3RL3';
   larp_weight_init_sequence = getLarpWeightInitSequence(larp_weight_init_type, larp_network_arch);
   projection_net = fh_projection_utils.getProjectionNetworkObject(dataset, larp_network_arch, larp_weight_init_sequence);
   projected_imdb = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, -1);
@@ -153,16 +153,16 @@ function calculateDistances()
   % afprintf(sprintf('[INFO] done!\n'));
 
 
-  % afprintf(sprintf('[INFO] Loading projected imdb...\n'));
-  % tmp = load(path_2);
-  % projection_net = tmp.net;
-  % projected_imdb = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, 9);
-  % experiments{end+1}.imdb = projected_imdb;
-  % experiments{end}.title = 'Trained V3P3 (LeNet) - trained on ALL';
-  % afprintf(sprintf('[INFO] done!\n'));
+  afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  tmp = load(path_2);
+  projection_net = tmp.net;
+  projected_imdb = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, 9);
+  experiments{end+1}.imdb = projected_imdb;
+  experiments{end}.title = 'Trained V3P3 (LeNet) - trained on ALL';
+  afprintf(sprintf('[INFO] done!\n'));
 
 
-  if true
+  if false
     % -------------------------------------------------------------------------
     %                                                                   Run KMD
     % -------------------------------------------------------------------------
@@ -257,8 +257,34 @@ function [between_class_point_ratios, within_class_point_ratios] = getPointDista
   % -------------------------------------------------------------------------
   %                                         Get pair-wise distances of points
   % -------------------------------------------------------------------------
-  [original_pdist_matrix, original_labels_train] = getNormalizedDistanceMatrixAndLabels(original_imdb, distance_type);
-  [projected_pdist_matrix, projected_labels_train] = getNormalizedDistanceMatrixAndLabels(projected_imdb, distance_type);
+  % [original_pdist_matrix, original_labels_train] = getNormalizedDistanceMatrixAndLabels(original_imdb, distance_type);
+  % [projected_pdist_matrix, projected_labels_train] = getNormalizedDistanceMatrixAndLabels(projected_imdb, distance_type);
+
+  [original_pdist_matrix, original_labels_train] = getDistanceMatrixAndLabels(original_imdb, distance_type);
+  [projected_pdist_matrix, projected_labels_train] = getDistanceMatrixAndLabels(projected_imdb, distance_type);
+
+  max_o = max(original_pdist_matrix(:));
+  min_o = min(original_pdist_matrix(:));
+  sum_o = sum(original_pdist_matrix(:)) / 2;
+  max_p = max(projected_pdist_matrix(:));
+  min_p = min(projected_pdist_matrix(:));
+  sum_p = sum(projected_pdist_matrix(:)) / 2;
+
+  % % MAX-NORMALIZED
+  % original_pdist_matrix = (original_pdist_matrix - min_o) / (max_o - min_o);
+  % projected_pdist_matrix = (projected_pdist_matrix - min_p) / (max_p - min_p);
+
+  % SUM-NORMALIZED
+  original_pdist_matrix = original_pdist_matrix / sum_o; % remember pdist is symmetric
+  projected_pdist_matrix = projected_pdist_matrix / sum_p; % remember pdist is symmetric
+
+  % % EMAIL MAX-NORMALIZE (NORMALIZE PROJECTED SPACE INTO DYNAMIC RANGE OF INPUT SPACE)
+  % original_pdist_matrix = original_pdist_matrix;
+  % projected_pdist_matrix = (projected_pdist_matrix - min_p) / (max_p - min_p) * (max_o - min_o) + min_o;
+
+  % % EMAIL SUM-NORMALIZED
+  % original_pdist_matrix = original_pdist_matrix / sum_o; % remember pdist is symmetric
+  % projected_pdist_matrix = projected_pdist_matrix / sum_p * sum_o; % remember pdist is symmetric
 
   assert(size(original_pdist_matrix, 1) == size(projected_pdist_matrix, 1));
   assert(size(original_pdist_matrix, 2) == size(projected_pdist_matrix, 2));
@@ -347,8 +373,22 @@ function [between_class_point_ratios, within_class_point_ratios] = getPointDista
   toc
 
 
+% % -------------------------------------------------------------------------
+% function [matrix_pdist, labels_train] = getNormalizedDistanceMatrixAndLabels(imdb, distance_type)
+% % -------------------------------------------------------------------------
+%   data_train = imdb.images.data(:,:,:,imdb.images.set == 1);
+%   labels_train = imdb.images.labels(imdb.images.set == 1);
+%   sample_size = size(data_train, 1) * size(data_train, 2) * size(data_train, 3);
+%   samples = reshape(data_train, sample_size, [])';
+%   matrix_pdist = squareform(pdist(samples));
+%   % MAX-NORMALIZED
+%   % matrix_pdist = (matrix_pdist - min(matrix_pdist(:))) / (max(matrix_pdist(:)) - min(matrix_pdist(:)));
+%   % SUM-NORMALIZED
+%   matrix_pdist = matrix_pdist / (sum(matrix_pdist(:)) / 2); % remember pdist is symmetric
+
+
 % -------------------------------------------------------------------------
-function [matrix_pdist, labels_train] = getNormalizedDistanceMatrixAndLabels(imdb, distance_type)
+function [matrix_pdist, labels_train] = getDistanceMatrixAndLabels(imdb, distance_type)
 % -------------------------------------------------------------------------
   data_train = imdb.images.data(:,:,:,imdb.images.set == 1);
   labels_train = imdb.images.labels(imdb.images.set == 1);
@@ -358,8 +398,7 @@ function [matrix_pdist, labels_train] = getNormalizedDistanceMatrixAndLabels(imd
   % MAX-NORMALIZED
   % matrix_pdist = (matrix_pdist - min(matrix_pdist(:))) / (max(matrix_pdist(:)) - min(matrix_pdist(:)));
   % SUM-NORMALIZED
-  matrix_pdist = matrix_pdist / (sum(matrix_pdist(:)) / 2); % remember pdist is symmetric
-
+  % matrix_pdist = matrix_pdist / (sum(matrix_pdist(:)) / 2); % remember pdist is symmetric
 
 
 % -------------------------------------------------------------------------
