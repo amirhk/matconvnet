@@ -124,9 +124,14 @@ function runLarpTests(experiment_parent_dir, dataset, posneg_balance, larp_netwo
   % end
 
 
-  experiment_options.learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,5)];
-  experiment_options.batch_size = 100;
-  experiment_options.weight_decay = 0.0001;
+  % experiment_options.learning_rate = [0.05*ones(1,15) 0.005*ones(1,10) 0.0005*ones(1,5)];
+  % experiment_options.batch_size = 100;
+  % experiment_options.weight_decay = 0.0001;
+  % testKFold(experiment_options);
+
+  experiment_options.learning_rate = [0.1*ones(1,15) 0.03*ones(1,15) 0.01*ones(1,15)] / 10;
+  experiment_options.batch_size = 50;
+  experiment_options.weight_decay = 0.001;
   testKFold(experiment_options);
 
 

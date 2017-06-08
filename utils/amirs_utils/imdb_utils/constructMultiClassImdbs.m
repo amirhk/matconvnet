@@ -52,12 +52,13 @@ function constructMultiClassImdbs(dataset, network_arch)
   % logspace(1 + log10(3.76), 3 + log10(5), 6)
   % -------------------------------------------------------------------------
   % createImdbWithBalance(dataset, all_class_imdb, 50, 50); % 750);
-  createImdbWithBalance(dataset, all_class_imdb, 38, 'default'); % 750);
-  createImdbWithBalance(dataset, all_class_imdb, 100, 'default'); % 750);
-  createImdbWithBalance(dataset, all_class_imdb, 266, 'default'); % 750);
-  createImdbWithBalance(dataset, all_class_imdb, 707, 'default'); % 750);
-  createImdbWithBalance(dataset, all_class_imdb, 1880, 'default'); % 750);
-  createImdbWithBalance(dataset, all_class_imdb, 5000, 'default'); % 750);
+  % createImdbWithBalance(dataset, all_class_imdb, 38, 'default'); % 750);
+  createImdbWithBalance(dataset, all_class_imdb, 50, 'default'); % 750);
+  % createImdbWithBalance(dataset, all_class_imdb, 100, 'default'); % 750);
+  % createImdbWithBalance(dataset, all_class_imdb, 266, 'default'); % 750);
+  % createImdbWithBalance(dataset, all_class_imdb, 707, 'default'); % 750);
+  % createImdbWithBalance(dataset, all_class_imdb, 1880, 'default'); % 750);
+  % createImdbWithBalance(dataset, all_class_imdb, 5000, 'default'); % 750);
 
   % createImdbWithBalance(dataset, all_class_imdb, 500, 750);
 

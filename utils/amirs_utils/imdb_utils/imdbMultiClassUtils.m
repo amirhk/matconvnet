@@ -104,12 +104,20 @@ function imdb = subsampleImdb(imdb, set_name, class_number, subsample_count)
   switch set_name
     case 'train'
       data_for_set_and_class = data_train_per_class{class_number};
-      subsampled_data_indices = randsample(size(data_for_set_and_class, 4), subsample_count);
+      if strcmp(subsample_count, 'default')
+        subsampled_data_indices = size(data_for_set_and_class, 4);
+      else
+        subsampled_data_indices = randsample(size(data_for_set_and_class, 4), subsample_count);
+      end
       subsampled_data = data_for_set_and_class(:,:,:,subsampled_data_indices);
       data_train_per_class{class_number} = subsampled_data;
     case 'test'
       data_for_set_and_class = data_test_per_class{class_number};
-      subsampled_data_indices = randsample(size(data_for_set_and_class, 4), subsample_count);
+      if strcmp(subsample_count, 'default')
+        subsampled_data_indices = size(data_for_set_and_class, 4);
+      else
+        subsampled_data_indices = randsample(size(data_for_set_and_class, 4), subsample_count);
+      end
       subsampled_data = data_for_set_and_class(:,:,:,subsampled_data_indices);
       data_test_per_class{class_number} = subsampled_data;
   end
