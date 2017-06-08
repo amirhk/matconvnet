@@ -34,7 +34,7 @@ function calculateDistances()
   % dataset = 'cifar-multi-class-subsampled';
   % posneg_balance = 'balanced-100';
   dataset = 'cifar-two-class-deer-truck';
-  posneg_balance = 'balanced-100';
+  posneg_balance = 'balanced-38';
 
 
   fh_projection_utils = projectionUtils;
@@ -48,11 +48,11 @@ function calculateDistances()
   afprintf(sprintf('[INFO] done!\n'));
 
 
-  afprintf(sprintf('[INFO] Loading projected imdb...\n'));
-  projected_imdb = fh_projection_utils.getDenslyProjectedImdb(original_imdb);
-  experiments{end+1}.imdb = projected_imdb;
-  experiments{end}.title = 'Dense Random Projection Matrix';
-  afprintf(sprintf('[INFO] done!\n'));
+  % afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  % projected_imdb = fh_projection_utils.getDenslyProjectedImdb(original_imdb);
+  % experiments{end+1}.imdb = projected_imdb;
+  % experiments{end}.title = 'Dense Random Projection Matrix';
+  % afprintf(sprintf('[INFO] done!\n'));
 
 
   % afprintf(sprintf('[INFO] Applying LDA...\n'));
@@ -69,58 +69,58 @@ function calculateDistances()
   % afprintf(sprintf('[INFO] done!\n'));
 
 
-  afprintf(sprintf('[INFO] Loading projected imdb...\n'));
-  larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
-  larp_network_arch = 'larpV1P0RL0-ensemble-sparse-rp';
-  projected_imdb = getProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
-  experiments{end+1}.imdb = projected_imdb;
-  experiments{end}.title = 'Random Gaussian V1P0 w/o ReLU';
-  afprintf(sprintf('[INFO] done!\n'));
+  % afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  % larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
+  % larp_network_arch = 'larpV1P0RL0-ensemble-sparse-rp';
+  % projected_imdb = getProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
+  % experiments{end+1}.imdb = projected_imdb;
+  % experiments{end}.title = 'Random Gaussian V1P0 w/o ReLU';
+  % afprintf(sprintf('[INFO] done!\n'));
 
 
-  afprintf(sprintf('[INFO] Loading projected imdb...\n'));
-  larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
-  larp_network_arch = 'larpV1P0RL1-ensemble-sparse-rp';
-  projected_imdb = getProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
-  experiments{end+1}.imdb = projected_imdb;
-  experiments{end}.title = 'Random Gaussian V1P0 w ReLU';
-  afprintf(sprintf('[INFO] done!\n'));
+  % afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  % larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
+  % larp_network_arch = 'larpV1P0RL1-ensemble-sparse-rp';
+  % projected_imdb = getProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
+  % experiments{end+1}.imdb = projected_imdb;
+  % experiments{end}.title = 'Random Gaussian V1P0 w ReLU';
+  % afprintf(sprintf('[INFO] done!\n'));
 
 
-  afprintf(sprintf('[INFO] Loading projected imdb...\n'));
-  larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
-  larp_network_arch = 'larpV3P0RL0';
-  projected_imdb = getProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
-  experiments{end+1}.imdb = projected_imdb;
-  experiments{end}.title = 'Random Gaussian V3P0 w/o ReLU';
-  afprintf(sprintf('[INFO] done!\n'));
+  % afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  % larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
+  % larp_network_arch = 'larpV3P0RL0';
+  % projected_imdb = getProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
+  % experiments{end+1}.imdb = projected_imdb;
+  % experiments{end}.title = 'Random Gaussian V3P0 w/o ReLU';
+  % afprintf(sprintf('[INFO] done!\n'));
 
 
-  afprintf(sprintf('[INFO] Loading projected imdb...\n'));
-  larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
-  larp_network_arch = 'larpV3P0RL3';
-  projected_imdb = getProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
-  experiments{end+1}.imdb = projected_imdb;
-  experiments{end}.title = 'Random Gaussian V3P0 w/ ReLU';
-  afprintf(sprintf('[INFO] done!\n'));
+  % afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  % larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
+  % larp_network_arch = 'larpV3P0RL3';
+  % projected_imdb = getProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
+  % experiments{end+1}.imdb = projected_imdb;
+  % experiments{end}.title = 'Random Gaussian V3P0 w/ ReLU';
+  % afprintf(sprintf('[INFO] done!\n'));
 
 
-  afprintf(sprintf('[INFO] Loading projected imdb...\n'));
-  larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
-  larp_network_arch = 'larpV3P3RL0';
-  projected_imdb = getProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
-  experiments{end+1}.imdb = projected_imdb;
-  experiments{end}.title = 'Random Gaussian V3P3 (LeNet) w/o ReLU';
-  afprintf(sprintf('[INFO] done!\n'));
+  % afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  % larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
+  % larp_network_arch = 'larpV3P3RL0';
+  % projected_imdb = getProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
+  % experiments{end+1}.imdb = projected_imdb;
+  % experiments{end}.title = 'Random Gaussian V3P3 (LeNet) w/o ReLU';
+  % afprintf(sprintf('[INFO] done!\n'));
 
 
-  afprintf(sprintf('[INFO] Loading projected imdb...\n'));
-  larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
-  larp_network_arch = 'larpV3P3RL3';
-  projected_imdb = getProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
-  experiments{end+1}.imdb = projected_imdb;
-  experiments{end}.title = 'Random Gaussian V3P3 (LeNet) w/ ReLU';
-  afprintf(sprintf('[INFO] done!\n'));
+  % afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  % larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
+  % larp_network_arch = 'larpV3P3RL3';
+  % projected_imdb = getProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
+  % experiments{end+1}.imdb = projected_imdb;
+  % experiments{end}.title = 'Random Gaussian V3P3 (LeNet) w/ ReLU';
+  % afprintf(sprintf('[INFO] done!\n'));
 
 
   if ispc
@@ -130,6 +130,12 @@ function calculateDistances()
   else
     path_1 = '/Volumes/Amir/some trained networks/balanced-38/v3p3/cifar/k=3-fold-cifar-multi-class-subsampled-31-May-2017-07-07-19-single-cnn/cnn-31-May-2017-07-07-20-cifar-multi-class-subsampled-convV3P3-RF32CH3+fcV1-RF4CH64-batch-size-100-weight-decay-0.0100-GPU-2-bpd-13/net-epoch-100.mat';
     path_2 = '/Volumes/Amir/Parent11.mat';
+    path_convV1P0RL0 = '/Volumes/Amir/some trained networks/larpV0P0RL0+convV1P0RL0/cifar/balance-38/k=3-fold-cifar-multi-class-subsampled-7-Jun-2017-17-14-44-single-cnn/cnn-7-Jun-2017-17-14-45-cifar-multi-class-subsampled-convV1P0RL0-RF32CH3+fcV1-RF32CH64-batch-size-100-weight-decay-0.0001-GPU-1-bpd-05/net-epoch-100.mat';
+    path_convV1P0RL1 = '/Volumes/Amir/some trained networks/larpV0P0RL0+convV1P0RL1/cifar/balance-38/k=3-fold-cifar-multi-class-subsampled-7-Jun-2017-23-56-51-single-cnn/cnn-7-Jun-2017-23-56-52-cifar-multi-class-subsampled-convV1P0RL1-RF32CH3+fcV1-RF32CH64-batch-size-50-weight-decay-0.0010-GPU-1-bpd-06/net-epoch-100.mat';
+    path_convV3P0RL0 = '/Volumes/Amir/Parent11.mat';
+    path_convV3P0RL3 = '/Volumes/Amir/Parent11.mat';
+    path_convV3P3RL0 = '/Volumes/Amir/some trained networks/larpV0P0RL0+convV3P3RL0/cifar/balance-38/k=3-fold-cifar-multi-class-subsampled-7-Jun-2017-05-36-41-single-cnn/cnn-7-Jun-2017-05-36-42-cifar-multi-class-subsampled-convV3P3RL0-RF32CH3+fcV1-RF4CH64-batch-size-50-weight-decay-0.0010-GPU-3-bpd-10/net-epoch-100.mat';
+    path_convV3P3RL3 = '/Volumes/Amir/some trained networks/larpV0P0RL0+convV3P3RL3/cifar/balance-38/k=3-fold-cifar-multi-class-subsampled-7-Jun-2017-13-35-35-single-cnn/cnn-7-Jun-2017-13-35-36-cifar-multi-class-subsampled-convV3P3RL3-RF32CH3+fcV1-RF4CH64-batch-size-50-weight-decay-0.0100-GPU-3-bpd-13/net-epoch-100.mat';
   end
 
   % afprintf(sprintf('[INFO] Loading projected imdb...\n'));
@@ -141,16 +147,65 @@ function calculateDistances()
   % afprintf(sprintf('[INFO] done!\n'));
 
 
+  % afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  % tmp = load(path_2);
+  % projection_net = tmp.net;
+  % projected_imdb = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, 9);
+  % experiments{end+1}.imdb = projected_imdb;
+  % experiments{end}.title = 'Trained V3P3 (LeNet) - trained on ALL';
+  % afprintf(sprintf('[INFO] done!\n'));
+
+
   afprintf(sprintf('[INFO] Loading projected imdb...\n'));
-  tmp = load(path_2);
+  tmp = load(path_convV1P0RL0);
+  projection_net = tmp.net;
+  projected_imdb = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, 1);
+  experiments{end+1}.imdb = projected_imdb;
+  experiments{end}.title = 'Trained V1P0 w/o ReLU - trained on 38';
+  afprintf(sprintf('[INFO] done!\n'));
+
+  afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  tmp = load(path_convV1P0RL1);
+  projection_net = tmp.net;
+  projected_imdb = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, 2);
+  experiments{end+1}.imdb = projected_imdb;
+  experiments{end}.title = 'Trained V1P0 w ReLU - trained on 38';
+  afprintf(sprintf('[INFO] done!\n'));
+
+  % afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  % tmp = load(path_convV3P0RL0);
+  % projection_net = tmp.net;
+  % projected_imdb = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, 3);
+  % experiments{end+1}.imdb = projected_imdb;
+  % experiments{end}.title = 'Trained V3P0 w/o ReLU - trained on 38';
+  % afprintf(sprintf('[INFO] done!\n'));
+
+  % afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  % tmp = load(path_convV3P0RL3);
+  % projection_net = tmp.net;
+  % projected_imdb = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, 6);
+  % experiments{end+1}.imdb = projected_imdb;
+  % experiments{end}.title = 'Trained V3P0 w/ ReLU - trained on 38';
+  % afprintf(sprintf('[INFO] done!\n'));
+
+  afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  tmp = load(path_convV3P3RL0);
+  projection_net = tmp.net;
+  projected_imdb = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, 6);
+  experiments{end+1}.imdb = projected_imdb;
+  experiments{end}.title = 'Trained V3P3 (LeNet) w/o ReLU - trained on 38';
+  afprintf(sprintf('[INFO] done!\n'));
+
+  afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  tmp = load(path_convV3P3RL3);
   projection_net = tmp.net;
   projected_imdb = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, 9);
   experiments{end+1}.imdb = projected_imdb;
-  experiments{end}.title = 'Trained V3P3 (LeNet) - trained on ALL';
+  experiments{end}.title = 'Trained V3P3 (LeNet) w/ ReLU - trained on 38';
   afprintf(sprintf('[INFO] done!\n'));
 
 
-  if true
+  if false
     % -------------------------------------------------------------------------
     %                                                                   Run KMD
     % -------------------------------------------------------------------------
