@@ -41,10 +41,8 @@ function folds = testKFold(input_opts)
   %                                                                 opts.imdb
   % -------------------------------------------------------------------------
   opts.imdb.posneg_balance = getValueFromFieldOrDefault(input_opts, 'posneg_balance', 'balanced-38');
-  % opts.imdb.projection = getValueFromFieldOrDefault(input_opts, 'projection', 'no-projection');
-  % opts.imdb.larp_network_arch = getValueFromFieldOrDefault(input_opts, 'larp_network_arch', 'v0p0');
-  % opts.imdb.larp_weight_init_sequence = getValueFromFieldOrDefault(input_opts, 'larp_weight_init_sequence', {});
-  % opts.imdb.larp_network_arch = getValueFromFieldOrDefault(input_opts, 'larp_network_arch', 'v0p0');
+  opts.imdb.larp_network_arch = getValueFromFieldOrDefault(input_opts, 'larp_network_arch', 'larpV0P0R0');
+  opts.imdb.larp_weight_init_sequence = getValueFromFieldOrDefault(input_opts, 'larp_weight_init_sequence', {});
   % if strcmp(opts.general.dataset, 'prostate-v2-20-patients')
   %   switch opts.imdb.posneg_balance
   %     case 'k=5-fold-unbalanced'
@@ -241,7 +239,7 @@ function folds = testKFold(input_opts)
     % -------------------------------------------------------------------------
     %                                                 project imdb if necessary
     % -------------------------------------------------------------------------
-    if numel(opts.imdb.larp_weight_init_sequence) > 0 || strcmp(opts.imdb.larp_network_arch, 'larpV0P0-single-dense-rp-no-nl')
+    if numel(opts.imdb.larp_weight_init_sequence) > 0 || strcmp(opts.imdb.larp_network_arch, 'larpV0P0R0-single-dense-rp')
       afprintf(sprintf('[INFO] Projecting imdb...\n'));
       fh_projection_utils = projectionUtils;
       if numel(opts.imdb.larp_weight_init_sequence) > 0
