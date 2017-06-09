@@ -51,8 +51,8 @@ function tempScriptRunTsne()
 
     vectorized_data_train = vectorized_data(is_train, :);
     vectorized_data_test = vectorized_data(is_test, :);
-    vectorized_data_train = vectorized_data_train';
-    vectorized_data_test = vectorized_data_test';
+    % vectorized_data_train = vectorized_data_train';
+    % vectorized_data_test = vectorized_data_test';
     labels_train = labels(is_train);
     labels_test = labels(is_test);
 
@@ -61,7 +61,6 @@ function tempScriptRunTsne()
     % Plot results
     figure,
     title(experiments{i}.title),
-    keyboard
     gscatter(mappedX(:,1), mappedX(:,2), labels_train);
   end
 
