@@ -36,9 +36,9 @@ function calculateDistances()
   % dataset = 'cifar-two-class-deer-truck';
   % posneg_balance = 'balanced-38';
 
-  experiments = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 1);
+  [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 1);
 
-  if true
+  if false
     % -------------------------------------------------------------------------
     %                                                                   Run KMD
     % -------------------------------------------------------------------------
