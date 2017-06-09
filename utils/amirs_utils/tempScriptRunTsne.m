@@ -61,6 +61,7 @@ function tempScriptRunTsne()
     % Plot results
     figure,
     title(experiments{i}.title),
+    keyboard
     gscatter(mappedX(:,1), mappedX(:,2), labels_train);
   end
 
