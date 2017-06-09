@@ -132,8 +132,8 @@ function calculateDistances()
     path_2 = '/Volumes/Amir/Parent11.mat';
     path_convV1P0RL0 = '/Volumes/Amir/some trained networks/larpV0P0RL0+convV1P0RL0/cifar/balance-38/k=3-fold-cifar-multi-class-subsampled-7-Jun-2017-17-14-44-single-cnn/cnn-7-Jun-2017-17-14-45-cifar-multi-class-subsampled-convV1P0RL0-RF32CH3+fcV1-RF32CH64-batch-size-100-weight-decay-0.0001-GPU-1-bpd-05/net-epoch-100.mat';
     path_convV1P0RL1 = '/Volumes/Amir/some trained networks/larpV0P0RL0+convV1P0RL1/cifar/balance-38/k=3-fold-cifar-multi-class-subsampled-7-Jun-2017-23-56-51-single-cnn/cnn-7-Jun-2017-23-56-52-cifar-multi-class-subsampled-convV1P0RL1-RF32CH3+fcV1-RF32CH64-batch-size-50-weight-decay-0.0010-GPU-1-bpd-06/net-epoch-100.mat';
-    path_convV3P0RL0 = '/Volumes/Amir/Parent11.mat';
-    path_convV3P0RL3 = '/Volumes/Amir/Parent11.mat';
+    path_convV3P0RL0 = '/Volumes/Amir/some trained networks/larpV0P0RL0+convV3P0RL0/cifar/balance-38/k=3-fold-cifar-multi-class-subsampled-9-Jun-2017-02-46-18-single-cnn/cnn-9-Jun-2017-02-46-19-cifar-multi-class-subsampled-convV3P0RL0-RF32CH3+fcV1-RF32CH64-batch-size-100-weight-decay-0.0001-GPU-1-bpd-07/net-epoch-100.mat';
+    path_convV3P0RL3 = '/Volumes/Amir/some trained networks/larpV0P0RL0+convV3P0RL3/cifar/balance-38/k=3-fold-cifar-multi-class-subsampled-8-Jun-2017-21-13-14-single-cnn/cnn-8-Jun-2017-21-13-15-cifar-multi-class-subsampled-convV3P0RL3-RF32CH3+fcV1-RF32CH64-batch-size-100-weight-decay-0.0010-GPU-2-bpd-10/net-epoch-100.mat';
     path_convV3P3RL0 = '/Volumes/Amir/some trained networks/larpV0P0RL0+convV3P3RL0/cifar/balance-38/k=3-fold-cifar-multi-class-subsampled-7-Jun-2017-05-36-41-single-cnn/cnn-7-Jun-2017-05-36-42-cifar-multi-class-subsampled-convV3P3RL0-RF32CH3+fcV1-RF4CH64-batch-size-50-weight-decay-0.0010-GPU-3-bpd-10/net-epoch-100.mat';
     path_convV3P3RL3 = '/Volumes/Amir/some trained networks/larpV0P0RL0+convV3P3RL3/cifar/balance-38/k=3-fold-cifar-multi-class-subsampled-7-Jun-2017-13-35-35-single-cnn/cnn-7-Jun-2017-13-35-36-cifar-multi-class-subsampled-convV3P3RL3-RF32CH3+fcV1-RF4CH64-batch-size-50-weight-decay-0.0100-GPU-3-bpd-13/net-epoch-100.mat';
   end
@@ -172,21 +172,21 @@ function calculateDistances()
   experiments{end}.title = 'Trained V1P0 w ReLU - trained on 38';
   afprintf(sprintf('[INFO] done!\n'));
 
-  % afprintf(sprintf('[INFO] Loading projected imdb...\n'));
-  % tmp = load(path_convV3P0RL0);
-  % projection_net = tmp.net;
-  % projected_imdb = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, 3);
-  % experiments{end+1}.imdb = projected_imdb;
-  % experiments{end}.title = 'Trained V3P0 w/o ReLU - trained on 38';
-  % afprintf(sprintf('[INFO] done!\n'));
+  afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  tmp = load(path_convV3P0RL0);
+  projection_net = tmp.net;
+  projected_imdb = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, 3);
+  experiments{end+1}.imdb = projected_imdb;
+  experiments{end}.title = 'Trained V3P0 w/o ReLU - trained on 38';
+  afprintf(sprintf('[INFO] done!\n'));
 
-  % afprintf(sprintf('[INFO] Loading projected imdb...\n'));
-  % tmp = load(path_convV3P0RL3);
-  % projection_net = tmp.net;
-  % projected_imdb = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, 6);
-  % experiments{end+1}.imdb = projected_imdb;
-  % experiments{end}.title = 'Trained V3P0 w/ ReLU - trained on 38';
-  % afprintf(sprintf('[INFO] done!\n'));
+  afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  tmp = load(path_convV3P0RL3);
+  projection_net = tmp.net;
+  projected_imdb = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, 6);
+  experiments{end+1}.imdb = projected_imdb;
+  experiments{end}.title = 'Trained V3P0 w/ ReLU - trained on 38';
+  afprintf(sprintf('[INFO] done!\n'));
 
   afprintf(sprintf('[INFO] Loading projected imdb...\n'));
   tmp = load(path_convV3P3RL0);
@@ -205,7 +205,7 @@ function calculateDistances()
   afprintf(sprintf('[INFO] done!\n'));
 
 
-  if false
+  if true
     % -------------------------------------------------------------------------
     %                                                                   Run KMD
     % -------------------------------------------------------------------------
