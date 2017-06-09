@@ -43,7 +43,8 @@ function tempScriptRunTsne()
   perplexity = 30;
   for i = 1 : numel(experiments)
     imdb = experiments{i}.imdb;
-    vectorized_data = reshape(imdb.images.data, opts.train.number_of_features, [])';
+    number_of_features = size(imdb.images.data, 1) * size(imdb.images.data, 2) * size(imdb.images.data, 3);
+    vectorized_data = reshape(imdb.images.data, number_of_features, [])';
     labels = imdb.images.labels;
     is_train = imdb.images.set == 1;
     is_test = imdb.images.set == 3;
