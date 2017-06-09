@@ -31,16 +31,16 @@ function tempScriptRunTsne()
   % dataset = 'cifar';
   % posneg_balance = 'whatever';
   dataset = 'cifar-multi-class-subsampled';
-  posneg_balance = 'balanced-38';
+  posneg_balance = 'balanced-1880';
   % dataset = 'cifar-two-class-deer-truck';
-  % posneg_balance = 'balanced-38';
+  % posneg_balance = 'balanced-266';
 
   [~, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 0);
 
   % Set parameters
   no_dims = 2;
   initial_dims = 50;
-  perplexity = 30;
+  % perplexity = 30;
   for i = 1 : numel(experiments)
     imdb = experiments{i}.imdb;
     number_of_features = size(imdb.images.data, 1) * size(imdb.images.data, 2) * size(imdb.images.data, 3);
@@ -56,11 +56,21 @@ function tempScriptRunTsne()
     labels_train = labels(is_train);
     labels_test = labels(is_test);
 
-    % Run t−SNE
-    mappedX = tsne(vectorized_data_train, [], no_dims, initial_dims, perplexity);
-    % Plot results
     figure,
-    title(experiments{i}.title),
-    gscatter(mappedX(:,1), mappedX(:,2), labels_train);
+    j =  1;
+    for perplexity = [2, 5, 30, 50, 100]
+      subplot(1, 5, j);
+      hold on
+      title(sprintf('perplexity: %d', perplexity));
+      % Run t−SNE
+      mappedX = tsne(vectorized_data_train, [], no_dims, initial_dims, perplexity);
+      % Plot results
+      % figure,
+      % title(experiments{i}.title),
+      gscatter(mappedX(:,1), mappedX(:,2), labels_train);
+      hold off
+      j = j + 1;
+    end
+    suptitle(experiments{i}.title);
   end
 
