@@ -52,11 +52,11 @@ function [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(data
   % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 
-  afprintf(sprintf('[INFO] Loading projected imdb...\n'));
-  projected_imdb = fh_projection_utils.getDenslyProjectedImdb(original_imdb);
-  experiments{end+1}.imdb = projected_imdb;
-  experiments{end}.title = 'Dense Random Projection Matrix';
-  afprintf(sprintf('[INFO] done!\n'));
+  % afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  % projected_imdb = fh_projection_utils.getDenslyProjectedImdb(original_imdb);
+  % experiments{end+1}.imdb = projected_imdb;
+  % experiments{end}.title = 'Dense Random Projection Matrix';
+  % afprintf(sprintf('[INFO] done!\n'));
 
 
   % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
@@ -207,12 +207,12 @@ function [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(data
   % experiments{end}.title = 'Trained larpV0P0RL0+convV3P3RL0 - trained on 38';
   % afprintf(sprintf('[INFO] done!\n'));
 
-  % afprintf(sprintf('[INFO] Loading projected imdb...\n'));
-  % projection_net = loadTrainedNet('larpV0P0RL0+convV3P3RL3', 'cifar', 'balanced-38');
-  % projected_imdb = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, 9);
-  % experiments{end+1}.imdb = projected_imdb;
-  % experiments{end}.title = 'Trained larpV0P0RL0+convV3P3RL3 (LeNet) - trained on 38';
-  % afprintf(sprintf('[INFO] done!\n'));
+  afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  projection_net = loadTrainedNet('larpV0P0RL0+convV3P3RL3', 'cifar', 'balanced-38');
+  projected_imdb = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, 9);
+  experiments{end+1}.imdb = projected_imdb;
+  experiments{end}.title = 'Trained larpV0P0RL0+convV3P3RL3 (LeNet) - trained on 38';
+  afprintf(sprintf('[INFO] done!\n'));
 
 
   % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
