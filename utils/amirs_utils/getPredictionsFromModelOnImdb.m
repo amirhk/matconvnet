@@ -43,6 +43,8 @@ function [top_predictions, all_predictions] = getPredictionsFromModelOnImdb(mode
       [top_predictions, all_predictions] = getPredictionsFromConvNetOnImdb(model, imdb);
     case 'mlp'
       [top_predictions, all_predictions] = getPredictionsFromMlpOnImdb(model, imdb);
+    case 'nearest_neighbor'
+      [top_predictions, all_predictions] = getPredictionsFromNearestNeighborOnImdb(model, imdb);
     case 'committee-cnn'
       [top_predictions, all_predictions] = getPredictionsFromCommitteeOnImdb(model, imdb, 'cnn');
     case 'committee-svm'
@@ -96,6 +98,12 @@ function [top_predictions, all_predictions] = getPredictionsFromMlpOnImdb(net, i
   top_predictions = net(net, vectorized_data);
   all_predictions = getAllPredictionsFromTopPredictions(top_predictions, imdb);
 
+% -------------------------------------------------------------------------
+function [top_predictions, all_predictions] = getPredictionsFromNearestNeighborOnImdb(nearest_neighbor_model, imdb)
+% -------------------------------------------------------------------------
+  vectorized_data = getVectorizedDataFromImdb(imdb);
+  top_predictions = predict(nearest_neighbor_model, vectorized_data);
+  all_predictions = getAllPredictionsFromTopPredictions(top_predictions, imdb);
 
 % -------------------------------------------------------------------------
 function [top_predictions, all_predictions] = getPredictionsFromConvNetOnImdb(net, imdb)
