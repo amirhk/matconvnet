@@ -25,10 +25,12 @@ function trained_net = loadTrainedNet(entire_architecture, dataset, posneg_balan
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
 
-  % entire_architecture = 'larpV3P3RL3+convV0P0RL0';
-  % dataset = 'cifar';
-  % posneg_balance = 'balanced-38';
-  folder_path = fullfile('/Volumes/Amir/some trained networks', entire_architecture, dataset, posneg_balance);
+  if ispc
+    datapath = 'H:\Amir\';
+  else
+    datapath = '/Volumes/Amir/';
+  end
+  folder_path = fullfile(datapath, 'some trained networks', entire_architecture, dataset, posneg_balance);
   trained_nets = dir(fullfile(folder_path, 'net-epoch-*.mat'));
   assert(numel(trained_nets) == 1);
   tmp = load(fullfile(folder_path, trained_nets(1).name));
