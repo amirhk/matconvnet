@@ -57,10 +57,10 @@ function tempScriptRunTsne()
     labels_test = labels(is_test);
 
     % Run t−SNE
-    mappedX = tsne(train_X, [], no_dims, initial_dims, perplexity);
+    mappedX = tsne(vectorized_data_train, [], no_dims, initial_dims, perplexity);
     % Plot results
     figure,
     title(experiments{i}.title),
-    gscatter(mappedX(:,1), mappedX(:,2), train_labels);
+    gscatter(mappedX(:,1), mappedX(:,2), labels_train);
   end
 
