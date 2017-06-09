@@ -34,7 +34,7 @@ function runTempTests()
   % -------------------------------------------------------------------------
   %                                                                opts.train
   % -------------------------------------------------------------------------
-  opts.train.gpus = 2;
+  opts.train.gpus = 3;
 
 
   % -------------------------------------------------------------------------
@@ -212,14 +212,14 @@ function runTempTests()
   % dataset_name = 'cifar';  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, larp_network_arch, non_larp_network_arch, larp_weight_init_type, opts.train.gpus);
 
 
-  larp_network_arch = 'larpV0P0RL0';
-  non_larp_network_arch = 'convV3P0RL0+fcV1';
-  dataset_name = 'cifar';  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, larp_network_arch, non_larp_network_arch, larp_weight_init_type, opts.train.gpus);
+  % larp_network_arch = 'larpV0P0RL0';
+  % non_larp_network_arch = 'convV3P0RL0+fcV1';
+  % dataset_name = 'cifar';  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, larp_network_arch, non_larp_network_arch, larp_weight_init_type, opts.train.gpus);
 
 
-  larp_network_arch = 'larpV0P0RL0';
-  non_larp_network_arch = 'convV3P0RL3+fcV1';
-  dataset_name = 'cifar';  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, larp_network_arch, non_larp_network_arch, larp_weight_init_type, opts.train.gpus);
+  % larp_network_arch = 'larpV0P0RL0';
+  % non_larp_network_arch = 'convV3P0RL3+fcV1';
+  % dataset_name = 'cifar';  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, larp_network_arch, non_larp_network_arch, larp_weight_init_type, opts.train.gpus);
 
 
   % larp_network_arch = 'larpV0P0RL0';
@@ -227,9 +227,9 @@ function runTempTests()
   % dataset_name = 'cifar';  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, larp_network_arch, non_larp_network_arch, larp_weight_init_type, opts.train.gpus);
 
 
-  % larp_network_arch = 'larpV0P0RL0';
-  % non_larp_network_arch = 'convV3P3RL3+fcV1';
-  % dataset_name = 'cifar';  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, larp_network_arch, non_larp_network_arch, larp_weight_init_type, opts.train.gpus);
+  larp_network_arch = 'larpV0P0RL0';
+  non_larp_network_arch = 'convV3P3RL3+fcV1';
+  dataset_name = 'cifar';  runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, larp_network_arch, non_larp_network_arch, larp_weight_init_type, opts.train.gpus);
 
 
 
