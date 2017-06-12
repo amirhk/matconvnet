@@ -28,10 +28,10 @@ function tempScriptRunKNN()
   % -------------------------------------------------------------------------
   %                                                                 Get IMDBs
   % -------------------------------------------------------------------------
-  % dataset = 'cifar';
-  % posneg_balance = 'whatever';
-  dataset = 'cifar-multi-class-subsampled';
-  posneg_balance = 'balanced-38';
+  dataset = 'cifar';
+  posneg_balance = 'whatever';
+  % dataset = 'cifar-multi-class-subsampled';
+  % posneg_balance = 'balanced-38';
   % dataset = 'cifar-two-class-deer-truck';
   % posneg_balance = 'balanced-38';
 
