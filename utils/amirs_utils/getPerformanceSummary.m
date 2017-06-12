@@ -36,8 +36,7 @@ function [accuracy, sensitivity, specificity] = getPerformanceSummary(model_obje
   else
     set_number = 3;
   end
-  
-  keyboard
+
   if should_return_summary
     afprintf(sprintf('[INFO] Getting model performance on `%s` set...\n', set));
     [top_predictions, ~] = getPredictionsFromModelOnImdb(model_object, model_string, imdb, set_number);

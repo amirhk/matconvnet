@@ -30,10 +30,10 @@ function tempScriptRunTsne()
   % -------------------------------------------------------------------------
   % dataset = 'cifar';
   % posneg_balance = 'whatever';
-  dataset = 'cifar-multi-class-subsampled';
-  posneg_balance = 'balanced-1880';
-  % dataset = 'cifar-two-class-deer-truck';
-  % posneg_balance = 'balanced-266';
+  % dataset = 'cifar-multi-class-subsampled';
+  % posneg_balance = 'balanced-38';
+  dataset = 'cifar-two-class-deer-truck';
+  posneg_balance = 'balanced-5000';
 
   [~, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 0);
 
