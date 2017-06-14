@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function tempScriptRunKNN()
+function tempScriptRunMmd()
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -35,19 +35,28 @@ function tempScriptRunKNN()
   % dataset = 'cifar-two-class-deer-truck';
   % posneg_balance = 'balanced-38';
 
-  [~, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 0);
+  [~, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 1);
 
   for i = 1 : numel(experiments)
-    input_opts = {};
-    input_opts.dataset = dataset;
-    input_opts.imdb = experiments{i}.imdb;
-    [~, experiments{i}.performance_summary] = testKnn(input_opts);
+    [experiments{i}.H, experiments{i}.info] = runKmdOnImdb(experiments{i}.imdb);
   end
 
   for i = 1 : numel(experiments)
     afprintf(sprintf( ...
-      '[INFO] 1-KNN Results for `%s`: \t\t train acc = %.4f, test acc = %.4f \n\n', ...
+      '[INFO] MMD Results for `%s`: \t\t val = %.6f, bound = %.6f\n\n', ...
       experiments{i}.title, ...
-      experiments{i}.performance_summary.testing.train.accuracy, ...
-      experiments{i}.performance_summary.testing.test.accuracy));
+      experiments{i}.info.mmd.val, ...
+      experiments{i}.info.mmd.bound));
   end
+
+% -------------------------------------------------------------------------
+function [H, info] = runKmdOnImdb(imdb)
+% -------------------------------------------------------------------------
+  data_train = imdb.images.data(:,:,:,imdb.images.set == 1);
+  labels_train = imdb.images.labels(imdb.images.set == 1);
+  sample_size = size(data_train, 1) * size(data_train, 2) * size(data_train, 3);
+  samples = reshape(data_train, sample_size, [])';
+
+  X = samples;
+  labels = (-1).^labels_train';
+  [H,info] = kmd(X,labels);

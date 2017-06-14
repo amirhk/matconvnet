@@ -29,99 +29,80 @@ function calculateDistances()
   % -------------------------------------------------------------------------
   %                                                                 Get IMDBs
   % -------------------------------------------------------------------------
-  dataset = 'cifar';
-  posneg_balance = 'whatever';
-  % dataset = 'cifar-multi-class-subsampled';
-  % posneg_balance = 'balanced-38';
+  % dataset = 'cifar';
+  % posneg_balance = 'whatever';
+  dataset = 'cifar-multi-class-subsampled';
+  posneg_balance = 'balanced-38';
   % dataset = 'cifar-two-class-deer-truck';
   % posneg_balance = 'balanced-38';
 
   [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 1);
 
-  if true
-    % -------------------------------------------------------------------------
-    %                                                                   Run KMD
-    % -------------------------------------------------------------------------
-    for i = 1 : numel(experiments)
-      [experiments{i}.H, experiments{i}.info] = runKmdOnImdb(experiments{i}.imdb);
-    end
+  % -------------------------------------------------------------------------
+  %                                                                Get ratios
+  % -------------------------------------------------------------------------
+  % point_type = 'border';
+  point_type = 'random';
+  % distance_type = 'euclidean';
+  distance_type = 'cosine';
 
-    for i = 1 : numel(experiments)
-      afprintf(sprintf( ...
-        '[INFO] MMD Results for `%s`: \t\t val = %.6f, bound = %.6f\n\n', ...
-        experiments{i}.title, ...
-        experiments{i}.info.mmd.val, ...
-        experiments{i}.info.mmd.bound));
-    end
-  else
-    % -------------------------------------------------------------------------
-    %                                                                Get ratios
-    % -------------------------------------------------------------------------
-    point_type = 'border';
-    % point_type = 'random';
-    distance_type = 'euclidean';
-    % distance_type = 'cosine';
-
-    for i = 1 : numel(experiments)
-      projected_imdb = experiments{i}.imdb;
-      [between_class_point_ratios, within_class_point_ratios] = getPointDistanceRatios(original_imdb, projected_imdb, point_type, distance_type);
-      experiments{i}.between_class_point_ratios = between_class_point_ratios;
-      experiments{i}.within_class_point_ratios = within_class_point_ratios;
-    end
-
-    % -------------------------------------------------------------------------
-    %                                                                      Plot
-    % -------------------------------------------------------------------------
-    figure
-    color_palette = {'c', 'r', 'g', 'b', 'k'};
-    legend_entries = {};
-    for i = 1 : numel(experiments)
-      legend_entries{i} = experiments{i}.title;
-    end
-
-    subplot(1,2,1)
-    title('Between-class Euclidean Distances')
-    hold on
-    for i = 1 : numel(experiments)
-      histogram( ...
-        experiments{i}.between_class_point_ratios, ...
-        0:0.05:2.5, ...
-        'facecolor', ...
-        color_palette{mod(i - 1,numel(color_palette)) + 1}, ...
-        'facealpha', ...
-        0.4, ...
-        'edgecolor', ...
-        'none');
-    end
-    hold off
-    legend(legend_entries);
-
-
-    subplot(1,2,2)
-    title('Within-class Euclidean Distances')
-    hold on
-    for i = 1 : numel(experiments)
-      histogram( ...
-        experiments{i}.within_class_point_ratios, ...
-        0:0.05:2.5, ...
-        'facecolor', ...
-        color_palette{mod(i - 1,numel(color_palette)) + 1}, ...
-        'facealpha', ...
-        0.4, ...
-        'edgecolor', ...
-        'none');
-    end
-    hold off
-    legend(legend_entries);
-
-    suptitle(sprintf('%s points', point_type));
-
-    % keyboard
-
-    % jigar tala
-
+  for i = 1 : numel(experiments)
+    projected_imdb = experiments{i}.imdb;
+    [between_class_point_ratios, within_class_point_ratios] = getPointDistanceRatios(original_imdb, projected_imdb, point_type, distance_type);
+    experiments{i}.between_class_point_ratios = between_class_point_ratios;
+    experiments{i}.within_class_point_ratios = within_class_point_ratios;
   end
 
+  % -------------------------------------------------------------------------
+  %                                                                      Plot
+  % -------------------------------------------------------------------------
+  figure
+  color_palette = {'c', 'r', 'g', 'b', 'k'};
+  legend_entries = {};
+  for i = 1 : numel(experiments)
+    legend_entries{i} = experiments{i}.title;
+  end
+
+  subplot(1,2,1)
+  title('Between-class Euclidean Distances')
+  hold on
+  for i = 1 : numel(experiments)
+    histogram( ...
+      experiments{i}.between_class_point_ratios, ...
+      0:0.05:2.5, ...
+      'facecolor', ...
+      color_palette{mod(i - 1,numel(color_palette)) + 1}, ...
+      'facealpha', ...
+      0.4, ...
+      'edgecolor', ...
+      'none');
+  end
+  hold off
+  legend(legend_entries);
+
+
+  subplot(1,2,2)
+  title('Within-class Euclidean Distances')
+  hold on
+  for i = 1 : numel(experiments)
+    histogram( ...
+      experiments{i}.within_class_point_ratios, ...
+      0:0.05:2.5, ...
+      'facecolor', ...
+      color_palette{mod(i - 1,numel(color_palette)) + 1}, ...
+      'facealpha', ...
+      0.4, ...
+      'edgecolor', ...
+      'none');
+  end
+  hold off
+  legend(legend_entries);
+
+  suptitle(sprintf('%s points', point_type));
+
+  % keyboard
+
+  % jigar tala
 
 
 
@@ -370,30 +351,6 @@ function random_point_index = findRandomWithinClassPointToPoint(point_row, point
       break
     end
   end
-
-
-% -------------------------------------------------------------------------
-function [H, info] = runKmdOnImdb(imdb)
-% -------------------------------------------------------------------------
-  data_train = imdb.images.data(:,:,:,imdb.images.set == 1);
-  labels_train = imdb.images.labels(imdb.images.set == 1);
-  sample_size = size(data_train, 1) * size(data_train, 2) * size(data_train, 3);
-  samples = reshape(data_train, sample_size, [])';
-
-  X = samples;
-  labels = (-1).^labels_train';
-  [H,info] = kmd(X,labels);
-
-
-% -------------------------------------------------------------------------
-function projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, projection_depth)
-% -------------------------------------------------------------------------
-  fh_projection_utils = projectionUtils;
-  larp_weight_init_sequence = getLarpWeightInitSequence(larp_weight_init_type, larp_network_arch);
-  projection_net = fh_projection_utils.getProjectionNetworkObject(dataset, larp_network_arch, larp_weight_init_sequence);
-  projected_imdb = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, projection_depth);
-
-
 
 
 
