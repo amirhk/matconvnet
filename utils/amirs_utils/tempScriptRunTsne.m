@@ -35,7 +35,7 @@ function tempScriptRunTsne()
   % dataset = 'cifar-two-class-deer-truck';
   % posneg_balance = 'balanced-266';
 
-  [~, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 0);
+  [~, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 1);
 
   % Set parameters
   no_dims = 2;
