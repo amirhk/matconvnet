@@ -41,11 +41,12 @@ function tempScriptRunMmd()
     unique_labels = unique(experiments{i}.imdb.images.labels);
     number_of_unique_labels = numel(unique_labels);
     for j = 1:number_of_unique_labels
-      for k = j:number_of_unique_labels
+      for k = j+1:number_of_unique_labels
         class_label_1 = unique_labels(j);
         class_label_2 = unique_labels(k);
         disp(class_label_1);
         disp(class_label_2);
+        disp('-- -- -- --');
         % tic
         % [experiments{i}.H, experiments{i}.info] = runKmdOnImdb(experiments{i}.imdb, class_label_1, class_label_2);
         % toc
