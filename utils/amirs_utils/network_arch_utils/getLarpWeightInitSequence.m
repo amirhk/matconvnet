@@ -64,8 +64,6 @@ function weight_init_sequence = getLarpWeightInitSequence(larp_weight_init_type,
       weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, larp_weight_init_type};
     case 'larpV5P0RL5'
       weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, larp_weight_init_type};
-    case 'larpV5P0RL5-test'
-      weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, larp_weight_init_type};
     case 'larpV5P3RL0'
       weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, larp_weight_init_type};
     case 'larpV5P3RL5'
@@ -74,4 +72,6 @@ function weight_init_sequence = getLarpWeightInitSequence(larp_weight_init_type,
       weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, larp_weight_init_type};
     case 'larpV5P5RL5'
       weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, larp_weight_init_type};
+    case 'larpV8P0RL8'
+      weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, larp_weight_init_type};
   end
