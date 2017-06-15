@@ -117,29 +117,29 @@ function [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(data
   % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 
-  % afprintf(sprintf('[INFO] Loading projected imdb...\n'));
-  % larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
-  % larp_network_arch = 'larpV5P0RL5-test';
-  % projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, 2);
-  % experiments{end+1}.imdb = projected_imdb;
-  % experiments{end}.title = sprintf('%s-depth-%d', larp_network_arch, 2);
-  % afprintf(sprintf('[INFO] done!\n'));
+  afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
+  larp_network_arch = 'larpV5P0RL5-test';
+  projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, 2);
+  experiments{end+1}.imdb = projected_imdb;
+  experiments{end}.title = sprintf('%s-depth-%d', larp_network_arch, 2);
+  afprintf(sprintf('[INFO] done!\n'));
 
-  % afprintf(sprintf('[INFO] Loading projected imdb...\n'));
-  % larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
-  % larp_network_arch = 'larpV5P0RL5-test';
-  % projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, 4);
-  % experiments{end+1}.imdb = projected_imdb;
-  % experiments{end}.title = sprintf('%s-depth-%d', larp_network_arch, 4);
-  % afprintf(sprintf('[INFO] done!\n'));
+  afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
+  larp_network_arch = 'larpV5P0RL5-test';
+  projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, 4);
+  experiments{end+1}.imdb = projected_imdb;
+  experiments{end}.title = sprintf('%s-depth-%d', larp_network_arch, 4);
+  afprintf(sprintf('[INFO] done!\n'));
 
-  % afprintf(sprintf('[INFO] Loading projected imdb...\n'));
-  % larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
-  % larp_network_arch = 'larpV5P0RL5-test';
-  % projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, 6);
-  % experiments{end+1}.imdb = projected_imdb;
-  % experiments{end}.title = sprintf('%s-depth-%d', larp_network_arch, 6);
-  % afprintf(sprintf('[INFO] done!\n'));
+  afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
+  larp_network_arch = 'larpV5P0RL5-test';
+  projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, 6);
+  experiments{end+1}.imdb = projected_imdb;
+  experiments{end}.title = sprintf('%s-depth-%d', larp_network_arch, 6);
+  afprintf(sprintf('[INFO] done!\n'));
 
   afprintf(sprintf('[INFO] Loading projected imdb...\n'));
   larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
