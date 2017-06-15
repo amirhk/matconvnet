@@ -39,10 +39,10 @@ function calculateDistances()
   [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 1);
 
   if true
-    point_type = 'border';
-    % point_type = 'random';
-    % distance_type = 'euclidean';
-    distance_type = 'cosine';
+    % point_type = 'border';
+    point_type = 'random';
+    distance_type = 'euclidean';
+    % distance_type = 'cosine';
     for i = 1 : numel(experiments)
       projected_imdb = experiments{i}.imdb;
       between_class_distance_absolute_values = getPointDistanceAbsoluteValues(experiments{i}.imdb, point_type, distance_type, 'between');
