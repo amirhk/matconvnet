@@ -31,7 +31,7 @@ function tempScriptRunKNN()
   % dataset = 'cifar';
   % posneg_balance = 'whatever';
   dataset = 'cifar-multi-class-subsampled';
-  posneg_balance = 'balanced-707';
+  posneg_balance = 'balanced-266';
   % dataset = 'cifar-two-class-deer-truck';
   % posneg_balance = 'balanced-38';
 
