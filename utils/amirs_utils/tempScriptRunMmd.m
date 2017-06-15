@@ -30,15 +30,27 @@ function tempScriptRunMmd()
   % -------------------------------------------------------------------------
   % dataset = 'cifar';
   % posneg_balance = 'whatever';
-  dataset = 'cifar-multi-class-subsampled';
-  posneg_balance = 'balanced-707';
-  % dataset = 'cifar-two-class-deer-truck';
-  % posneg_balance = 'balanced-38';
+  % dataset = 'cifar-multi-class-subsampled';
+  % posneg_balance = 'balanced-707';
+  dataset = 'cifar-two-class-deer-truck';
+  posneg_balance = 'balanced-38';
 
   [~, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 1);
 
   for i = 1 : numel(experiments)
-    [experiments{i}.H, experiments{i}.info] = runKmdOnImdb(experiments{i}.imdb);
+    unique_labels = unique(experiments{i}.imdb.images.labels);
+    number_of_unique_labels = numel(unique_labels);
+    for j = 1:number_of_unique_labels
+      for k = j:number_of_unique_labels
+        class_label_1 = unique_labels(j);
+        class_label_2 = unique_labels(k);
+        disp(class_label_1);
+        disp(class_label_2);
+        % tic
+        % [experiments{i}.H, experiments{i}.info] = runKmdOnImdb(experiments{i}.imdb, class_label_1, class_label_2);
+        % toc
+      end
+    end
   end
 
   for i = 1 : numel(experiments)
@@ -50,7 +62,7 @@ function tempScriptRunMmd()
   end
 
 % -------------------------------------------------------------------------
-function [H, info] = runKmdOnImdb(imdb)
+function [H, info] = runKmdOnImdb(imdb, class_label_1, class_label_2)
 % -------------------------------------------------------------------------
   data_train = imdb.images.data(:,:,:,imdb.images.set == 1);
   labels_train = imdb.images.labels(imdb.images.set == 1);
