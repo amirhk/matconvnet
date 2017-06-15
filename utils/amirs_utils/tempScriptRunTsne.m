@@ -60,7 +60,7 @@ function tempScriptRunTsne()
     j =  1;
     % for perplexity = [2, 5, 30, 50, 100]
     for perplexity = [30]
-      subplot(1, 5, j);
+      subplot(1, numel(perplexity), j);
       hold on
       title(sprintf('perplexity: %d', perplexity));
       % Run t−SNE
