@@ -39,8 +39,8 @@ function calculateDistances()
   [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 1);
 
   if true
-    point_type = 'border';
-    % point_type = 'random';
+    % point_type = 'border';
+    point_type = 'random';
     % distance_type = 'euclidean';
     distance_type = 'cosine';
     for i = 1 : numel(experiments)
