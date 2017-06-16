@@ -180,7 +180,7 @@ function imdb = getAngleSeparatedImdb(imdb)
   M_S = getCovarianceMeasureForSet(imdb, S);
   M_D = getCovarianceMeasureForSet(imdb, D);
   printConsoleOutputSeparator();
-  keyboard
+  % keyboard
   % Computing right eigen vectors.
   % [V, D] = eig(inv(M_D) * M_S);
   % [V, D] = eig(pinv(M_D) * M_S);
