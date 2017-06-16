@@ -112,11 +112,7 @@ function imdb = getDenslyProjectedImdb(imdb)
   % should be same size as input(so we need N random projections, where N
   % is dimension of vectorized image)
   random_projection_matrix = randn(s1 * s2 * s3, s1 * s2 * s3) * 1/100;
-  % random_projection_matrix = eye(s1 * s2 * s3);
-  all_data_original_vectorized = reshape(imdb.images.data, s1 * s2 * s3, []); % [] = s4
-  all_data_projected_vectorized = random_projection_matrix * all_data_original_vectorized; % 3072x3072 * 3072xnumber_of_images
-  all_data_projected_matricized = reshape(all_data_projected_vectorized, s1, s2, s3, s4);
-  imdb.images.data = all_data_projected_matricized;
+  imdb = projectImdbUsingMatrix(imdb, random_projection_matrix);
   % for j = 1 : s4
   %   tmp = imdb.images.data(:,:,:,j);
   %   vectorized = reshape(tmp, s1 * s2 * s3, 1);
@@ -140,7 +136,13 @@ function [images, labels] = getSimpleNNBatch(imdb, batch)
   if rand > 0.5, images=fliplr(images); end
 
 
-
+% -------------------------------------------------------------------------
+function imdb = projectImdbUsingMatrix(imdb, input_matrix)
+% -------------------------------------------------------------------------
+  all_data_original_vectorized = reshape(imdb.images.data, s1 * s2 * s3, []); % [] = s4
+  all_data_projected_vectorized = input_matrix * all_data_original_vectorized; % 3072x3072 * 3072xnumber_of_images
+  all_data_projected_matricized = reshape(all_data_projected_vectorized, s1, s2, s3, s4);
+  imdb.images.data = all_data_projected_matricized;
 
 
 
@@ -169,19 +171,17 @@ function [images, labels] = getSimpleNNBatch(imdb, batch)
 % -------------------------------------------------------------------------
 function imdb = getAngleSeparatedImdb(imdb)
 % -------------------------------------------------------------------------
-  [S, D] = getSimilarityAndDissimilarityEnumerations(imdb);
+  [S, D] = getSimilarityAndDissimilarityEnumerationSets(imdb);
   printConsoleOutputSeparator();
   M_S = getCovarianceMeasureForSet(imdb, S);
   M_D = getCovarianceMeasureForSet(imdb, D);
   printConsoleOutputSeparator();
+  keyboard
   % [V, D, W] = eig(inv(M_D) * M_S);
   [V, D, W] = eig(pinv(M_D) * M_S);
   keyboard
-  all_data_original_vectorized = reshape(imdb.images.data, s1 * s2 * s3, []); % [] = s4
-  all_data_projected_vectorized = random_projection_matrix * all_data_original_vectorized; % 3072x3072 * 3072xnumber_of_images
-  all_data_projected_matricized = reshape(all_data_projected_vectorized, s1, s2, s3, s4);
-  imdb.images.data = all_data_projected_matricized;
-
+  angle_separation_matrix = V;
+  imdb = projectImdbUsingMatrix(imdb, angle_separation_matrix);
 
 % -------------------------------------------------------------------------
 function M = getCovarianceMeasureForSet(imdb, input_set)
@@ -208,7 +208,7 @@ function matrix = getCovarianceThingyBetweenVectors(a, b)
 
 
 % -------------------------------------------------------------------------
-function [S, D] = getSimilarityAndDissimilarityEnumerations(imdb)
+function [S, D] = getSimilarityAndDissimilarityEnumerationSets(imdb)
 % -------------------------------------------------------------------------
   unique_labels = unique(imdb.images.labels);
   number_of_classes = numel(unique_labels);
