@@ -30,27 +30,27 @@ function tempScriptRunMmd()
   % -------------------------------------------------------------------------
   % dataset = 'cifar';
   % posneg_balance = 'whatever';
-  dataset = 'cifar-multi-class-subsampled';
+  % dataset = 'cifar-multi-class-subsampled';
+  % posneg_balance = 'balanced-266';
+  dataset = 'cifar-two-class-deer-truck';
   posneg_balance = 'balanced-266';
-  % dataset = 'cifar-two-class-deer-truck';
-  % posneg_balance = 'balanced-38';
 
   [~, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 1);
 
   for i = 1 : numel(experiments)
     unique_labels = unique(experiments{i}.imdb.images.labels);
-    number_of_unique_labels = numel(unique_labels);
+    number_of_classes = numel(unique_labels);
     counter = 1;
     vals = [];
     bounds = [];
-    for j = 1:number_of_unique_labels
-      for k = j+1:number_of_unique_labels
+    for j = 1:number_of_classes
+      for k = j+1:number_of_classes
         class_label_1 = unique_labels(j);
         class_label_2 = unique_labels(k);
         afprintf(sprintf( ...
           '[INFO] Running MMD on pair %d / %d (class 1: %d, class 2: %d) \t ', ...
           counter, ...
-          number_of_unique_labels * (number_of_unique_labels - 1) / 2, ...
+          number_of_classes * (number_of_classes - 1) / 2, ...
           class_label_1, ...
           class_label_2));
         % [experiments{i}.H, experiments{i}.info] = runKmdOnImdb(experiments{i}.imdb, class_label_1, class_label_2);

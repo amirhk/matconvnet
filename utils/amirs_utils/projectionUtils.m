@@ -25,6 +25,7 @@ function fh = projectionUtils()
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
 
+  fh.getAngleSeparatedImdb = @getAngleSeparatedImdb;
   fh.getDenslyProjectedImdb = @getDenslyProjectedImdb;
   fh.projectImdbThroughNetwork = @projectImdbThroughNetwork;
   fh.getProjectionNetworkObject = @getProjectionNetworkObject;
@@ -126,7 +127,6 @@ function imdb = getDenslyProjectedImdb(imdb)
   % end
   % imdb.images.data = projected_data;
 
-
 % -------------------------------------------------------------------------
 function fn = getBatch()
 % -------------------------------------------------------------------------
@@ -138,6 +138,128 @@ function [images, labels] = getSimpleNNBatch(imdb, batch)
   images = imdb.images.data(:,:,:,batch);
   labels = imdb.images.labels(1,batch);
   if rand > 0.5, images=fliplr(images); end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+% -------------------------------------------------------------------------
+function imdb = getAngleSeparatedImdb(imdb)
+% -------------------------------------------------------------------------
+  [S, D] = getSimilarityAndDissimilarityEnumerations(imdb);
+  printConsoleOutputSeparator();
+  M_S = getCovarianceMeasureForSet(imdb, S);
+  M_D = getCovarianceMeasureForSet(imdb, D);
+  printConsoleOutputSeparator();
+  % [V, D, W] = eig(inv(M_D) * M_S);
+  [V, D, W] = eig(pinv(M_D) * M_S);
+  keyboard
+  all_data_original_vectorized = reshape(imdb.images.data, s1 * s2 * s3, []); % [] = s4
+  all_data_projected_vectorized = random_projection_matrix * all_data_original_vectorized; % 3072x3072 * 3072xnumber_of_images
+  all_data_projected_matricized = reshape(all_data_projected_vectorized, s1, s2, s3, s4);
+  imdb.images.data = all_data_projected_matricized;
+
+
+% -------------------------------------------------------------------------
+function M = getCovarianceMeasureForSet(imdb, input_set)
+% -------------------------------------------------------------------------
+  M = 0;
+  afprintf(sprintf('[INFO] processing sample pairs # '));
+  for k = 1:length(input_set)
+    for j = 0:log10(k - 1) + (3 + numel(num2str(length(input_set))))
+      fprintf('\b'); % delete previous counter display
+    end
+    fprintf('%d / %d', k, length(input_set));
+    pair_of_samples_indices = input_set(k);
+    sample_i = getVectorizedSampleAtIndex(imdb, pair_of_samples_indices{1}(1));
+    sample_j = getVectorizedSampleAtIndex(imdb, pair_of_samples_indices{1}(2));
+    M = M + getCovarianceThingyBetweenVectors(sample_i', sample_j');
+  end
+  afprintf(sprintf('\n'));
+  M = (1 / length(input_set)) * M;
+
+% -------------------------------------------------------------------------
+function matrix = getCovarianceThingyBetweenVectors(a, b)
+% -------------------------------------------------------------------------
+  matrix = (a - b) * (a - b)';
+
+
+% -------------------------------------------------------------------------
+function [S, D] = getSimilarityAndDissimilarityEnumerations(imdb)
+% -------------------------------------------------------------------------
+  unique_labels = unique(imdb.images.labels);
+  number_of_classes = numel(unique_labels);
+
+  S = {};
+  D = {};
+  for i = 1:number_of_classes
+    afprintf(sprintf('Populating `S` and `D` sets for class #%d\n', i));
+    S = cat(2, S, getEnumerationsOfSampleIndicesFromClasses(imdb, i, i));
+    for j = i+1:number_of_classes
+      D = cat(2, D, getEnumerationsOfSampleIndicesFromClasses(imdb, i, j));
+    end
+  end
+
+
+% -------------------------------------------------------------------------
+function enumerations = getEnumerationsOfSampleIndicesFromClasses(imdb, class_1_label, class_2_label)
+% -------------------------------------------------------------------------
+  class_1_indices = find(imdb.images.labels == class_1_label);
+  class_2_indices = find(imdb.images.labels == class_2_label);
+  if class_1_label == class_2_label
+    assert(isequal(class_1_indices, class_2_indices));
+    enumerations = getEnumerationsOfTwoSimilarVectors(class_1_indices, class_2_indices);
+  else
+    assert(sum(ismember(class_1_indices, class_2_indices)) == 0);
+    enumerations = getEnumerationsOfTwoDissimilarVectors(class_1_indices, class_2_indices);
+  end
+
+
+% -------------------------------------------------------------------------
+function enumerations = getEnumerationsOfTwoSimilarVectors(a, b)
+% -------------------------------------------------------------------------
+  enumerations = {};
+  for i = 1:length(a)
+    for j = i+1:length(b)
+      enumerations{end+1} = [a(i), b(j)];
+    end
+  end
+
+
+% -------------------------------------------------------------------------
+function enumerations = getEnumerationsOfTwoDissimilarVectors(a, b)
+% -------------------------------------------------------------------------
+  [A, B] = meshgrid(a, b);
+  c = cat(2, A', B');
+  d = reshape(c, [], 2);
+  enumerations = {};
+  for i = 1:size(d, 1)
+    enumerations{end+1} = d(i, :);
+  end
+
 
 
 

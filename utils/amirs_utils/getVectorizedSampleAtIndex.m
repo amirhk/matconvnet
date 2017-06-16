@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function tempScriptRunKNN()
+function vectorized_sample = getVectorizedSampleAtIndex(imdb, index)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -24,30 +24,12 @@ function tempScriptRunKNN()
 % CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
+  vectorized_sample = vectorizeSample(imdb.images.data(:,:,:,index));
 
-  % -------------------------------------------------------------------------
-  %                                                                 Get IMDBs
-  % -------------------------------------------------------------------------
-  % dataset = 'cifar';
-  % posneg_balance = 'whatever';
-  % dataset = 'cifar-multi-class-subsampled';
-  % posneg_balance = 'balanced-266';
-  dataset = 'cifar-two-class-deer-truck';
-  posneg_balance = 'balanced-266';
 
-  [~, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 0);
+% -------------------------------------------------------------------------
+function vectorized_sample = vectorizeSample(sample)
+% -------------------------------------------------------------------------
+  sample_size = size(sample, 1) * size(sample, 2) * size(sample, 3);
+  vectorized_sample = reshape(sample, sample_size, [])';
 
-  for i = 1 : numel(experiments)
-    input_opts = {};
-    input_opts.dataset = dataset;
-    input_opts.imdb = experiments{i}.imdb;
-    [~, experiments{i}.performance_summary] = testKnn(input_opts);
-  end
-
-  for i = 1 : numel(experiments)
-    afprintf(sprintf( ...
-      '[INFO] 1-KNN Results for `%s`: \t\t train acc = %.4f, test acc = %.4f \n\n', ...
-      experiments{i}.title, ...
-      experiments{i}.performance_summary.testing.train.accuracy, ...
-      experiments{i}.performance_summary.testing.test.accuracy));
-  end

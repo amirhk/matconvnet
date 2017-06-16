@@ -31,10 +31,10 @@ function calculateDistances()
   % -------------------------------------------------------------------------
   % dataset = 'cifar';
   % posneg_balance = 'whatever';
-  dataset = 'cifar-multi-class-subsampled';
-  posneg_balance = 'balanced-266';
-  % dataset = 'cifar-two-class-deer-truck';
-  % posneg_balance = 'balanced-1880';
+  % dataset = 'cifar-multi-class-subsampled';
+  % posneg_balance = 'balanced-266';
+  dataset = 'cifar-two-class-deer-truck';
+  posneg_balance = 'balanced-38';
 
   [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 1);
 
@@ -306,20 +306,6 @@ function [matrix_pdist, labels_train] = getDistanceMatrixAndLabels(imdb, distanc
     end
     distance = theta_in_degrees;
   end
-
-
-% -------------------------------------------------------------------------
-function vectorized_sample = getVectorizedSampleAtIndex(imdb, index)
-% -------------------------------------------------------------------------
-  vectorized_sample = vectorizeSample(imdb.images.data(:,:,:,index));
-
-
-% -------------------------------------------------------------------------
-function vectorized_sample = vectorizeSample(sample)
-% -------------------------------------------------------------------------
-  sample_size = size(sample, 1) * size(sample, 2) * size(sample, 3);
-  vectorized_sample = reshape(sample, sample_size, [])';
-
 
 % -------------------------------------------------------------------------
 function point_index = findClosestBetweenClassPointIndexToPoint(point_row, point_class, labels)
