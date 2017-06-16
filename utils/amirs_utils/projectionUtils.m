@@ -139,6 +139,10 @@ function [images, labels] = getSimpleNNBatch(imdb, batch)
 % -------------------------------------------------------------------------
 function imdb = projectImdbUsingMatrix(imdb, input_matrix)
 % -------------------------------------------------------------------------
+  s1 = size(imdb.images.data, 1);
+  s2 = size(imdb.images.data, 2);
+  s3 = size(imdb.images.data, 3);
+  s4 = size(imdb.images.data, 4);
   all_data_original_vectorized = reshape(imdb.images.data, s1 * s2 * s3, []); % [] = s4
   all_data_projected_vectorized = input_matrix * all_data_original_vectorized; % 3072x3072 * 3072xnumber_of_images
   all_data_projected_matricized = reshape(all_data_projected_vectorized, s1, s2, s3, s4);
