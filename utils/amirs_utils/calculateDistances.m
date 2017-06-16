@@ -33,8 +33,8 @@ function calculateDistances()
   % posneg_balance = 'whatever';
   % dataset = 'cifar-multi-class-subsampled';
   % posneg_balance = 'balanced-266';
-  % dataset = 'cifar-two-class-deer-truck';
-  dataset = 'mnist-two-class-9-4';
+  dataset = 'cifar-two-class-deer-truck';
+  % dataset = 'mnist-two-class-9-4';
   posneg_balance = 'balanced-38';
 
   [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 1);

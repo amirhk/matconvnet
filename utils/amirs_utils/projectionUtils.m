@@ -177,10 +177,12 @@ function imdb = getAngleSeparatedImdb(imdb)
   M_D = getCovarianceMeasureForSet(imdb, D);
   printConsoleOutputSeparator();
   keyboard
-  % [V, D, W] = eig(inv(M_D) * M_S);
-  [V, D, W] = eig(pinv(M_D) * M_S);
-  keyboard
-  angle_separation_matrix = V;
+  % Computing right eigen vectors.
+  % [V, D] = eig(inv(M_D) * M_S);
+  % [V, D] = eig(pinv(M_D) * M_S);
+  [V, D] = eig(M_S - M_D);
+  % keyboard
+  angle_separation_matrix = V';
   imdb = projectImdbUsingMatrix(imdb, angle_separation_matrix);
 
 % -------------------------------------------------------------------------
