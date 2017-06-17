@@ -45,6 +45,7 @@ function tempScriptRunTsne()
   if initial_dims >= size(imdb.images.data,1) * size(imdb.images.data,2) * size(imdb.images.data,3)
     initial_dims = size(imdb.images.data,1) * size(imdb.images.data,2) * size(imdb.images.data,3);
   end
+
   for i = 1 : numel(experiments)
     imdb = experiments{i}.imdb;
     number_of_features = size(imdb.images.data, 1) * size(imdb.images.data, 2) * size(imdb.images.data, 3);
