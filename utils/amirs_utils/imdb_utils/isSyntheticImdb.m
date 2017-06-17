@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function imdb = loadSavedImdb(input_opts, debug_flag)
+function output = isSyntheticImdb(dataset)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -25,27 +25,7 @@ function imdb = loadSavedImdb(input_opts, debug_flag)
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
 
-  dataset = getValueFromFieldOrDefault(input_opts, 'dataset', 'mnist-two-class-9-4');
-  network_arch = getValueFromFieldOrDefault(input_opts, 'network_arch', 'lenet'); % TODO: IMDB SHOULD NOT DEPEND ON NETWORK ARCH!
-  posneg_balance = getValueFromFieldOrDefault(input_opts, 'posneg_balance', 'balanced-low');
-  fold_number = getValueFromFieldOrDefault(input_opts, 'fold_number', 1); % currently only implemented for prostate data
-
-  if isMultiClassImdb(dataset)
-    imdb = loadSavedMultiClassImdb(dataset, network_arch);
-  elseif isSubsampledMultiClassImdb(dataset)
-    imdb = loadSavedSubsampledMultiClassImdb(dataset, posneg_balance);
-  elseif isTwoClassImdb(dataset)
-    imdb = loadSavedTwoClassImdb(dataset, posneg_balance, fold_number);
-  elseif isSyntheticImdb(dataset)
-    imdb = loadSyntheticImdb(dataset);
-  else
-    throwException('[ERROR] imdb not recognized, or type not supported.')
-  end
-
-  % print info
-  if debug_flag
-    printConsoleOutputSeparator();
-    fh_imdb_utils = imdbMultiClassUtils;
-    fh_imdb_utils.getImdbInfo(imdb, 1);
-    printConsoleOutputSeparator();
+  output = false;
+  if strcmp(dataset, 'gaussian5D')
+    output = true;
   end

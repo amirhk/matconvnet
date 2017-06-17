@@ -35,7 +35,7 @@ function calculateDistances()
   % posneg_balance = 'balanced-266';
   dataset = 'cifar-two-class-deer-truck';
   % dataset = 'mnist-two-class-9-4';
-  posneg_balance = 'balanced-1880';
+  posneg_balance = 'balanced-38';
 
   [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 1);
 
@@ -280,17 +280,11 @@ function [matrix_pdist, labels_train] = getDistanceMatrixAndLabels(imdb, distanc
   labels_train = imdb.images.labels(imdb.images.set == 1);
   sample_size = size(data_train, 1) * size(data_train, 2) * size(data_train, 3);
   samples = reshape(data_train, sample_size, [])';
+  keyboard
   matrix_pdist = squareform(pdist(samples));
-  % MAX-NORMALIZED
-  % matrix_pdist = (matrix_pdist - min(matrix_pdist(:))) / (max(matrix_pdist(:)) - min(matrix_pdist(:)));
-  % SUM-NORMALIZED
-  % matrix_pdist = matrix_pdist / (sum(matrix_pdist(:)) / 2); % remember pdist is symmetric
-
 
 % -------------------------------------------------------------------------
-% function distance = calculateDistance(point_1, point_2, distance_type, pdist_matrix)
-  % function distance = calculateDistance(point_1, point_2, distance_type)
-  function distance = calculateDistance(point_1, point_1_index, point_2, point_2_index, distance_type, pdist_matrix)
+function distance = calculateDistance(point_1, point_1_index, point_2, point_2_index, distance_type, pdist_matrix)
 % -------------------------------------------------------------------------
   if strcmp(distance_type, 'euclidean')
     % TODO: these distances are sadly not normalized :|

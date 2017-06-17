@@ -50,11 +50,13 @@ function [ ...
     % train
     data_train_indices_per_class{class_number} = bsxfun(@and, imdb.images.labels == class_number, imdb.images.set == 1);
     data_train_count_per_class{class_number} = sum(data_train_indices_per_class{class_number});
-    data_train_per_class{class_number} = imdb.images.data(:,:,:,data_train_indices_per_class{class_number});
+    data_train_per_class{class_number} = imdb.images.data(:,:,:,data_train_indices_per_class{class_number}); % TODO: ADDRESS MEEEEEEEE
+    % data_train_per_class{class_number} = imdb.images.data(data_train_indices_per_class{class_number}, :); % TODO: ADDRESS MEEEEEEEE
     % test
     data_test_indices_per_class{class_number} = bsxfun(@and, imdb.images.labels == class_number, imdb.images.set == 3);
     data_test_count_per_class{class_number} = sum(data_test_indices_per_class{class_number});
-    data_test_per_class{class_number} = imdb.images.data(:,:,:,data_test_indices_per_class{class_number});
+    data_test_per_class{class_number} = imdb.images.data(:,:,:,data_test_indices_per_class{class_number}); % TODO: ADDRESS MEEEEEEEE
+    % data_test_per_class{class_number} = imdb.images.data(data_test_indices_per_class{class_number}, :); % TODO: ADDRESS MEEEEEEEE
   end
 
   if debug_flag
