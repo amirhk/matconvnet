@@ -74,7 +74,7 @@ function tempScriptRunTsne()
     labels_train = labels(is_train);
     labels_test = labels(is_test);
 
-    figure,
+    h = figure,
     j =  1;
     perplexity_array = [2, 5, 30, 50, 100];
     % perplexity_array = [30];
