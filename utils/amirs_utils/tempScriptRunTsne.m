@@ -33,7 +33,8 @@ function tempScriptRunTsne()
   % dataset = 'cifar-multi-class-subsampled';
   % posneg_balance = 'balanced-266';
   % dataset = 'cifar-two-class-deer-truck';
-  dataset = 'gaussian-10D-160-train-40-test';
+  % dataset = 'gaussian-10D-160-train-40-test';
+  dataset = 'gaussian-5D-800-train-200-test';
   posneg_balance = 'balanced-38';
 
   [~, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 1);
@@ -65,7 +66,7 @@ function tempScriptRunTsne()
     figure,
     j =  1;
     perplexity_array = [2, 5, 30, 50, 100];
-    perplexity_array = [30];
+    % perplexity_array = [30];
     for perplexity = perplexity_array
       subplot(1, numel(perplexity_array), j);
       hold on
