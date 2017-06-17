@@ -88,7 +88,6 @@ function [H, info] = runKmdOnImdb(imdb, class_label_1, class_label_2)
   % samples = reshape(data_train, sample_size, [])';
 
   indices_for_2_classes = bsxfun(@and, bsxfun(@or, imdb.images.labels == class_label_1, imdb.images.labels == class_label_2), imdb.images.set == 1);
-  keyboard
   imdb.images.labels(indices_for_2_classes);
 
   data_train = imdb.images.data(:,:,:,indices_for_2_classes);

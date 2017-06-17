@@ -37,3 +37,7 @@ function imdb = filterImdbForSet(imdb, set, output_set)
   else
     assert(numel(find(imdb.images.set == 1)) == 0);
   end
+
+  % enforce row vector before doing bsxfun
+  imdb.images.labels = reshape(imdb.images.labels, 1, prod(size(imdb.images.labels)));
+  imdb.images.set = reshape(imdb.images.set, 1, prod(size(imdb.images.set)));
