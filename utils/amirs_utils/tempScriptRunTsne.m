@@ -56,6 +56,7 @@ function tempScriptRunTsne()
     % vectorized_data_test = vectorized_data_test';
     labels_train = labels(is_train);
     labels_test = labels(is_test);
+    keyboard
 
     figure,
     j =  1;

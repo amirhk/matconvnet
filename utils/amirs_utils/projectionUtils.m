@@ -207,6 +207,7 @@ function M = getCovarianceMeasureForSet(imdb, input_set)
   afprintf(sprintf('\n'));
   M = (1 / length(input_set)) * M;
 
+
 % -------------------------------------------------------------------------
 function matrix = getCovarianceThingyBetweenVectors(a, b)
 % -------------------------------------------------------------------------
