@@ -38,17 +38,18 @@ function tempScriptRunTsne()
 
   [~, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 1);
 
-  % Set parameters
-  no_dims = 2;
-  initial_dims = 50;
-  % perplexity = 30;
-  if initial_dims >= size(imdb.images.data,1) * size(imdb.images.data,2) * size(imdb.images.data,3)
-    initial_dims = size(imdb.images.data,1) * size(imdb.images.data,2) * size(imdb.images.data,3);
-  end
-
   for i = 1 : numel(experiments)
     imdb = experiments{i}.imdb;
     number_of_features = size(imdb.images.data, 1) * size(imdb.images.data, 2) * size(imdb.images.data, 3);
+
+    % Set parameters
+    no_dims = 2;
+    initial_dims = 50;
+    % perplexity = 30;
+    if initial_dims >= number_of_features
+      initial_dims = number_of_features;
+    end
+
     vectorized_data = reshape(imdb.images.data, number_of_features, [])';
     labels = imdb.images.labels;
     is_train = imdb.images.set == 1;
