@@ -42,7 +42,9 @@ function tempScriptRunTsne()
   % dataset = 'gaussian-5D-400-train-100-test';
   % dataset = 'gaussian-10D-400-train-100-test';
   % dataset = 'gaussian-25D-400-train-100-test';
-  dataset = 'gaussian-50D-400-train-100-test';
+  % dataset = 'gaussian-50D-400-train-100-test';
+
+  dataset = 'gaussian-50D-800-train-200-test';
 
   posneg_balance = 'balanced-38';
 
@@ -89,6 +91,9 @@ function tempScriptRunTsne()
       hold off
       j = j + 1;
     end
-    suptitle(experiments{i}.title);
+
+    tmp_string = sprintf('t-SNE - %s', experiments{i}.title);
+    suptitle(tmp_string);
+    saveas(h, fullfile(getDevPath(), 'temp_images', sprintf('%s.png', tmp_string)));
   end
 

@@ -42,7 +42,9 @@ function tempScriptRunMmd()
   % dataset = 'gaussian-5D-400-train-100-test';
   % dataset = 'gaussian-10D-400-train-100-test';
   % dataset = 'gaussian-25D-400-train-100-test';
-  dataset = 'gaussian-50D-400-train-100-test';
+  % dataset = 'gaussian-50D-400-train-100-test';
+
+  dataset = 'gaussian-50D-800-train-200-test';
 
   posneg_balance = 'balanced-38';
 
