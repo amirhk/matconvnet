@@ -189,30 +189,6 @@ function imdb = getAngleSeparatedImdb(input_imdb)
   angle_separation_matrix = V';
   imdb = projectImdbUsingMatrix(input_imdb, angle_separation_matrix);
 
-% -------------------------------------------------------------------------
-function M = getCovarianceMeasureForSet(imdb, input_set)
-% -------------------------------------------------------------------------
-  M = 0;
-  afprintf(sprintf('[INFO] processing sample pairs # '));
-  for k = 1:length(input_set)
-    for j = 0:log10(k - 1) + (3 + numel(num2str(length(input_set))))
-      fprintf('\b'); % delete previous counter display
-    end
-    fprintf('%d / %d', k, length(input_set));
-    pair_of_samples_indices = input_set(k);
-    sample_i = getVectorizedSampleAtIndex(imdb, pair_of_samples_indices{1}(1));
-    sample_j = getVectorizedSampleAtIndex(imdb, pair_of_samples_indices{1}(2));
-    M = M + getCovarianceThingyBetweenVectors(sample_i', sample_j');
-  end
-  afprintf(sprintf('\n'));
-  M = (1 / length(input_set)) * M;
-
-
-% -------------------------------------------------------------------------
-function matrix = getCovarianceThingyBetweenVectors(a, b)
-% -------------------------------------------------------------------------
-  matrix = (a - b) * (a - b)';
-
 
 % -------------------------------------------------------------------------
 function [S, D] = getSimilarityAndDissimilarityEnumerationSets(imdb)
@@ -234,8 +210,13 @@ function [S, D] = getSimilarityAndDissimilarityEnumerationSets(imdb)
 % -------------------------------------------------------------------------
 function enumerations = getEnumerationsOfSampleIndicesFromClasses(imdb, class_1_label, class_2_label)
 % -------------------------------------------------------------------------
-  class_1_indices = find(imdb.images.labels == class_1_label);
-  class_2_indices = find(imdb.images.labels == class_2_label);
+  % class_1_indices = find(imdb.images.labels == class_1_label);
+  % class_2_indices = find(imdb.images.labels == class_2_label);
+  % training samples only!!!!!!!!!!!!
+  class_1_indices = bsxfun(@and, imdb.images.labels == class_1_label, imdb.images.set == 1);
+  class_1_indices = find(class_1_indices == 1);
+  class_2_indices = bsxfun(@and, imdb.images.labels == class_2_label, imdb.images.set == 1);
+  class_2_indices = find(class_2_indices == 1);
   if class_1_label == class_2_label
     assert(isequal(class_1_indices, class_2_indices));
     enumerations = getEnumerationsOfTwoSimilarVectors(class_1_indices, class_2_indices);
@@ -267,6 +248,30 @@ function enumerations = getEnumerationsOfTwoDissimilarVectors(a, b)
     enumerations{end+1} = d(i, :);
   end
 
+
+% -------------------------------------------------------------------------
+function M = getCovarianceMeasureForSet(imdb, input_set)
+% -------------------------------------------------------------------------
+  M = 0;
+  afprintf(sprintf('[INFO] processing sample pairs # '));
+  for k = 1:length(input_set)
+    for j = 0:log10(k - 1) + (3 + numel(num2str(length(input_set))))
+      fprintf('\b'); % delete previous counter display
+    end
+    fprintf('%d / %d', k, length(input_set));
+    pair_of_samples_indices = input_set(k);
+    sample_i = getVectorizedSampleAtIndex(imdb, pair_of_samples_indices{1}(1));
+    sample_j = getVectorizedSampleAtIndex(imdb, pair_of_samples_indices{1}(2));
+    M = M + getCovarianceThingyBetweenVectors(sample_i', sample_j');
+  end
+  afprintf(sprintf('\n'));
+  M = (1 / length(input_set)) * M;
+
+
+% -------------------------------------------------------------------------
+function matrix = getCovarianceThingyBetweenVectors(a, b)
+% -------------------------------------------------------------------------
+  matrix = (a - b) * (a - b)';
 
 
 
