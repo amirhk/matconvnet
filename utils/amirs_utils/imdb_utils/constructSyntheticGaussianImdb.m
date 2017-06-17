@@ -1,5 +1,11 @@
+% NOTES:
+% 1) Using im2double will bring all pixel values between [-1,+1] and hence need
+%    higher LR. Note, that constructing CIFAR imdb in matconvnet does not use
+%    im2doube by default, but it was recommended by Javad.
+% 2) Subtract the mean of the training data from both the training and test data
+% 3) STL-10 does NOT require contrast normalization or whitening
 % -------------------------------------------------------------------------
-function output = isSyntheticImdb(dataset)
+function imdb = constructSyntheticGaussianImdb(samples_per_class, sample_dim)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -25,9 +31,26 @@ function output = isSyntheticImdb(dataset)
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
 
-  output = false;
-  if ...
-    strcmp(dataset, 'gaussian-5D-800-train-200-test') || ...
-    strcmp(dataset, 'gaussian-10D-160-train-40-test')
-    output = true;
-  end
+  afprintf(sprintf('[INFO] Constructing synthetic Gaussian imdb...'));
+  data_1 = mvnrnd(1 * ones(sample_dim, 1), eye(sample_dim), samples_per_class);
+  data_10 = mvnrnd(10 * ones(sample_dim, 1), eye(sample_dim), samples_per_class);
+  labels_1 = 1 * ones(1, samples_per_class);
+  labels_10 = 2 * ones(1, samples_per_class);
+
+  data = cat(1, data_1, data_10);
+  labels = cat(2, labels_1, labels_10)';
+  set = cat(1, 1 * ones(.8 * samples_per_class * 2, 1), 3 * ones(.2 * samples_per_class * 2, 1));
+
+  assert(length(labels) == length(set));
+
+  % shuffle
+  ix = randperm(samples_per_class * 2);
+  imdb.images.data = data(ix,:);
+  imdb.images.labels = labels(ix);
+  imdb.images.set = set; % NOT set(ix).... that way you won't have any of your first class samples in the test set!
+
+  % get the data into 4D format to be compatible with code built for all other imdbs.
+  imdb.images.data = reshape(imdb.images.data, sample_dim, 1, 1, []);
+  afprintf(sprintf('done!\n\n'));
+  fh = imdbMultiClassUtils;
+  fh.getImdbInfo(imdb, 1);

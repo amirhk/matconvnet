@@ -173,22 +173,21 @@ function imdb = projectImdbUsingMatrix(imdb, input_matrix)
 
 
 % -------------------------------------------------------------------------
-function imdb = getAngleSeparatedImdb(imdb)
+function imdb = getAngleSeparatedImdb(input_imdb)
 % -------------------------------------------------------------------------
-  [S, D] = getSimilarityAndDissimilarityEnumerationSets(imdb);
+  [S, D] = getSimilarityAndDissimilarityEnumerationSets(input_imdb);
   printConsoleOutputSeparator();
-  M_S = getCovarianceMeasureForSet(imdb, S);
-  M_D = getCovarianceMeasureForSet(imdb, D);
+  M_S = getCovarianceMeasureForSet(input_imdb, S);
+  M_D = getCovarianceMeasureForSet(input_imdb, D);
   printConsoleOutputSeparator();
   % keyboard
   % Computing right eigen vectors.
-  % [V, D] = eig(inv(M_D) * M_S);
-  keyboard
-  [V, D] = eig(pinv(M_D) * M_S);
+  [V, D] = eig(inv(M_D) * M_S);
+  % [V, D] = eig(pinv(M_D) * M_S);
   % [V, D] = eig(M_S - M_D);
   % keyboard
   angle_separation_matrix = V';
-  imdb = projectImdbUsingMatrix(imdb, angle_separation_matrix);
+  imdb = projectImdbUsingMatrix(input_imdb, angle_separation_matrix);
   keyboard
 
 % -------------------------------------------------------------------------
