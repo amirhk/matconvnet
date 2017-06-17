@@ -175,18 +175,20 @@ function imdb = projectImdbUsingMatrix(imdb, input_matrix)
 % -------------------------------------------------------------------------
 function imdb = getAngleSeparatedImdb(input_imdb)
 % -------------------------------------------------------------------------
+  % IMPORTANT!! S & D are computed for the training set only, but applied to
+  % both training and test sets.
   [S, D] = getSimilarityAndDissimilarityEnumerationSets(input_imdb);
   printConsoleOutputSeparator();
-  M_S = getCovarianceMeasureForSet(input_imdb, S);
-  M_D = getCovarianceMeasureForSet(input_imdb, D);
+  M_S = getCovarianceMeasureForSet(input_imdb, S, 'S');
+  M_D = getCovarianceMeasureForSet(input_imdb, D, 'D');
   printConsoleOutputSeparator();
-  % keyboard
+
   % Computing right eigen vectors.
   [V, D] = eig(inv(M_D) * M_S);
   % [V, D] = eig(pinv(M_D) * M_S);
   % [V, D] = eig(M_S - M_D);
-  % keyboard
   angle_separation_matrix = V';
+
   imdb = projectImdbUsingMatrix(input_imdb, angle_separation_matrix);
 
 
@@ -205,6 +207,29 @@ function [S, D] = getSimilarityAndDissimilarityEnumerationSets(imdb)
       D = cat(2, D, getEnumerationsOfSampleIndicesFromClasses(imdb, i, j));
     end
   end
+
+  % S = {};
+  % D = {};
+  % saved_SD_file =  fullfile(getDevPath(), 'data', 'similarity_dissimilarity_sets', sprintf('SD_sets_for_%s.mat', imdb.name));
+  % keyboard
+  % if exist(saved_SD_file) == 2
+  %   tmp = load(saved_SD_file);
+  %   tmp = tmp.tmp;
+  %   S = tmp.S;
+  %   D = tmp.D;
+  % else
+  %   for i = 1:number_of_classes
+  %     afprintf(sprintf('Populating `S` and `D` sets for class #%d\n', i));
+  %     S = cat(2, S, getEnumerationsOfSampleIndicesFromClasses(imdb, i, i));
+  %     for j = i+1:number_of_classes
+  %       D = cat(2, D, getEnumerationsOfSampleIndicesFromClasses(imdb, i, j));
+  %     end
+  %   end
+  %   tmp = {};
+  %   tmp.S = S;
+  %   tmp.D = D;
+  %   save(saved_SD_file, 'tmp');
+  % end
 
 
 % -------------------------------------------------------------------------
@@ -250,22 +275,49 @@ function enumerations = getEnumerationsOfTwoDissimilarVectors(a, b)
 
 
 % -------------------------------------------------------------------------
-function M = getCovarianceMeasureForSet(imdb, input_set)
+function M = getCovarianceMeasureForSet(imdb, input_set, input_set_name)
+  % input_set_name = {'S', 'D'}
 % -------------------------------------------------------------------------
-  M = 0;
-  afprintf(sprintf('[INFO] processing sample pairs # '));
-  for k = 1:length(input_set)
-    for j = 0:log10(k - 1) + (3 + numel(num2str(length(input_set))))
-      fprintf('\b'); % delete previous counter display
+
+  saved_measure_file =  fullfile( ...
+    getDevPath(), ...
+    'data', ...
+    'similarity_dissimilarity_sets', ...
+    sprintf('%s_measure_for_%s.mat', input_set_name, imdb.name));
+  if exist(saved_measure_file) == 2
+    afprintf(sprintf('[INFO] loading saved %s measure...\n', input_set_name));
+    tmp = load(saved_measure_file);
+    M = tmp.M;
+    afprintf(sprintf('done!\n'));
+  else
+    M = 0;
+    afprintf(sprintf('[INFO] processing sample pairs # '));
+    for k = 1:length(input_set)
+      for j = 0:log10(k - 1) + (3 + numel(num2str(length(input_set))))
+        fprintf('\b'); % delete previous counter display
+      end
+      fprintf('%d / %d', k, length(input_set));
+      pair_of_samples_indices = input_set(k);
+      sample_i = getVectorizedSampleAtIndex(imdb, pair_of_samples_indices{1}(1));
+      sample_j = getVectorizedSampleAtIndex(imdb, pair_of_samples_indices{1}(2));
+      M = M + getCovarianceThingyBetweenVectors(sample_i', sample_j');
     end
-    fprintf('%d / %d', k, length(input_set));
-    pair_of_samples_indices = input_set(k);
-    sample_i = getVectorizedSampleAtIndex(imdb, pair_of_samples_indices{1}(1));
-    sample_j = getVectorizedSampleAtIndex(imdb, pair_of_samples_indices{1}(2));
-    M = M + getCovarianceThingyBetweenVectors(sample_i', sample_j');
+    afprintf(sprintf('\n'));
+    M = (1 / length(input_set)) * M;
+
+    save(saved_measure_file, 'M');
   end
-  afprintf(sprintf('\n'));
-  M = (1 / length(input_set)) * M;
+
+
+
+
+
+
+
+
+
+
+
 
 
 % -------------------------------------------------------------------------

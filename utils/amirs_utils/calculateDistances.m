@@ -35,8 +35,10 @@ function calculateDistances()
   % posneg_balance = 'balanced-266';
   % dataset = 'cifar-two-class-deer-truck';
   % dataset = 'mnist-two-class-9-4';
-  % dataset = 'gaussian-10D-160-train-40-test';
-  dataset = 'gaussian-5D-800-train-200-test';
+  % dataset = 'gaussian-5D-160-train-40-test';
+  dataset = 'gaussian-10D-160-train-40-test';
+  % dataset = 'gaussian-25D-160-train-40-test';
+  % dataset = 'gaussian-100D-160-train-40-test';
   posneg_balance = 'balanced-38';
 
   [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 1);

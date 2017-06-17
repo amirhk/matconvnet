@@ -51,14 +51,7 @@ function imdb = loadSyntheticImdb(dataset)
 
   afprintf(sprintf('[INFO] Loading synthetic (dataset: %s)\n', dataset));
   path_to_imdbs = fullfile(getDevPath(), 'data', 'synthetic_imdbs');
-  switch dataset
-    case 'gaussian-5D-800-train-200-test'
-      tmp = load(fullfile(path_to_imdbs, sprintf('%s.mat', dataset)));
-    case 'gaussian-10D-160-train-40-test'
-      tmp = load(fullfile(path_to_imdbs, sprintf('%s.mat', dataset)));
-    otherwise
-      throwException('[ERROR] imdb not recognized, or type not supported.')
-  end
+  tmp = load(fullfile(path_to_imdbs, sprintf('%s.mat', dataset)));
   imdb = tmp.imdb;
   afprintf(sprintf('[INFO] done!\n'));
 

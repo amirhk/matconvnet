@@ -37,9 +37,12 @@ function imdb = constructSyntheticGaussianImdb(samples_per_class, sample_dim)
   labels_1 = 1 * ones(1, samples_per_class);
   labels_10 = 2 * ones(1, samples_per_class);
 
+  number_of_training_samples = .8 * samples_per_class * 2;
+  number_of_testing_samples = .2 * samples_per_class * 2;
+
   data = cat(1, data_1, data_10);
   labels = cat(2, labels_1, labels_10)';
-  set = cat(1, 1 * ones(.8 * samples_per_class * 2, 1), 3 * ones(.2 * samples_per_class * 2, 1));
+  set = cat(1, 1 * ones(number_of_training_samples, 1), 3 * ones(number_of_testing_samples, 1));
 
   assert(length(labels) == length(set));
 
@@ -48,9 +51,11 @@ function imdb = constructSyntheticGaussianImdb(samples_per_class, sample_dim)
   imdb.images.data = data(ix,:);
   imdb.images.labels = labels(ix);
   imdb.images.set = set; % NOT set(ix).... that way you won't have any of your first class samples in the test set!
+  imdb.name = sprintf('gaussian-%dD-%d-train-%d-test', sample_dim, number_of_training_samples, number_of_testing_samples);
 
   % get the data into 4D format to be compatible with code built for all other imdbs.
   imdb.images.data = reshape(imdb.images.data, sample_dim, 1, 1, []);
   afprintf(sprintf('done!\n\n'));
   fh = imdbMultiClassUtils;
   fh.getImdbInfo(imdb, 1);
+  save(sprintf('%s.mat', imdb.name), 'imdb');
