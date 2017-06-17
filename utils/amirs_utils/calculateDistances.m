@@ -34,7 +34,7 @@ function calculateDistances()
   % posneg_balance = 'balanced-266';
   % dataset = 'cifar-two-class-deer-truck';
   dataset = 'gaussian-5D-160-train-40-test';
-  % dataset = 'gaussian-10D-160-train-40-test';
+  dataset = 'gaussian-10D-160-train-40-test';
   % dataset = 'gaussian-25D-160-train-40-test';
   % dataset = 'gaussian-50D-160-train-40-test';
   posneg_balance = 'balanced-38';
