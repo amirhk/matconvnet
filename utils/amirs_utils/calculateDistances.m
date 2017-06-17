@@ -105,7 +105,7 @@ function calculateDistances()
 
     tmp_string = sprintf('%s %s distances - %s %s - %s', distance_type, point_type, dataset, posneg_balance, experiments{i}.title);
     suptitle(tmp_string);
-    saveas(h, sprintf('%s.png', tmp_string));
+    saveas(h, fullfile(getDevPath(), 'temp_images', sprintf('%s.png', tmp_string)));
 
   else
 
