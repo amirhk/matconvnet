@@ -253,7 +253,9 @@ function folds = testKFold(input_opts)
           -1);
       else
         projected_imdb = fh_projection_utils.getDenslyProjectedImdb( ...
-          training_opts.single_training_method_options.imdb);
+          training_opts.single_training_method_options.imdb, ...
+          1, ...
+          0);
       end
       training_opts.single_training_method_options.imdb = projected_imdb;
       afprintf(sprintf('[INFO] done!\n'));

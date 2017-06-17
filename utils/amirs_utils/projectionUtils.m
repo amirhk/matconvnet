@@ -101,27 +101,26 @@ function projected_samples = getProjectedImdbSamplesOnNet(imdb, net, depth)
   projected_samples = info.all_samples_forward_pass_results;
 
 % -------------------------------------------------------------------------
-function imdb = getDenslyProjectedImdb(imdb)
+function imdb = getDenslyProjectedImdb(imdb, number_of_projection_layers, number_of_relu_layers)
 % -------------------------------------------------------------------------
   projected_data = zeros(size(imdb.images.data));
   s1 = size(imdb.images.data, 1);
   s2 = size(imdb.images.data, 2);
   s3 = size(imdb.images.data, 3);
   s4 = size(imdb.images.data, 4);
-  % use a consistent random projection matrix; output of random projection
-  % should be same size as input(so we need N random projections, where N
-  % is dimension of vectorized image)
+  assert(number_of_projection_layers >=  number_of_relu_layers);
+  relu_count = 0;
+  for i = 1 : number_of_projection_layers
+    random_projection_matrix = randn(s1 * s2 * s3, s1 * s2 * s3) * 1/100;
+    imdb = projectImdbUsingMatrix(imdb, random_projection_matrix);
+    if relu_count < number_of_relu_layers
+      % apply relu
+      imdb.images.data(imdb.images.data < 0) = 0;
+      relu_count = relu_count + 1;
+    end
+  end
   random_projection_matrix = randn(s1 * s2 * s3, s1 * s2 * s3) * 1/100;
   imdb = projectImdbUsingMatrix(imdb, random_projection_matrix);
-  % for j = 1 : s4
-  %   tmp = imdb.images.data(:,:,:,j);
-  %   vectorized = reshape(tmp, s1 * s2 * s3, 1);
-  %   projected = random_projection_matrix * vectorized;
-  %   matricized = reshape(projected, s1, s2, s3);
-  %   projected_data(:,:,:,j) = matricized;
-  %   keyboard
-  % end
-  % imdb.images.data = projected_data;
 
 % -------------------------------------------------------------------------
 function fn = getBatch()
@@ -137,14 +136,14 @@ function [images, labels] = getSimpleNNBatch(imdb, batch)
 
 
 % -------------------------------------------------------------------------
-function imdb = projectImdbUsingMatrix(imdb, input_matrix)
+function imdb = projectImdbUsingMatrix(imdb, projection_matrix)
 % -------------------------------------------------------------------------
   s1 = size(imdb.images.data, 1);
   s2 = size(imdb.images.data, 2);
   s3 = size(imdb.images.data, 3);
   s4 = size(imdb.images.data, 4);
   all_data_original_vectorized = reshape(imdb.images.data, s1 * s2 * s3, []); % [] = s4
-  all_data_projected_vectorized = input_matrix * all_data_original_vectorized; % 3072x3072 * 3072xnumber_of_images
+  all_data_projected_vectorized = projection_matrix * all_data_original_vectorized; % 3072x3072 * 3072xnumber_of_images
   all_data_projected_matricized = reshape(all_data_projected_vectorized, s1, s2, s3, s4);
   imdb.images.data = all_data_projected_matricized;
 
