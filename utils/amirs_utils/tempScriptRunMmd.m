@@ -103,3 +103,18 @@ function [H, info] = runKmdOnImdb(imdb, class_label_1, class_label_2)
   labels = labels_train';
   % keyboard
   [H,info] = kmd(X,labels);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

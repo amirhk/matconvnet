@@ -33,8 +33,9 @@ function calculateDistances()
   % posneg_balance = 'whatever';
   % dataset = 'cifar-multi-class-subsampled';
   % posneg_balance = 'balanced-266';
-  dataset = 'cifar-two-class-deer-truck';
+  % dataset = 'cifar-two-class-deer-truck';
   % dataset = 'mnist-two-class-9-4';
+  dataset = 'gaussian5D';
   posneg_balance = 'balanced-38';
 
   [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 1);
@@ -280,7 +281,7 @@ function [matrix_pdist, labels_train] = getDistanceMatrixAndLabels(imdb, distanc
   labels_train = imdb.images.labels(imdb.images.set == 1);
   sample_size = size(data_train, 1) * size(data_train, 2) * size(data_train, 3);
   samples = reshape(data_train, sample_size, [])';
-  keyboard
+  % keyboard
   matrix_pdist = squareform(pdist(samples));
 
 % -------------------------------------------------------------------------

@@ -53,11 +53,11 @@ function [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(data
   % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 
-  % afprintf(sprintf('[INFO] Loading projected imdb...\n'));
-  % projected_imdb = fh_projection_utils.getAngleSeparatedImdb(original_imdb);
-  % experiments{end+1}.imdb = projected_imdb;
-  % experiments{end}.title = 'Angle Separated Imdb';
-  % afprintf(sprintf('[INFO] done!\n'));
+  afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  projected_imdb = fh_projection_utils.getAngleSeparatedImdb(original_imdb);
+  experiments{end+1}.imdb = projected_imdb;
+  experiments{end}.title = 'Angle Separated Imdb';
+  afprintf(sprintf('[INFO] done!\n'));
 
 
   % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
