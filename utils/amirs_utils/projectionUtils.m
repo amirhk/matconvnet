@@ -188,7 +188,6 @@ function imdb = getAngleSeparatedImdb(input_imdb)
   % keyboard
   angle_separation_matrix = V';
   imdb = projectImdbUsingMatrix(input_imdb, angle_separation_matrix);
-  keyboard
 
 % -------------------------------------------------------------------------
 function M = getCovarianceMeasureForSet(imdb, input_set)
