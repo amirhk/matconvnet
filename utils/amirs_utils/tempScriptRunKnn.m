@@ -32,8 +32,9 @@ function tempScriptRunKNN()
   % posneg_balance = 'whatever';
   % dataset = 'cifar-multi-class-subsampled';
   % posneg_balance = 'balanced-266';
-  dataset = 'cifar-two-class-deer-truck';
-  posneg_balance = 'balanced-266';
+  % dataset = 'cifar-two-class-deer-truck';
+  dataset = 'gaussian-10D-160-train-40-test';
+  posneg_balance = 'balanced-38';
 
   [~, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 0);
 
