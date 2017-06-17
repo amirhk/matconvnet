@@ -28,7 +28,7 @@ function [accuracy, sensitivity, specificity] = getPerformanceSummary(model_obje
   if isTwoClassImdb(dataset)
     fhGetAccSensSpec = @getAccSensSpec;
   else
-    assert(isMultiClassImdb(dataset) || isSubsampledMultiClassImdb(dataset));
+    assert(isMultiClassImdb(dataset) || isSubsampledMultiClassImdb(dataset) || isSyntheticImdb(dataset));
     fhGetAccSensSpec = @getAccSensSpecMultiClass;
   end
   if strcmp(set, 'train')
