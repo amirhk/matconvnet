@@ -44,7 +44,9 @@ function calculateDistances()
   % dataset = 'gaussian-25D-400-train-100-test';
   % dataset = 'gaussian-50D-400-train-100-test';
 
-  dataset = 'gaussian-50D-800-train-200-test';
+  % dataset = 'gaussian-50D-800-train-200-test';
+
+  dataset = 'gaussian-5D-160-train-40-test-0.1-var';
 
   posneg_balance = 'balanced-38';
 
