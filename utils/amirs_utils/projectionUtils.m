@@ -308,17 +308,6 @@ function M = getCovarianceMeasureForSet(imdb, input_set, input_set_name)
   end
 
 
-
-
-
-
-
-
-
-
-
-
-
 % -------------------------------------------------------------------------
 function matrix = getCovarianceThingyBetweenVectors(a, b)
 % -------------------------------------------------------------------------
