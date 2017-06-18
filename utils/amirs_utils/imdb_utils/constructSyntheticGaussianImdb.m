@@ -51,7 +51,7 @@ function imdb = constructSyntheticGaussianImdb(samples_per_class, sample_dim, va
   imdb.images.data = data(ix,:);
   imdb.images.labels = labels(ix);
   imdb.images.set = set; % NOT set(ix).... that way you won't have any of your first class samples in the test set!
-  imdb.name = sprintf('gaussian-%dD-%d-train-%d-test-%d-var', sample_dim, number_of_training_samples, number_of_testing_samples, variance);
+  imdb.name = sprintf('gaussian-%dD-%d-train-%d-test-%.1f-var', sample_dim, number_of_training_samples, number_of_testing_samples, variance);
 
   % get the data into 4D format to be compatible with code built for all other imdbs.
   imdb.images.data = reshape(imdb.images.data, sample_dim, 1, 1, []);
