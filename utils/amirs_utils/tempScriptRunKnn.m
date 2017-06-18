@@ -57,7 +57,7 @@ function tempScriptRunKNN()
   dataset = 'gaussian-5D-400-train-100-test-10.0-var';
 
   dataset = 'gaussian-5D-800-train-200-test-0.1-var';
-  % dataset = 'gaussian-5D-800-train-200-test-1.0-var';
+  dataset = 'gaussian-5D-800-train-200-test-1.0-var';
   % dataset = 'gaussian-5D-800-train-200-test-10.0-var';
 
   posneg_balance = 'balanced-38';
