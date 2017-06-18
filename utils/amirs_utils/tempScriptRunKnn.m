@@ -50,7 +50,7 @@ function tempScriptRunKNN()
 
   dataset = 'gaussian-5D-160-train-40-test-0.1-var';
   dataset = 'gaussian-5D-160-train-40-test-1.0-var';
-  % dataset = 'gaussian-5D-160-train-40-test-10.0-var';
+  dataset = 'gaussian-5D-160-train-40-test-10.0-var';
 
   % dataset = 'gaussian-5D-400-train-100-test-0.1-var';
   % dataset = 'gaussian-5D-400-train-100-test-1.0-var';
