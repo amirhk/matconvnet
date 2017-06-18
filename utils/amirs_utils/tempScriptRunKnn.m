@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function tempScriptRunKNN()
+function tempScriptRunKNN(dataset)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -48,17 +48,17 @@ function tempScriptRunKNN()
   % TODO: change name to include variance as well!!!!!!!!!!
   % generate more of the 0.1 variances and compare
 
-  dataset = 'gaussian-5D-160-train-40-test-0.1-var';
-  dataset = 'gaussian-5D-160-train-40-test-1.0-var';
-  dataset = 'gaussian-5D-160-train-40-test-10.0-var';
+  % dataset = 'gaussian-5D-160-train-40-test-0.1-var';
+  % dataset = 'gaussian-5D-160-train-40-test-1.0-var';
+  % dataset = 'gaussian-5D-160-train-40-test-10.0-var';
 
-  dataset = 'gaussian-5D-400-train-100-test-0.1-var';
-  dataset = 'gaussian-5D-400-train-100-test-1.0-var';
-  dataset = 'gaussian-5D-400-train-100-test-10.0-var';
+  % dataset = 'gaussian-5D-400-train-100-test-0.1-var';
+  % dataset = 'gaussian-5D-400-train-100-test-1.0-var';
+  % dataset = 'gaussian-5D-400-train-100-test-10.0-var';
 
-  dataset = 'gaussian-5D-800-train-200-test-0.1-var';
-  dataset = 'gaussian-5D-800-train-200-test-1.0-var';
-  dataset = 'gaussian-5D-800-train-200-test-10.0-var';
+  % dataset = 'gaussian-5D-800-train-200-test-0.1-var';
+  % dataset = 'gaussian-5D-800-train-200-test-1.0-var';
+  % dataset = 'gaussian-5D-800-train-200-test-10.0-var';
 
   posneg_balance = 'balanced-38';
 
