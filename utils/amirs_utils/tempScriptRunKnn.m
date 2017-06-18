@@ -46,19 +46,19 @@ function tempScriptRunKNN()
 
   % dataset = 'gaussian-50D-800-train-200-test';
   % TODO: change name to include variance as well!!!!!!!!!!
-  % generate more of the 0.1 variances and comapre
+  % generate more of the 0.1 variances and compare
 
   dataset = 'gaussian-5D-160-train-40-test-0.1-var';
-  dataset = 'gaussian-5D-160-train-40-test-1.0-var';
-  dataset = 'gaussian-5D-160-train-40-test-10.0-var';
+  % dataset = 'gaussian-5D-160-train-40-test-1.0-var';
+  % dataset = 'gaussian-5D-160-train-40-test-10.0-var';
 
-  dataset = 'gaussian-5D-400-train-100-test-0.1-var';
-  dataset = 'gaussian-5D-400-train-100-test-1.0-var';
-  dataset = 'gaussian-5D-400-train-100-test-10.0-var';
+  % dataset = 'gaussian-5D-400-train-100-test-0.1-var';
+  % dataset = 'gaussian-5D-400-train-100-test-1.0-var';
+  % dataset = 'gaussian-5D-400-train-100-test-10.0-var';
 
-  dataset = 'gaussian-5D-800-train-200-test-0.1-var';
-  dataset = 'gaussian-5D-800-train-200-test-1.0-var';
-  dataset = 'gaussian-5D-800-train-200-test-10.0-var';
+  % dataset = 'gaussian-5D-800-train-200-test-0.1-var';
+  % dataset = 'gaussian-5D-800-train-200-test-1.0-var';
+  % dataset = 'gaussian-5D-800-train-200-test-10.0-var';
 
   posneg_balance = 'balanced-38';
 
@@ -78,3 +78,19 @@ function tempScriptRunKNN()
       experiments{i}.performance_summary.testing.train.accuracy, ...
       experiments{i}.performance_summary.testing.test.accuracy));
   end
+
+
+  y = [];
+  exp_number = 1;
+  for i = 1:7
+    for j = 1:2
+      y(i,j) = experiments{exp_number}.performance_summary.testing.test.accuracy;
+      exp_number = exp_number + 1;
+    end
+  end
+  h = figure,
+  bar(y);
+  tmp_string = sprintf('1-KNN - %s', dataset);
+  suptitle(tmp_string);
+  saveas(h, fullfile(getDevPath(), 'temp_images', sprintf('%s.png', tmp_string)));
+

@@ -54,7 +54,7 @@ function imdb = constructSyntheticGaussianImdb(samples_per_class, sample_dim, va
   imdb.name = sprintf('gaussian-%dD-%d-train-%d-test-%.1f-var', sample_dim, number_of_training_samples, number_of_testing_samples, variance);
 
   % get the data into 4D format to be compatible with code built for all other imdbs.
-  imdb.images.data = reshape(imdb.images.data, sample_dim, 1, 1, []);
+  imdb.images.data = reshape(imdb.images.data', sample_dim, 1, 1, []);
   afprintf(sprintf('done!\n\n'));
   fh = imdbMultiClassUtils;
   fh.getImdbInfo(imdb, 1);
