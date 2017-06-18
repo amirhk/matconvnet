@@ -53,6 +53,47 @@ function [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(data
   % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 
+  % afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  % projected_imdb = fh_projection_utils.getDenslyProjectedImdb(original_imdb, 1, 0);
+  % experiments{end+1}.imdb = projected_imdb;
+  % experiments{end}.title = 'Dense Random Projection Matrix';
+  % afprintf(sprintf('[INFO] done!\n'));
+
+  % afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  % projected_imdb = fh_projection_utils.getDenslyProjectedImdb(original_imdb, 2, 0);
+  % experiments{end+1}.imdb = projected_imdb;
+  % experiments{end}.title = 'Dense Random Projection Matrix';
+  % afprintf(sprintf('[INFO] done!\n'));
+
+  % afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  % projected_imdb = fh_projection_utils.getDenslyProjectedImdb(original_imdb, 3, 0);
+  % experiments{end+1}.imdb = projected_imdb;
+  % experiments{end}.title = 'Dense Random Projection Matrix';
+  % afprintf(sprintf('[INFO] done!\n'));
+
+  % afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  % projected_imdb = fh_projection_utils.getDenslyProjectedImdb(original_imdb, 1, 1);
+  % experiments{end+1}.imdb = projected_imdb;
+  % experiments{end}.title = 'Dense Random Projection Matrix';
+  % afprintf(sprintf('[INFO] done!\n'));
+
+  % afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  % projected_imdb = fh_projection_utils.getDenslyProjectedImdb(original_imdb, 2, 2);
+  % experiments{end+1}.imdb = projected_imdb;
+  % experiments{end}.title = 'Dense Random Projection Matrix';
+  % afprintf(sprintf('[INFO] done!\n'));
+
+  % afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  % projected_imdb = fh_projection_utils.getDenslyProjectedImdb(original_imdb, 3, 3);
+  % experiments{end+1}.imdb = projected_imdb;
+  % experiments{end}.title = 'Dense Random Projection Matrix';
+  % afprintf(sprintf('[INFO] done!\n'));
+
+
+  % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
+
   afprintf(sprintf('[INFO] Loading projected imdb...\n'));
   angle_separated_imdb = fh_projection_utils.getAngleSeparatedImdb(original_imdb);
   experiments{end+1}.imdb = angle_separated_imdb;
@@ -64,41 +105,41 @@ function [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(data
   % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 
-  afprintf(sprintf('[INFO] Loading projected imdb...\n'));
-  projected_imdb = fh_projection_utils.getDenslyProjectedImdb(original_imdb, 1, 0);
-  experiments{end+1}.imdb = projected_imdb;
-  experiments{end}.title = 'Dense Random Projection Matrix';
-  afprintf(sprintf('[INFO] done!\n'));
+  % afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  % projected_imdb = fh_projection_utils.getDenslyProjectedImdb(angle_separated_imdb, 1, 0);
+  % experiments{end+1}.imdb = projected_imdb;
+  % experiments{end}.title = 'Dense Random Projection Matrix';
+  % afprintf(sprintf('[INFO] done!\n'));
 
-  afprintf(sprintf('[INFO] Loading projected imdb...\n'));
-  projected_imdb = fh_projection_utils.getDenslyProjectedImdb(original_imdb, 2, 0);
-  experiments{end+1}.imdb = projected_imdb;
-  experiments{end}.title = 'Dense Random Projection Matrix';
-  afprintf(sprintf('[INFO] done!\n'));
+  % afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  % projected_imdb = fh_projection_utils.getDenslyProjectedImdb(angle_separated_imdb, 2, 0);
+  % experiments{end+1}.imdb = projected_imdb;
+  % experiments{end}.title = 'Dense Random Projection Matrix';
+  % afprintf(sprintf('[INFO] done!\n'));
 
-  afprintf(sprintf('[INFO] Loading projected imdb...\n'));
-  projected_imdb = fh_projection_utils.getDenslyProjectedImdb(original_imdb, 3, 0);
-  experiments{end+1}.imdb = projected_imdb;
-  experiments{end}.title = 'Dense Random Projection Matrix';
-  afprintf(sprintf('[INFO] done!\n'));
+  % afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  % projected_imdb = fh_projection_utils.getDenslyProjectedImdb(angle_separated_imdb, 3, 0);
+  % experiments{end+1}.imdb = projected_imdb;
+  % experiments{end}.title = 'Dense Random Projection Matrix';
+  % afprintf(sprintf('[INFO] done!\n'));
 
-  afprintf(sprintf('[INFO] Loading projected imdb...\n'));
-  projected_imdb = fh_projection_utils.getDenslyProjectedImdb(original_imdb, 1, 1);
-  experiments{end+1}.imdb = projected_imdb;
-  experiments{end}.title = 'Dense Random Projection Matrix';
-  afprintf(sprintf('[INFO] done!\n'));
+  % afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  % projected_imdb = fh_projection_utils.getDenslyProjectedImdb(angle_separated_imdb, 1, 1);
+  % experiments{end+1}.imdb = projected_imdb;
+  % experiments{end}.title = 'Dense Random Projection Matrix';
+  % afprintf(sprintf('[INFO] done!\n'));
 
-  afprintf(sprintf('[INFO] Loading projected imdb...\n'));
-  projected_imdb = fh_projection_utils.getDenslyProjectedImdb(original_imdb, 2, 2);
-  experiments{end+1}.imdb = projected_imdb;
-  experiments{end}.title = 'Dense Random Projection Matrix';
-  afprintf(sprintf('[INFO] done!\n'));
+  % afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  % projected_imdb = fh_projection_utils.getDenslyProjectedImdb(angle_separated_imdb, 2, 2);
+  % experiments{end+1}.imdb = projected_imdb;
+  % experiments{end}.title = 'Dense Random Projection Matrix';
+  % afprintf(sprintf('[INFO] done!\n'));
 
-  afprintf(sprintf('[INFO] Loading projected imdb...\n'));
-  projected_imdb = fh_projection_utils.getDenslyProjectedImdb(original_imdb, 3, 3);
-  experiments{end+1}.imdb = projected_imdb;
-  experiments{end}.title = 'Dense Random Projection Matrix';
-  afprintf(sprintf('[INFO] done!\n'));
+  % afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  % projected_imdb = fh_projection_utils.getDenslyProjectedImdb(angle_separated_imdb, 3, 3);
+  % experiments{end+1}.imdb = projected_imdb;
+  % experiments{end}.title = 'Dense Random Projection Matrix';
+  % afprintf(sprintf('[INFO] done!\n'));
 
 
   % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --

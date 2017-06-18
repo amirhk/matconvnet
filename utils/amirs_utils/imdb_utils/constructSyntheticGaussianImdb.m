@@ -5,7 +5,7 @@
 % 2) Subtract the mean of the training data from both the training and test data
 % 3) STL-10 does NOT require contrast normalization or whitening
 % -------------------------------------------------------------------------
-function imdb = constructSyntheticGaussianImdb(samples_per_class, sample_dim)
+function imdb = constructSyntheticGaussianImdb(samples_per_class, sample_dim, variance)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -32,8 +32,8 @@ function imdb = constructSyntheticGaussianImdb(samples_per_class, sample_dim)
 % POSSIBILITY OF SUCH DAMAGE.
 
   afprintf(sprintf('[INFO] Constructing synthetic Gaussian imdb...'));
-  data_1 = mvnrnd(1 * ones(sample_dim, 1), 0.1 * eye(sample_dim), samples_per_class);
-  data_10 = mvnrnd(10 * ones(sample_dim, 1), 0.1 * eye(sample_dim), samples_per_class);
+  data_1 = mvnrnd(1 * ones(sample_dim, 1), variance * eye(sample_dim), samples_per_class);
+  data_10 = mvnrnd(10 * ones(sample_dim, 1), variance * eye(sample_dim), samples_per_class);
   labels_1 = 1 * ones(1, samples_per_class);
   labels_10 = 2 * ones(1, samples_per_class);
 
@@ -51,7 +51,7 @@ function imdb = constructSyntheticGaussianImdb(samples_per_class, sample_dim)
   imdb.images.data = data(ix,:);
   imdb.images.labels = labels(ix);
   imdb.images.set = set; % NOT set(ix).... that way you won't have any of your first class samples in the test set!
-  imdb.name = sprintf('gaussian-%dD-%d-train-%d-test', sample_dim, number_of_training_samples, number_of_testing_samples);
+  imdb.name = sprintf('gaussian-%dD-%d-train-%d-test-%d-var', sample_dim, number_of_training_samples, number_of_testing_samples, variance);
 
   % get the data into 4D format to be compatible with code built for all other imdbs.
   imdb.images.data = reshape(imdb.images.data, sample_dim, 1, 1, []);
