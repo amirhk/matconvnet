@@ -5,7 +5,7 @@
 % 2) Subtract the mean of the training data from both the training and test data
 % 3) STL-10 does NOT require contrast normalization or whitening
 % -------------------------------------------------------------------------
-function imdb = constructSyntheticGaussianImdb(samples_per_class, sample_dim, variance)
+function imdb = constructSyntheticGaussianImdb(samples_per_class, sample_dim, sample_mean, sample_variance)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -32,16 +32,16 @@ function imdb = constructSyntheticGaussianImdb(samples_per_class, sample_dim, va
 % POSSIBILITY OF SUCH DAMAGE.
 
   afprintf(sprintf('[INFO] Constructing synthetic Gaussian imdb...'));
-  data_m10 = mvnrnd(-1 * ones(sample_dim, 1), variance * eye(sample_dim), samples_per_class);
-  data_p10 = mvnrnd(+1 * ones(sample_dim, 1), variance * eye(sample_dim), samples_per_class);
-  labels_m10 = 1 * ones(1, samples_per_class);
-  labels_p10 = 2 * ones(1, samples_per_class);
+  data_m = mvnrnd(- sample_mean * ones(sample_dim, 1), sample_variance * eye(sample_dim), samples_per_class);
+  data_p = mvnrnd(+ sample_mean * ones(sample_dim, 1), sample_variance * eye(sample_dim), samples_per_class);
+  labels_m = 1 * ones(1, samples_per_class);
+  labels_p = 2 * ones(1, samples_per_class);
 
-  number_of_training_samples = .8 * samples_per_class * 2;
-  number_of_testing_samples = .2 * samples_per_class * 2;
+  number_of_training_samples = .5 * samples_per_class * 2;
+  number_of_testing_samples = .5 * samples_per_class * 2;
 
-  data = cat(1, data_m10, data_p10);
-  labels = cat(2, labels_m10, labels_p10)';
+  data = cat(1, data_m, data_p);
+  labels = cat(2, labels_m, labels_p)';
   set = cat(1, 1 * ones(number_of_training_samples, 1), 3 * ones(number_of_testing_samples, 1));
 
   assert(length(labels) == length(set));
@@ -51,11 +51,11 @@ function imdb = constructSyntheticGaussianImdb(samples_per_class, sample_dim, va
   imdb.images.data = data(ix,:);
   imdb.images.labels = labels(ix);
   imdb.images.set = set; % NOT set(ix).... that way you won't have any of your first class samples in the test set!
-  imdb.name = sprintf('gaussian-%dD-%d-train-%d-test-%.1f-var', sample_dim, number_of_training_samples, number_of_testing_samples, variance);
+  imdb.name = sprintf('gaussian-%dD-%d-train-%d-test-%.1f-var', sample_dim, number_of_training_samples, number_of_testing_samples, sample_variance);
 
   % get the data into 4D format to be compatible with code built for all other imdbs.
   imdb.images.data = reshape(imdb.images.data', sample_dim, 1, 1, []);
   afprintf(sprintf('done!\n\n'));
   fh = imdbMultiClassUtils;
   fh.getImdbInfo(imdb, 1);
-  save(sprintf('%s.mat', imdb.name), 'imdb');
+  % save(sprintf('%s.mat', imdb.name), 'imdb');

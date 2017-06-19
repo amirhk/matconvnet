@@ -48,15 +48,8 @@
 % constructSyntheticGaussianImdb(500, 50, 10);
 
 
-
-
-% constructSyntheticGaussianImdb(10, 5, 10);
-% constructSyntheticGaussianImdb(25, 5, 10);
-% constructSyntheticGaussianImdb(50, 5, 10);
-% constructSyntheticGaussianImdb(100, 5, 10);
-
-
-tempScriptRunKnn('gaussian-5D-16-train-4-test-10.0-var');
-tempScriptRunKnn('gaussian-5D-40-train-10-test-10.0-var');
-tempScriptRunKnn('gaussian-5D-80-train-20-test-10.0-var');
-tempScriptRunKnn('gaussian-5D-160-train-40-test-10.0-var');
+tempScriptRunKnn('saved-multi-class-gaussian-5D-mean-1-var-10-train-balance-10-test-balance-500');
+tempScriptRunKnn('saved-multi-class-gaussian-5D-mean-1-var-10-train-balance-50-test-balance-500');
+tempScriptRunKnn('saved-multi-class-gaussian-5D-mean-1-var-10-train-balance-100-test-balance-500');
+tempScriptRunKnn('saved-multi-class-gaussian-5D-mean-1-var-10-train-balance-250-test-balance-500');
+tempScriptRunKnn('saved-multi-class-gaussian-5D-mean-1-var-10-train-balance-500-test-balance-500');

@@ -255,12 +255,13 @@ function M = getCovarianceMeasureForSet(imdb, input_set, input_set_name)
   % input_set_name = {'S', 'D'}
 % -------------------------------------------------------------------------
 
+  load_from_saved_measure_file_if_present = true;
   saved_measure_file =  fullfile( ...
     getDevPath(), ...
     'data', ...
     'similarity_dissimilarity_sets', ...
     sprintf('%s_measure_for_%s.mat', input_set_name, imdb.name));
-  if exist(saved_measure_file) == 2
+  if exist(saved_measure_file) == 2 && load_from_saved_measure_file_if_present
     afprintf(sprintf('[INFO] loading saved %s measure...\n', input_set_name));
     tmp = load(saved_measure_file);
     M = tmp.M;
