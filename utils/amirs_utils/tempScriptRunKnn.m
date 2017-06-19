@@ -62,7 +62,7 @@ function tempScriptRunKNN(dataset, posneg_balance)
 
   % posneg_balance = 'balanced-38';
 
-  repeat_count = 1;
+  repeat_count = 30;
   all_experiments_multi_run = {};
 
   for i = 1 : 22
@@ -78,16 +78,62 @@ function tempScriptRunKNN(dataset, posneg_balance)
   end
 
 
-  y = [];
-  std_errors_value = [];
+  % y = [];
+  % std_errors_value = [];
+  % exp_number = 1;
+  % for j = 1:2
+  %   for i = 1:11
+  %     y(i,j) = mean(all_experiments_multi_run{exp_number}.test_performance);
+  %     std_errors_value(end + 1) = std(all_experiments_multi_run{exp_number}.test_performance);
+  %     exp_number = exp_number + 1;
+  %   end
+  % end
+
+  % std_errors_x_location = [ ...
+  %   0.86, 1.14, ...
+  %   1.86, 2.14, ...
+  %   2.86, 3.14, ...
+  %   3.86, 4.14, ...
+  %   4.86, 5.14, ...
+  %   5.86, 6.14, ...
+  %   6.86, 7.14, ...
+  %   7.86, 8.14, ...
+  %   8.86, 9.14, ...
+  %   9.86, 10.14, ...
+  %   10.86, 11.14];
+  % std_errors_y_location = reshape(y', 1, []);
+
+  % h = figure;
+  % hold on
+  % bar(y);
+  % ylim([-0.5, 1.5]);
+  % errorbar(std_errors_x_location, std_errors_y_location, std_errors_value);
+  % tmp_string = sprintf('1-KNN - %s', dataset);
+  % suptitle(tmp_string);
+  % saveas(h, fullfile(getDevPath(), 'temp_images', sprintf('%s.png', tmp_string)));
+
+
+  y_all = [];
+  y_w_relu = [];
+  y_wo_relu = [];
+  std_errors_value_all = [];
+  std_errors_value_w_relu = [];
+  std_errors_value_wo_relu = [];
   exp_number = 1;
   for j = 1:2
     for i = 1:11
-      y(i,j) = mean(all_experiments_multi_run{exp_number}.test_performance);
-      std_errors_value(end + 1) = std(all_experiments_multi_run{exp_number}.test_performance);
+      y_all(i,j) = mean(all_experiments_multi_run{exp_number}.test_performance);
+      std_errors_value_all(i,j) = std(all_experiments_multi_run{exp_number}.test_performance);
       exp_number = exp_number + 1;
     end
   end
+
+  y_w_relu = [y_all(1,:); y_all(2:6,:)];
+  y_wo_relu = [y_all(1,:); y_all(7:11,:)];
+
+  std_errors_value_w_relu = reshape([std_errors_value_all(1,:); std_errors_value_all(2:6,:)]', 1, []);
+  std_errors_value_wo_relu = reshape([std_errors_value_all(1,:); std_errors_value_all(7:11,:)]', 1, []);
+
 
   std_errors_x_location = [ ...
     0.86, 1.14, ...
@@ -95,19 +141,29 @@ function tempScriptRunKNN(dataset, posneg_balance)
     2.86, 3.14, ...
     3.86, 4.14, ...
     4.86, 5.14, ...
-    5.86, 6.14, ...
-    6.86, 7.14, ...
-    7.86, 8.14, ...
-    8.86, 9.14, ...
-    9.86, 10.14, ...
-    10.86, 11.14];
-  std_errors_y_location = reshape(y', 1, []);
+    5.86, 6.14];
+  std_errors_y_location = reshape(y_all', 1, []);
+  std_errors_y_location_w_relu = cat(2, std_errors_y_location(1:2), std_errors_y_location(3:12));
+  std_errors_y_location_wo_relu = cat(2, std_errors_y_location(1:2), std_errors_y_location(13:22));
 
   h = figure;
-  hold on
-  bar(y);
-  ylim([-0.5, 1.5]);
-  errorbar(std_errors_x_location, std_errors_y_location, std_errors_value);
+
+  subplot(1,2,1);
+  hold on;
+  bar(y_w_relu);
+  ylim([-0.1, 1.1]);
+  errorbar(std_errors_x_location, std_errors_y_location_w_relu, std_errors_value_w_relu);
+  legend({'original imdb', 'angle separated imdb'});
+  hold off
+
+  subplot(1,2,2);
+  hold on;
+  bar(y_wo_relu);
+  ylim([-0.1, 1.1]);
+  errorbar(std_errors_x_location, std_errors_y_location_wo_relu, std_errors_value_wo_relu);
+  legend({'original imdb', 'angle separated imdb'});
+  hold off
+
   tmp_string = sprintf('1-KNN - %s', dataset);
   suptitle(tmp_string);
   saveas(h, fullfile(getDevPath(), 'temp_images', sprintf('%s.png', tmp_string)));
