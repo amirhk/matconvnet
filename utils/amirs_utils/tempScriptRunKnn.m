@@ -62,7 +62,7 @@ function tempScriptRunKNN(dataset)
 
   posneg_balance = 'balanced-38';
 
-  repeat_count = 1;
+  repeat_count = 30;
   all_experiments_multi_run = {};
 
   for i = 1 : 14
