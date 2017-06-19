@@ -96,11 +96,11 @@
 
 
 
-tempScriptRunKnn('saved-multi-class-gaussian-5D-mean-1-var-.1-train-balance-10-test-balance-500', 'balanced-38');
-tempScriptRunKnn('saved-multi-class-gaussian-5D-mean-1-var-.1-train-balance-50-test-balance-500', 'balanced-38');
-tempScriptRunKnn('saved-multi-class-gaussian-5D-mean-1-var-.1-train-balance-100-test-balance-500', 'balanced-38');
-tempScriptRunKnn('saved-multi-class-gaussian-5D-mean-1-var-.1-train-balance-250-test-balance-500', 'balanced-38');
-tempScriptRunKnn('saved-multi-class-gaussian-5D-mean-1-var-.1-train-balance-500-test-balance-500', 'balanced-38');
+% tempScriptRunKnn('saved-multi-class-gaussian-5D-mean-1-var-.1-train-balance-10-test-balance-500', 'balanced-38');
+% tempScriptRunKnn('saved-multi-class-gaussian-5D-mean-1-var-.1-train-balance-50-test-balance-500', 'balanced-38');
+% tempScriptRunKnn('saved-multi-class-gaussian-5D-mean-1-var-.1-train-balance-100-test-balance-500', 'balanced-38');
+% tempScriptRunKnn('saved-multi-class-gaussian-5D-mean-1-var-.1-train-balance-250-test-balance-500', 'balanced-38');
+% tempScriptRunKnn('saved-multi-class-gaussian-5D-mean-1-var-.1-train-balance-500-test-balance-500', 'balanced-38');
 tempScriptRunKnn('saved-multi-class-gaussian-5D-mean-1-var-1-train-balance-10-test-balance-500', 'balanced-38');
 tempScriptRunKnn('saved-multi-class-gaussian-5D-mean-1-var-1-train-balance-50-test-balance-500', 'balanced-38');
 tempScriptRunKnn('saved-multi-class-gaussian-5D-mean-1-var-1-train-balance-100-test-balance-500', 'balanced-38');
