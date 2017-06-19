@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function calculateDistances()
+function calculateDistances(dataset)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -46,7 +46,7 @@ function calculateDistances()
 
   % dataset = 'gaussian-50D-800-train-200-test';
 
-  dataset = 'gaussian-5D-160-train-40-test-0.1-var';
+  % dataset = 'gaussian-5D-160-train-40-test-0.1-var';
 
   posneg_balance = 'balanced-38';
 
