@@ -46,16 +46,20 @@ function constructMultiClassImdbs(dataset, network_arch)
     case 'svhn'
       opts.imdb.contrast_normalization = true;
       all_class_imdb = constructSvhnImdb(opts);
-    case 'gaussian-5D-mean-1-var-0'
-      all_class_imdb = constructSyntheticGaussianImdb(1100, 5, 1, 0);
     % case 'gaussian-5D-mean-1-var-.1'
     %   all_class_imdb = constructSyntheticGaussianImdb(1100, 5, 1, .1);
+    case 'gaussian-5D-mean-1-var-0'
+      all_class_imdb = constructSyntheticGaussianImdb(1100, 5, 1, 0);
     case 'gaussian-5D-mean-1-var-1'
       all_class_imdb = constructSyntheticGaussianImdb(1100, 5, 1, 1);
     case 'gaussian-5D-mean-1-var-10'
       all_class_imdb = constructSyntheticGaussianImdb(1100, 5, 1, 10);
-    case 'gaussian-25D-mean-1-var-10'
-      all_class_imdb = constructSyntheticGaussianImdb(1100, 25, 1, 10);
+    case 'gaussian-50D-mean-1-var-0'
+      all_class_imdb = constructSyntheticGaussianImdb(1100, 5, 1, 0);
+    case 'gaussian-50D-mean-1-var-1'
+      all_class_imdb = constructSyntheticGaussianImdb(1100, 5, 1, 1);
+    case 'gaussian-50D-mean-1-var-10'
+      all_class_imdb = constructSyntheticGaussianImdb(1100, 5, 1, 10);
   end
 
 
@@ -73,10 +77,10 @@ function constructMultiClassImdbs(dataset, network_arch)
   % createImdbWithBalance(dataset, all_class_imdb, 500, 750);
 
 
-  createImdbWithBalance(dataset, all_class_imdb, 10, 500);
-  createImdbWithBalance(dataset, all_class_imdb, 50, 500);
-  createImdbWithBalance(dataset, all_class_imdb, 100, 500);
-  createImdbWithBalance(dataset, all_class_imdb, 250, 500);
+  % createImdbWithBalance(dataset, all_class_imdb, 10, 500);
+  % createImdbWithBalance(dataset, all_class_imdb, 50, 500);
+  % createImdbWithBalance(dataset, all_class_imdb, 100, 500);
+  % createImdbWithBalance(dataset, all_class_imdb, 250, 500);
   createImdbWithBalance(dataset, all_class_imdb, 500, 500);
 
 
