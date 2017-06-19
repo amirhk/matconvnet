@@ -183,7 +183,11 @@ function imdb = getAngleSeparatedImdb(input_imdb)
   printConsoleOutputSeparator();
 
   % Computing right eigen vectors.
-  [V, D] = eig(inv(M_D) * M_S);
+  tmp = inv(M_D);
+  if isinf(tmp)
+    tmp = eye(size(M_D))
+  end
+  [V, D] = eig(tmp * M_S);
   % [V, D] = eig(pinv(M_D) * M_S);
   % [V, D] = eig(M_S - M_D);
   angle_separation_matrix = V';
@@ -254,7 +258,6 @@ function enumerations = getEnumerationsOfTwoDissimilarVectors(a, b)
 function M = getCovarianceMeasureForSet(imdb, input_set, input_set_name)
   % input_set_name = {'S', 'D'}
 % -------------------------------------------------------------------------
-
   load_from_saved_measure_file_if_present = true;
   saved_measure_file =  fullfile( ...
     getDevPath(), ...
