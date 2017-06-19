@@ -26,28 +26,8 @@ function tempScriptRunTsne(dataset, posneg_balance)
 % POSSIBILITY OF SUCH DAMAGE.
 
   % -------------------------------------------------------------------------
-  %                                                                 Get IMDBs
+  %                                                                     Setup
   % -------------------------------------------------------------------------
-  % dataset = 'cifar';
-  % posneg_balance = 'whatever';
-  % dataset = 'cifar-multi-class-subsampled';
-  % posneg_balance = 'balanced-266';
-  % dataset = 'cifar-two-class-deer-truck';
-
-  % dataset = 'gaussian-5D-160-train-40-test';
-  % dataset = 'gaussian-10D-160-train-40-test';
-  % dataset = 'gaussian-25D-160-train-40-test';
-  % dataset = 'gaussian-50D-160-train-40-test';
-
-  % dataset = 'gaussian-5D-400-train-100-test';
-  % dataset = 'gaussian-10D-400-train-100-test';
-  % dataset = 'gaussian-25D-400-train-100-test';
-  % dataset = 'gaussian-50D-400-train-100-test';
-
-  % dataset = 'gaussian-50D-800-train-200-test';
-
-  % posneg_balance = 'balanced-38';
-
   [~, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 1);
 
   for i = 1 : numel(experiments)

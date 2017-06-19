@@ -190,7 +190,7 @@ function imdb = getAngleSeparatedImdb(input_imdb)
     % [V, D] = eig(M_S - M_D);
     angle_separation_matrix = V';
   else
-    angle_separation_matrix = eye(size(M_D))
+    angle_separation_matrix = eye(size(M_D));
   end
 
   assert(isreal(angle_separation_matrix));
