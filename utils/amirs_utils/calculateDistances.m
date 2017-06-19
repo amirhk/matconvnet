@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function calculateDistances(dataset)
+function calculateDistances(dataset, posneg_balance)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -48,9 +48,24 @@ function calculateDistances(dataset)
 
   % dataset = 'gaussian-5D-160-train-40-test-0.1-var';
 
-  posneg_balance = 'balanced-38';
+  % posneg_balance = 'balanced-38';
 
   [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 1);
+
+
+  % synthetic_original_imdb = {};
+  % synthetic_original_imdb.images.data = reshape([-10:1:-1, 1:1:10], 1,1,1,[]);
+  % synthetic_original_imdb.images.labels = [-1 * ones(1,10), 1 * ones(1,10)];
+  % synthetic_original_imdb.images.set = 1 * ones(1, 20);
+
+  % synthetic_projected_imdb = {};
+  % synthetic_projected_imdb.images.data = reshape([-100:1:-91, 91:1:100], 1,1,1,[]);
+  % synthetic_projected_imdb.images.labels = [-1 * ones(1,10), 1 * ones(1,10)];
+  % synthetic_projected_imdb.images.set = 1 * ones(1, 20);
+
+
+  % experiments{1}.imdb = synthetic_original_imdb;
+  % experiments{2}.imdb = synthetic_projected_imdb;
 
   if true
     % point_type = 'border';
@@ -81,7 +96,7 @@ function calculateDistances(dataset)
     for i = 1 : numel(experiments)
       histogram( ...
         experiments{i}.between_class_distance_absolute_values, ...
-        0:2.5:180, ...
+        ..., % 0:2.5:180, ...
         ..., % 0:1:75, ...
         ..., % 0:2.5e-8:10e-7, ...
         'facecolor', ...
@@ -101,7 +116,7 @@ function calculateDistances(dataset)
     for i = 1 : numel(experiments)
       histogram( ...
         experiments{i}.within_class_distance_absolute_values, ...
-        0:2.5:180, ...
+        ..., % 0:2.5:180, ...
         ..., % 0:1:75, ...
         ..., % 0:2.5e-8:10e-7, ...
         'facecolor', ...
@@ -236,47 +251,48 @@ function [distance_ratios, distance_absolute_values] = getPointDistanceBeef(orig
     case 'border'
       repeat_count = 1;
     case 'random'
-      repeat_count = 10;
+      repeat_count = 100;
     otherwise
       throwException('[ERROR] point_type not recognized.');
   end
   distance_ratios = [];
   distance_absolute_values = [];
   for i = 1 : repeat_count
-    for point_index = 1 : size(original_pdist_matrix, 1)
+    for reference_point_index = 1 : size(original_pdist_matrix, 1)
 
       % -------------------------------------------------------------------------
       %                                                         Get point indices
       % -------------------------------------------------------------------------
-      original_point_row = original_pdist_matrix(point_index, :);
-      original_point_class = original_labels_train(point_index);
-      projected_point_row = projected_pdist_matrix(point_index, :);
-      projected_point_class = projected_labels_train(point_index);
+      original_reference_point_row = original_pdist_matrix(reference_point_index, :);
+      original_reference_point_class = original_labels_train(reference_point_index);
+      projected_reference_point_row = projected_pdist_matrix(reference_point_index, :);
+      projected_reference_point_class = projected_labels_train(reference_point_index);
+      assert(original_reference_point_class == projected_reference_point_class);
 
       if strcmp(point_type, 'border')
-        original_point_index = findBorderPointFunctionHandle(original_point_row, original_point_class, original_labels_train);
-        projected_point_index = findBorderPointFunctionHandle(projected_point_row, projected_point_class, projected_labels_train);
+        original_other_point_index = findBorderPointFunctionHandle(original_reference_point_row, original_reference_point_class, original_labels_train);
+        projected_other_point_index = findBorderPointFunctionHandle(projected_reference_point_row, projected_reference_point_class, projected_labels_train);
       elseif strcmp(point_type, 'random')
-        original_point_index = findRandomPointFunctionHandle(original_point_row, original_point_class, original_labels_train);
-        projected_point_index = original_point_index;
+        original_other_point_index = findRandomPointFunctionHandle(original_reference_point_row, original_reference_point_class, original_labels_train);
+        projected_other_point_index = original_other_point_index;
       end
 
       % -------------------------------------------------------------------------
       %                                                     Get points themselves
       % -------------------------------------------------------------------------
-      original_reference_point_index = point_index;
+      original_reference_point_index = reference_point_index;
       original_reference_point = getVectorizedSampleAtIndex(original_imdb, original_reference_point_index);
-      original_point = getVectorizedSampleAtIndex(original_imdb, original_point_index);
+      original_other_point = getVectorizedSampleAtIndex(original_imdb, original_other_point_index);
 
-      projected_reference_point_index = point_index;
+      projected_reference_point_index = reference_point_index;
       projected_reference_point = getVectorizedSampleAtIndex(projected_imdb, projected_reference_point_index);
-      projected_point = getVectorizedSampleAtIndex(projected_imdb, projected_point_index);
+      projected_other_point = getVectorizedSampleAtIndex(projected_imdb, projected_other_point_index);
 
       % -------------------------------------------------------------------------
       %                                                        Calculate distance
       % -------------------------------------------------------------------------
-      original_distance = calculateDistance(original_reference_point, original_reference_point_index, original_point, original_point_index, distance_type, original_pdist_matrix);
-      projected_distance = calculateDistance(projected_reference_point, projected_reference_point_index, projected_point, projected_point_index, distance_type, projected_pdist_matrix);
+      original_distance = calculateDistance(original_reference_point, original_reference_point_index, original_other_point, original_other_point_index, distance_type, original_pdist_matrix);
+      projected_distance = calculateDistance(projected_reference_point, projected_reference_point_index, projected_other_point, projected_other_point_index, distance_type, projected_pdist_matrix);
 
       % -------------------------------------------------------------------------
       %                                                 Finally, calculate ratios
@@ -295,7 +311,6 @@ function [matrix_pdist, labels_train] = getDistanceMatrixAndLabels(imdb, distanc
   labels_train = imdb.images.labels(imdb.images.set == 1);
   sample_size = size(data_train, 1) * size(data_train, 2) * size(data_train, 3);
   samples = reshape(data_train, sample_size, [])';
-  % keyboard
   matrix_pdist = squareform(pdist(samples));
 
 % -------------------------------------------------------------------------

@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function tempScriptRunMmd()
+function tempScriptRunMmd(dataset, posneg_balance)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -44,9 +44,9 @@ function tempScriptRunMmd()
   % dataset = 'gaussian-25D-400-train-100-test';
   % dataset = 'gaussian-50D-400-train-100-test';
 
-  dataset = 'gaussian-50D-800-train-200-test';
+  % dataset = 'gaussian-50D-800-train-200-test';
 
-  posneg_balance = 'balanced-38';
+  % posneg_balance = 'balanced-38';
 
   [~, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 1);
 
