@@ -208,30 +208,6 @@ function [S, D] = getSimilarityAndDissimilarityEnumerationSets(imdb)
     end
   end
 
-  % S = {};
-  % D = {};
-  % saved_SD_file =  fullfile(getDevPath(), 'data', 'similarity_dissimilarity_sets', sprintf('SD_sets_for_%s.mat', imdb.name));
-  % keyboard
-  % if exist(saved_SD_file) == 2
-  %   tmp = load(saved_SD_file);
-  %   tmp = tmp.tmp;
-  %   S = tmp.S;
-  %   D = tmp.D;
-  % else
-  %   for i = 1:number_of_classes
-  %     afprintf(sprintf('Populating `S` and `D` sets for class #%d\n', i));
-  %     S = cat(2, S, getEnumerationsOfSampleIndicesFromClasses(imdb, i, i));
-  %     for j = i+1:number_of_classes
-  %       D = cat(2, D, getEnumerationsOfSampleIndicesFromClasses(imdb, i, j));
-  %     end
-  %   end
-  %   tmp = {};
-  %   tmp.S = S;
-  %   tmp.D = D;
-  %   save(saved_SD_file, 'tmp');
-  % end
-
-
 % -------------------------------------------------------------------------
 function enumerations = getEnumerationsOfSampleIndicesFromClasses(imdb, class_1_label, class_2_label)
 % -------------------------------------------------------------------------

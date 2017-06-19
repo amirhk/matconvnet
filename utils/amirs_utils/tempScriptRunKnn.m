@@ -62,6 +62,49 @@ function tempScriptRunKNN(dataset)
 
   posneg_balance = 'balanced-38';
 
+  repeat_count = 30;
+  all_experiments_multi_run = {};
+
+  for i = 1 : 14
+    all_experiments_multi_run{i}.test_performance = [];
+  end
+
+  for kk = 1:repeat_count
+    all_experiments_single_run = runAllExperimentsOnce(dataset, posneg_balance);
+    for i = 1 : numel(all_experiments_single_run)
+      all_experiments_multi_run{i}.test_performance(end + 1) = ...
+        all_experiments_single_run{i}.performance_summary.testing.test.accuracy;
+    end
+  end
+
+
+  y = [];
+  std_errors_value = [];
+  exp_number = 1;
+  for i = 1:7
+    for j = 1:2
+      y(i,j) = mean(all_experiments_multi_run{exp_number}.test_performance);
+      std_errors_value(end + 1) = std(all_experiments_multi_run{exp_number}.test_performance);
+      exp_number = exp_number + 1;
+    end
+  end
+
+  std_errors_x_location = [0.86, 1.14, 1.86, 2.14, 2.86, 3.14, 3.86, 4.14, 4.86, 5.14, 5.86, 6.14, 6.86, 7.14];
+  std_errors_y_location = reshape(y', 1, []);
+
+  h = figure;
+  hold on
+  bar(y);
+  ylim([-0.5, 1.5]);
+  errorbar(std_errors_x_location, std_errors_y_location, std_errors_value);
+  tmp_string = sprintf('1-KNN - %s', dataset);
+  suptitle(tmp_string);
+  saveas(h, fullfile(getDevPath(), 'temp_images', sprintf('%s.png', tmp_string)));
+
+
+% -------------------------------------------------------------------------
+function all_experiments_single_run = runAllExperimentsOnce(dataset, posneg_balance)
+% -------------------------------------------------------------------------
   [~, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 0);
 
   for i = 1 : numel(experiments)
@@ -69,6 +112,7 @@ function tempScriptRunKNN(dataset)
     input_opts.dataset = dataset;
     input_opts.imdb = experiments{i}.imdb;
     [~, experiments{i}.performance_summary] = testKnn(input_opts);
+    % all_experiments_repeated{i}.performance_summary.testing.test.accuracy = []
   end
 
   for i = 1 : numel(experiments)
@@ -78,20 +122,4 @@ function tempScriptRunKNN(dataset)
       experiments{i}.performance_summary.testing.train.accuracy, ...
       experiments{i}.performance_summary.testing.test.accuracy));
   end
-
-
-  y = [];
-  exp_number = 1;
-  for i = 1:7
-    for j = 1:2
-      y(i,j) = experiments{exp_number}.performance_summary.testing.test.accuracy;
-      exp_number = exp_number + 1;
-    end
-  end
-  h = figure;
-  bar(y);
-  ylim([0, 1])
-  tmp_string = sprintf('1-KNN - %s', dataset);
-  suptitle(tmp_string);
-  saveas(h, fullfile(getDevPath(), 'temp_images', sprintf('%s.png', tmp_string)));
-
+  all_experiments_single_run = experiments;
