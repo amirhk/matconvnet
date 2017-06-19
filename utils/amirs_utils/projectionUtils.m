@@ -184,13 +184,15 @@ function imdb = getAngleSeparatedImdb(input_imdb)
 
   % Computing right eigen vectors.
   tmp = inv(M_D);
-  if isinf(tmp)
-    tmp = eye(size(M_D))
+  if ~isinf(tmp)
+    [V, D] = eig(tmp * M_S);
+    % [V, D] = eig(pinv(M_D) * M_S);
+    % [V, D] = eig(M_S - M_D);
+    angle_separation_matrix = V';
+  else
+    angle_separation_matrix = eye(size(M_D))
   end
-  [V, D] = eig(tmp * M_S);
-  % [V, D] = eig(pinv(M_D) * M_S);
-  % [V, D] = eig(M_S - M_D);
-  angle_separation_matrix = V';
+
   assert(isreal(angle_separation_matrix));
 
   imdb = projectImdbUsingMatrix(input_imdb, angle_separation_matrix);
