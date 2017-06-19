@@ -18,7 +18,7 @@ tempScriptRunKnn('saved-multi-class-gaussian-5D-mean-1-var-0-train-balance-500-t
 % tempScriptRunKnn('saved-multi-class-gaussian-5D-mean-1-var-10-train-balance-500-test-balance-500', 'balanced-38');
 
 
-calculateDistances('saved-multi-class-gaussian-5D-mean-1-var-0-train-balance-500-test-balance-500', 'balanced-38');
+% calculateDistances('saved-multi-class-gaussian-5D-mean-1-var-0-train-balance-500-test-balance-500', 'balanced-38');
 % calculateDistances('saved-multi-class-gaussian-5D-mean-1-var-1-train-balance-500-test-balance-500', 'balanced-38');
 % calculateDistances('saved-multi-class-gaussian-5D-mean-1-var-10-train-balance-500-test-balance-500', 'balanced-38');
 
