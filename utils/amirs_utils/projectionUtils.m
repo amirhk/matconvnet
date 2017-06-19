@@ -187,6 +187,7 @@ function imdb = getAngleSeparatedImdb(input_imdb)
   % [V, D] = eig(pinv(M_D) * M_S);
   % [V, D] = eig(M_S - M_D);
   angle_separation_matrix = V';
+  assert(isreal(angle_separation_matrix));
 
   imdb = projectImdbUsingMatrix(input_imdb, angle_separation_matrix);
 

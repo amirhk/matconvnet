@@ -90,6 +90,7 @@ function tempScriptRunKNN(dataset)
   end
   h = figure;
   bar(y);
+  ylim([0, 1])
   tmp_string = sprintf('1-KNN - %s', dataset);
   suptitle(tmp_string);
   saveas(h, fullfile(getDevPath(), 'temp_images', sprintf('%s.png', tmp_string)));
