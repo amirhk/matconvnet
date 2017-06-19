@@ -28,7 +28,7 @@ function tempScriptRunKNN(dataset, posneg_balance)
   % -------------------------------------------------------------------------
   %                                                                     Setup
   % -------------------------------------------------------------------------
-  repeat_count = 30;
+  repeat_count = 1;
   all_experiments_multi_run = {};
 
   for i = 1 : 22
