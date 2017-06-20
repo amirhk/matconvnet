@@ -30,7 +30,8 @@
 % tempScriptRunKnn('saved-multi-class-gaussian-50D-mean-9-var-10-train-balance-500-test-balance-500', 'balanced-38', 1);
 
 
-tempScriptRunKnn('uci-spam', 'balanced-38', 0);
+tempScriptRunKnn('uci-ion', 'balanced-38', 0);
+% tempScriptRunKnn('uci-spam', 'balanced-38', 0);
 
 
 

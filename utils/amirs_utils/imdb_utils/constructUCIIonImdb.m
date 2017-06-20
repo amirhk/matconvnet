@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function imdb = constructUCISpamImdb(opts)
+function imdb = constructUCIIonImdb(opts)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -25,19 +25,23 @@ function imdb = constructUCISpamImdb(opts)
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
 
-  afprintf(sprintf('[INFO] Constructing UCI spam imdb...\n'));
+  afprintf(sprintf('[INFO] Constructing UCI ion imdb...\n'));
 
-  data_file = fullfile(opts.imdb.data_dir, 'spambase.data');
+  data_file = fullfile(opts.imdb.data_dir, 'ionosphere.data');
+  labels_file = fullfile(opts.imdb.data_dir, 'ionosphere.labels');
+
   data_matrix = load(data_file);
+  labels = importdata('/Users/a6karimi/dev/data/source/uci-ion/ionosphere.labels');
+  labels = cell2mat(labels);
 
-  sample_dim = size(data_matrix, 2) - 1;
+  sample_dim = size(data_matrix, 2);
   number_of_samples = size(data_matrix, 1);
-  assert(number_of_samples == 4601);
-  number_of_training_samples = 2301;
-  number_of_testing_samples = 2300;
+  assert(number_of_samples == 351);
+  number_of_training_samples = 176;
+  number_of_testing_samples = 175;
 
-  data = data_matrix(:,1:end-1);
-  labels = data_matrix(:,end) + 1; % +1 because uci-spam dataset has labels {0,1}, but my code likes {1,2,...}
+  data = load(data_file);
+  labels = convertGoodBadLabelsToOneTwoLabels(labels);
   set = cat(1, 1 * ones(number_of_training_samples, 1), 3 * ones(number_of_testing_samples, 1));
 
   assert(length(labels) == length(set));
@@ -47,7 +51,7 @@ function imdb = constructUCISpamImdb(opts)
   imdb.images.data = data(ix,:);
   imdb.images.labels = labels(ix);
   imdb.images.set = set; % NOT set(ix).... that way you won't have any of your first class samples in the test set!
-  imdb.name = 'uci-spam';
+  imdb.name = 'uci-ion';
 
   % get the data into 4D format to be compatible with code built for all other imdbs.
   imdb.images.data = reshape(imdb.images.data', sample_dim, 1, 1, []);
@@ -55,3 +59,12 @@ function imdb = constructUCISpamImdb(opts)
   fh = imdbMultiClassUtils;
   fh.getImdbInfo(imdb, 1);
   save(sprintf('%s.mat', imdb.name), 'imdb');
+
+
+% -------------------------------------------------------------------------
+function one_two_labels = convertGoodBadLabelsToOneTwoLabels(good_bad_labels)
+% -------------------------------------------------------------------------
+  a = reshape(good_bad_labels, 1, []);
+  b = replace(a, 'g', '1');
+  c = replace(b, 'b', '2');
+  one_two_labels = c';
