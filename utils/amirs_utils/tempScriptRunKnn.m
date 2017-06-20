@@ -85,6 +85,7 @@ function tempScriptRunKNN(dataset, posneg_balance, save_results)
   ylim([-0.1, 1.1]);
   errorbar(std_errors_x_location, std_errors_y_location_wo_relu, std_errors_value_wo_relu);
   legend({'original imdb', 'angle separated imdb'}, 'Location','southeast');
+  title('w/o ReLU');
   hold off
 
   subplot(1,2,2);
@@ -93,6 +94,7 @@ function tempScriptRunKNN(dataset, posneg_balance, save_results)
   ylim([-0.1, 1.1]);
   errorbar(std_errors_x_location, std_errors_y_location_w_relu, std_errors_value_w_relu);
   legend({'original imdb', 'angle separated imdb'}, 'Location','southeast');
+  title('w ReLU');
   hold off
 
   tmp_string = sprintf('1-KNN - %s', dataset);

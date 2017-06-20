@@ -72,7 +72,7 @@ function tempScriptRunTsne(dataset, posneg_balance, save_results)
       j = j + 1;
     end
 
-    tmp_string = sprintf('t-SNE - %s', experiments{i}.title);
+    tmp_string = sprintf('t-SNE - %s - %s', experiments{i}.imdb.name, experiments{i}.title);
     suptitle(tmp_string);
     if save_results
       saveas(h, fullfile(getDevPath(), 'temp_images', sprintf('%s.png', tmp_string)));

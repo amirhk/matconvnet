@@ -176,7 +176,7 @@ function imdb = getAngleSeparatedImdb(input_imdb)
   % M_S = M_D;
   % M_D = jigar;
   tmp = inv(M_D);
-  if ~isinf(tmp)  ~isnan(tmp)
+  if ~isinf(tmp) && ~isnan(tmp)
     [V, ~] = eig(tmp * M_S);
     % [V, ~] = eig(pinv(M_D) * M_S);
     % [V, ~] = eig(M_S - M_D);

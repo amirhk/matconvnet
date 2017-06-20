@@ -31,13 +31,15 @@
 
 
 % tempScriptRunKnn('uci-ion', 'balanced-38', 1);
-tempScriptRunTsne('uci-ion', 'balanced-38', 1);
+% tempScriptRunTsne('uci-ion', 'balanced-38', 1);
 % calculateDistances('uci-ion', 'balanced-38', 1);
 
 % tempScriptRunKnn('uci-spam', 'balanced-38', 1);
-tempScriptRunTsne('uci-spam', 'balanced-38', 1);
+% tempScriptRunTsne('uci-spam', 'balanced-38', 1);
 % calculateDistances('uci-spam', 'balanced-38', 1);
 
+
+tempScriptRunKnn('saved-multi-class-gaussian-50D-mean-1-var-10-train-balance-2500-test-balance-2500', 'balanced-38', 1);
 
 
 
