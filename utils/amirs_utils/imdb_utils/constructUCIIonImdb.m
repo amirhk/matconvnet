@@ -67,4 +67,6 @@ function one_two_labels = convertGoodBadLabelsToOneTwoLabels(good_bad_labels)
   a = reshape(good_bad_labels, 1, []);
   b = replace(a, 'g', '1');
   c = replace(b, 'b', '2');
-  one_two_labels = c';
+  d = c';
+  e = str2num(d);
+  one_two_labels = e;
