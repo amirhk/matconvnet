@@ -40,6 +40,7 @@
 
 
 tempScriptRunKnn('saved-multi-class-gaussian-50D-mean-1-var-10-train-balance-2500-test-balance-2500', 'balanced-38', 1);
+% calculateDistances('saved-multi-class-gaussian-50D-mean-1-var-10-train-balance-2500-test-balance-2500', 'balanced-38', 1);
 
 
 
