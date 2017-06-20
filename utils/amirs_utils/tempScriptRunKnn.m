@@ -45,11 +45,11 @@ function tempScriptRunKNN(dataset, posneg_balance, save_results)
 
 
   y_all = [];
-  y_w_relu = [];
   y_wo_relu = [];
+  y_w_relu = [];
   std_errors_value_all = [];
-  std_errors_value_w_relu = [];
   std_errors_value_wo_relu = [];
+  std_errors_value_w_relu = [];
   exp_number = 1;
   for j = 1:2
     for i = 1:11
@@ -59,11 +59,11 @@ function tempScriptRunKNN(dataset, posneg_balance, save_results)
     end
   end
 
-  y_w_relu = [y_all(1,:); y_all(2:6,:)];
-  y_wo_relu = [y_all(1,:); y_all(7:11,:)];
+  y_wo_relu = [y_all(1,:); y_all(2:6,:)];
+  y_w_relu = [y_all(1,:); y_all(7:11,:)];
 
-  std_errors_value_w_relu = reshape([std_errors_value_all(1,:); std_errors_value_all(2:6,:)]', 1, []);
-  std_errors_value_wo_relu = reshape([std_errors_value_all(1,:); std_errors_value_all(7:11,:)]', 1, []);
+  std_errors_value_wo_relu = reshape([std_errors_value_all(1,:); std_errors_value_all(2:6,:)]', 1, []);
+  std_errors_value_w_relu = reshape([std_errors_value_all(1,:); std_errors_value_all(7:11,:)]', 1, []);
 
 
   std_errors_x_location = [ ...
@@ -74,24 +74,24 @@ function tempScriptRunKNN(dataset, posneg_balance, save_results)
     4.86, 5.14, ...
     5.86, 6.14];
   std_errors_y_location = reshape(y_all', 1, []);
-  std_errors_y_location_w_relu = cat(2, std_errors_y_location(1:2), std_errors_y_location(3:12));
-  std_errors_y_location_wo_relu = cat(2, std_errors_y_location(1:2), std_errors_y_location(13:22));
+  std_errors_y_location_wo_relu = cat(2, std_errors_y_location(1:2), std_errors_y_location(3:12));
+  std_errors_y_location_w_relu = cat(2, std_errors_y_location(1:2), std_errors_y_location(13:22));
 
   h = figure;
 
   subplot(1,2,1);
   hold on;
-  bar(y_w_relu);
+  bar(y_wo_relu);
   ylim([-0.1, 1.1]);
-  errorbar(std_errors_x_location, std_errors_y_location_w_relu, std_errors_value_w_relu);
+  errorbar(std_errors_x_location, std_errors_y_location_wo_relu, std_errors_value_wo_relu);
   legend({'original imdb', 'angle separated imdb'}, 'Location','southeast');
   hold off
 
   subplot(1,2,2);
   hold on;
-  bar(y_wo_relu);
+  bar(y_w_relu);
   ylim([-0.1, 1.1]);
-  errorbar(std_errors_x_location, std_errors_y_location_wo_relu, std_errors_value_wo_relu);
+  errorbar(std_errors_x_location, std_errors_y_location_w_relu, std_errors_value_w_relu);
   legend({'original imdb', 'angle separated imdb'}, 'Location','southeast');
   hold off
 
