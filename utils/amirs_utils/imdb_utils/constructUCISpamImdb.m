@@ -1,11 +1,5 @@
-% NOTES:
-% 1) Using im2double will bring all pixel values between [-1,+1] and hence need
-%    higher LR. Note, that constructing CIFAR imdb in matconvnet does not use
-%    im2doube by default, but it was recommended by Javad.
-% 2) Subtract the mean of the training data from both the training and test data
-% 3) STL-10 does NOT require contrast normalization or whitening
 % -------------------------------------------------------------------------
-function imdb = constructStl10Imdb(opts)
+function imdb = constructUCISpamImdb(opts)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -31,32 +25,34 @@ function imdb = constructStl10Imdb(opts)
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
 
-  afprintf(sprintf('[INFO] Constructing STL-10 imdb...'));
+  afprintf(sprintf('[INFO] Constructing UCI spam imdb...\n'));
 
-  train_file = load(fullfile(opts.imdb.data_dir, 'train.mat'));
-  test_file = load(fullfile(opts.imdb.data_dir, 'test.mat'));
+  data_file = fullfile(opts.imdb.data_dir, 'spambase.data');
+  data_matrix = load(data_file);
 
-  data_train = imresize(reshape(im2double(train_file.X'), 96,96,3,[]), [32,32]);
-  labels_train = single(train_file.y');
-  set_train = 1 * ones(1, 5000);
+  number_of_samples = size(data_matrix, 1);
+  assert(number_of_samples == 4601);
+  number_of_training_samples = 2301;
+  number_of_testing_samples = 2300;
 
-  data_test = imresize(reshape(im2double(test_file.X'), 96,96,3,[]), [32,32]);
-  labels_test = single(test_file.y');
-  set_test = 3 * ones(1, 8000);
+  sample_dim = size(data_matrix, 2) - 1;
 
-  data = single(cat(4, data_train, data_test));
-  labels = single(cat(2, labels_train, labels_test));
-  set = cat(2, set_train, set_test);
+  data = data_matrix(:,1:end-1);
+  labels = data_matrix(:,end) + 1; % +1 because uci-spam dataset has labels {0,1}, but my code likes {1,2,...}
+  set = cat(1, 1 * ones(number_of_training_samples, 1), 3 * ones(number_of_testing_samples, 1));
 
-  % remove mean in any case
-  data_mean = mean(data(:,:,:,set == 1), 4);
-  data = bsxfun(@minus, data, data_mean);
+  assert(length(labels) == length(set));
 
-  % STL-10 does NOT require contrast normalization or whitening
+  % shuffle
+  ix = randperm(number_of_samples);
+  imdb.images.data = data(ix,:);
+  imdb.images.labels = labels(ix);
+  imdb.images.set = set; % NOT set(ix).... that way you won't have any of your first class samples in the test set!
+  imdb.name = 'uci-spam';
 
-  imdb.images.data = data;
-  imdb.images.labels = labels;
-  imdb.images.set = set;
-  imdb.meta.sets = {'train', 'val', 'test'};
-  imdb.meta.classes = train_file.class_names; % = test_file.class_names
+  % get the data into 4D format to be compatible with code built for all other imdbs.
+  imdb.images.data = reshape(imdb.images.data', sample_dim, 1, 1, []);
   afprintf(sprintf('done!\n\n'));
+  fh = imdbMultiClassUtils;
+  fh.getImdbInfo(imdb, 1);
+  save(sprintf('%s.mat', imdb.name), 'imdb');

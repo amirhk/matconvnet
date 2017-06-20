@@ -1,9 +1,3 @@
-% NOTES:
-% 1) Using im2double will bring all pixel values between [-1,+1] and hence need
-%    higher LR. Note, that constructing CIFAR imdb in matconvnet does not use
-%    im2doube by default, but it was recommended by Javad.
-% 2) Subtract the mean of the training data from both the training and test data
-% 3) STL-10 does NOT require contrast normalization or whitening
 % -------------------------------------------------------------------------
 function imdb = constructSyntheticGaussianImdb(samples_per_class, sample_dim, sample_mean, sample_variance)
 % -------------------------------------------------------------------------
@@ -31,7 +25,7 @@ function imdb = constructSyntheticGaussianImdb(samples_per_class, sample_dim, sa
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
 
-  afprintf(sprintf('[INFO] Constructing synthetic Gaussian imdb...'));
+  afprintf(sprintf('[INFO] Constructing synthetic Gaussian imdb...\n'));
   data_m = mvnrnd(- sample_mean * ones(sample_dim, 1), sample_variance * eye(sample_dim), samples_per_class);
   data_p = mvnrnd(+ sample_mean * ones(sample_dim, 1), sample_variance * eye(sample_dim), samples_per_class);
   % data_m = mvnrnd(+ 9 * ones(sample_dim, 1), sample_variance * eye(sample_dim), samples_per_class);
