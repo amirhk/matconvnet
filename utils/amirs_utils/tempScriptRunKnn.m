@@ -43,7 +43,34 @@ function tempScriptRunKNN(dataset, posneg_balance, save_results)
     end
   end
 
+  plotBeef(all_experiments_multi_run, dataset, save_results);
 
+% -------------------------------------------------------------------------
+function all_experiments_single_run = runAllExperimentsOnce(dataset, posneg_balance)
+% -------------------------------------------------------------------------
+  [~, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 0);
+
+  for i = 1 : numel(experiments)
+    input_opts = {};
+    input_opts.dataset = dataset;
+    input_opts.imdb = experiments{i}.imdb;
+    [~, experiments{i}.performance_summary] = testKnn(input_opts);
+    % all_experiments_repeated{i}.performance_summary.testing.test.accuracy = []
+  end
+
+  for i = 1 : numel(experiments)
+    afprintf(sprintf( ...
+      '[INFO] 1-KNN Results for `%s`: \t\t train acc = %.4f, test acc = %.4f \n\n', ...
+      experiments{i}.title, ...
+      experiments{i}.performance_summary.testing.train.accuracy, ...
+      experiments{i}.performance_summary.testing.test.accuracy));
+  end
+  all_experiments_single_run = experiments;
+
+
+% -------------------------------------------------------------------------
+function plotBeef(all_experiments_multi_run, dataset, save_results)
+% -------------------------------------------------------------------------
   y_all = [];
   y_wo_relu = [];
   y_w_relu = [];
@@ -80,48 +107,67 @@ function tempScriptRunKNN(dataset, posneg_balance, save_results)
   h = figure;
 
   subplot(1,2,1);
-  hold on;
-  bar(y_wo_relu);
-  ylim([-0.1, 1.1]);
-  errorbar(std_errors_x_location, std_errors_y_location_wo_relu, std_errors_value_wo_relu);
-  legend({'original imdb', 'angle separated imdb'}, 'Location','southeast');
-  title('w/o ReLU');
-  hold off
+  subplotBeef(y_wo_relu, std_errors_x_location, std_errors_y_location_wo_relu, std_errors_value_wo_relu, 'w/o ReLU');
 
   subplot(1,2,2);
-  hold on;
-  bar(y_w_relu);
-  ylim([-0.1, 1.1]);
-  errorbar(std_errors_x_location, std_errors_y_location_w_relu, std_errors_value_w_relu);
-  legend({'original imdb', 'angle separated imdb'}, 'Location','southeast');
-  title('w ReLU');
-  hold off
+  subplotBeef(y_w_relu, std_errors_x_location, std_errors_y_location_w_relu, std_errors_value_w_relu, 'w ReLU');
 
   tmp_string = sprintf('1-KNN - %s', dataset);
   suptitle(tmp_string);
   if save_results
-    saveas(h, fullfile(getDevPath(), 'temp_images', sprintf('%s.png', tmp_string)));
+    % saveas(h, fullfile(getDevPath(), 'temp_images', sprintf('%s.png', tmp_string)));
+    print(fullfile(getDevPath(), 'temp_images', tmp_string), '-dpdf', '-fillpage')
   end
-
 
 % -------------------------------------------------------------------------
-function all_experiments_single_run = runAllExperimentsOnce(dataset, posneg_balance)
+function subplotBeef(y, std_errors_x_location, std_errors_y_location, std_errors_value, title_string)
 % -------------------------------------------------------------------------
-  [~, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 0);
+  hold on;
+  bar(y);
+  ylim([-0.1, 1.1]);
+  errorbar(std_errors_x_location, std_errors_y_location, std_errors_value);
+  legend({'original imdb', 'angle separated imdb'}, 'Location','southeast');
+  title(title_string);
 
-  for i = 1 : numel(experiments)
-    input_opts = {};
-    input_opts.dataset = dataset;
-    input_opts.imdb = experiments{i}.imdb;
-    [~, experiments{i}.performance_summary] = testKnn(input_opts);
-    % all_experiments_repeated{i}.performance_summary.testing.test.accuracy = []
-  end
+  % Set the X-Tick locations so that every other month is labeled.
+  Xt = 1:1:6;
+  Xl = [0.5 6.5];
+  set(gca, 'XTick', Xt, 'XLim', Xl);
 
-  for i = 1 : numel(experiments)
-    afprintf(sprintf( ...
-      '[INFO] 1-KNN Results for `%s`: \t\t train acc = %.4f, test acc = %.4f \n\n', ...
-      experiments{i}.title, ...
-      experiments{i}.performance_summary.testing.train.accuracy, ...
-      experiments{i}.performance_summary.testing.test.accuracy));
-  end
-  all_experiments_single_run = experiments;
+  % Add the months as tick labels.
+  labels = ['Default';
+            '-------';
+            'RP =  1';
+            '-------';;
+            'RP =  2';
+            '-------';;
+            'RP =  3';
+            '-------';;
+            'RP =  4';
+            '-------';;
+            'RP =  5';
+            '-------';];
+  ax = axis;     % Current axis limits
+  axis(axis);    % Set the axis limit modes (e.g. XLimMode) to manual
+  Yl = ax(3:4);  % Y-axis limits
+
+  % Place the text labels
+  t = text(Xt, Yl(1) * ones(1, length(Xt)), labels(1:2:12,:));
+  set(t, 'HorizontalAlignment', 'right', 'VerticalAlignment', 'top', 'Rotation', 45);
+
+  % Remove the default labels
+  set(gca,'XTickLabel','');
+  hold off
+
+
+
+
+
+
+
+
+
+
+
+
+

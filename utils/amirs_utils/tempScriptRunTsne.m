@@ -30,6 +30,7 @@ function tempScriptRunTsne(dataset, posneg_balance, save_results)
   % -------------------------------------------------------------------------
   [~, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 1);
 
+  h = figure,
   for i = 1 : numel(experiments)
     imdb = experiments{i}.imdb;
     number_of_features = size(imdb.images.data, 1) * size(imdb.images.data, 2) * size(imdb.images.data, 3);
@@ -37,7 +38,6 @@ function tempScriptRunTsne(dataset, posneg_balance, save_results)
     % Set parameters
     no_dims = 2;
     initial_dims = 50;
-    % perplexity = 30;
     if initial_dims >= number_of_features
       initial_dims = number_of_features;
     end
@@ -54,28 +54,38 @@ function tempScriptRunTsne(dataset, posneg_balance, save_results)
     labels_train = labels(is_train);
     labels_test = labels(is_test);
 
-    h = figure,
+
     j =  1;
     perplexity_array = [2, 5, 30, 50, 100];
-    % perplexity_array = [30];
     for perplexity = perplexity_array
-      subplot(1, numel(perplexity_array), j);
+      subplot(numel(experiments), numel(perplexity_array), j + (i - 1) * numel(perplexity_array) );
+      title(sprintf('perp: %d', perplexity));
       hold on
-      title(sprintf('perplexity: %d', perplexity));
       % Run t−SNE
       mappedX = tsne(vectorized_data_train, [], no_dims, initial_dims, perplexity);
       % Plot results
       % figure,
       % title(experiments{i}.title),
       gscatter(mappedX(:,1), mappedX(:,2), labels_train);
+      if j == 1
+        tmp_xlim = xlim;
+        tmp_ylim = ylim;
+        x_pos = tmp_xlim(1) - 3.5;
+        y_pos = 0 + tmp_ylim(1) / 2;
+        h = text(x_pos, y_pos, experiments{i}.title);
+        set(h, 'rotation', 90)
+      end
       hold off
       j = j + 1;
     end
-
-    tmp_string = sprintf('t-SNE - %s - %s', experiments{i}.imdb.name, experiments{i}.title);
-    suptitle(tmp_string);
-    if save_results
-      saveas(h, fullfile(getDevPath(), 'temp_images', sprintf('%s.png', tmp_string)));
-    end
   end
+
+  tmp_string = sprintf('t-SNE - %s', experiments{i}.imdb.name);
+  suptitle(tmp_string);
+  if save_results
+    % saveas(h, fullfile(getDevPath(), 'temp_images', sprintf('%s.png', tmp_string)));
+    print(fullfile(getDevPath(), 'temp_images', tmp_string), '-dpdf', '-fillpage')
+  end
+
+
 

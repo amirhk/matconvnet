@@ -112,7 +112,8 @@ function calculateDistances(dataset, posneg_balance, save_results)
     tmp_string = sprintf('%s %s distances - %s %s - %s', distance_type, point_type, dataset, posneg_balance, experiments{i}.title);
     suptitle(tmp_string);
     if save_results
-      saveas(h, fullfile(getDevPath(), 'temp_images', sprintf('%s.png', tmp_string)));
+      % saveas(h, fullfile(getDevPath(), 'temp_images', sprintf('%s.png', tmp_string)));
+      print(fullfile(getDevPath(), 'temp_images', tmp_string), '-dpdf', '-fillpage')
     end
 
   else
@@ -233,7 +234,7 @@ function [distance_ratios, distance_absolute_values] = getPointDistanceBeef(orig
     case 'border'
       repeat_count = 1;
     case 'random'
-      repeat_count = 10;
+      repeat_count = 100;
     otherwise
       throwException('[ERROR] point_type not recognized.');
   end
