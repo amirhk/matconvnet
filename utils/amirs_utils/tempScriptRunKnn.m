@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function tempScriptRunKNN(dataset, posneg_balance)
+function tempScriptRunKNN(dataset, posneg_balance, save_results)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -42,41 +42,6 @@ function tempScriptRunKNN(dataset, posneg_balance)
         all_experiments_single_run{i}.performance_summary.testing.test.accuracy;
     end
   end
-
-
-  % y = [];
-  % std_errors_value = [];
-  % exp_number = 1;
-  % for j = 1:2
-  %   for i = 1:11
-  %     y(i,j) = mean(all_experiments_multi_run{exp_number}.test_performance);
-  %     std_errors_value(end + 1) = std(all_experiments_multi_run{exp_number}.test_performance);
-  %     exp_number = exp_number + 1;
-  %   end
-  % end
-
-  % std_errors_x_location = [ ...
-  %   0.86, 1.14, ...
-  %   1.86, 2.14, ...
-  %   2.86, 3.14, ...
-  %   3.86, 4.14, ...
-  %   4.86, 5.14, ...
-  %   5.86, 6.14, ...
-  %   6.86, 7.14, ...
-  %   7.86, 8.14, ...
-  %   8.86, 9.14, ...
-  %   9.86, 10.14, ...
-  %   10.86, 11.14];
-  % std_errors_y_location = reshape(y', 1, []);
-
-  % h = figure;
-  % hold on
-  % bar(y);
-  % ylim([-0.5, 1.5]);
-  % errorbar(std_errors_x_location, std_errors_y_location, std_errors_value);
-  % tmp_string = sprintf('1-KNN - %s', dataset);
-  % suptitle(tmp_string);
-  % saveas(h, fullfile(getDevPath(), 'temp_images', sprintf('%s.png', tmp_string)));
 
 
   y_all = [];
@@ -132,7 +97,9 @@ function tempScriptRunKNN(dataset, posneg_balance)
 
   tmp_string = sprintf('1-KNN - %s', dataset);
   suptitle(tmp_string);
-  saveas(h, fullfile(getDevPath(), 'temp_images', sprintf('%s.png', tmp_string)));
+  if save_results
+    saveas(h, fullfile(getDevPath(), 'temp_images', sprintf('%s.png', tmp_string)));
+  end
 
 
 % -------------------------------------------------------------------------

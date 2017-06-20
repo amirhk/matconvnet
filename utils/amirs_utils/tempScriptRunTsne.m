@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function tempScriptRunTsne(dataset, posneg_balance)
+function tempScriptRunTsne(dataset, posneg_balance, save_results)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -74,6 +74,8 @@ function tempScriptRunTsne(dataset, posneg_balance)
 
     tmp_string = sprintf('t-SNE - %s', experiments{i}.title);
     suptitle(tmp_string);
-    saveas(h, fullfile(getDevPath(), 'temp_images', sprintf('%s.png', tmp_string)));
+    if save_results
+      saveas(h, fullfile(getDevPath(), 'temp_images', sprintf('%s.png', tmp_string)));
+    end
   end
 

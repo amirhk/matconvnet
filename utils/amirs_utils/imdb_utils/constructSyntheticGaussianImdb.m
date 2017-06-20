@@ -32,10 +32,10 @@ function imdb = constructSyntheticGaussianImdb(samples_per_class, sample_dim, sa
 % POSSIBILITY OF SUCH DAMAGE.
 
   afprintf(sprintf('[INFO] Constructing synthetic Gaussian imdb...'));
-  % data_m = mvnrnd(- sample_mean * ones(sample_dim, 1), sample_variance * eye(sample_dim), samples_per_class);
-  % data_p = mvnrnd(+ sample_mean * ones(sample_dim, 1), sample_variance * eye(sample_dim), samples_per_class);
-  data_m = mvnrnd(+ 9 * ones(sample_dim, 1), sample_variance * eye(sample_dim), samples_per_class);
-  data_p = mvnrnd(+ 11 * ones(sample_dim, 1), sample_variance * eye(sample_dim), samples_per_class);
+  data_m = mvnrnd(- sample_mean * ones(sample_dim, 1), sample_variance * eye(sample_dim), samples_per_class);
+  data_p = mvnrnd(+ sample_mean * ones(sample_dim, 1), sample_variance * eye(sample_dim), samples_per_class);
+  % data_m = mvnrnd(+ 9 * ones(sample_dim, 1), sample_variance * eye(sample_dim), samples_per_class);
+  % data_p = mvnrnd(+ 11 * ones(sample_dim, 1), sample_variance * eye(sample_dim), samples_per_class);
   labels_m = 1 * ones(1, samples_per_class);
   labels_p = 2 * ones(1, samples_per_class);
 
