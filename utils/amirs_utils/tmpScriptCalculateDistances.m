@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function calculateDistances(dataset, posneg_balance, save_results)
+function tmpScriptCalculateDistances(dataset, posneg_balance, save_results)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -30,54 +30,11 @@ function calculateDistances(dataset, posneg_balance, save_results)
   % -------------------------------------------------------------------------
   [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 1);
 
-  data_original = reshape(experiments{1}.imdb.images.data, 2, [])';
-  data_original_a = data_original(experiments{1}.imdb.images.labels == 1,:);
-  data_original_b = data_original(experiments{1}.imdb.images.labels == 2,:);
-  data_angle_separated = reshape(experiments{2}.imdb.images.data, 2, [])';
-  data_angle_separated_a = data_angle_separated(experiments{2}.imdb.images.labels == 1,:);
-  data_angle_separated_b = data_angle_separated(experiments{2}.imdb.images.labels == 2,:);
-
-  figure;
-
-  a = strfind(dataset,'var-');
-  b = strfind(dataset(a:end),'-train');
-  variance = str2num(dataset(a+4:a+b-2));
-
-  subplot(1,2,1),
-  title('Original Data');
-  hold on
-  plot(data_original_a(:,1), data_original_a(:,2), 'bs');
-  plot(data_original_b(:,1), data_original_b(:,2), 'ro');
-  xlim([-30, 30]);
-  ylim([-30, 30]);
-  hold off
-
-  subplot(1,2,2),
-  title('Angle Separated Data');
-  hold on
-  plot(data_angle_separated_a(:,1), data_angle_separated_a(:,2), 'bs');
-  plot(data_angle_separated_b(:,1), data_angle_separated_b(:,2), 'ro');
-  xlim([-30, 30]);
-  ylim([-30, 30]);
-  hold off
-
-  suptitle(sprintf('Gaussian Class Variance: %d', variance));
-  keyboard
-
-  % synthetic_original_imdb = {};
-  % synthetic_original_imdb.images.data = reshape([-10:1:-1, 1:1:10], 1,1,1,[]);
-  % synthetic_original_imdb.images.labels = [-1 * ones(1,10), 1 * ones(1,10)];
-  % synthetic_original_imdb.images.set = 1 * ones(1, 20);
-
-  % synthetic_projected_imdb = {};
-  % synthetic_projected_imdb.images.data = reshape([-100:1:-91, 91:1:100], 1,1,1,[]);
-  % synthetic_projected_imdb.images.labels = [-1 * ones(1,10), 1 * ones(1,10)];
-  % synthetic_projected_imdb.images.set = 1 * ones(1, 20);
-
-  % experiments{1}.imdb = synthetic_original_imdb;
-  % experiments{2}.imdb = synthetic_projected_imdb;
-
   if true
+
+    % -------------------------------------------------------------------------
+    %                                                                Get ratios
+    % -------------------------------------------------------------------------
     % point_type = 'border';
     point_type = 'random';
     % distance_type = 'euclidean';
@@ -95,172 +52,46 @@ function calculateDistances(dataset, posneg_balance, save_results)
     % -------------------------------------------------------------------------
     if numel(experiments) == 2
       h = figure;
-      color_palette = {'c', 'r', 'g', 'b', 'k'};
-      legend_entries = {};
-      for i = 1 : numel(experiments)
-        legend_entries{i} = experiments{i}.title;
-      end
 
-      subplot(1,2,1)
-      title(sprintf('Between-class %s Distances', distance_type))
-      hold on
-      for i = 1 : numel(experiments)
-        histogram( ...
-          experiments{i}.between_class_distance_absolute_values, ...
-          0:2.5:180, ...
-          ..., % 0:0.5:25, ...
-          ..., % 0:0.1:10, ...
-          ..., % 0:2.5e-8:10e-7, ...
-          'facecolor', ...
-          color_palette{mod(i - 1,numel(color_palette)) + 1}, ...
-          'facealpha', ...
-          0.4);
-          % ..., % 'edgecolor', ...
-          % ..., % 'none');
-      end
-      hold off
-      legend(legend_entries);
+      subplot(1,2,1),
+      within_between = 'between';
+      subplotAbsoluteDistanceBeef(experiments, within_between, distance_type);
 
+      subplot(1,2,2),
+      within_between = 'within';
+      subplotAbsoluteDistanceBeef(experiments, within_between, distance_type);
 
-      subplot(1,2,2)
-      title(sprintf('Within-class %s Distances', distance_type))
-      hold on
-      for i = 1 : numel(experiments)
-        histogram( ...
-          experiments{i}.within_class_distance_absolute_values, ...
-          0:2.5:180, ...
-          ..., % 0:0.5:25, ...
-          ..., % 0:0.1:10, ...
-          ..., % 0:2.5e-8:10e-7, ...
-          'facecolor', ...
-          color_palette{mod(i - 1,numel(color_palette)) + 1}, ...
-          'facealpha', ...
-          0.4);
-          % ..., % 'edgecolor', ...
-          % ..., % 'none');
-      end
-      hold off
-      legend(legend_entries);
-
-      tmp_string = sprintf('%s %s distances - %s - %s', distance_type, point_type, dataset, posneg_balance);
-      suptitle(tmp_string);
-      if save_results
-        % saveas(h, fullfile(getDevPath(), 'temp_images', sprintf('%s.png', tmp_string)));
-        print(fullfile(getDevPath(), 'temp_images', tmp_string), '-dpdf', '-fillpage')
-      end
     else
       assert(numel(experiments) == 14);
-      experiments_1 = {};
-      experiments_2 = {};
-      experiments_3 = {};
-      experiments_4 = {};
-
-      experiments_1{end+1} = experiments{1};
-      experiments_1{end+1} = experiments{2};
-      experiments_1{end+1} = experiments{3};
-      experiments_1{end+1} = experiments{4};
-
-      experiments_2{end+1} = experiments{1};
-      experiments_2{end+1} = experiments{5};
-      experiments_2{end+1} = experiments{6};
-      experiments_2{end+1} = experiments{7};
-
-      experiments_3{end+1} = experiments{8};
-      experiments_3{end+1} = experiments{9};
-      experiments_3{end+1} = experiments{10};
-      experiments_3{end+1} = experiments{11};
-
-      experiments_4{end+1} = experiments{8};
-      experiments_4{end+1} = experiments{12};
-      experiments_4{end+1} = experiments{13};
-      experiments_4{end+1} = experiments{14};
+      tmp = struct();
+      tmp.(sprintf('group_%d', 1)) = cat(2, experiments(1), experiments(2:4));
+      tmp.(sprintf('group_%d', 2)) = cat(2, experiments(1), experiments(5:7));
+      tmp.(sprintf('group_%d', 3)) = cat(2, experiments(8), experiments(9:11));
+      tmp.(sprintf('group_%d', 4)) = cat(2, experiments(8), experiments(12:14));
 
       h = figure;
-      if strcmp(distance_type, 'cosine')
-        x_ticks = 0:2.5:180;
-        y_limits = [0 15000];
-      else
-        x_ticks = 0:0.1:10;
-        y_limits = [0 15000];
-      end
       for k = 1 : 4
-        switch k
-          case 1
-            experiments = experiments_1;
-          case 2
-            experiments = experiments_2;
-          case 3
-            experiments = experiments_3;
-          case 4
-            experiments = experiments_4;
-        end
-
-        color_palette = {'c', 'r', 'g', 'b', 'k'};
-        legend_entries = {};
-        for i = 1 : numel(experiments)
-          legend_entries{i} = experiments{i}.title;
-        end
+        experiments = tmp.(sprintf('group_%d', k));
 
         subplot(4, 2, 1 + (k - 1) * 2)
-        title(sprintf('Between-class %s Distances', distance_type))
-        hold on
-        for i = 1 : numel(experiments)
-          histogram( ...
-            experiments{i}.between_class_distance_absolute_values, ...
-            x_ticks, ...
-            ..., % 0:2.5:180, ...
-            ..., % 0:0.5:25, ...
-            ..., % 0:0.1:10, ...
-            ..., % 0:2.5e-8:10e-7, ...
-            'facecolor', ...
-            color_palette{mod(i - 1,numel(color_palette)) + 1}, ...
-            'facealpha', ...
-            0.4);
-            % ..., % 'edgecolor', ...
-            % ..., % 'none');
-        end
-        ylim(y_limits);
-        hold off
-        legend(legend_entries);
-
+        within_between = 'between';
+        subplotAbsoluteDistanceBeef(experiments, within_between, distance_type);
 
         subplot(4, 2, 2 + (k - 1) * 2)
-        title(sprintf('Within-class %s Distances', distance_type))
-        hold on
-        for i = 1 : numel(experiments)
-          histogram( ...
-            experiments{i}.within_class_distance_absolute_values, ...
-            x_ticks, ...
-            ..., % 0:2.5:180, ...
-            ..., % 0:0.5:25, ...
-            ..., % 0:0.1:10, ...
-            ..., % 0:2.5e-8:10e-7, ...
-            'facecolor', ...
-            color_palette{mod(i - 1,numel(color_palette)) + 1}, ...
-            'facealpha', ...
-            0.4);
-            % ..., % 'edgecolor', ...
-            % ..., % 'none');
-        end
-        ylim(y_limits);
-        hold off
-        legend(legend_entries);
+        within_between = 'within';
+        subplotAbsoluteDistanceBeef(experiments, within_between, distance_type);
 
-        tmp_string = sprintf('%s %s distances - %s - %s', distance_type, point_type, dataset, posneg_balance);
-        suptitle(tmp_string);
-        if save_results
-          % saveas(h, fullfile(getDevPath(), 'temp_images', sprintf('%s.png', tmp_string)));
-          print(fullfile(getDevPath(), 'temp_images', tmp_string), '-dpdf', '-fillpage')
-        end
       end
     end
+
+    tmp_string = sprintf('%s %s distances - %s - %s', distance_type, point_type, dataset, posneg_balance);
+    suptitle(tmp_string);
 
   else
 
     % -------------------------------------------------------------------------
     %                                                                Get ratios
     % -------------------------------------------------------------------------
-
     point_type = 'border';
     % point_type = 'random';
     % distance_type = 'euclidean';
@@ -276,54 +107,22 @@ function calculateDistances(dataset, posneg_balance, save_results)
     % -------------------------------------------------------------------------
     %                                                                      Plot
     % -------------------------------------------------------------------------
-    figure
-    color_palette = {'c', 'r', 'g', 'b', 'k'};
-    legend_entries = {};
-    for i = 1 : numel(experiments)
-      legend_entries{i} = experiments{i}.title;
-    end
+    h = figure;
 
     subplot(1,2,1)
-    title(sprintf('Between-class %s Distance R, distance_typeatios'))
-    hold on
-    for i = 1 : numel(experiments)
-      histogram( ...
-        experiments{i}.between_class_distance_ratios, ...
-        0:0.05:2.5, ...
-        'facecolor', ...
-        color_palette{mod(i - 1,numel(color_palette)) + 1}, ...
-        'facealpha', ...
-        0.4, ...
-        'edgecolor', ...
-        'none');
-    end
-    hold off
-    legend(legend_entries);
-
+    within_between = 'between';
+    `(experiments, within_between, distance_type);
 
     subplot(1,2,2)
-    title(sprintf('Within-class %s Distance R, distance_typeatios'))
-    hold on
-    for i = 1 : numel(experiments)
-      histogram( ...
-        experiments{i}.within_class_distance_ratios, ...
-        0:0.05:2.5, ...
-        'facecolor', ...
-        color_palette{mod(i - 1,numel(color_palette)) + 1}, ...
-        'facealpha', ...
-        0.4, ...
-        'edgecolor', ...
-        'none');
-    end
-    hold off
-    legend(legend_entries);
+    within_between = 'within';
+    subplotRatioDistanceBeef(experiments, within_between, distance_type);
 
     suptitle(sprintf('%s points', point_type));
   end
-  % keyboard
 
-  % jigar tala
-
+  if save_results
+    print(fullfile(getDevPath(), 'temp_images', tmp_string), '-dpdf', '-fillpage')
+  end
 
 
 % -------------------------------------------------------------------------
@@ -434,6 +233,7 @@ function [matrix_pdist, labels_train] = getDistanceMatrixAndLabels(imdb, distanc
   sample_size = size(data_train, 1) * size(data_train, 2) * size(data_train, 3);
   samples = reshape(data_train, sample_size, [])';
   matrix_pdist = squareform(pdist(samples));
+
 
 % -------------------------------------------------------------------------
 function distance = calculateDistance(point_1, point_1_index, point_2, point_2_index, distance_type, pdist_matrix)
@@ -556,22 +356,90 @@ function [original_pdist_matrix, projected_pdist_matrix] = normalizePdistMatrice
   end
 
 
+% -------------------------------------------------------------------------
+function subplotAbsoluteDistanceBeef(experiments, within_between, distance_type)
+% -------------------------------------------------------------------------
+  color_palette = {'c', 'r', 'g', 'b', 'k'};
+  legend_entries = {};
+  for i = 1 : numel(experiments)
+    legend_entries{i} = experiments{i}.title;
+  end
+
+  if strcmp(distance_type, 'cosine')
+    x_ticks = 0:2.5:180;
+    y_limits = [0 15000];
+  else
+    x_ticks = 0:0.1:10;
+    y_limits = [0 15000];
+  end
+
+  if strcmp(within_between, 'within')
+    title(sprintf('Within-class %s Distances', distance_type));
+  else
+    title(sprintf('Between-class %s Distances', distance_type));
+  end
+
+  hold on
+  for i = 1 : numel(experiments)
+    if strcmp(within_between, 'within')
+      data = experiments{i}.within_class_distance_absolute_values;
+    else
+      data = experiments{i}.between_class_distance_absolute_values;
+    end
+    histogram( ...
+      data, ...
+      x_ticks, ...
+      'facecolor', ...
+      color_palette{mod(i - 1,numel(color_palette)) + 1}, ...
+      'facealpha', ...
+      0.4);
+  end
+  ylim(y_limits);
+  hold off
+  legend(legend_entries);
 
 
+% -------------------------------------------------------------------------
+function subplotRatioDistanceBeef(experiments, within_between, distance_type)
+% -------------------------------------------------------------------------
+  color_palette = {'c', 'r', 'g', 'b', 'k'};
+  legend_entries = {};
+  for i = 1 : numel(experiments)
+    legend_entries{i} = experiments{i}.title;
+  end
 
 
+  if strcmp(distance_type, 'cosine')
+    x_ticks = 0:2.5:180;
+    y_limits = [0 15000];
+  else
+    x_ticks = 0:0.1:10;
+    y_limits = [0 15000];
+  end
 
+  if strcmp(within_between, 'within')
+    title(sprintf('Within-class %s Distance Ratios, distance_type'));
+  else
+    title(sprintf('Between-class %s Distance Ratios, distance_type'));
+  end
 
-
-
-
-
-
-
-
-
-
-
+  hold on
+  for i = 1 : numel(experiments)
+    if strcmp(within_between, 'within')
+      data = experiments{i}.within_class_distance_ratios;
+    else
+      data = experiments{i}.between_class_distance_ratios;
+    end
+    histogram( ...
+      data, ...
+      0:0.05:2.5, ...
+      'facecolor', ...
+      color_palette{mod(i - 1,numel(color_palette)) + 1}, ...
+      'facealpha', ...
+      0.4);
+  end
+  hold off
+  legend(legend_entries);
 
 
 
