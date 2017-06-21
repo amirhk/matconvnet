@@ -52,6 +52,9 @@ function constructMultiClassImdbs(dataset, network_arch)
       all_class_imdb = constructUCISpamImdb(opts);
 
 
+    case 'gaussian-2D-mean-1-var-1'
+      all_class_imdb = constructSyntheticGaussianImdb(1100, 2, 1, 1);
+
     % case 'gaussian-5D-mean-1-var-.1'
     %   all_class_imdb = constructSyntheticGaussianImdb(1100, 5, 1, .1);
     case 'gaussian-5D-mean-1-var-0'
@@ -105,8 +108,8 @@ function constructMultiClassImdbs(dataset, network_arch)
   % createImdbWithBalance(dataset, all_class_imdb, 50, 500);
   % createImdbWithBalance(dataset, all_class_imdb, 100, 500);
   % createImdbWithBalance(dataset, all_class_imdb, 250, 500);
-  % createImdbWithBalance(dataset, all_class_imdb, 500, 500);
-  createImdbWithBalance(dataset, all_class_imdb, 2500, 2500);
+  createImdbWithBalance(dataset, all_class_imdb, 500, 500);
+  % createImdbWithBalance(dataset, all_class_imdb, 2500, 2500);
 
 
 function createImdbWithBalance(dataset, imdb, train_balance_count, test_balance_count)

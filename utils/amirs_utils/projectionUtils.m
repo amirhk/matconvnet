@@ -111,7 +111,9 @@ function imdb = getDenslyProjectedImdb(imdb, number_of_projection_layers, number
   assert(number_of_relu_layers <= number_of_projection_layers);
   relu_count = 0;
   for i = 1 : number_of_projection_layers
-    random_projection_matrix = randn(s1 * s2 * s3, s1 * s2 * s3) * 1/100;
+    % random_projection_matrix = randn(s1 * s2 * s3, s1 * s2 * s3) * 1/100;
+    % random_projection_matrix = randn(s1 * s2 * s3, s1 * s2 * s3);
+    random_projection_matrix = randn(s1 * s2 * s3, s1 * s2 * s3) / sqrt(s1 * s2 * s3);
     imdb = projectImdbUsingMatrix(imdb, random_projection_matrix);
     if relu_count < number_of_relu_layers
       % apply relu
@@ -119,8 +121,8 @@ function imdb = getDenslyProjectedImdb(imdb, number_of_projection_layers, number
       relu_count = relu_count + 1;
     end
   end
-  random_projection_matrix = randn(s1 * s2 * s3, s1 * s2 * s3) * 1/100;
-  imdb = projectImdbUsingMatrix(imdb, random_projection_matrix);
+  % random_projection_matrix = randn(s1 * s2 * s3, s1 * s2 * s3) * 1/100;
+  % imdb = projectImdbUsingMatrix(imdb, random_projection_matrix);
 
 % -------------------------------------------------------------------------
 function fn = getBatch()

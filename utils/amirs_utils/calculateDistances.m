@@ -30,7 +30,6 @@ function calculateDistances(dataset, posneg_balance, save_results)
   % -------------------------------------------------------------------------
   [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 1);
 
-
   % synthetic_original_imdb = {};
   % synthetic_original_imdb.images.data = reshape([-10:1:-1, 1:1:10], 1,1,1,[]);
   % synthetic_original_imdb.images.labels = [-1 * ones(1,10), 1 * ones(1,10)];
@@ -40,7 +39,6 @@ function calculateDistances(dataset, posneg_balance, save_results)
   % synthetic_projected_imdb.images.data = reshape([-100:1:-91, 91:1:100], 1,1,1,[]);
   % synthetic_projected_imdb.images.labels = [-1 * ones(1,10), 1 * ones(1,10)];
   % synthetic_projected_imdb.images.set = 1 * ones(1, 20);
-
 
   % experiments{1}.imdb = synthetic_original_imdb;
   % experiments{2}.imdb = synthetic_projected_imdb;
@@ -61,59 +59,166 @@ function calculateDistances(dataset, posneg_balance, save_results)
     % -------------------------------------------------------------------------
     %                                                                      Plot
     % -------------------------------------------------------------------------
-    h = figure;
-    color_palette = {'c', 'r', 'g', 'b', 'k'};
-    legend_entries = {};
-    for i = 1 : numel(experiments)
-      legend_entries{i} = experiments{i}.title;
-    end
+    if numel(experiments) == 2
+      h = figure;
+      color_palette = {'c', 'r', 'g', 'b', 'k'};
+      legend_entries = {};
+      for i = 1 : numel(experiments)
+        legend_entries{i} = experiments{i}.title;
+      end
 
-    subplot(1,2,1)
-    title(sprintf('Between-class %s Distances', distance_type))
-    hold on
-    for i = 1 : numel(experiments)
-      histogram( ...
-        experiments{i}.between_class_distance_absolute_values, ...
-        0:2.5:180, ...
-        ..., % 0:0.5:25, ...
-        ..., % 0:1:75, ...
-        ..., % 0:2.5e-8:10e-7, ...
-        'facecolor', ...
-        color_palette{mod(i - 1,numel(color_palette)) + 1}, ...
-        'facealpha', ...
-        0.4);
-        % ..., % 'edgecolor', ...
-        % ..., % 'none');
-    end
-    hold off
-    legend(legend_entries);
+      subplot(1,2,1)
+      title(sprintf('Between-class %s Distances', distance_type))
+      hold on
+      for i = 1 : numel(experiments)
+        histogram( ...
+          experiments{i}.between_class_distance_absolute_values, ...
+          0:2.5:180, ...
+          ..., % 0:0.5:25, ...
+          ..., % 0:0.1:10, ...
+          ..., % 0:2.5e-8:10e-7, ...
+          'facecolor', ...
+          color_palette{mod(i - 1,numel(color_palette)) + 1}, ...
+          'facealpha', ...
+          0.4);
+          % ..., % 'edgecolor', ...
+          % ..., % 'none');
+      end
+      hold off
+      legend(legend_entries);
 
 
-    subplot(1,2,2)
-    title(sprintf('Within-class %s Distances', distance_type))
-    hold on
-    for i = 1 : numel(experiments)
-      histogram( ...
-        experiments{i}.within_class_distance_absolute_values, ...
-        0:2.5:180, ...
-        ..., % 0:0.5:25, ...
-        ..., % 0:1:75, ...
-        ..., % 0:2.5e-8:10e-7, ...
-        'facecolor', ...
-        color_palette{mod(i - 1,numel(color_palette)) + 1}, ...
-        'facealpha', ...
-        0.4);
-        % ..., % 'edgecolor', ...
-        % ..., % 'none');
-    end
-    hold off
-    legend(legend_entries);
+      subplot(1,2,2)
+      title(sprintf('Within-class %s Distances', distance_type))
+      hold on
+      for i = 1 : numel(experiments)
+        histogram( ...
+          experiments{i}.within_class_distance_absolute_values, ...
+          0:2.5:180, ...
+          ..., % 0:0.5:25, ...
+          ..., % 0:0.1:10, ...
+          ..., % 0:2.5e-8:10e-7, ...
+          'facecolor', ...
+          color_palette{mod(i - 1,numel(color_palette)) + 1}, ...
+          'facealpha', ...
+          0.4);
+          % ..., % 'edgecolor', ...
+          % ..., % 'none');
+      end
+      hold off
+      legend(legend_entries);
 
-    tmp_string = sprintf('%s %s distances - %s %s - %s', distance_type, point_type, dataset, posneg_balance, experiments{i}.title);
-    suptitle(tmp_string);
-    if save_results
-      % saveas(h, fullfile(getDevPath(), 'temp_images', sprintf('%s.png', tmp_string)));
-      print(fullfile(getDevPath(), 'temp_images', tmp_string), '-dpdf', '-fillpage')
+      tmp_string = sprintf('%s %s distances - %s - %s', distance_type, point_type, dataset, posneg_balance);
+      suptitle(tmp_string);
+      if save_results
+        % saveas(h, fullfile(getDevPath(), 'temp_images', sprintf('%s.png', tmp_string)));
+        print(fullfile(getDevPath(), 'temp_images', tmp_string), '-dpdf', '-fillpage')
+      end
+    else
+      assert(numel(experiments) == 14);
+      experiments_1 = {};
+      experiments_2 = {};
+      experiments_3 = {};
+      experiments_4 = {};
+
+      experiments_1{end+1} = experiments{1};
+      experiments_1{end+1} = experiments{2};
+      experiments_1{end+1} = experiments{3};
+      experiments_1{end+1} = experiments{4};
+
+      experiments_2{end+1} = experiments{1};
+      experiments_2{end+1} = experiments{5};
+      experiments_2{end+1} = experiments{6};
+      experiments_2{end+1} = experiments{7};
+
+      experiments_3{end+1} = experiments{8};
+      experiments_3{end+1} = experiments{9};
+      experiments_3{end+1} = experiments{10};
+      experiments_3{end+1} = experiments{11};
+
+      experiments_4{end+1} = experiments{8};
+      experiments_4{end+1} = experiments{12};
+      experiments_4{end+1} = experiments{13};
+      experiments_4{end+1} = experiments{14};
+
+      h = figure;
+      if strcmp(distance_type, 'cosine')
+        x_ticks = 0:2.5:180;
+        y_limits = [0 15000];
+      else
+        x_ticks = 0:0.1:10;
+        y_limits = [0 15000];
+      end
+      for k = 1 : 4
+        switch k
+          case 1
+            experiments = experiments_1;
+          case 2
+            experiments = experiments_2;
+          case 3
+            experiments = experiments_3;
+          case 4
+            experiments = experiments_4;
+        end
+
+        color_palette = {'c', 'r', 'g', 'b', 'k'};
+        legend_entries = {};
+        for i = 1 : numel(experiments)
+          legend_entries{i} = experiments{i}.title;
+        end
+
+        subplot(4, 2, 1 + (k - 1) * 2)
+        title(sprintf('Between-class %s Distances', distance_type))
+        hold on
+        for i = 1 : numel(experiments)
+          histogram( ...
+            experiments{i}.between_class_distance_absolute_values, ...
+            x_ticks, ...
+            ..., % 0:2.5:180, ...
+            ..., % 0:0.5:25, ...
+            ..., % 0:0.1:10, ...
+            ..., % 0:2.5e-8:10e-7, ...
+            'facecolor', ...
+            color_palette{mod(i - 1,numel(color_palette)) + 1}, ...
+            'facealpha', ...
+            0.4);
+            % ..., % 'edgecolor', ...
+            % ..., % 'none');
+        end
+        ylim(y_limits);
+        hold off
+        legend(legend_entries);
+
+
+        subplot(4, 2, 2 + (k - 1) * 2)
+        title(sprintf('Within-class %s Distances', distance_type))
+        hold on
+        for i = 1 : numel(experiments)
+          histogram( ...
+            experiments{i}.within_class_distance_absolute_values, ...
+            x_ticks, ...
+            ..., % 0:2.5:180, ...
+            ..., % 0:0.5:25, ...
+            ..., % 0:0.1:10, ...
+            ..., % 0:2.5e-8:10e-7, ...
+            'facecolor', ...
+            color_palette{mod(i - 1,numel(color_palette)) + 1}, ...
+            'facealpha', ...
+            0.4);
+            % ..., % 'edgecolor', ...
+            % ..., % 'none');
+        end
+        ylim(y_limits);
+        hold off
+        legend(legend_entries);
+
+        tmp_string = sprintf('%s %s distances - %s - %s', distance_type, point_type, dataset, posneg_balance);
+        suptitle(tmp_string);
+        if save_results
+          % saveas(h, fullfile(getDevPath(), 'temp_images', sprintf('%s.png', tmp_string)));
+          print(fullfile(getDevPath(), 'temp_images', tmp_string), '-dpdf', '-fillpage')
+        end
+      end
     end
 
   else
