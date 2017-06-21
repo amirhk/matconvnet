@@ -48,8 +48,8 @@ function calculateDistances(dataset, posneg_balance, save_results)
   hold on
   plot(data_original_a(:,1), data_original_a(:,2), 'bs');
   plot(data_original_b(:,1), data_original_b(:,2), 'ro');
-  xlim([-15, 15]);
-  ylim([-15, 15]);
+  xlim([-30, 30]);
+  ylim([-30, 30]);
   hold off
 
   subplot(1,2,2),
@@ -57,8 +57,8 @@ function calculateDistances(dataset, posneg_balance, save_results)
   hold on
   plot(data_angle_separated_a(:,1), data_angle_separated_a(:,2), 'bs');
   plot(data_angle_separated_b(:,1), data_angle_separated_b(:,2), 'ro');
-  xlim([-15, 15]);
-  ylim([-15, 15]);
+  xlim([-30, 30]);
+  ylim([-30, 30]);
   hold off
 
   suptitle(sprintf('Gaussian Class Variance: %d', variance));
