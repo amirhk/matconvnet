@@ -29,6 +29,29 @@ function calculateDistances(dataset, posneg_balance, save_results)
   %                                                                     Setup
   % -------------------------------------------------------------------------
   [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 1);
+  keyboard
+  data_original = reshape(experiments{1}.imdb.images.data, 2, [])';
+  data_original_a = data_original(experiments{1}.imdb.images.labels == 1,:);
+  data_original_b = data_original(experiments{1}.imdb.images.labels == 2,:);
+  data_angle_separated = reshape(experiments{2}.imdb.images.data, 2, [])';
+  data_angle_separated_a = data_angle_separated(experiments{2}.imdb.images.labels == 1,:);
+  data_angle_separated_b = data_angle_separated(experiments{2}.imdb.images.labels == 2,:);
+
+  figure;
+
+  subplot(1,2,1),
+  title('Original Data');
+  hold on
+  plot(data_original_a(:,1), data_original_a(:,2), 'bs');
+  plot(data_original_b(:,1), data_original_b(:,2), 'ro');
+  hold off
+
+  subplot(1,2,2),
+  title('Angle Separated Data');
+  hold on
+  plot(data_angle_separated_a(:,1), data_angle_separated_a(:,2), 'bs');
+  plot(data_angle_separated_b(:,1), data_angle_separated_b(:,2), 'ro');
+  hold off
 
   % synthetic_original_imdb = {};
   % synthetic_original_imdb.images.data = reshape([-10:1:-1, 1:1:10], 1,1,1,[]);

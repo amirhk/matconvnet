@@ -52,8 +52,12 @@ function constructMultiClassImdbs(dataset, network_arch)
       all_class_imdb = constructUCISpamImdb(opts);
 
 
+    case 'gaussian-2D-mean-1-var-0'
+      all_class_imdb = constructSyntheticGaussianImdb(1100, 2, 1, 0);
     case 'gaussian-2D-mean-1-var-1'
       all_class_imdb = constructSyntheticGaussianImdb(1100, 2, 1, 1);
+    case 'gaussian-2D-mean-1-var-10'
+      all_class_imdb = constructSyntheticGaussianImdb(1100, 2, 1, 10);
 
     % case 'gaussian-5D-mean-1-var-.1'
     %   all_class_imdb = constructSyntheticGaussianImdb(1100, 5, 1, .1);
