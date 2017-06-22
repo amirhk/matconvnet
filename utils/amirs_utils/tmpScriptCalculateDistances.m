@@ -32,7 +32,6 @@ function tmpScriptCalculateDistances(dataset, posneg_balance, save_results)
   [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 1);
   afprintf(sprintf('[INFO] done!\n'));
   printConsoleOutputSeparator();
-  keyboard
 
   % plot_type = 'absolute_distances';
   % plot_type = 'ratio_distances_giryes_paper';
@@ -521,12 +520,12 @@ function plotBeefAlexRatioDistance(experiments)
   color_palette = {'c', 'r', 'g', 'b', 'k'};
   legend_entries = {};
   for i = 1 : numel(experiments)
-    legend_entries{i} = experiments{i}.title;
+    legend_entries{i} = sprintf('%s - fd = %.3f', experiments{i}.title, experiments{i}.fisher_discriminant_value);
   end
 
   x_ticks = 0:0.025:3;
   y_limits = [0 100];
-  title('Between-class to Within-class Distance Ratios, distance_type');
+  title('Between-class to Within-class Distance Ratios');
 
   hold on
   for i = 1 : numel(experiments)
@@ -546,8 +545,22 @@ function plotBeefAlexRatioDistance(experiments)
 
 
 % -------------------------------------------------------------------------
-function getFisherDiscriminantValue(imdb)
+function fisher_discriminant_value = getFisherDiscriminantValue(imdb)
 % -------------------------------------------------------------------------
+  vectorized_imdb = getVectorizedImdb(imdb);
+  assert(numel(unique(imdb.images.labels)) == 2);
+  data_class_1 = vectorized_imdb.images.data(vectorized_imdb.images.labels == 1, :);
+  data_class_2 = vectorized_imdb.images.data(vectorized_imdb.images.labels == 2, :);
+
+  mean_data_class_1 = mean(data_class_1);
+  mean_data_class_2 = mean(data_class_2);
+
+  cov_data_class_1 = cov(data_class_1);
+  cov_data_class_2 = cov(data_class_2);
+
+  fisher_discriminant_value = norm(mean_data_class_1 - mean_data_class_2) / (norm(cov_data_class_1 + cov_data_class_2));
+
+
 
 
 
