@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function tempScriptPlot2DEuclideanDistances(dataset, posneg_balance, save_results)
+function tempScriptPlot3DEuclideanDistances(dataset, posneg_balance, save_results)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -54,8 +54,8 @@ function tempScriptPlot2DEuclideanDistances(dataset, posneg_balance, save_result
   title('Original Data');
   hold on,
   grid on,
-  scatter(data_original_a(:,1), data_original_a(:,2), 'bs');
-  scatter(data_original_b(:,1), data_original_b(:,2), 'ro');
+  scatter3(data_original_a(:,1), data_original_a(:,2), data_original_a(:,3), 'bs');
+  scatter3(data_original_b(:,1), data_original_b(:,2), data_original_b(:,3), 'ro');
   xlim([-30, 30]);
   ylim([-30, 30]);
   hold off
@@ -64,8 +64,8 @@ function tempScriptPlot2DEuclideanDistances(dataset, posneg_balance, save_result
   title('Angle Separated Data');
   hold on,
   grid on,
-  scatter(data_angle_separated_a(:,1), data_angle_separated_a(:,2), 'bs');
-  scatter(data_angle_separated_b(:,1), data_angle_separated_b(:,2), 'ro');
+  scatter3(data_angle_separated_a(:,1), data_angle_separated_a(:,2), data_angle_separated_a(:,3), 'bs');
+  scatter3(data_angle_separated_b(:,1), data_angle_separated_b(:,2), data_angle_separated_b(:,3), 'ro');
   xlim([-30, 30]);
   ylim([-30, 30]);
   hold off

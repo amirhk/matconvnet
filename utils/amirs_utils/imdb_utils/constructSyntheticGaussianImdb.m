@@ -33,8 +33,11 @@ function imdb = constructSyntheticGaussianImdb(samples_per_class, sample_dim, sa
   % data_m = mvnrnd(+ 9 * ones(sample_dim, 1), sample_variance * eye(sample_dim), samples_per_class);
   % data_p = mvnrnd(+ 11 * ones(sample_dim, 1), sample_variance * eye(sample_dim), samples_per_class);
 
-  data_m = mvnrnd(- sample_mean * ones(sample_dim, 1), sample_variance * [10,1.75;1.75,1], samples_per_class);
-  data_p = mvnrnd(+ sample_mean * ones(sample_dim, 1), sample_variance * [10,1.75;1.75,1], samples_per_class);
+  % data_m = mvnrnd(- sample_mean * ones(sample_dim, 1), sample_variance * [10,1.75;1.75,1], samples_per_class);
+  % data_p = mvnrnd(+ sample_mean * ones(sample_dim, 1), sample_variance * [10,1.75;1.75,1], samples_per_class);
+
+  data_m = mvnrnd(- sample_mean * ones(sample_dim, 1), sample_variance * [10,1.75,1;1.75,3,1;1,1,1], samples_per_class);
+  data_p = mvnrnd(+ sample_mean * ones(sample_dim, 1), sample_variance * [10,1.75,1;1.75,3,1;1,1,1], samples_per_class);
 
 
   labels_m = 1 * ones(1, samples_per_class);
@@ -57,7 +60,7 @@ function imdb = constructSyntheticGaussianImdb(samples_per_class, sample_dim, sa
   imdb.name = sprintf('gaussian-%dD-%d-train-%d-test-%.1f-var', sample_dim, number_of_training_samples, number_of_testing_samples, sample_variance);
 
   % get the data into 4D format to be compatible with code built for all other imdbs.
-  imdb.images.data = reshape(imdb.images.data', sample_dim, 1, 1, []);
+  imdb = get4DImdb(imdb, sample_dim, 1, 1, samples_per_class * 2);
   afprintf(sprintf('done!\n\n'));
   fh = imdbMultiClassUtils;
   fh.getImdbInfo(imdb, 1);

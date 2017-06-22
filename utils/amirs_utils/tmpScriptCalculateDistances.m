@@ -152,7 +152,7 @@ function tmpScriptCalculateDistances(dataset, posneg_balance, save_results)
     for i = 1 : numel(experiments)
       projected_imdb = experiments{i}.imdb;
       experiments{i}.between_class_to_within_class_distance_ratios = getBetweenToWithinDistanceRatios(experiments{i}.imdb, distance_type);
-      experiments{i}.fisher_discriminant_value = getFisherDiscriminantValue(experiments{i}.imdb);
+      experiments{i}.fisher_discriminant_ratio = getFisherDiscriminantRatio(experiments{i}.imdb);
     end
 
     afprintf(sprintf('[INFO] done!\n'));
@@ -325,6 +325,7 @@ function distance = calculateDistance(point_1, point_1_index, point_2, point_2_i
     distance = theta_in_degrees;
   end
 
+
 % -------------------------------------------------------------------------
 function point_index = findClosestBetweenClassPointIndexToPoint(point_row, point_class, labels)
 % -------------------------------------------------------------------------
@@ -482,10 +483,10 @@ function subplotBeefGiryesRatioDistance(experiments, within_between, distance_ty
 
   if strcmp(distance_type, 'cosine')
     x_ticks = 0:2.5:180;
-    y_limits = [0 15000];
+    y_limits = [0 30000];
   else
     x_ticks = 0:0.1:10;
-    y_limits = [0 15000];
+    y_limits = [0 30000];
   end
 
   if strcmp(within_between, 'within')
@@ -520,7 +521,8 @@ function plotBeefAlexRatioDistance(experiments)
   color_palette = {'c', 'r', 'g', 'b', 'k'};
   legend_entries = {};
   for i = 1 : numel(experiments)
-    legend_entries{i} = sprintf('%s - fd = %.3f', experiments{i}.title, experiments{i}.fisher_discriminant_value);
+    % legend_entries{i} = sprintf('%s - fd = %.3f', experiments{i}.title, experiments{i}.fisher_discriminant_ratio);
+    legend_entries{i} = experiments{i}.title;
   end
 
   x_ticks = 0:0.025:3;
@@ -545,12 +547,14 @@ function plotBeefAlexRatioDistance(experiments)
 
 
 % -------------------------------------------------------------------------
-function fisher_discriminant_value = getFisherDiscriminantValue(imdb)
+function fisher_discriminant_ratio = getFisherDiscriminantRatio(imdb)
 % -------------------------------------------------------------------------
   vectorized_imdb = getVectorizedImdb(imdb);
   assert(numel(unique(imdb.images.labels)) == 2);
-  data_class_1 = vectorized_imdb.images.data(vectorized_imdb.images.labels == 1, :);
-  data_class_2 = vectorized_imdb.images.data(vectorized_imdb.images.labels == 2, :);
+
+  data = vectorized_imdb.images.data;
+  data_class_1 = data(vectorized_imdb.images.labels == 1, :);
+  data_class_2 = data(vectorized_imdb.images.labels == 2, :);
 
   mean_data_class_1 = mean(data_class_1);
   mean_data_class_2 = mean(data_class_2);
@@ -558,7 +562,71 @@ function fisher_discriminant_value = getFisherDiscriminantValue(imdb)
   cov_data_class_1 = cov(data_class_1);
   cov_data_class_2 = cov(data_class_2);
 
-  fisher_discriminant_value = norm(mean_data_class_1 - mean_data_class_2) / (norm(cov_data_class_1 + cov_data_class_2));
+  % Using Alex's suggested method
+  % fisher_discriminant_ratio = norm(mean_data_class_1 - mean_data_class_2)^2 / (norm(cov_data_class_1 + cov_data_class_2));
+
+  % Using http://www.csd.uwo.ca/~olga/Courses/CS434a_541a/Lecture8.pdf
+  % S_1 = size(data_class_1, 1) * cov_data_class_1;
+  S_1 = cov_data_class_1;
+  % S_2 = size(data_class_2, 1) * cov_data_class_2;
+  S_2 = cov_data_class_2;
+
+  S_W = S_1 + S_2;
+
+  % assert full rank
+  assert(rank(S_W) == size(S_W, 1));
+
+  optimal_projection_line_direction = inv(S_W) * (mean_data_class_1 - mean_data_class_2)';
+
+  optimally_projected_data = optimal_projection_line_direction' * data';
+  optimally_projected_data_class_1 = optimal_projection_line_direction' * data_class_1';
+  optimally_projected_data_class_2 = optimal_projection_line_direction' * data_class_2';
+
+  % Using https://compbio.soe.ucsc.edu/genex/genexTR2html/node12.html
+  fisher_discriminant_ratio = ...
+    (mean(optimally_projected_data_class_1) - mean(optimally_projected_data_class_2))^2 / ...
+    (var(optimally_projected_data_class_1) + var(optimally_projected_data_class_2));
+
+  % keyboard
+  % figure, hold on, histogram(optimally_projected_data_class_1), histogram(optimally_projected_data_class_2)
+  % imdb.images.data = optimally_projected_data;
+  % imdb = get4DImdb(imdb, size(imdb.images.data, 1), 1, 1, []);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
