@@ -28,7 +28,10 @@ function tempScriptRunMmd(dataset, posneg_balance)
   % -------------------------------------------------------------------------
   %                                                                     Setup
   % -------------------------------------------------------------------------
+  afprintf(sprintf('[INFO] Setting up experiment...\n'));
   [~, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 1);
+  afprintf(sprintf('[INFO] done!\n'));
+  printConsoleOutputSeparator();
 
   for i = 1 : numel(experiments)
     unique_labels = unique(experiments{i}.imdb.images.labels);

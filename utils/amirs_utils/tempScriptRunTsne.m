@@ -28,7 +28,10 @@ function tempScriptRunTsne(dataset, posneg_balance, save_results)
   % -------------------------------------------------------------------------
   %                                                                     Setup
   % -------------------------------------------------------------------------
+  afprintf(sprintf('[INFO] Setting up experiment...\n'));
   [~, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 1);
+  afprintf(sprintf('[INFO] done!\n'));
+  printConsoleOutputSeparator();
 
   h = figure,
   for i = 1 : numel(experiments)

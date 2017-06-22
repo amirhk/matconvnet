@@ -28,7 +28,10 @@ function tempScriptPlot2DEuclideanDistances(dataset, posneg_balance, save_result
   % -------------------------------------------------------------------------
   %                                                                     Setup
   % -------------------------------------------------------------------------
+  afprintf(sprintf('[INFO] Setting up experiment...\n'));
   [~, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 1);
+  afprintf(sprintf('[INFO] done!\n'));
+  printConsoleOutputSeparator();
 
   data_original = reshape(experiments{1}.imdb.images.data, 2, [])';
   data_original_a = data_original(experiments{1}.imdb.images.labels == 1,:);
