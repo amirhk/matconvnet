@@ -364,6 +364,9 @@ function distance = calculateDistance(imdb, point_1_index, point_2_index, distan
   elseif strcmp(distance_type, 'cosine')
     cos_theta = dot(point_1, point_2) / (norm(point_1) * norm(point_2));
     theta_in_degrees = acosd(cos_theta);
+    if isnan(theta_in_degrees)
+      keyboard
+    end
     if ~isreal(theta_in_degrees)
       % keyboard
       % TODO?????????????
