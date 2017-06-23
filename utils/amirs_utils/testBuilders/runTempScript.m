@@ -8,8 +8,9 @@
 
 
 % functionHandle = @tempScriptRunKnn;
-functionHandle = @tmpScriptCalculateDistances;
+% functionHandle = @tmpScriptCalculateDistances;
 % functionHandle = @tempScriptPlot2DEuclideanDistances;
+functionHandle = @tempScriptPlot3DEuclideanDistances;
 
 
 

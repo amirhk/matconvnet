@@ -39,151 +39,134 @@ function tmpScriptCalculateDistances(dataset, posneg_balance, save_results)
 
   if strcmp(plot_type, 'absolute_distances')
 
-    afprintf(sprintf('[INFO] Getting absolute distances...\n'));
-    % other_point_type = 'border';
-    % other_point_type = 'random';
-    other_point_type = 'average_of_all';
+    % -------------------------------------------------------------------------
+    %                                                    Get absolute distances
+    % -------------------------------------------------------------------------
+    afprintf(sprintf('[INFO] Get absolute distances...\n'));
+    % point_type = 'border';
+    point_type = 'random';
+    % distance_type = 'euclidean';
+    distance_type = 'cosine';
 
-    h = figure;
-    distance_types = {'euclidean', 'cosine'};
-    for k = 1 : numel(distance_types)
+    for i = 1 : numel(experiments)
+      projected_imdb = experiments{i}.imdb;
+      experiments{i}.between_class_distance_absolute_values = getPointDistanceAbsoluteValues(experiments{i}.imdb, point_type, distance_type, 'between');
+      experiments{i}.within_class_distance_absolute_values = getPointDistanceAbsoluteValues(experiments{i}.imdb, point_type, distance_type, 'within');
+    end
 
-      distance_type = distance_types{k};
-
-      % -------------------------------------------------------------------------
-      %                                                    Get absolute distances
-      % -------------------------------------------------------------------------
-      for i = 1 : numel(experiments)
-        projected_imdb = experiments{i}.imdb;
-        experiments{i}.between_class_distance_absolute_values = getPointDistanceAbsoluteValues(experiments{i}.imdb, other_point_type, distance_type, 'between');
-        experiments{i}.within_class_distance_absolute_values = getPointDistanceAbsoluteValues(experiments{i}.imdb, other_point_type, distance_type, 'within');
-      end
-
-      afprintf(sprintf('[INFO] done!\n'));
-      printConsoleOutputSeparator();
+    afprintf(sprintf('[INFO] done!\n'));
+    printConsoleOutputSeparator();
 
 
-      % -------------------------------------------------------------------------
-      %                                                                      Plot
-      % -------------------------------------------------------------------------
-      afprintf(sprintf('[INFO] Plotting...\n'));
-      if numel(experiments) == 2
+    % -------------------------------------------------------------------------
+    %                                                                      Plot
+    % -------------------------------------------------------------------------
+    afprintf(sprintf('[INFO] Plotting...\n'));
+    if numel(experiments) == 2
+      h = figure;
 
-        subplot(numel(distance_types), 2, 1 + (k - 1) * numel(distance_types)),
+      subplot(1,2,1),
+      within_between = 'between';
+      subplotBeefAbsoluteDistance(experiments, within_between, distance_type);
+
+      subplot(1,2,2),
+      within_between = 'within';
+      subplotBeefAbsoluteDistance(experiments, within_between, distance_type);
+
+    else
+      assert(numel(experiments) == 14);
+      tmp = struct();
+      tmp.(sprintf('group_%d', 1)) = cat(2, experiments(1), experiments(2:4));
+      tmp.(sprintf('group_%d', 2)) = cat(2, experiments(1), experiments(5:7));
+      tmp.(sprintf('group_%d', 3)) = cat(2, experiments(8), experiments(9:11));
+      tmp.(sprintf('group_%d', 4)) = cat(2, experiments(8), experiments(12:14));
+
+      h = figure;
+      for k = 1 : 4
+        experiments = tmp.(sprintf('group_%d', k));
+
+        subplot(4, 2, 1 + (k - 1) * 2)
         within_between = 'between';
         subplotBeefAbsoluteDistance(experiments, within_between, distance_type);
 
-        subplot(numel(distance_types), 2, 2 + (k - 1) * numel(distance_types)),
+        subplot(4, 2, 2 + (k - 1) * 2)
         within_between = 'within';
         subplotBeefAbsoluteDistance(experiments, within_between, distance_type);
 
-      else
-        assert(numel(distance_types) == 1);
-        assert(numel(experiments) == 14);
-        tmp = struct();
-        tmp.(sprintf('group_%d', 1)) = cat(2, experiments(1), experiments(2:4));
-        tmp.(sprintf('group_%d', 2)) = cat(2, experiments(1), experiments(5:7));
-        tmp.(sprintf('group_%d', 3)) = cat(2, experiments(8), experiments(9:11));
-        tmp.(sprintf('group_%d', 4)) = cat(2, experiments(8), experiments(12:14));
-
-        h = figure;
-        for j = 1 : 4
-          experiments = tmp.(sprintf('group_%d', j));
-
-          subplot(4, 2, 1 + (j - 1) * 2)
-          within_between = 'between';
-          subplotBeefAbsoluteDistance(experiments, within_between, distance_type);
-
-          subplot(4, 2, 2 + (j - 1) * 2)
-          within_between = 'within';
-          subplotBeefAbsoluteDistance(experiments, within_between, distance_type);
-
-        end
       end
-      afprintf(sprintf('[INFO] done!\n'));
-      printConsoleOutputSeparator();
     end
+    afprintf(sprintf('[INFO] done!\n'));
+    printConsoleOutputSeparator();
 
-    tmp_string = sprintf('%s %s distances - %s - %s', distance_type, other_point_type, dataset, posneg_balance);
+    tmp_string = sprintf('%s %s distances - %s - %s', distance_type, point_type, dataset, posneg_balance);
     suptitle(tmp_string);
 
   elseif strcmp(plot_type, 'ratio_distances_giryes_paper')
 
-    % other_point_type = 'border';
-    % other_point_type = 'random';
-    other_point_type = 'average_of_all';
+    % -------------------------------------------------------------------------
+    %                                                    Get ratio of distances
+    % -------------------------------------------------------------------------
+    afprintf(sprintf('[INFO] Get ratio of distances...\n'));
+    point_type = 'border';
+    % point_type = 'random';
+    % distance_type = 'euclidean';
+    distance_type = 'cosine';
 
-    h = figure;
-    distance_types = {'euclidean', 'cosine'};
-    for k = 1 : numel(distance_types)
-
-      distance_type = distance_types{k};
-
-      % -------------------------------------------------------------------------
-      %                                                    Get ratio of distances
-      % -------------------------------------------------------------------------
-      afprintf(sprintf('[INFO] Getting ratio of distances...\n'));
-      for i = 1 : numel(experiments)
-        projected_imdb = experiments{i}.imdb;
-        experiments{i}.between_class_distance_ratios = getPointDistanceRatios(original_imdb, projected_imdb, other_point_type, distance_type, 'between');
-        experiments{i}.within_class_distance_ratios = getPointDistanceRatios(original_imdb, projected_imdb, other_point_type, distance_type, 'within');
-      end
-      afprintf(sprintf('[INFO] done!\n'));
-      printConsoleOutputSeparator();
-
-      % -------------------------------------------------------------------------
-      %                                                                      Plot
-      % -------------------------------------------------------------------------
-      afprintf(sprintf('[INFO] Plotting...\n'));
-
-      subplot(numel(distance_types), 2, 1 + (k - 1) * numel(distance_types)),
-      within_between = 'between';
-      subplotBeefGiryesRatioDistance(experiments, within_between, distance_type);
-
-      subplot(numel(distance_types), 2, 2 + (k - 1) * numel(distance_types)),
-      within_between = 'within';
-      subplotBeefGiryesRatioDistance(experiments, within_between, distance_type);
-
-      suptitle(sprintf('%s points', other_point_type));
-
-      afprintf(sprintf('[INFO] done!\n'));
-      printConsoleOutputSeparator();
-
+    for i = 1 : numel(experiments)
+      projected_imdb = experiments{i}.imdb;
+      experiments{i}.between_class_distance_ratios = getPointDistanceRatios(original_imdb, projected_imdb, point_type, distance_type, 'between');
+      experiments{i}.within_class_distance_ratios = getPointDistanceRatios(original_imdb, projected_imdb, point_type, distance_type, 'within');
     end
+    afprintf(sprintf('[INFO] done!\n'));
+    printConsoleOutputSeparator();
+
+
+    % -------------------------------------------------------------------------
+    %                                                                      Plot
+    % -------------------------------------------------------------------------
+    afprintf(sprintf('[INFO] Plotting...\n'));
+    h = figure;
+
+    subplot(1,2,1)
+    within_between = 'between';
+    subplotBeefGiryesRatioDistance(experiments, within_between, distance_type);
+
+    subplot(1,2,2)
+    within_between = 'within';
+    subplotBeefGiryesRatioDistance(experiments, within_between, distance_type);
+
+    suptitle(sprintf('%s points', point_type));
+
+    afprintf(sprintf('[INFO] done!\n'));
+    printConsoleOutputSeparator();
+
 
   elseif strcmp(plot_type, 'ratio_distances_discuss_w_alex')
 
-    h = figure;
-    distance_types = {'euclidean', 'cosine'};
-    for k = 1 : numel(distance_types)
-
-      distance_type = distance_types{k};
-
-      % -------------------------------------------------------------------------
-      %                                                    Get ratio of distances
-      % -------------------------------------------------------------------------
-      afprintf(sprintf('[INFO] Getting ratio of distances...\n'));
-      distance_type = 'euclidean';
-      for i = 1 : numel(experiments)
-        projected_imdb = experiments{i}.imdb;
-        experiments{i}.between_class_to_within_class_distance_ratios = getBetweenToWithinDistanceRatios(experiments{i}.imdb, distance_type);
-        experiments{i}.fisher_discriminant_ratio = getFisherDiscriminantRatio(experiments{i}.imdb);
-      end
-
-      afprintf(sprintf('[INFO] done!\n'));
-      printConsoleOutputSeparator();
-
-      % -------------------------------------------------------------------------
-      %                                                                      Plot
-      % -------------------------------------------------------------------------
-      afprintf(sprintf('[INFO] Plotting...\n'));
-      subplot(numel(distance_types), 1, 1 + (k - 1) * numel(distance_types)),
-      plotBeefAlexRatioDistance(experiments, distance_type);
-
-      afprintf(sprintf('[INFO] done!\n'));
-      printConsoleOutputSeparator();
-
+    % -------------------------------------------------------------------------
+    %                                                    Get ratio of distances
+    % -------------------------------------------------------------------------
+    afprintf(sprintf('[INFO] Get ratio of distances...\n'));
+    distance_type = 'euclidean';
+    % distance_type = 'cosine';
+    for i = 1 : numel(experiments)
+      projected_imdb = experiments{i}.imdb;
+      experiments{i}.between_class_to_within_class_distance_ratios = getBetweenToWithinDistanceRatios(experiments{i}.imdb, distance_type);
+      experiments{i}.fisher_discriminant_ratio = getFisherDiscriminantRatio(experiments{i}.imdb);
     end
+
+    afprintf(sprintf('[INFO] done!\n'));
+    printConsoleOutputSeparator();
+
+    % -------------------------------------------------------------------------
+    %                                                                      Plot
+    % -------------------------------------------------------------------------
+    afprintf(sprintf('[INFO] Plotting...\n'));
+    h = figure;
+    plotBeefAlexRatioDistance(experiments);
+
+    afprintf(sprintf('[INFO] done!\n'));
+    printConsoleOutputSeparator();
 
   end
 
@@ -192,74 +175,45 @@ function tmpScriptCalculateDistances(dataset, posneg_balance, save_results)
   end
 
 
-% % -------------------------------------------------------------------------
-% function ratio_distances = getBetweenToWithinDistanceRatios2(imdb, distance_type);
-% % -------------------------------------------------------------------------
-%   afprintf(sprintf('[INFO] Getting between class TO within class distance ratios...\n'));
-%   [ratio_distances, ~, ~] = getPointDistanceBeef2(imdb);
-%   afprintf(sprintf('[INFO] done!\n'));
-
-% % -------------------------------------------------------------------------
-% function [absolute_between, absolute_within] = getBetweenAndWithinAbsoluteDistances2(imdb, distance_type);
-% % -------------------------------------------------------------------------
-%   afprintf(sprintf('[INFO] Getting between class AND within class distance ratios...\n'));
-%   [~, absolute_between, absolute_within] = getPointDistanceBeef2(imdb);
-%   afprintf(sprintf('[INFO] done!\n'));
-
-% % -------------------------------------------------------------------------
-% function [ratio_distances, absolute_between, absolute_within] = getPointDistanceBeef2(imdb, distance_type);
-% % -------------------------------------------------------------------------
-%   [pdist_matrix, labels] = getDistanceMatrixAndLabels(imdb);
-%   ratio_distances = [];
-%   absolute_between = [];
-%   absolute_within = [];
-%   for i = 1:size(pdist_matrix, 1)
-%     same_class_distance = [];
-%     diff_class_distance = [];
-%     for j = 1:size(pdist_matrix, 2)
-%       if labels(i) == labels(j)
-%         same_class_distance(end + 1) = pdist_matrix(i, j);
-%       else
-%         diff_class_distance(end + 1) = pdist_matrix(i, j);
-%       end
-%     end
-%     ratio_distances(end + 1) = mean(diff_class_distance) / mean(same_class_distance);
-%     absolute_between(end + 1) = mean(diff_class_distance);
-%     absolute_within(end + 1) = mean(same_class_distance);
-%   end
-
-
-
 % -------------------------------------------------------------------------
 function ratio_distances = getBetweenToWithinDistanceRatios(imdb, distance_type);
 % -------------------------------------------------------------------------
-  afprintf(sprintf('[INFO] Getting between class TO within class distance ratios...\n'));
-  [~, within_distance_absolute_values] = getPointDistanceBeef(imdb, imdb, 'average_of_all', distance_type, 'within', 'none');
-  [~, between_distance_absolute_values] = getPointDistanceBeef(imdb, imdb, 'average_of_all', distance_type, 'between', 'none');
-  assert(length(within_distance_absolute_values) == length(between_distance_absolute_values));
-  % TODO... is it correct to just do the below:
-  ratio_distances = between_distance_absolute_values ./ within_distance_absolute_values;
+  afprintf(sprintf('[INFO] Getting between class to within class distance ratios...\n'));
+  [pdist_matrix, labels] = getDistanceMatrixAndLabels(imdb);
+  ratio_distances = [];
+  for i = 1:size(pdist_matrix, 1)
+    same_class_distance = [];
+    diff_class_distance = [];
+    for j = 1:size(pdist_matrix, 2)
+      if labels(i) == labels(j)
+        same_class_distance(end + 1) = pdist_matrix(i, j);
+      else
+        diff_class_distance(end + 1) = pdist_matrix(i, j);
+      end
+    end
+    ratio_distances(end + 1) = mean(diff_class_distance) / mean(same_class_distance);
+  end
   afprintf(sprintf('[INFO] done!\n'));
 
 
 % -------------------------------------------------------------------------
-function distance_absolute_values = getPointDistanceAbsoluteValues(imdb, other_point_type, distance_type, within_between)
+function distance_absolute_values = getPointDistanceAbsoluteValues(imdb, point_type, distance_type, within_between)
 % -------------------------------------------------------------------------
   afprintf(sprintf('[INFO] Getting point distance ratios...\n'));
-  [~, distance_absolute_values] = getPointDistanceBeef(imdb, imdb, other_point_type, distance_type, within_between, 'none');
+  [~, distance_absolute_values] = getPointDistanceBeef(imdb, imdb, point_type, distance_type, within_between, 'none');
   afprintf(sprintf('[INFO] done!\n'));
 
 
 % -------------------------------------------------------------------------
-function distance_ratios = getPointDistanceRatios(original_imdb, projected_imdb, other_point_type, distance_type, within_between)
+function distance_ratios = getPointDistanceRatios(original_imdb, projected_imdb, point_type, distance_type, within_between)
 % -------------------------------------------------------------------------
   afprintf(sprintf('[INFO] Getting point distance ratios...\n'));
-  [distance_ratios, ~] = getPointDistanceBeef(original_imdb, projected_imdb, other_point_type, distance_type, within_between, 'sum-normalized');
+  [distance_ratios, ~] = getPointDistanceBeef(original_imdb, projected_imdb, point_type, distance_type, within_between, 'sum-normalized');
   afprintf(sprintf('[INFO] done!\n'));
 
 
 % -------------------------------------------------------------------------
-function [projected_2_original_distance_ratios, original_distance_absolute_values] = getPointDistanceBeef(original_imdb, projected_imdb, other_point_type, distance_type, within_between, normalization_type)
+function [distance_ratios, distance_absolute_values] = getPointDistanceBeef(original_imdb, projected_imdb, point_type, distance_type, within_between, normalization_type)
 % -------------------------------------------------------------------------
   [original_pdist_matrix, original_labels_train] = getDistanceMatrixAndLabels(original_imdb);
   [projected_pdist_matrix, projected_labels_train] = getDistanceMatrixAndLabels(projected_imdb);
@@ -273,13 +227,11 @@ function [projected_2_original_distance_ratios, original_distance_absolute_value
   %                                                  Define function handles
   % -------------------------------------------------------------------------
   if strcmp(within_between, 'within')
-    findBorderPointIndexFunctionHandle = @findFurthestWithinClassPointIndexToPoint;
-    findRandomPointIndexFunctionHandle = @findRandomWithinClassPointIndexToPoint;
-    findAllOtherPointIndicesFunctionHandle = @findAllOtherWithinClassPointIndicesToPoint;
+    findBorderPointFunctionHandle = @findFurthestWithinClassPointIndexToPoint;
+    findRandomPointFunctionHandle = @findRandomWithinClassPointIndexToPoint;
   elseif strcmp(within_between, 'between')
-    findBorderPointIndexFunctionHandle = @findClosestBetweenClassPointIndexToPoint;
-    findRandomPointIndexFunctionHandle = @findRandomBetweenClassPointIndexToPoint;
-    findAllOtherPointIndicesFunctionHandle = @findAllOtherBetweenClassPointIndicesToPoint;
+    findBorderPointFunctionHandle = @findClosestBetweenClassPointIndexToPoint;
+    findRandomPointFunctionHandle = @findRandomBetweenClassPointIndexToPoint;
   else
     throwException('[ERROR] within_between not recognized.');
   end
@@ -287,20 +239,16 @@ function [projected_2_original_distance_ratios, original_distance_absolute_value
   % -------------------------------------------------------------------------
   %                                                  Get ratios of all points
   % -------------------------------------------------------------------------
-  switch other_point_type
+  switch point_type
     case 'border'
-      assert
       repeat_count = 1;
     case 'random'
       repeat_count = 100;
-    case 'average_of_all'
-      repeat_count = 1;
     otherwise
-      throwException('[ERROR] other_point_type not recognized.');
+      throwException('[ERROR] point_type not recognized.');
   end
-  projected_2_original_distance_ratios = [];
-  original_distance_absolute_values = [];
-
+  distance_ratios = [];
+  distance_absolute_values = [];
   for i = 1 : repeat_count
     for reference_point_index = 1 : size(original_pdist_matrix, 1)
 
@@ -313,50 +261,36 @@ function [projected_2_original_distance_ratios, original_distance_absolute_value
       projected_reference_point_class = projected_labels_train(reference_point_index);
       assert(original_reference_point_class == projected_reference_point_class);
 
-      original_reference_point_index = reference_point_index;
-      projected_reference_point_index = reference_point_index;
-
-      if strcmp(other_point_type, 'border')
-        original_other_point_index = findBorderPointIndexFunctionHandle(original_reference_point_row, original_reference_point_class, original_labels_train);
-        projected_other_point_index = findBorderPointIndexFunctionHandle(projected_reference_point_row, projected_reference_point_class, projected_labels_train);
-      elseif strcmp(other_point_type, 'random')
-        original_other_point_index = findRandomPointIndexFunctionHandle(original_reference_point_row, original_reference_point_class, original_labels_train);
+      if strcmp(point_type, 'border')
+        original_other_point_index = findBorderPointFunctionHandle(original_reference_point_row, original_reference_point_class, original_labels_train);
+        projected_other_point_index = findBorderPointFunctionHandle(projected_reference_point_row, projected_reference_point_class, projected_labels_train);
+      elseif strcmp(point_type, 'random')
+        original_other_point_index = findRandomPointFunctionHandle(original_reference_point_row, original_reference_point_class, original_labels_train);
         projected_other_point_index = original_other_point_index;
-      elseif strcmp(other_point_type, 'average_of_all')
-        original_other_point_indices = findAllOtherPointIndicesFunctionHandle(original_reference_point_index  , original_reference_point_class, original_labels_train);
-        projected_other_point_indices = original_other_point_indices; % turns out to be the same `set` of indices, because the reference point is the same
       end
+
+      % -------------------------------------------------------------------------
+      %                                                     Get points themselves
+      % -------------------------------------------------------------------------
+      original_reference_point_index = reference_point_index;
+      original_reference_point = getVectorizedSampleAtIndex(original_imdb, original_reference_point_index);
+      original_other_point = getVectorizedSampleAtIndex(original_imdb, original_other_point_index);
+
+      projected_reference_point_index = reference_point_index;
+      projected_reference_point = getVectorizedSampleAtIndex(projected_imdb, projected_reference_point_index);
+      projected_other_point = getVectorizedSampleAtIndex(projected_imdb, projected_other_point_index);
 
       % -------------------------------------------------------------------------
       %                                                        Calculate distance
       % -------------------------------------------------------------------------
-      if ~strcmp(other_point_type, 'average_of_all')
-        original_distance = calculateDistance(original_imdb, original_reference_point_index, original_other_point_index, distance_type, original_pdist_matrix);
-        projected_distance = calculateDistance(projected_imdb, projected_reference_point_index, projected_other_point_index, distance_type, projected_pdist_matrix);
-      else
-        tmp_original_distance = [];
-        tmp_projected_distance = [];
-        for original_other_point_index = original_other_point_indices
-          projected_other_point_index = original_other_point_index;
-          tmp_original_distance(end+1) = calculateDistance(original_imdb, original_reference_point_index, original_other_point_index, distance_type, original_pdist_matrix);
-          tmp_projected_distance(end+1) = calculateDistance(projected_imdb, projected_reference_point_index, projected_other_point_index, distance_type, projected_pdist_matrix);
-        end
-        original_distance = mean(tmp_original_distance);
-        projected_distance = mean(tmp_projected_distance);
-      end
-
-      % HERE, WE MUST MENTALLY ASSERT THAT ORIGINAL_DISTANCE AND PROJECTED_DISTANCE
-      % ARE SINGLE VALUES... NOT ARRAYS OF MULTIPLE VALUES. THIS IS DONE BECAUSE
-      % LATER WE CAN GET BOTH ABSOLUTE VALUES AND / OR RATIO OF VALUES.
+      original_distance = calculateDistance(original_reference_point, original_reference_point_index, original_other_point, original_other_point_index, distance_type, original_pdist_matrix);
+      projected_distance = calculateDistance(projected_reference_point, projected_reference_point_index, projected_other_point, projected_other_point_index, distance_type, projected_pdist_matrix);
 
       % -------------------------------------------------------------------------
-      %                                                              Finally, ...
+      %                                                 Finally, calculate ratios
       % -------------------------------------------------------------------------
-      projected_2_original_distance_ratios(end + 1) = projected_distance / original_distance;
-      original_distance_absolute_values(end + 1) = original_distance; % ignoring projected_distance... only 1 imdb passed into both anyways lol
-
-
-      % TODO: naming like this: projected_2_original_distance_ratios
+      distance_ratios(end + 1) = projected_distance / original_distance;
+      distance_absolute_values(end + 1) = original_distance;
 
     end
   end
@@ -373,19 +307,13 @@ function [matrix_pdist, labels_train] = getDistanceMatrixAndLabels(imdb)
 
 
 % -------------------------------------------------------------------------
-function distance = calculateDistance(imdb, point_1_index, point_2_index, distance_type, pdist_matrix)
+function distance = calculateDistance(point_1, point_1_index, point_2, point_2_index, distance_type, pdist_matrix)
 % -------------------------------------------------------------------------
-
-  point_1 = getVectorizedSampleAtIndex(imdb, point_1_index);
-  point_2 = getVectorizedSampleAtIndex(imdb, point_2_index);
-
   if strcmp(distance_type, 'euclidean')
     % TODO: these distances are sadly not normalized :|
     % distance = pdist([point_1; point_2]);
     assert(pdist_matrix(point_1_index, point_2_index) == pdist_matrix(point_2_index, point_1_index));
     distance = pdist_matrix(point_1_index, point_2_index);
-    amirs_calculated_distance = norm(point_1 - point_2);
-    assert(amirs_calculated_distance - distance < 10e-3);
   elseif strcmp(distance_type, 'cosine')
     cos_theta = dot(point_1, point_2) / (norm(point_1) * norm(point_2));
     theta_in_degrees = acosd(cos_theta);
@@ -401,6 +329,9 @@ function distance = calculateDistance(imdb, point_1_index, point_2_index, distan
 % -------------------------------------------------------------------------
 function point_index = findClosestBetweenClassPointIndexToPoint(point_row, point_class, labels)
 % -------------------------------------------------------------------------
+  % [sorted_point_row, indices] = sort(point_row(labels ~= point_class));
+  % point_index = indices(1);
+
   [sorted_point_row, indices] = sort(point_row, 'ascend');
   labels = labels(indices); % sort labels according to sorted_point_row
   for i = 1:length(point_row)
@@ -414,6 +345,9 @@ function point_index = findClosestBetweenClassPointIndexToPoint(point_row, point
 % -------------------------------------------------------------------------
 function point_index = findFurthestWithinClassPointIndexToPoint(point_row, point_class, labels)
 % -------------------------------------------------------------------------
+  % [sorted_point_row, indices] = sort(point_row(labels == point_class));
+  % point_index = indices(end);
+
   [sorted_point_row, indices] = sort(point_row, 'descend');
   labels = labels(indices); % sort labels according to sorted_point_row
   for i = 1:length(point_row)
@@ -427,6 +361,9 @@ function point_index = findFurthestWithinClassPointIndexToPoint(point_row, point
 % -------------------------------------------------------------------------
 function random_point_index = findRandomBetweenClassPointIndexToPoint(point_row, point_class, labels)
 % -------------------------------------------------------------------------
+  % between_class_row = point_row(labels ~= point_class);
+  % random_point_index = ceil(rand() * length(between_class_row));
+
   while 1
     random_point_index = ceil(rand() * length(point_row));
     if labels(random_point_index) ~= point_class
@@ -438,24 +375,15 @@ function random_point_index = findRandomBetweenClassPointIndexToPoint(point_row,
 % -------------------------------------------------------------------------
 function random_point_index = findRandomWithinClassPointIndexToPoint(point_row, point_class, labels)
 % -------------------------------------------------------------------------
+  % within_class_row = point_row(labels == point_class);
+  % random_point_index = ceil(rand() * length(within_class_row));
+
   while 1
     random_point_index = ceil(rand() * length(point_row));
     if labels(random_point_index) == point_class
       break
     end
   end
-
-
-% -------------------------------------------------------------------------
-function all_other_point_indicies = findAllOtherBetweenClassPointIndicesToPoint(original_reference_point_index, point_class, labels)
-% -------------------------------------------------------------------------
-  all_other_point_indicies = setdiff(find(labels ~= point_class), original_reference_point_index);
-
-
-% -------------------------------------------------------------------------
-function all_other_point_indicies = findAllOtherWithinClassPointIndicesToPoint(original_reference_point_index, point_class, labels)
-% -------------------------------------------------------------------------
-  all_other_point_indicies = setdiff(find(labels == point_class), original_reference_point_index);
 
 
 % -------------------------------------------------------------------------
@@ -511,10 +439,10 @@ function subplotBeefAbsoluteDistance(experiments, within_between, distance_type)
 
   if strcmp(distance_type, 'cosine')
     x_ticks = 0:2.5:180;
-    y_limits = [0 200];
+    y_limits = [0 15000];
   else
     x_ticks = 0:0.1:10;
-    y_limits = [0 200];
+    y_limits = [0 15000];
   end
 
   if strcmp(within_between, 'within')
@@ -588,7 +516,7 @@ function subplotBeefGiryesRatioDistance(experiments, within_between, distance_ty
 
 
 % -------------------------------------------------------------------------
-function plotBeefAlexRatioDistance(experiments, distance_type)
+function plotBeefAlexRatioDistance(experiments)
 % -------------------------------------------------------------------------
   color_palette = {'c', 'r', 'g', 'b', 'k'};
   legend_entries = {};
@@ -597,9 +525,9 @@ function plotBeefAlexRatioDistance(experiments, distance_type)
     % legend_entries{i} = experiments{i}.title;
   end
 
-  x_ticks = 0:0.025:3.5;
+  x_ticks = 0:0.025:3;
   y_limits = [0 100];
-  title(sprintf('Between-class to Within-class %s Distance Ratios', distance_type));
+  title('Between-class to Within-class Distance Ratios');
 
   hold on
   for i = 1 : numel(experiments)
@@ -615,6 +543,7 @@ function plotBeefAlexRatioDistance(experiments, distance_type)
   ylim(y_limits);
   hold off
   legend(legend_entries);
+
 
 
 % -------------------------------------------------------------------------

@@ -34,13 +34,13 @@ function tempScriptPlot3DEuclideanDistances(dataset, posneg_balance, save_result
   afprintf(sprintf('[INFO] done!\n'));
   printConsoleOutputSeparator();
 
-  imdb_1 = experiments{1}.imdb;
-  imdb_2 = experiments{2}.imdb;
+  imdb_1 = getVectorizedImdb(experiments{1}.imdb);
+  imdb_2 = getVectorizedImdb(experiments{2}.imdb);
 
-  data_original = reshape(imdb_1.images.data, 2, [])';
+  data_original = imdb_1.images.data;
   data_original_a = data_original(imdb_1.images.labels == 1,:);
   data_original_b = data_original(imdb_1.images.labels == 2,:);
-  data_angle_separated = reshape(imdb_2.images.data, 2, [])';
+  data_angle_separated = imdb_2.images.data;
   data_angle_separated_a = data_angle_separated(imdb_2.images.labels == 1,:);
   data_angle_separated_b = data_angle_separated(imdb_2.images.labels == 2,:);
 
@@ -58,7 +58,9 @@ function tempScriptPlot3DEuclideanDistances(dataset, posneg_balance, save_result
   scatter3(data_original_b(:,1), data_original_b(:,2), data_original_b(:,3), 'ro');
   xlim([-30, 30]);
   ylim([-30, 30]);
+  zlim([-30, 30]);
   hold off
+  view(15, 25);
 
   subplot(1,2,2),
   title('Angle Separated Data');
@@ -68,6 +70,8 @@ function tempScriptPlot3DEuclideanDistances(dataset, posneg_balance, save_result
   scatter3(data_angle_separated_b(:,1), data_angle_separated_b(:,2), data_angle_separated_b(:,3), 'ro');
   xlim([-30, 30]);
   ylim([-30, 30]);
+  zlim([-30, 30]);
   hold off
+  view(15, 25);
 
   suptitle(sprintf('Gaussian Class Variance: %d', variance));
