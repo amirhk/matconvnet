@@ -55,8 +55,10 @@ function tmpScriptCalculateDistances(dataset, posneg_balance, save_results)
       % -------------------------------------------------------------------------
       for i = 1 : numel(experiments)
         projected_imdb = experiments{i}.imdb;
-        experiments{i}.between_class_distance_absolute_values = getPointDistanceAbsoluteValues(experiments{i}.imdb, other_point_type, distance_type, 'between');
-        experiments{i}.within_class_distance_absolute_values = getPointDistanceAbsoluteValues(experiments{i}.imdb, other_point_type, distance_type, 'within');
+        [experiments{i}.between_class_distance_absolute_values, experiments{i}.between_class_metric] = ...
+          getPointDistanceAbsoluteValues(experiments{i}.imdb, other_point_type, distance_type, 'between');
+        [experiments{i}.within_class_distance_absolute_values, experiments{i}.within_class_metric] = ...
+          getPointDistanceAbsoluteValues(experiments{i}.imdb, other_point_type, distance_type, 'within');
       end
 
       afprintf(sprintf('[INFO] done!\n'));
@@ -166,7 +168,11 @@ function tmpScriptCalculateDistances(dataset, posneg_balance, save_results)
       distance_type = 'euclidean';
       for i = 1 : numel(experiments)
         projected_imdb = experiments{i}.imdb;
-        experiments{i}.between_class_to_within_class_distance_ratios = getBetweenToWithinDistanceRatios(experiments{i}.imdb, distance_type);
+        [ ...
+          experiments{i}.between_class_to_within_class_distance_ratios, ...
+          experiments{i}.between_class_metric, ...
+          experiments{i}.within_class_metric] = ...
+          getBetweenToWithinPointDistanceRatios(experiments{i}.imdb, distance_type);
         experiments{i}.fisher_discriminant_ratio = getFisherDiscriminantRatio(experiments{i}.imdb);
       end
 
@@ -192,61 +198,23 @@ function tmpScriptCalculateDistances(dataset, posneg_balance, save_results)
   end
 
 
-% % -------------------------------------------------------------------------
-% function ratio_distances = getBetweenToWithinDistanceRatios2(imdb, distance_type);
-% % -------------------------------------------------------------------------
-%   afprintf(sprintf('[INFO] Getting between class TO within class distance ratios...\n'));
-%   [ratio_distances, ~, ~] = getPointDistanceBeef2(imdb);
-%   afprintf(sprintf('[INFO] done!\n'));
-
-% % -------------------------------------------------------------------------
-% function [absolute_between, absolute_within] = getBetweenAndWithinAbsoluteDistances2(imdb, distance_type);
-% % -------------------------------------------------------------------------
-%   afprintf(sprintf('[INFO] Getting between class AND within class distance ratios...\n'));
-%   [~, absolute_between, absolute_within] = getPointDistanceBeef2(imdb);
-%   afprintf(sprintf('[INFO] done!\n'));
-
-% % -------------------------------------------------------------------------
-% function [ratio_distances, absolute_between, absolute_within] = getPointDistanceBeef2(imdb, distance_type);
-% % -------------------------------------------------------------------------
-%   [pdist_matrix, labels] = getDistanceMatrixAndLabels(imdb);
-%   ratio_distances = [];
-%   absolute_between = [];
-%   absolute_within = [];
-%   for i = 1:size(pdist_matrix, 1)
-%     same_class_distance = [];
-%     diff_class_distance = [];
-%     for j = 1:size(pdist_matrix, 2)
-%       if labels(i) == labels(j)
-%         same_class_distance(end + 1) = pdist_matrix(i, j);
-%       else
-%         diff_class_distance(end + 1) = pdist_matrix(i, j);
-%       end
-%     end
-%     ratio_distances(end + 1) = mean(diff_class_distance) / mean(same_class_distance);
-%     absolute_between(end + 1) = mean(diff_class_distance);
-%     absolute_within(end + 1) = mean(same_class_distance);
-%   end
-
-
-
 % -------------------------------------------------------------------------
-function ratio_distances = getBetweenToWithinDistanceRatios(imdb, distance_type);
+function [ratio_distances, between_class_metric, within_class_metric] = getBetweenToWithinPointDistanceRatios(imdb, distance_type);
 % -------------------------------------------------------------------------
   afprintf(sprintf('[INFO] Getting between class TO within class distance ratios...\n'));
-  [~, within_distance_absolute_values] = getPointDistanceBeef(imdb, imdb, 'average_of_all', distance_type, 'within', 'none');
-  [~, between_distance_absolute_values] = getPointDistanceBeef(imdb, imdb, 'average_of_all', distance_type, 'between', 'none');
-  assert(length(within_distance_absolute_values) == length(between_distance_absolute_values));
+  [~, within_class_distance_absolute_values, within_class_metric] = getPointDistanceBeef(imdb, imdb, 'average_of_all', distance_type, 'within', 'none');
+  [~, between_class_distance_absolute_values, between_class_metric] = getPointDistanceBeef(imdb, imdb, 'average_of_all', distance_type, 'between', 'none');
+  assert(length(within_class_distance_absolute_values) == length(between_class_distance_absolute_values));
   % TODO... is it correct to just do the below:
-  ratio_distances = between_distance_absolute_values ./ within_distance_absolute_values;
+  ratio_distances = between_class_distance_absolute_values ./ within_class_distance_absolute_values;
   afprintf(sprintf('[INFO] done!\n'));
 
 
 % -------------------------------------------------------------------------
-function distance_absolute_values = getPointDistanceAbsoluteValues(imdb, other_point_type, distance_type, within_between)
+function [distance_absolute_values, class_metric] = getPointDistanceAbsoluteValues(imdb, other_point_type, distance_type, within_between)
 % -------------------------------------------------------------------------
   afprintf(sprintf('[INFO] Getting point distance ratios...\n'));
-  [~, distance_absolute_values] = getPointDistanceBeef(imdb, imdb, other_point_type, distance_type, within_between, 'none');
+  [~, distance_absolute_values, class_metric] = getPointDistanceBeef(imdb, imdb, other_point_type, distance_type, within_between, 'none');
   afprintf(sprintf('[INFO] done!\n'));
 
 
@@ -254,12 +222,15 @@ function distance_absolute_values = getPointDistanceAbsoluteValues(imdb, other_p
 function distance_ratios = getPointDistanceRatios(original_imdb, projected_imdb, other_point_type, distance_type, within_between)
 % -------------------------------------------------------------------------
   afprintf(sprintf('[INFO] Getting point distance ratios...\n'));
-  [distance_ratios, ~] = getPointDistanceBeef(original_imdb, projected_imdb, other_point_type, distance_type, within_between, 'sum-normalized');
+  [distance_ratios, ~, ~] = getPointDistanceBeef(original_imdb, projected_imdb, other_point_type, distance_type, within_between, 'sum-normalized');
   afprintf(sprintf('[INFO] done!\n'));
 
 
 % -------------------------------------------------------------------------
-function [projected_2_original_distance_ratios, original_distance_absolute_values] = getPointDistanceBeef(original_imdb, projected_imdb, other_point_type, distance_type, within_between, normalization_type)
+function [ ...
+  projected_2_original_distance_ratios, ...
+  original_distance_absolute_values, ...
+  average_of_all_original_distance_absolute_values] = getPointDistanceBeef(original_imdb, projected_imdb, other_point_type, distance_type, within_between, normalization_type)
 % -------------------------------------------------------------------------
   [original_pdist_matrix, original_labels_train] = getDistanceMatrixAndLabels(original_imdb);
   [projected_pdist_matrix, projected_labels_train] = getDistanceMatrixAndLabels(projected_imdb);
@@ -300,6 +271,7 @@ function [projected_2_original_distance_ratios, original_distance_absolute_value
   end
   projected_2_original_distance_ratios = [];
   original_distance_absolute_values = [];
+  original_distance_absolute_values_all = [];
 
   for i = 1 : repeat_count
     for reference_point_index = 1 : size(original_pdist_matrix, 1)
@@ -340,6 +312,7 @@ function [projected_2_original_distance_ratios, original_distance_absolute_value
           projected_other_point_index = original_other_point_index;
           tmp_original_distance(end+1) = calculateDistance(original_imdb, original_reference_point_index, original_other_point_index, distance_type, original_pdist_matrix);
           tmp_projected_distance(end+1) = calculateDistance(projected_imdb, projected_reference_point_index, projected_other_point_index, distance_type, projected_pdist_matrix);
+          original_distance_absolute_values_all = tmp_original_distance(end);
         end
         original_distance = mean(tmp_original_distance);
         projected_distance = mean(tmp_projected_distance);
@@ -360,6 +333,7 @@ function [projected_2_original_distance_ratios, original_distance_absolute_value
 
     end
   end
+  average_of_all_original_distance_absolute_values = mean(original_distance_absolute_values_all) / 2;
 
 
 % -------------------------------------------------------------------------
@@ -501,12 +475,63 @@ function [original_pdist_matrix, projected_pdist_matrix] = normalizePdistMatrice
 
 
 % -------------------------------------------------------------------------
+function fisher_discriminant_ratio = getFisherDiscriminantRatio(imdb)
+% -------------------------------------------------------------------------
+  vectorized_imdb = getVectorizedImdb(imdb);
+  assert(numel(unique(imdb.images.labels)) == 2);
+
+  data = vectorized_imdb.images.data;
+  data_class_1 = data(vectorized_imdb.images.labels == 1, :);
+  data_class_2 = data(vectorized_imdb.images.labels == 2, :);
+
+  mean_data_class_1 = mean(data_class_1);
+  mean_data_class_2 = mean(data_class_2);
+
+  cov_data_class_1 = cov(data_class_1);
+  cov_data_class_2 = cov(data_class_2);
+
+  % Using Alex's suggested method
+  % fisher_discriminant_ratio = norm(mean_data_class_1 - mean_data_class_2)^2 / (norm(cov_data_class_1 + cov_data_class_2));
+
+  % Using http://www.csd.uwo.ca/~olga/Courses/CS434a_541a/Lecture8.pdf
+  % S_1 = size(data_class_1, 1) * cov_data_class_1;
+  S_1 = cov_data_class_1;
+  % S_2 = size(data_class_2, 1) * cov_data_class_2;
+  S_2 = cov_data_class_2;
+
+  S_W = S_1 + S_2;
+
+  % assert full rank
+  assert(rank(S_W) == size(S_W, 1));
+
+  optimal_projection_line_direction = inv(S_W) * (mean_data_class_1 - mean_data_class_2)';
+
+  optimally_projected_data = optimal_projection_line_direction' * data';
+  optimally_projected_data_class_1 = optimal_projection_line_direction' * data_class_1';
+  optimally_projected_data_class_2 = optimal_projection_line_direction' * data_class_2';
+
+  % Using https://compbio.soe.ucsc.edu/genex/genexTR2html/node12.html
+  fisher_discriminant_ratio = ...
+    (mean(optimally_projected_data_class_1) - mean(optimally_projected_data_class_2))^2 / ...
+    (var(optimally_projected_data_class_1) + var(optimally_projected_data_class_2));
+
+  % keyboard
+  % figure, hold on, histogram(optimally_projected_data_class_1), histogram(optimally_projected_data_class_2)
+  % imdb.images.data = optimally_projected_data;
+  % imdb = get4DImdb(imdb, size(imdb.images.data, 1), 1, 1, []);
+
+
+% -------------------------------------------------------------------------
 function subplotBeefAbsoluteDistance(experiments, within_between, distance_type)
 % -------------------------------------------------------------------------
   color_palette = {'c', 'r', 'g', 'b', 'k'};
   legend_entries = {};
   for i = 1 : numel(experiments)
-    legend_entries{i} = experiments{i}.title;
+    if strcmp(within_between, 'between')
+      legend_entries{i} = sprintf('%s - metric = %.3f', experiments{i}.title, experiments{i}.between_class_metric);
+    else
+      legend_entries{i} = sprintf('%s - metric = %.3f', experiments{i}.title, experiments{i}.within_class_metric);
+    end
   end
 
   if strcmp(distance_type, 'cosine')
@@ -517,10 +542,10 @@ function subplotBeefAbsoluteDistance(experiments, within_between, distance_type)
     y_limits = [0 200];
   end
 
-  if strcmp(within_between, 'within')
-    title(sprintf('Within-class %s Distances', distance_type));
-  else
+  if strcmp(within_between, 'between')
     title(sprintf('Between-class %s Distances', distance_type));
+  else
+    title(sprintf('Within-class %s Distances', distance_type));
   end
 
   hold on
@@ -615,53 +640,6 @@ function plotBeefAlexRatioDistance(experiments, distance_type)
   ylim(y_limits);
   hold off
   legend(legend_entries);
-
-
-% -------------------------------------------------------------------------
-function fisher_discriminant_ratio = getFisherDiscriminantRatio(imdb)
-% -------------------------------------------------------------------------
-  vectorized_imdb = getVectorizedImdb(imdb);
-  assert(numel(unique(imdb.images.labels)) == 2);
-
-  data = vectorized_imdb.images.data;
-  data_class_1 = data(vectorized_imdb.images.labels == 1, :);
-  data_class_2 = data(vectorized_imdb.images.labels == 2, :);
-
-  mean_data_class_1 = mean(data_class_1);
-  mean_data_class_2 = mean(data_class_2);
-
-  cov_data_class_1 = cov(data_class_1);
-  cov_data_class_2 = cov(data_class_2);
-
-  % Using Alex's suggested method
-  % fisher_discriminant_ratio = norm(mean_data_class_1 - mean_data_class_2)^2 / (norm(cov_data_class_1 + cov_data_class_2));
-
-  % Using http://www.csd.uwo.ca/~olga/Courses/CS434a_541a/Lecture8.pdf
-  % S_1 = size(data_class_1, 1) * cov_data_class_1;
-  S_1 = cov_data_class_1;
-  % S_2 = size(data_class_2, 1) * cov_data_class_2;
-  S_2 = cov_data_class_2;
-
-  S_W = S_1 + S_2;
-
-  % assert full rank
-  assert(rank(S_W) == size(S_W, 1));
-
-  optimal_projection_line_direction = inv(S_W) * (mean_data_class_1 - mean_data_class_2)';
-
-  optimally_projected_data = optimal_projection_line_direction' * data';
-  optimally_projected_data_class_1 = optimal_projection_line_direction' * data_class_1';
-  optimally_projected_data_class_2 = optimal_projection_line_direction' * data_class_2';
-
-  % Using https://compbio.soe.ucsc.edu/genex/genexTR2html/node12.html
-  fisher_discriminant_ratio = ...
-    (mean(optimally_projected_data_class_1) - mean(optimally_projected_data_class_2))^2 / ...
-    (var(optimally_projected_data_class_1) + var(optimally_projected_data_class_2));
-
-  % keyboard
-  % figure, hold on, histogram(optimally_projected_data_class_1), histogram(optimally_projected_data_class_2)
-  % imdb.images.data = optimally_projected_data;
-  % imdb = get4DImdb(imdb, size(imdb.images.data, 1), 1, 1, []);
 
 
 
