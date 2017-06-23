@@ -363,10 +363,14 @@ function distance = calculateDistance(imdb, point_1_index, point_2_index, distan
     assert(amirs_calculated_distance - distance < 10e-3);
   elseif strcmp(distance_type, 'cosine')
     cos_theta = dot(point_1, point_2) / (norm(point_1) * norm(point_2));
-    theta_in_degrees = acosd(cos_theta);
-    if isnan(theta_in_degrees)
+    if isnan(cos_theta)
       keyboard
+      % most likely because the denominator above is 0 ...
+      % most likely because one of the vectors is the zero vector ...
+      cos_theta = 1;
     end
+
+    theta_in_degrees = acosd(cos_theta);
     if ~isreal(theta_in_degrees)
       % keyboard
       % TODO?????????????
