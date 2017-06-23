@@ -7,8 +7,8 @@
 
 
 
-functionHandle = @tempScriptRunKnn;
-% functionHandle = @tmpScriptCalculateDistances;
+% functionHandle = @tempScriptRunKnn;
+functionHandle = @tmpScriptCalculateDistances;
 % functionHandle = @tempScriptPlot2DEuclideanDistances;
 % functionHandle = @tempScriptPlot3DEuclideanDistances;
 
@@ -21,7 +21,7 @@ functionHandle = @tempScriptRunKnn;
 
 % functionHandle('saved-multi-class-gaussian-2D-mean-3-var-3-train-balance-500-test-balance-500', 'balanced-38', 0);
 
-% functionHandle('saved-multi-class-gaussian-3D-mean-3-var-3-train-balance-500-test-balance-500', 'balanced-38', 0);
+functionHandle('saved-multi-class-gaussian-3D-mean-3-var-3-train-balance-500-test-balance-500', 'balanced-38', 1);
 
 % functionHandle('saved-multi-class-gaussian-5D-mean-1-var-0-train-balance-500-test-balance-500', 'balanced-38', 0);
 % functionHandle('saved-multi-class-gaussian-5D-mean-1-var-1-train-balance-500-test-balance-500', 'balanced-38', 0);
@@ -44,4 +44,4 @@ functionHandle = @tempScriptRunKnn;
 % functionHandle('uci-ion', 'balanced-38', 0);
 % functionHandle('uci-spam', 'balanced-38', 0);
 
-functionHandle('cifar-multi-class-subsampled', 'balanced-1880', 0);
+% functionHandle('cifar-multi-class-subsampled', 'balanced-1880', 0);
