@@ -334,6 +334,11 @@ function [ ...
 
     end
   end
+
+  projected_2_original_distance_ratios = projected_2_original_distance_ratios(~isnan(projected_2_original_distance_ratios));
+  original_distance_absolute_values = original_distance_absolute_values(~isnan(original_distance_absolute_values));
+  original_distance_absolute_values_all = original_distance_absolute_values_all(~isnan(original_distance_absolute_values_all));
+
   average_of_all_original_distance_absolute_values = mean(original_distance_absolute_values_all) / 2;
 
 
@@ -363,12 +368,12 @@ function distance = calculateDistance(imdb, point_1_index, point_2_index, distan
     assert(amirs_calculated_distance - distance < 10e-3);
   elseif strcmp(distance_type, 'cosine')
     cos_theta = dot(point_1, point_2) / (norm(point_1) * norm(point_2));
-    if isnan(cos_theta)
-      keyboard
-      % most likely because the denominator above is 0 ...
-      % most likely because one of the vectors is the zero vector ...
-      cos_theta = 1;
-    end
+    % if isnan(cos_theta)
+    %   % keyboard
+    %   % most likely because the denominator above is 0 ...
+    %   % most likely because one of the vectors is the zero vector ...
+    %   cos_theta = 1;
+    % end
 
     theta_in_degrees = acosd(cos_theta);
     if ~isreal(theta_in_degrees)

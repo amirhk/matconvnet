@@ -112,9 +112,10 @@ function imdb = getDenslyProjectedImdb(imdb, number_of_projection_layers, number
   relu_count = 0;
   for i = 1 : number_of_projection_layers
     % random_projection_matrix = randn(s1 * s2 * s3, s1 * s2 * s3) * 1/100;
-    % random_projection_matrix = randn(s1 * s2 * s3, s1 * s2 * s3);
-    random_projection_matrix = sqrt(2) * randn(s1 * s2 * s3, s1 * s2 * s3) / sqrt(s1 * s2 * s3);
+    random_projection_matrix = randn(s1 * s2 * s3, s1 * s2 * s3);
+    % random_projection_matrix = randn(s1 * s2 * s3, s1 * s2 * s3) / sqrt(s1 * s2 * s3);
     % random_projection_matrix = randn(s1 * s2 * s3, s1 * s2 * s3) / sqrt(sqrt(s1 * s2 * s3));
+    % random_projection_matrix = randn(s1 * s2 * s3, s1 * s2 * s3) / sqrt(s1 * s2 * s3) * sqrt(2);
     % random_projection_matrix = (round(rand(s1 * s2 * s3, s1 * s2 * s3)) - 0.5) * 2 / sqrt(s1 * s2 * s3); % Bernoulli
     imdb = projectImdbUsingMatrix(imdb, random_projection_matrix);
     if relu_count < number_of_relu_layers
