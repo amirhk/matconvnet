@@ -190,6 +190,7 @@ for i=1:n
   switch l.type
     case 'conv'
       if isfield(l, 'weights')
+        % keyboard
         res(i+1).x = vl_nnconv(res(i).x, l.weights{1}, l.weights{2}, ...
                                'pad', l.pad, 'stride', l.stride, ...
                                cudnn{:}) ;

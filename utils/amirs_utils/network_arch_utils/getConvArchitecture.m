@@ -34,7 +34,8 @@ function net = getConvArchitecture(dataset, network_arch)
     case 'convV0P0RL0+fcV1-RF32CH3'
       % FULLY CONNECTED
       layer_number = numel(net.layers) + 1;
-      net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 32, 3, 64, 5/100, 0, 'gaussian', 'gen');
+      % net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 32, 3, 64, 5/100, 0, 'gaussian', 'gen');
+      net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 50, 1, 64, 5/100, 0, 'gaussian', 'gen');
       net.layers{end+1} = fh.reluLayer(layer_number);
 
       layer_number = numel(net.layers) + 1;
