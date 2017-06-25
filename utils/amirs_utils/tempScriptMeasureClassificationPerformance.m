@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function tempScriptRunKNN(dataset, posneg_balance, save_results)
+function tempScriptMeasureClassificationPerformance(dataset, posneg_balance, save_results)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -28,6 +28,7 @@ function tempScriptRunKNN(dataset, posneg_balance, save_results)
   % -------------------------------------------------------------------------
   %                                                                     Setup
   % -------------------------------------------------------------------------
+  classification_method = 'cnn';
   repeat_count = 30;
   all_experiments_multi_run = {};
 
@@ -36,7 +37,7 @@ function tempScriptRunKNN(dataset, posneg_balance, save_results)
   end
 
   for kk = 1:repeat_count
-    all_experiments_single_run = runAllExperimentsOnce(dataset, posneg_balance);
+    all_experiments_single_run = runAllExperimentsOnce(dataset, posneg_balance, classification_method);
     for i = 1 : numel(all_experiments_single_run)
       all_experiments_multi_run{i}.test_performance(end + 1) = ...
         all_experiments_single_run{i}.performance_summary.testing.test.accuracy;
@@ -46,16 +47,61 @@ function tempScriptRunKNN(dataset, posneg_balance, save_results)
   plotBeef(all_experiments_multi_run, dataset, save_results);
 
 % -------------------------------------------------------------------------
-function all_experiments_single_run = runAllExperimentsOnce(dataset, posneg_balance)
+function all_experiments_single_run = runAllExperimentsOnce(dataset, posneg_balance, classification_method)
 % -------------------------------------------------------------------------
+  opts.general.dataset = dataset;
+  opts.general.posneg_balance = posneg_balance;
   [~, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 0);
-  % keyboard
+
+  % -------------------------------------------------------------------------
+  %                                                                opts.paths
+  % -------------------------------------------------------------------------
+  opts.paths.time_string = sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
+  opts.paths.experiment_parent_dir = getValueFromFieldOrDefault( ...
+    {}, ... % no input_opts here! :)
+    'experiment_parent_dir', ...
+    fullfile(vl_rootnn, 'experiment_results'));
+  opts.paths.experiment_dir = fullfile(opts.paths.experiment_parent_dir, sprintf( ...
+    'test-angle-separation-rp-tests-%s-%s-%s-GPU-%d', ...
+    opts.paths.time_string, ...
+    opts.general.dataset, ...
+    opts.general.posneg_balance));
+  if ~exist(opts.paths.experiment_dir)
+    mkdir(opts.paths.experiment_dir);
+  end
+  opts.paths.options_file_path = fullfile(opts.paths.experiment_dir, 'options.txt');
+
+
+  % -------------------------------------------------------------------------
+  %                                       opts.single_training_method_options
+  % -------------------------------------------------------------------------
+  opts.single_training_method_options.experiment_parent_dir = opts.paths.experiment_dir;
+  opts.single_training_method_options.dataset = dataset;
+  opts.single_training_method_options.return_performance_summary = true;
+  switch classification_method
+    case 'knn'
+      classificationMethodFunctonHandle = @testKnn;
+      % no additional options
+    case 'cnn'
+      classificationMethodFunctonHandle = @testCnn;
+      opts.single_training_method_options.network_arch = 'convV0P0RL0+fcV1-RF32CH3';
+      opts.single_training_method_options.backprop_depth = 4;
+      opts.single_training_method_options.gpus = ifNotMacSetGpu(1);
+      opts.single_training_method_options.debug_flag = false;
+      opts.single_training_method_options.learning_rate = [0.1*ones(1,15) 0.03*ones(1,15) 0.01*ones(1,15)];
+      % opts.single_training_method_options.learning_rate = [0.1*ones(1,3)];
+      opts.single_training_method_options.weight_decay = 0.0001;
+      opts.single_training_method_options.batch_size = 50;
+  end
+
+  % -------------------------------------------------------------------------
+  %                                                    save experiment setup!
+  % -------------------------------------------------------------------------
+  saveStruct2File(opts, opts.paths.options_file_path, 0);
 
   for i = 1 : numel(experiments)
-    input_opts = {};
-    input_opts.dataset = dataset;
-    input_opts.imdb = experiments{i}.imdb;
-    [~, experiments{i}.performance_summary] = testKnn(input_opts);
+    opts.single_training_method_options.imdb = experiments{i}.imdb;
+    [~, experiments{i}.performance_summary] = classificationMethodFunctonHandle(opts.single_training_method_options);
     % all_experiments_repeated{i}.performance_summary.testing.test.accuracy = []
   end
 
@@ -66,6 +112,7 @@ function all_experiments_single_run = runAllExperimentsOnce(dataset, posneg_bala
       experiments{i}.performance_summary.testing.train.accuracy, ...
       experiments{i}.performance_summary.testing.test.accuracy));
   end
+
   all_experiments_single_run = experiments;
 
 

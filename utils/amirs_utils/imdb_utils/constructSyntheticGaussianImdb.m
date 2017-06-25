@@ -65,3 +65,43 @@ function imdb = constructSyntheticGaussianImdb(samples_per_class, sample_dim, sa
   fh = imdbMultiClassUtils;
   fh.getImdbInfo(imdb, 1);
   % save(sprintf('%s.mat', imdb.name), 'imdb');
+
+
+
+
+
+
+% tmp =mvnrnd([-2;-2], [1,10;0,1], 100); figure, hold on, plot(tmp(:,1), tmp(:,2), 'bo'), hold off
+
+% sample_mean = 3;
+% sample_dim = 2;
+% sample_variance = 3;
+% samples_per_class = 500;
+
+% data_m = mvnrnd(- sample_mean * ones(sample_dim, 1), sample_variance * [10,1.75;1.75,1], samples_per_class);
+% data_p = mvnrnd(+ sample_mean * ones(sample_dim, 1), sample_variance * [10,1.75;1.75,1], samples_per_class);
+
+% figure,
+% hold on,
+% plot(data_m(:,1), data_m(:,2), 'bo'),
+% plot(data_p(:,1), data_p(:,2), 'rs'),
+% hold off
+
+
+
+
+
+
+
+% % synthetic_original_imdb = {};
+%   % synthetic_original_imdb.images.data = reshape([-10:1:-1, 1:1:10], 1,1,1,[]);
+%   % synthetic_original_imdb.images.labels = [-1 * ones(1,10), 1 * ones(1,10)];
+%   % synthetic_original_imdb.images.set = 1 * ones(1, 20);
+
+%   % synthetic_projected_imdb = {};
+%   % synthetic_projected_imdb.images.data = reshape([-100:1:-91, 91:1:100], 1,1,1,[]);
+%   % synthetic_projected_imdb.images.labels = [-1 * ones(1,10), 1 * ones(1,10)];
+%   % synthetic_projected_imdb.images.set = 1 * ones(1, 20);
+
+%   % experiments{1}.imdb = synthetic_original_imdb;
+%   % experiments{2}.imdb = synthetic_projected_imdb;

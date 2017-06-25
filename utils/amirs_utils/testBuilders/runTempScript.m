@@ -7,8 +7,10 @@
 
 
 
-% functionHandle = @tempScriptRunKnn;
-functionHandle = @tmpScriptCalculateDistances;
+functionHandle = @tempScriptMeasureClassificationPerformance;
+% functionHandle = @tempScriptRunMmd
+% functionHandle = @tempScriptRunTsne;
+% functionHandle = @tmpScriptCalculateDistances;
 % functionHandle = @tempScriptPlot2DEuclideanDistances;
 % functionHandle = @tempScriptPlot3DEuclideanDistances;
 % functionHandle = @tempScriptPlotProgressionOfRandomProjectionFor1Sample;

@@ -35,8 +35,10 @@ function net = getConvArchitecture(dataset, network_arch)
       % FULLY CONNECTED
       layer_number = numel(net.layers) + 1;
       % net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 32, 3, 64, 5/100, 0, 'gaussian', 'gen');
-      % net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 50, 1, 64, 5/100, [0 0 24 25], 'gaussian', 'gen');
-      net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 3, 1, 64, 5/100, [0 0 1 1], 'gaussian', 'gen');
+      net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 3, 1, 64, 5/100, [0 0 1 1], 'gaussian', 'gen'); % Gaussian 3D
+      % net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 50, 1, 64, 5/100, [0 0 24 25], 'gaussian', 'gen'); % Gaussian 3D
+      % net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 34, 1, 64, 5/100, [0 0 16 17], 'gaussian', 'gen'); % UCI-ion
+      % net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 57, 1, 64, 5/100, [0 0 28 28], 'gaussian', 'gen'); % UCI-spam
       net.layers{end+1} = fh.reluLayer(layer_number);
 
       layer_number = numel(net.layers) + 1;

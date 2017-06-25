@@ -48,9 +48,9 @@ function imdb = constructUCIIonImdb(opts)
 
   % shuffle
   ix = randperm(number_of_samples);
-  imdb.images.data = data(ix,:);
-  imdb.images.labels = labels(ix);
-  imdb.images.set = set; % NOT set(ix).... that way you won't have any of your first class samples in the test set!
+  imdb.images.data = single(data(ix,:));
+  imdb.images.labels = single(labels(ix)');
+  imdb.images.set = single(set'); % NOT set(ix).... that way you won't have any of your first class samples in the test set!
   imdb.name = 'uci-ion';
 
   % get the data into 4D format to be compatible with code built for all other imdbs.
