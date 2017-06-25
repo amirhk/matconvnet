@@ -41,8 +41,6 @@ opts.plotDiagnostics = false;
 opts.memoryMapFile = fullfile(tempdir, 'matconvnet.bin');
 opts = vl_argparse(opts, varargin);
 
-opts.gpus = [];
-
 if ~exist(opts.expDir, 'dir'), mkdir(opts.expDir); end
 if isempty(opts.train), opts.train = find(imdb.images.set==1); end
 if isempty(opts.val), opts.val = find(imdb.images.set==2); end

@@ -98,6 +98,7 @@ function runLarpTests(experiment_parent_dir, dataset, posneg_balance, larp_netwo
 
   % base_learning_rate = [0.1*ones(1,25) 0.03*ones(1,25) 0.01*ones(1,50)];
   base_learning_rate = [0.1*ones(1,15) 0.03*ones(1,15) 0.01*ones(1,15)];
+  % base_learning_rate = [0.1*ones(1,10)];
 
   if strcmp(dataset, 'cifar') || strcmp(dataset, 'cifar-multi-class-subsampled')
     learning_rate_dividers = [1, 3, 10, 30];

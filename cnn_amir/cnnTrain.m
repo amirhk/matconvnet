@@ -576,6 +576,7 @@ function write_gradients(mmap, net, res)
 
 % -------------------------------------------------------------------------
 function [all_samples_top_class_predictions, all_samples_all_class_predictions, all_labels] = get_all_samples_predictions_from_network(opts, getBatch, epoch, subset, learning_rate, imdb, net_cpu)
+  % IMPORTANT: looks at LABELS at the end of the network
 % -------------------------------------------------------------------------
   % validation mode if learning rate is zero
   % if nargout > 2, mpiprofile on; end
@@ -592,7 +593,7 @@ function [all_samples_top_class_predictions, all_samples_all_class_predictions, 
   % softmax
   net_2.layers = net_1.layers;
   net_2.layers{end}.type = 'softmax';
-  afprintf(sprintf('Extracting `top`-class predictions based on `softmaxloss`\n'));
+  afprintf(sprintf('Extracting `top`-class and `all`-class predictions based on `softmaxloss`\n'));
   [all_samples_top_class_predictions, ~, all_labels_1, ~] = tmpBeef(opts, getBatch, epoch, subset, learning_rate, imdb, net_1, 'softmaxloss', -1);
   all_samples_all_class_predictions = all_samples_top_class_predictions;
 
@@ -604,8 +605,10 @@ function [all_samples_top_class_predictions, all_samples_all_class_predictions, 
 
 % -------------------------------------------------------------------------
 function [all_samples_forward_pass_results] = get_resulting_forward_pass_matrix_from_network_for_all_samples(opts, getBatch, epoch, subset, learning_rate, imdb, net_cpu, forward_pass_only_depth)
+  % IMPORTANT: looks at FEATURE MAPS at a certain depth
 % -------------------------------------------------------------------------
   afprintf(sprintf('Extracting result of forward pass through network...\n'));
+
   [~, ~, ~, all_samples_forward_pass_results] = ...
     tmpBeef(opts, getBatch, epoch, subset, learning_rate, imdb, net_cpu, 'none', forward_pass_only_depth);
 
@@ -721,13 +724,6 @@ function [all_samples_top_class_predictions, all_samples_all_class_predictions, 
   else
     net_cpu = net;
   end
-
-
-
-
-
-
-
 
 
 

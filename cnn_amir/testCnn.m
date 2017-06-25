@@ -233,7 +233,7 @@ function [trained_model, performance_summary] = testCnn(input_opts)
 % -------------------------------------------------------------------------
 function error_function = getErrorFunctionForDataset(dataset)
 % -------------------------------------------------------------------------
-  if isTwoClassImdb(dataset)
+  if isTwoClassImdb(dataset) || isSyntheticImdb(dataset)
     error_function = 'two-class';
   else
     error_function = 'multiclass';
