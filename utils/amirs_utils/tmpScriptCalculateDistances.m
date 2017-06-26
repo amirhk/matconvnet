@@ -177,6 +177,8 @@ function dumb_array = tmpScriptCalculateDistances(dataset, posneg_balance, save_
     end
   end
 
+  keyboard
+
   if save_results
     print(fullfile(getDevPath(), 'temp_images', tmp_string), '-dpdf', '-fillpage')
   end
