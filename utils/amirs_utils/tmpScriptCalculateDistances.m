@@ -31,14 +31,17 @@ function dumb_array = tmpScriptCalculateDistances(dataset, posneg_balance, save_
   dumb_array = {};
 
   [~, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 1);
-  for i = 1 : numel(experiments)
-    dumb_array.(sprintf('exp_%d_euclidean_between_metric', i)) = [];
-    dumb_array.(sprintf('exp_%d_euclidean_within_metric', i)) = [];
-    dumb_array.(sprintf('exp_%d_cosine_between_metric', i)) = [];
-    dumb_array.(sprintf('exp_%d_cosine_within_metric', i)) = [];
+  for distance_type = {'euclidean', 'cosine'}
+    distance_type = char(distance_type);
+    for within_between_type = {'between', 'within'}
+      within_between_type = char(within_between_type);
+      for i = 1 : numel(experiments)
+        dumb_array.(sprintf('exp_%d_%s_%s_metric', i, distance_type, within_between)) = [];
+      end
+    end
   end
 
-  for kkk = 1:3
+  for kkk = 1:2
     afprintf(sprintf('[INFO] Setting up experiment...\n'));
     [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 1);
     afprintf(sprintf('[INFO] done!\n'));
@@ -181,7 +184,7 @@ function dumb_array = tmpScriptCalculateDistances(dataset, posneg_balance, save_
     end
   end
 
-  keyboard
+  save dumb_array;
 
   if save_results
     print(fullfile(getDevPath(), 'temp_images', tmp_string), '-dpdf', '-fillpage')
