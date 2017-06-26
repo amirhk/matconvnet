@@ -30,7 +30,7 @@ function dumb_array = tmpScriptCalculateDistances(dataset, posneg_balance, save_
   % -------------------------------------------------------------------------
   dumb_array = {};
 
-  for i = 1 : 2
+  for i = 1 : 10
       dumb_array.(sprintf('exp_%d_metric', i)) = [];
     end
 
