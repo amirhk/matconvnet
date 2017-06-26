@@ -73,9 +73,9 @@ function dumb_array = tmpScriptCalculateDistances(dataset, posneg_balance, save_
             [experiments{i}.distance_absolute_values, experiments{i}.class_metric] = ...
               getPointDistanceAbsoluteValues(experiments{i}.imdb, other_point_type, distance_type, within_between);
 
-            tmp = dumb_array.(sprintf('exp_%d_%s_%s_metric', distance_type, within_between, i));
+            tmp = dumb_array.(sprintf('exp_%d_%s_%s_metric', i, distance_type, within_between));
             tmp(end+1) = experiments{i}.class_metric;
-            dumb_array.(sprintf('exp_%d_%s_%s_metric', distance_type, within_between, i)) = tmp;
+            dumb_array.(sprintf('exp_%d_%s_%s_metric', i, distance_type, within_between)) = tmp;
           end
           afprintf(sprintf('[INFO] done!\n'));
           printConsoleOutputSeparator();
