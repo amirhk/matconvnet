@@ -45,6 +45,28 @@ function dumb_array = tmpScriptCalculateDistances(dataset, posneg_balance, save_
   for kkk = 1:10
     afprintf(sprintf('[INFO] Setting up experiment...\n'));
     [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 1);
+
+
+    % % keyboard
+    % for i = 1 : numel(experiments)
+    %   tmp = experiments{i}.imdb;
+    %   tmp.images.data = tmp.images.data(:,:,:,1:5);
+    %   tmp.images.labels = tmp.images.labels(1:5);
+    %   tmp.images.set = tmp.images.set(1:5);
+    %   experiments{i}.imdb = tmp;
+
+
+
+    %   tmp = getVectorizedImdb(experiments{i}.imdb);
+    %   % [sorted_labels, sorted_indices] = sort(tmp.images.labels);
+    %   % sorted_data = tmp.images.data(sorted_indices, :);
+    %   sorted_data = tmp.images.data;
+    %   disp(sorted_data);
+    %   % keyboard
+    % end
+    % % keyboard
+
+
     afprintf(sprintf('[INFO] done!\n'));
     printConsoleOutputSeparator();
 
@@ -298,6 +320,15 @@ function [ ...
       % -------------------------------------------------------------------------
       %                                                        Calculate distance
       % -------------------------------------------------------------------------
+
+
+
+      % original_reference_point_index
+      % original_other_point_indices
+      % keyboard
+
+
+
       if ~strcmp(other_point_type, 'average_of_all')
         original_distance = calculateDistance(original_imdb, original_reference_point_index, original_other_point_index, distance_type, original_pdist_matrix);
         projected_distance = calculateDistance(projected_imdb, projected_reference_point_index, projected_other_point_index, distance_type, projected_pdist_matrix);
@@ -308,7 +339,18 @@ function [ ...
           projected_other_point_index = original_other_point_index;
           tmp_original_distance(end+1) = calculateDistance(original_imdb, original_reference_point_index, original_other_point_index, distance_type, original_pdist_matrix);
           tmp_projected_distance(end+1) = calculateDistance(projected_imdb, projected_reference_point_index, projected_other_point_index, distance_type, projected_pdist_matrix);
-          original_distance_absolute_values_all = tmp_original_distance(end);
+
+
+          % a = original_imdb.images.data(:,:,:,original_reference_point_index);
+          % b = original_imdb.images.data(:,:,:,original_other_point_index);
+          % a
+          % b
+          % original_pdist_matrix(original_reference_point_index, original_other_point_index)
+          % norm(a - b)
+          % norm(b - a)
+          % keyboard
+          % original_distance_absolute_values_all(end+1) = tmp_original_distance(end);
+
         end
         tmp_original_distance = tmp_original_distance(~isnan(tmp_original_distance));
         tmp_projected_distance = tmp_projected_distance(~isnan(tmp_projected_distance));
@@ -332,11 +374,13 @@ function [ ...
     end
   end
 
+  % keyboard
+
   projected_2_original_distance_ratios = projected_2_original_distance_ratios(~isnan(projected_2_original_distance_ratios));
   original_distance_absolute_values = original_distance_absolute_values(~isnan(original_distance_absolute_values));
   original_distance_absolute_values_all = original_distance_absolute_values_all(~isnan(original_distance_absolute_values_all));
 
-  average_of_all_original_distance_absolute_values = mean(original_distance_absolute_values_all) / 2;
+  average_of_all_original_distance_absolute_values = mean(original_distance_absolute_values_all); % don't actually need the / 2 because its mean... think about it!;
 
 
 % -------------------------------------------------------------------------
