@@ -182,9 +182,11 @@ function dumb_array = tmpScriptCalculateDistances(dataset, posneg_balance, save_
       end
 
     end
+
+    save('dumb_array.mat', dumb_array);
   end
 
-  save dumb_array;
+
 
   if save_results
     print(fullfile(getDevPath(), 'temp_images', tmp_string), '-dpdf', '-fillpage')
