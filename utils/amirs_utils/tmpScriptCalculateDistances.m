@@ -45,7 +45,7 @@ function dumb_array = tmpScriptCalculateDistances(dataset, posneg_balance, save_
     end
   end
 
-  for kkk = 1:1
+  for kkk = 1:10
     afprintf(sprintf('[INFO] Setting up experiment...\n'));
     [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 1);
 
