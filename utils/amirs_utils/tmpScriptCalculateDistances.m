@@ -81,7 +81,7 @@ function tmpScriptCalculateDistances(dataset, posneg_balance, save_results)
         % if numel(experiments) == 2
         % if numel(experiments) <= 14
 
-          subplot(numel(distance_types), numel(within_between_types), 1 + k2 + (k1 - 1) * numel(distance_types)),
+          subplot(numel(distance_types), numel(within_between_types), 1 + (k2 - 1) + (k1 - 1) * numel(distance_types)),
           within_between = 'between';
           subplotBeefAbsoluteDistance(experiments, within_between, distance_type);
 
