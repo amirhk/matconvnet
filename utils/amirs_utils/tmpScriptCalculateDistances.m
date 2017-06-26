@@ -29,15 +29,16 @@ function dumb_array = tmpScriptCalculateDistances(dataset, posneg_balance, save_
   %                                                                     Setup
   % -------------------------------------------------------------------------
   dumb_array = {};
+
+  for i = 1 : 2
+      dumb_array.(sprintf('exp_%d_metric', i)) = [];
+    end
+
   for kkk = 1:3
     afprintf(sprintf('[INFO] Setting up experiment...\n'));
     [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 1);
     afprintf(sprintf('[INFO] done!\n'));
     printConsoleOutputSeparator();
-
-    for i = 1 : numel(experiments)
-      dumb_array.(sprintf('exp_%d_metric', i)) = [];
-    end
 
     plot_type = 'absolute_distances';
     % plot_type = 'ratio_distances_giryes_paper';
