@@ -70,7 +70,7 @@ function tmpScriptCalculateDistances(dataset, posneg_balance, save_results)
       % -------------------------------------------------------------------------
       afprintf(sprintf('[INFO] Plotting...\n'));
       % if numel(experiments) == 2
-      if numel(experiments) < 14
+      if numel(experiments) <= 14
 
         subplot(numel(distance_types), 2, 1 + (k - 1) * numel(distance_types)),
         within_between = 'between';
