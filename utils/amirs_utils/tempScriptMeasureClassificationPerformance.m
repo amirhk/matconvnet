@@ -29,7 +29,7 @@ function tempScriptMeasureClassificationPerformance(dataset, posneg_balance, sav
   %                                                                     Setup
   % -------------------------------------------------------------------------
   classification_method = 'knn';
-  repeat_count = 10;
+  repeat_count = 30;
   all_experiments_multi_run = {};
 
   for i = 1 : 22
