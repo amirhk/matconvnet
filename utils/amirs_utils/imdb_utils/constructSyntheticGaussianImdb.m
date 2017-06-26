@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function imdb = constructSyntheticGaussianImdb(samples_per_class, sample_dim, sample_mean, sample_variance)
+function imdb = constructSyntheticGaussianImdb(samples_per_class, sample_dim, sample_mean, sample_variance_multiplier)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -27,18 +27,21 @@ function imdb = constructSyntheticGaussianImdb(samples_per_class, sample_dim, sa
 
   afprintf(sprintf('[INFO] Constructing synthetic Gaussian imdb...\n'));
 
-  % data_m = mvnrnd(- sample_mean * ones(sample_dim, 1), sample_variance * eye(sample_dim), samples_per_class);
-  % data_p = mvnrnd(+ sample_mean * ones(sample_dim, 1), sample_variance * eye(sample_dim), samples_per_class);
+  % data_m = mvnrnd(- sample_mean * ones(sample_dim, 1), sample_variance_multiplier * eye(sample_dim), samples_per_class);
+  % data_p = mvnrnd(+ sample_mean * ones(sample_dim, 1), sample_variance_multiplier * eye(sample_dim), samples_per_class);
 
-  % data_m = mvnrnd(+ 9 * ones(sample_dim, 1), sample_variance * eye(sample_dim), samples_per_class);
-  % data_p = mvnrnd(+ 11 * ones(sample_dim, 1), sample_variance * eye(sample_dim), samples_per_class);
+  % data_m = mvnrnd(+ 9 * ones(sample_dim, 1), sample_variance_multiplier * eye(sample_dim), samples_per_class);
+  % data_p = mvnrnd(+ 11 * ones(sample_dim, 1), sample_variance_multiplier * eye(sample_dim), samples_per_class);
 
-  % data_m = mvnrnd(- sample_mean * ones(sample_dim, 1), sample_variance * [10,1.75;1.75,1], samples_per_class);
-  % data_p = mvnrnd(+ sample_mean * ones(sample_dim, 1), sample_variance * [10,1.75;1.75,1], samples_per_class);
+  % data_m = mvnrnd(- sample_mean * ones(sample_dim, 1), sample_variance_multiplier * [10,1.75;1.75,1], samples_per_class);
+  % data_p = mvnrnd(+ sample_mean * ones(sample_dim, 1), sample_variance_multiplier * [10,1.75;1.75,1], samples_per_class);
 
-  data_m = mvnrnd(- sample_mean * ones(sample_dim, 1), sample_variance * [10,1.75,1;1.75,3,1;1,1,1], samples_per_class);
-  data_p = mvnrnd(+ sample_mean * ones(sample_dim, 1), sample_variance * [10,1.75,1;1.75,3,1;1,1,1], samples_per_class);
+  % data_m = mvnrnd(- sample_mean * ones(sample_dim, 1), sample_variance_multiplier * [10,1.75,1;1.75,3,1;1,1,1], samples_per_class);
+  % data_p = mvnrnd(+ sample_mean * ones(sample_dim, 1), sample_variance_multiplier * [10,1.75,1;1.75,3,1;1,1,1], samples_per_class);
 
+  covariance_matrix = diag([sample_dim:-1:1].^2);
+  data_m = mvnrnd(- sample_mean * ones(sample_dim, 1), sample_variance_multiplier * covariance_matrix, samples_per_class);
+  data_p = mvnrnd(+ sample_mean * ones(sample_dim, 1), sample_variance_multiplier * covariance_matrix, samples_per_class);
 
   labels_m = 1 * ones(1, samples_per_class);
   labels_p = 2 * ones(1, samples_per_class);
@@ -57,7 +60,7 @@ function imdb = constructSyntheticGaussianImdb(samples_per_class, sample_dim, sa
   imdb.images.data = data(ix,:);
   imdb.images.labels = labels(ix);
   imdb.images.set = set; % NOT set(ix).... that way you won't have any of your first class samples in the test set!
-  imdb.name = sprintf('gaussian-%dD-%d-train-%d-test-%.1f-var', sample_dim, number_of_training_samples, number_of_testing_samples, sample_variance);
+  imdb.name = sprintf('gaussian-%dD-%d-train-%d-test-%.1f-var', sample_dim, number_of_training_samples, number_of_testing_samples, sample_variance_multiplier);
 
   % get the data into 4D format to be compatible with code built for all other imdbs.
   imdb = get4DImdb(imdb, sample_dim, 1, 1, samples_per_class * 2);
@@ -71,21 +74,50 @@ function imdb = constructSyntheticGaussianImdb(samples_per_class, sample_dim, sa
 
 
 
-% tmp =mvnrnd([-2;-2], [1,10;0,1], 100); figure, hold on, plot(tmp(:,1), tmp(:,2), 'bo'), hold off
 
-% sample_mean = 3;
-% sample_dim = 2;
-% sample_variance = 3;
+% sample_dim = 3;
+% sample_mean = 1;
+% sample_variance_multiplier = 1;
 % samples_per_class = 500;
 
-% data_m = mvnrnd(- sample_mean * ones(sample_dim, 1), sample_variance * [10,1.75;1.75,1], samples_per_class);
-% data_p = mvnrnd(+ sample_mean * ones(sample_dim, 1), sample_variance * [10,1.75;1.75,1], samples_per_class);
+% covariance_matrix = diag([sample_dim:-1:1].^2);
+
+% data_m = mvnrnd(- sample_mean * ones(sample_dim, 1), sample_variance_multiplier * covariance_matrix, samples_per_class);
+% data_p = mvnrnd(+ sample_mean * ones(sample_dim, 1), sample_variance_multiplier * covariance_matrix, samples_per_class);
 
 % figure,
 % hold on,
-% plot(data_m(:,1), data_m(:,2), 'bo'),
-% plot(data_p(:,1), data_p(:,2), 'rs'),
+% grid on,
+% scatter3(data_m(:,1), data_m(:,2), data_m(:,3), 'bo'),
+% scatter3(data_p(:,1), data_p(:,2), data_p(:,3), 'rs'),
 % hold off
+
+
+
+
+
+
+
+
+
+
+% sample_dim = 3;
+% sample_mean = 3;
+% sample_variance_multiplier = 3;
+% samples_per_class = 500;
+
+% data_m = mvnrnd(- sample_mean * ones(sample_dim, 1), sample_variance_multiplier * [10,1.75,1;1.75,3,1;1,1,1], samples_per_class);
+% data_p = mvnrnd(+ sample_mean * ones(sample_dim, 1), sample_variance_multiplier * [10,1.75,1;1.75,3,1;1,1,1], samples_per_class);
+
+% figure,
+% hold on,
+% grid on,
+% scatter3(data_m(:,1), data_m(:,2), data_m(:,3), 'bo'),
+% scatter3(data_p(:,1), data_p(:,2), data_p(:,3), 'rs'),
+% hold off
+
+
+
 
 
 
