@@ -82,7 +82,8 @@ function all_experiments_single_run = runAllExperimentsOnce(dataset, posneg_bala
     case 'knn'
       classificationMethodFunctonHandle = @testKnn;
       % opts.single_training_method_options.number_of_nearest_neighbors = 1;
-      opts.single_training_method_options.number_of_nearest_neighbors = 3;
+      % opts.single_training_method_options.number_of_nearest_neighbors = 3;
+      opts.single_training_method_options.number_of_nearest_neighbors = 5;
     case 'cnn'
       classificationMethodFunctonHandle = @testCnn;
       opts.single_training_method_options.network_arch = 'convV0P0RL0+fcV1-RF32CH3';
