@@ -39,7 +39,10 @@ function imdb = constructSyntheticGaussianImdb(samples_per_class, sample_dim, sa
   % data_m = mvnrnd(- sample_mean * ones(sample_dim, 1), sample_variance_multiplier * [10,1.75,1;1.75,3,1;1,1,1], samples_per_class);
   % data_p = mvnrnd(+ sample_mean * ones(sample_dim, 1), sample_variance_multiplier * [10,1.75,1;1.75,3,1;1,1,1], samples_per_class);
 
-  covariance_matrix = diag([sample_dim:-1:1].^2);
+  % covariance_matrix = diag([sample_dim:-1:1].^2);
+  covariance_matrix = diag(ones(1, sample_dim));
+  covariance_matrix(1,1) = 25;
+  covariance_matrix(2,2) = 9;
   data_m = mvnrnd(- sample_mean * ones(sample_dim, 1), sample_variance_multiplier * covariance_matrix, samples_per_class);
   data_p = mvnrnd(+ sample_mean * ones(sample_dim, 1), sample_variance_multiplier * covariance_matrix, samples_per_class);
 

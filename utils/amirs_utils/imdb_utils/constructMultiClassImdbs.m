@@ -97,7 +97,7 @@ function constructMultiClassImdbs(dataset, network_arch)
       all_class_imdb = constructSyntheticGaussianImdb(1100, 50, 1, 1);
     case 'gaussian-50D-mean-3-var-1-diag'
       all_class_imdb = constructSyntheticGaussianImdb(1100, 50, 3, 1);
-    case 'gaussian-50D-mean-10-var-1-diag'
+    case 'gaussian-50D-mean-3-var-1-diag2'
       all_class_imdb = constructSyntheticGaussianImdb(1100, 50, 3, 1);
 
     case 'gaussian-50D-mean-9-var-0'
