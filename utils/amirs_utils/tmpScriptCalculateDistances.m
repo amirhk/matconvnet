@@ -30,9 +30,13 @@ function dumb_array = tmpScriptCalculateDistances(dataset, posneg_balance, save_
   % -------------------------------------------------------------------------
   dumb_array = {};
 
-  for i = 1 : 10
-      dumb_array.(sprintf('exp_%d_metric', i)) = [];
-    end
+  [~, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 1);
+  for i = 1 : numel(experiments)
+    dumb_array.(sprintf('exp_%d_euclidean_between_metric', i)) = [];
+    dumb_array.(sprintf('exp_%d_euclidean_within_metric', i)) = [];
+    dumb_array.(sprintf('exp_%d_cosine_between_metric', i)) = [];
+    dumb_array.(sprintf('exp_%d_cosine_within_metric', i)) = [];
+  end
 
   for kkk = 1:3
     afprintf(sprintf('[INFO] Setting up experiment...\n'));
@@ -51,10 +55,10 @@ function dumb_array = tmpScriptCalculateDistances(dataset, posneg_balance, save_
       other_point_type = 'average_of_all';
 
       h = figure;
-      % distance_types = {'euclidean', 'cosine'};
-      distance_types = {'euclidean'};
-      % within_between_types = {'between', 'within'};
-      within_between_types = {'between'};
+      distance_types = {'euclidean', 'cosine'};
+      % distance_types = {'euclidean'};
+      within_between_types = {'between', 'within'};
+      % within_between_types = {'between'};
       for k1 = 1 : numel(distance_types)
         for k2 = 1 : numel(within_between_types)
 
@@ -69,9 +73,9 @@ function dumb_array = tmpScriptCalculateDistances(dataset, posneg_balance, save_
             [experiments{i}.distance_absolute_values, experiments{i}.class_metric] = ...
               getPointDistanceAbsoluteValues(experiments{i}.imdb, other_point_type, distance_type, within_between);
 
-            tmp = dumb_array.(sprintf('exp_%d_metric', i));
+            tmp = dumb_array.(sprintf('exp_%d_%s_%s_metric', distance_type, within_between, i));
             tmp(end+1) = experiments{i}.class_metric;
-            dumb_array.(sprintf('exp_%d_metric', i)) = tmp;
+            dumb_array.(sprintf('exp_%d_%s_%s_metric', distance_type, within_between, i)) = tmp;
           end
           afprintf(sprintf('[INFO] done!\n'));
           printConsoleOutputSeparator();
