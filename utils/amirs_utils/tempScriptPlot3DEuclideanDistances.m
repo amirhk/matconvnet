@@ -56,9 +56,9 @@ function tempScriptPlot3DEuclideanDistances(dataset, posneg_balance, save_result
   grid on,
   scatter3(data_original_a(:,1), data_original_a(:,2), data_original_a(:,3), 'bs');
   scatter3(data_original_b(:,1), data_original_b(:,2), data_original_b(:,3), 'ro');
-  xlim([-30, 30]);
-  ylim([-30, 30]);
-  zlim([-30, 30]);
+  xlim([-15, 15]);
+  ylim([-15, 15]);
+  zlim([-15, 15]);
   hold off
   view(15, 25);
 
@@ -68,9 +68,9 @@ function tempScriptPlot3DEuclideanDistances(dataset, posneg_balance, save_result
   grid on,
   scatter3(data_angle_separated_a(:,1), data_angle_separated_a(:,2), data_angle_separated_a(:,3), 'bs');
   scatter3(data_angle_separated_b(:,1), data_angle_separated_b(:,2), data_angle_separated_b(:,3), 'ro');
-  xlim([-30, 30]);
-  ylim([-30, 30]);
-  zlim([-30, 30]);
+  xlim([-15, 15]);
+  ylim([-15, 15]);
+  zlim([-15, 15]);
   hold off
   view(15, 25);
 

@@ -86,6 +86,7 @@ function dumb_array = tmpScriptCalculateDistances(dataset, posneg_balance, save_
       h = figure;
       distance_types = {'euclidean', 'cosine'};
       % distance_types = {'euclidean'};
+      % distance_types = {'cosine'};
       within_between_types = {'between', 'within'};
       % within_between_types = {'between'};
       for k1 = 1 : numel(distance_types)
@@ -348,13 +349,17 @@ function [ ...
           tmp_projected_distance(end+1) = calculateDistance(projected_imdb, projected_reference_point_index, projected_other_point_index, distance_type, projected_pdist_matrix);
 
 
-          % a = original_imdb.images.data(:,:,:,original_reference_point_index);
-          % b = original_imdb.images.data(:,:,:,original_other_point_index);
-          % a
-          % b
-          % original_pdist_matrix(original_reference_point_index, original_other_point_index)
-          % norm(a - b)
-          % norm(b - a)
+          % point_1 = original_imdb.images.data(:,:,:,original_reference_point_index);
+          % point_2 = original_imdb.images.data(:,:,:,original_other_point_index);
+          % point_1
+          % point_2
+          % % original_pdist_matrix(original_reference_point_index, original_other_point_index)
+          % % norm(a - b)
+          % % norm(b - a)
+          % cos_theta = dot(point_1, point_2) / (norm(point_1) * norm(point_2));
+          % acosd(cos_theta)
+          % disp('--');
+          % tmp_original_distance(end)
           % keyboard
           original_distance_absolute_values_all(end+1) = tmp_original_distance(end);
 
