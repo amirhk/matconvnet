@@ -315,6 +315,8 @@ function [ ...
           tmp_projected_distance(end+1) = calculateDistance(projected_imdb, projected_reference_point_index, projected_other_point_index, distance_type, projected_pdist_matrix);
           original_distance_absolute_values_all = tmp_original_distance(end);
         end
+        original_distance = original_distance(~isnan(original_distance));
+        projected_distance = projected_distance(~isnan(projected_distance));
         original_distance = mean(tmp_original_distance);
         projected_distance = mean(tmp_projected_distance);
       end
