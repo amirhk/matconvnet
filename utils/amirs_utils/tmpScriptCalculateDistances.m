@@ -70,8 +70,7 @@ function tmpScriptCalculateDistances(dataset, posneg_balance, save_results)
         %                                                                      Plot
         % -------------------------------------------------------------------------
         afprintf(sprintf('[INFO] Plotting...\n'));
-        keyboard
-        subplot(numel(distance_types), numel(within_between_types), 1 + (k2 - 1) + (k1 - 1) * numel(distance_types)),
+        subplot(numel(distance_types), numel(within_between_types), 1 + (k2 - 1) + (k1 - 1) * numel(within_between_types)),
         within_between = 'between';
         subplotBeefAbsoluteDistance(experiments, within_between, distance_type);
         afprintf(sprintf('[INFO] done!\n'));
