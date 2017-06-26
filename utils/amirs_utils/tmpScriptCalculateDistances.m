@@ -58,8 +58,8 @@ function dumb_array = tmpScriptCalculateDistances(dataset, posneg_balance, save_
       other_point_type = 'average_of_all';
 
       h = figure;
-      distance_types = {'euclidean', 'cosine'};
-      % distance_types = {'euclidean'};
+      % distance_types = {'euclidean', 'cosine'};
+      distance_types = {'euclidean'};
       within_between_types = {'between', 'within'};
       % within_between_types = {'between'};
       for k1 = 1 : numel(distance_types)
