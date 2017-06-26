@@ -39,7 +39,6 @@ function tmpScriptCalculateDistances(dataset, posneg_balance, save_results)
 
   if strcmp(plot_type, 'absolute_distances')
 
-    afprintf(sprintf('[INFO] Getting absolute distances...\n'));
     % other_point_type = 'border';
     % other_point_type = 'random';
     other_point_type = 'average_of_all';
@@ -50,7 +49,6 @@ function tmpScriptCalculateDistances(dataset, posneg_balance, save_results)
     % within_between_types = {'between', 'within'};
     within_between_types = {'between'};
     for k1 = 1 : numel(distance_types)
-
       for k2 = 1 : numel(within_between_types)
 
         distance_type = distance_types{k1};
@@ -59,17 +57,11 @@ function tmpScriptCalculateDistances(dataset, posneg_balance, save_results)
         % -------------------------------------------------------------------------
         %                                                    Get absolute distances
         % -------------------------------------------------------------------------
+        afprintf(sprintf('[INFO] Getting absolute distances...\n'));
         for i = 1 : numel(experiments)
-          projected_imdb = experiments{i}.imdb;
-          % [experiments{i}.between_class_distance_absolute_values, experiments{i}.between_class_metric] = ...
-          %   getPointDistanceAbsoluteValues(experiments{i}.imdb, other_point_type, distance_type, 'between');
-          % [experiments{i}.within_class_distance_absolute_values, experiments{i}.within_class_metric] = ...
-          %   getPointDistanceAbsoluteValues(experiments{i}.imdb, other_point_type, distance_type, 'within');
-
           [experiments{i}.distance_absolute_values, experiments{i}.class_metric] = ...
             getPointDistanceAbsoluteValues(experiments{i}.imdb, other_point_type, distance_type, within_between);
         end
-
         afprintf(sprintf('[INFO] done!\n'));
         printConsoleOutputSeparator();
 
@@ -78,49 +70,14 @@ function tmpScriptCalculateDistances(dataset, posneg_balance, save_results)
         %                                                                      Plot
         % -------------------------------------------------------------------------
         afprintf(sprintf('[INFO] Plotting...\n'));
-        % if numel(experiments) == 2
-        % if numel(experiments) <= 14
-
-          subplot(numel(distance_types), numel(within_between_types), 1 + (k2 - 1) + (k1 - 1) * numel(distance_types)),
-          within_between = 'between';
-          subplotBeefAbsoluteDistance(experiments, within_between, distance_type);
-
-          % subplot(numel(distance_types), 2, 1 + (k1 - 1) * numel(distance_types)),
-          % within_between = 'between';
-          % subplotBeefAbsoluteDistance(experiments, within_between, distance_type);
-
-          % subplot(numel(distance_types), 2, 2 + (k1 - 1) * numel(distance_types)),
-          % within_between = 'within';
-          % subplotBeefAbsoluteDistance(experiments, within_between, distance_type);
-
-        % else
-        %   assert(numel(distance_types) == 1);
-        %   assert(numel(experiments) == 14);
-        %   tmp = struct();
-        %   tmp.(sprintf('group_%d', 1)) = cat(2, experiments(1), experiments(2:4));
-        %   tmp.(sprintf('group_%d', 2)) = cat(2, experiments(1), experiments(5:7));
-        %   tmp.(sprintf('group_%d', 3)) = cat(2, experiments(8), experiments(9:11));
-        %   tmp.(sprintf('group_%d', 4)) = cat(2, experiments(8), experiments(12:14));
-
-        %   h = figure;
-        %   for j = 1 : 4
-        %     experiments = tmp.(sprintf('group_%d', j));
-
-        %     subplot(4, 2, 1 + (j - 1) * 2)
-        %     within_between = 'between';
-        %     subplotBeefAbsoluteDistance(experiments, within_between, distance_type);
-
-        %     subplot(4, 2, 2 + (j - 1) * 2)
-        %     within_between = 'within';
-        %     subplotBeefAbsoluteDistance(experiments, within_between, distance_type);
-
-        %   end
-        % end
+        keyboard
+        subplot(numel(distance_types), numel(within_between_types), 1 + (k2 - 1) + (k1 - 1) * numel(distance_types)),
+        within_between = 'between';
+        subplotBeefAbsoluteDistance(experiments, within_between, distance_type);
         afprintf(sprintf('[INFO] done!\n'));
         printConsoleOutputSeparator();
 
       end
-
     end
 
     tmp_string = sprintf('%s %s distances - %s - %s', distance_type, other_point_type, dataset, posneg_balance);
@@ -184,7 +141,6 @@ function tmpScriptCalculateDistances(dataset, posneg_balance, save_results)
       afprintf(sprintf('[INFO] Getting ratio of distances...\n'));
       distance_type = 'euclidean';
       for i = 1 : numel(experiments)
-        projected_imdb = experiments{i}.imdb;
         [ ...
           experiments{i}.between_class_to_within_class_distance_ratios, ...
           experiments{i}.between_class_metric, ...
@@ -558,12 +514,7 @@ function subplotBeefAbsoluteDistance(experiments, within_between, distance_type)
   color_palette = {'c', 'r', 'g', 'b', 'k'};
   legend_entries = {};
   for i = 1 : numel(experiments)
-    % if strcmp(within_between, 'between')
-    %   legend_entries{i} = sprintf('%s - metric = %.6f', experiments{i}.title, experiments{i}.between_class_metric);
-    % else
-    %   legend_entries{i} = sprintf('%s - metric = %.6f', experiments{i}.title, experiments{i}.within_class_metric);
-    % end
-    legend_entries{i} = sprintf('%s - metric = %.6f', experiments{i}.title, experiments{i}.class_metric);
+    legend_entries{i} = sprintf('%s - metric = %.4f', experiments{i}.title, experiments{i}.class_metric);
   end
 
   if strcmp(distance_type, 'cosine')
@@ -574,20 +525,10 @@ function subplotBeefAbsoluteDistance(experiments, within_between, distance_type)
     y_limits = [0 200];
   end
 
-  % if strcmp(within_between, 'between')
-  %   title(sprintf('Between-class %s Distances', distance_type));
-  % else
-  %   title(sprintf('Within-class %s Distances', distance_type));
-  % end
   title(sprintf('%s-class %s Distances', within_between, distance_type));
 
   hold on
   for i = 1 : numel(experiments)
-    % if strcmp(within_between, 'within')
-    %   data = experiments{i}.within_class_distance_absolute_values;
-    % else
-    %   data = experiments{i}.between_class_distance_absolute_values;
-    % end
     data = experiments{i}.distance_absolute_values;
     histogram( ...
       data, ...
@@ -652,7 +593,7 @@ function plotBeefAlexRatioDistance(experiments, distance_type)
   color_palette = {'c', 'r', 'g', 'b', 'k'};
   legend_entries = {};
   for i = 1 : numel(experiments)
-    legend_entries{i} = sprintf('%s - fd = %.6f', experiments{i}.title, experiments{i}.fisher_discriminant_ratio);
+    legend_entries{i} = sprintf('%s - fd = %.4f', experiments{i}.title, experiments{i}.fisher_discriminant_ratio);
     % legend_entries{i} = experiments{i}.title;
   end
 
