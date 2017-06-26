@@ -31,6 +31,9 @@ function dumb_array = tmpScriptCalculateDistances(dataset, posneg_balance, save_
   dumb_array = {};
 
   [~, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 1);
+  for i = 1 : numel(experiments)
+    dumb_array.(sprintf('exp_%d_name', i)) = experiments{i}.title;
+  end
   for distance_type = {'euclidean', 'cosine'}
     distance_type = char(distance_type);
     for within_between = {'between', 'within'}
@@ -98,6 +101,10 @@ function dumb_array = tmpScriptCalculateDistances(dataset, posneg_balance, save_
           for i = 1 : numel(experiments)
             [experiments{i}.distance_absolute_values, experiments{i}.class_metric] = ...
               getPointDistanceAbsoluteValues(experiments{i}.imdb, other_point_type, distance_type, within_between);
+
+
+            % experiments{i}.class_metric
+            % keyboard
 
             tmp = dumb_array.(sprintf('exp_%d_%s_%s_metric', i, distance_type, within_between));
             tmp(end+1) = experiments{i}.class_metric;
@@ -349,7 +356,7 @@ function [ ...
           % norm(a - b)
           % norm(b - a)
           % keyboard
-          % original_distance_absolute_values_all(end+1) = tmp_original_distance(end);
+          original_distance_absolute_values_all(end+1) = tmp_original_distance(end);
 
         end
         tmp_original_distance = tmp_original_distance(~isnan(tmp_original_distance));
@@ -381,6 +388,7 @@ function [ ...
   original_distance_absolute_values_all = original_distance_absolute_values_all(~isnan(original_distance_absolute_values_all));
 
   average_of_all_original_distance_absolute_values = mean(original_distance_absolute_values_all); % don't actually need the / 2 because its mean... think about it!;
+  % keyboard
 
 
 % -------------------------------------------------------------------------
