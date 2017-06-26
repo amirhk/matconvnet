@@ -33,8 +33,8 @@ function dumb_array = tmpScriptCalculateDistances(dataset, posneg_balance, save_
   [~, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 1);
   for distance_type = {'euclidean', 'cosine'}
     distance_type = char(distance_type);
-    for within_between_type = {'between', 'within'}
-      within_between_type = char(within_between_type);
+    for within_between = {'between', 'within'}
+      within_between = char(within_between);
       for i = 1 : numel(experiments)
         dumb_array.(sprintf('exp_%d_%s_%s_metric', i, distance_type, within_between)) = [];
       end
