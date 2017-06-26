@@ -45,7 +45,8 @@ function tmpScriptCalculateDistances(dataset, posneg_balance, save_results)
     other_point_type = 'average_of_all';
 
     h = figure;
-    distance_types = {'euclidean', 'cosine'};
+    % distance_types = {'euclidean', 'cosine'};
+    distance_types = {'euclidean'};
     for k = 1 : numel(distance_types)
 
       distance_type = distance_types{k};
@@ -70,7 +71,7 @@ function tmpScriptCalculateDistances(dataset, posneg_balance, save_results)
       % -------------------------------------------------------------------------
       afprintf(sprintf('[INFO] Plotting...\n'));
       % if numel(experiments) == 2
-      if numel(experiments) <= 14
+      % if numel(experiments) <= 14
 
         subplot(numel(distance_types), 2, 1 + (k - 1) * numel(distance_types)),
         within_between = 'between';
@@ -80,29 +81,29 @@ function tmpScriptCalculateDistances(dataset, posneg_balance, save_results)
         within_between = 'within';
         subplotBeefAbsoluteDistance(experiments, within_between, distance_type);
 
-      else
-        assert(numel(distance_types) == 1);
-        assert(numel(experiments) == 14);
-        tmp = struct();
-        tmp.(sprintf('group_%d', 1)) = cat(2, experiments(1), experiments(2:4));
-        tmp.(sprintf('group_%d', 2)) = cat(2, experiments(1), experiments(5:7));
-        tmp.(sprintf('group_%d', 3)) = cat(2, experiments(8), experiments(9:11));
-        tmp.(sprintf('group_%d', 4)) = cat(2, experiments(8), experiments(12:14));
+      % else
+      %   assert(numel(distance_types) == 1);
+      %   assert(numel(experiments) == 14);
+      %   tmp = struct();
+      %   tmp.(sprintf('group_%d', 1)) = cat(2, experiments(1), experiments(2:4));
+      %   tmp.(sprintf('group_%d', 2)) = cat(2, experiments(1), experiments(5:7));
+      %   tmp.(sprintf('group_%d', 3)) = cat(2, experiments(8), experiments(9:11));
+      %   tmp.(sprintf('group_%d', 4)) = cat(2, experiments(8), experiments(12:14));
 
-        h = figure;
-        for j = 1 : 4
-          experiments = tmp.(sprintf('group_%d', j));
+      %   h = figure;
+      %   for j = 1 : 4
+      %     experiments = tmp.(sprintf('group_%d', j));
 
-          subplot(4, 2, 1 + (j - 1) * 2)
-          within_between = 'between';
-          subplotBeefAbsoluteDistance(experiments, within_between, distance_type);
+      %     subplot(4, 2, 1 + (j - 1) * 2)
+      %     within_between = 'between';
+      %     subplotBeefAbsoluteDistance(experiments, within_between, distance_type);
 
-          subplot(4, 2, 2 + (j - 1) * 2)
-          within_between = 'within';
-          subplotBeefAbsoluteDistance(experiments, within_between, distance_type);
+      %     subplot(4, 2, 2 + (j - 1) * 2)
+      %     within_between = 'within';
+      %     subplotBeefAbsoluteDistance(experiments, within_between, distance_type);
 
-        end
-      end
+      %   end
+      % end
       afprintf(sprintf('[INFO] done!\n'));
       printConsoleOutputSeparator();
     end
