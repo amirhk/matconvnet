@@ -183,7 +183,7 @@ function dumb_array = tmpScriptCalculateDistances(dataset, posneg_balance, save_
 
     end
 
-    save('dumb_array.mat', dumb_array);
+    save('dumb_array.mat', 'dumb_array');
   end
 
 
