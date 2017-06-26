@@ -120,7 +120,6 @@ function dumb_array = tmpScriptCalculateDistances(dataset, posneg_balance, save_
           % -------------------------------------------------------------------------
           afprintf(sprintf('[INFO] Plotting...\n'));
           subplot(numel(distance_types), numel(within_between_types), 1 + (k2 - 1) + (k1 - 1) * numel(within_between_types)),
-          within_between = 'between';
           subplotBeefAbsoluteDistance(experiments, within_between, distance_type);
           afprintf(sprintf('[INFO] done!\n'));
           printConsoleOutputSeparator();
@@ -286,7 +285,6 @@ function [ ...
   % -------------------------------------------------------------------------
   switch other_point_type
     case 'border'
-      assert
       repeat_count = 1;
     case 'random'
       repeat_count = 100;
@@ -321,7 +319,7 @@ function [ ...
         original_other_point_index = findRandomPointIndexFunctionHandle(original_reference_point_row, original_reference_point_class, original_labels_train);
         projected_other_point_index = original_other_point_index;
       elseif strcmp(other_point_type, 'average_of_all')
-        original_other_point_indices = findAllOtherPointIndicesFunctionHandle(original_reference_point_index  , original_reference_point_class, original_labels_train);
+        original_other_point_indices = findAllOtherPointIndicesFunctionHandle(original_reference_point_index, original_reference_point_class, original_labels_train);
         projected_other_point_indices = original_other_point_indices; % turns out to be the same `set` of indices, because the reference point is the same
       end
 

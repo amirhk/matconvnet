@@ -53,6 +53,34 @@ function all_experiments_single_run = runAllExperimentsOnce(dataset, posneg_bala
   opts.general.posneg_balance = posneg_balance;
   [~, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 0);
 
+  % % keyboard
+  % for i = 1 : numel(experiments)
+  %   tmp = experiments{i}.imdb;
+  %   train_indices = find(tmp.images.set == 1);
+  %   test_indices = find(tmp.images.set == 3);
+  %   subsampled_train_indices = train_indices(1:5);
+  %   subsampled_test_indices = test_indices(1:5);
+  %   subsampled_imdb_indices = cat(2, subsampled_train_indices, subsampled_test_indices);
+  %   tmp.images.data = tmp.images.data(:,:,:,subsampled_imdb_indices);
+  %   tmp.images.labels = tmp.images.labels(subsampled_imdb_indices);
+  %   tmp.images.set = tmp.images.set(subsampled_imdb_indices);
+  %   experiments{i}.imdb = tmp;
+
+  %   % fh = imdbMultiClassUtils;
+  %   % fh.getImdbInfo(experiments{i}.imdb, 1);
+  %   % keyboard
+
+
+
+  %   tmp = getVectorizedImdb(experiments{i}.imdb);
+  %   % [sorted_labels, sorted_indices] = sort(tmp.images.labels);
+  %   % sorted_data = tmp.images.data(sorted_indices, :);
+  %   sorted_data = tmp.images.data;
+  %   disp(sorted_data);
+  %   % keyboard
+  % end
+  % % keyboard
+
   % -------------------------------------------------------------------------
   %                                                                opts.paths
   % -------------------------------------------------------------------------
