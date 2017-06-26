@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function tmpScriptCalculateDistances(dataset, posneg_balance, save_results)
+function dumb_array = tmpScriptCalculateDistances(dataset, posneg_balance, save_results)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -28,141 +28,152 @@ function tmpScriptCalculateDistances(dataset, posneg_balance, save_results)
   % -------------------------------------------------------------------------
   %                                                                     Setup
   % -------------------------------------------------------------------------
-  afprintf(sprintf('[INFO] Setting up experiment...\n'));
-  [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 1);
-  afprintf(sprintf('[INFO] done!\n'));
-  printConsoleOutputSeparator();
+  dumb_array = {};
+  for kkk = 1:3
+    afprintf(sprintf('[INFO] Setting up experiment...\n'));
+    [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 1);
+    afprintf(sprintf('[INFO] done!\n'));
+    printConsoleOutputSeparator();
 
-  plot_type = 'absolute_distances';
-  % plot_type = 'ratio_distances_giryes_paper';
-  % plot_type = 'ratio_distances_discuss_w_alex';
+    for i = 1 : numel(experiments)
+      dumb_array.(sprintf('exp_%d_metric', i)) = [];
+    end
 
-  if strcmp(plot_type, 'absolute_distances')
+    plot_type = 'absolute_distances';
+    % plot_type = 'ratio_distances_giryes_paper';
+    % plot_type = 'ratio_distances_discuss_w_alex';
 
-    % other_point_type = 'border';
-    % other_point_type = 'random';
-    other_point_type = 'average_of_all';
+    if strcmp(plot_type, 'absolute_distances')
 
-    h = figure;
-    distance_types = {'euclidean', 'cosine'};
-    % distance_types = {'euclidean'};
-    % within_between_types = {'between', 'within'};
-    within_between_types = {'between'};
-    for k1 = 1 : numel(distance_types)
-      for k2 = 1 : numel(within_between_types)
+      % other_point_type = 'border';
+      % other_point_type = 'random';
+      other_point_type = 'average_of_all';
 
-        distance_type = distance_types{k1};
-        within_between = within_between_types{k2};
+      h = figure;
+      distance_types = {'euclidean', 'cosine'};
+      % distance_types = {'euclidean'};
+      % within_between_types = {'between', 'within'};
+      within_between_types = {'between'};
+      for k1 = 1 : numel(distance_types)
+        for k2 = 1 : numel(within_between_types)
+
+          distance_type = distance_types{k1};
+          within_between = within_between_types{k2};
+
+          % -------------------------------------------------------------------------
+          %                                                    Get absolute distances
+          % -------------------------------------------------------------------------
+          afprintf(sprintf('[INFO] Getting absolute distances...\n'));
+          for i = 1 : numel(experiments)
+            [experiments{i}.distance_absolute_values, experiments{i}.class_metric] = ...
+              getPointDistanceAbsoluteValues(experiments{i}.imdb, other_point_type, distance_type, within_between);
+
+            tmp = dumb_array.(sprintf('exp_%d_metric', i));
+            tmp(end+1) = experiments{i}.class_metric;
+            dumb_array.(sprintf('exp_%d_metric', i)) = tmp;
+          end
+          afprintf(sprintf('[INFO] done!\n'));
+          printConsoleOutputSeparator();
+
+
+          % -------------------------------------------------------------------------
+          %                                                                      Plot
+          % -------------------------------------------------------------------------
+          afprintf(sprintf('[INFO] Plotting...\n'));
+          subplot(numel(distance_types), numel(within_between_types), 1 + (k2 - 1) + (k1 - 1) * numel(within_between_types)),
+          within_between = 'between';
+          subplotBeefAbsoluteDistance(experiments, within_between, distance_type);
+          afprintf(sprintf('[INFO] done!\n'));
+          printConsoleOutputSeparator();
+
+        end
+      end
+
+      tmp_string = sprintf('%s %s distances - %s - %s', distance_type, other_point_type, dataset, posneg_balance);
+      suptitle(tmp_string);
+
+    elseif strcmp(plot_type, 'ratio_distances_giryes_paper')
+
+      % other_point_type = 'border';
+      % other_point_type = 'random';
+      other_point_type = 'average_of_all';
+
+      h = figure;
+      distance_types = {'euclidean', 'cosine'};
+      for k = 1 : numel(distance_types)
+
+        distance_type = distance_types{k};
 
         % -------------------------------------------------------------------------
-        %                                                    Get absolute distances
+        %                                                    Get ratio of distances
         % -------------------------------------------------------------------------
-        afprintf(sprintf('[INFO] Getting absolute distances...\n'));
+        afprintf(sprintf('[INFO] Getting ratio of distances...\n'));
         for i = 1 : numel(experiments)
-          [experiments{i}.distance_absolute_values, experiments{i}.class_metric] = ...
-            getPointDistanceAbsoluteValues(experiments{i}.imdb, other_point_type, distance_type, within_between);
+          projected_imdb = experiments{i}.imdb;
+          experiments{i}.between_class_distance_ratios = getPointDistanceRatios(original_imdb, projected_imdb, other_point_type, distance_type, 'between');
+          experiments{i}.within_class_distance_ratios = getPointDistanceRatios(original_imdb, projected_imdb, other_point_type, distance_type, 'within');
         end
         afprintf(sprintf('[INFO] done!\n'));
         printConsoleOutputSeparator();
-
 
         % -------------------------------------------------------------------------
         %                                                                      Plot
         % -------------------------------------------------------------------------
         afprintf(sprintf('[INFO] Plotting...\n'));
-        subplot(numel(distance_types), numel(within_between_types), 1 + (k2 - 1) + (k1 - 1) * numel(within_between_types)),
+
+        subplot(numel(distance_types), 2, 1 + (k - 1) * numel(distance_types)),
         within_between = 'between';
-        subplotBeefAbsoluteDistance(experiments, within_between, distance_type);
+        subplotBeefGiryesRatioDistance(experiments, within_between, distance_type);
+
+        subplot(numel(distance_types), 2, 2 + (k - 1) * numel(distance_types)),
+        within_between = 'within';
+        subplotBeefGiryesRatioDistance(experiments, within_between, distance_type);
+
+        suptitle(sprintf('%s points', other_point_type));
+
         afprintf(sprintf('[INFO] done!\n'));
         printConsoleOutputSeparator();
 
       end
-    end
 
-    tmp_string = sprintf('%s %s distances - %s - %s', distance_type, other_point_type, dataset, posneg_balance);
-    suptitle(tmp_string);
+    elseif strcmp(plot_type, 'ratio_distances_discuss_w_alex')
 
-  elseif strcmp(plot_type, 'ratio_distances_giryes_paper')
+      h = figure;
+      distance_types = {'euclidean', 'cosine'};
+      for k = 1 : numel(distance_types)
 
-    % other_point_type = 'border';
-    % other_point_type = 'random';
-    other_point_type = 'average_of_all';
+        distance_type = distance_types{k};
 
-    h = figure;
-    distance_types = {'euclidean', 'cosine'};
-    for k = 1 : numel(distance_types)
+        % -------------------------------------------------------------------------
+        %                                                    Get ratio of distances
+        % -------------------------------------------------------------------------
+        afprintf(sprintf('[INFO] Getting ratio of distances...\n'));
+        distance_type = 'euclidean';
+        for i = 1 : numel(experiments)
+          [ ...
+            experiments{i}.between_class_to_within_class_distance_ratios, ...
+            experiments{i}.between_class_metric, ...
+            experiments{i}.within_class_metric] = ...
+            getBetweenToWithinPointDistanceRatios(experiments{i}.imdb, distance_type);
+          experiments{i}.fisher_discriminant_ratio = getFisherDiscriminantRatio(experiments{i}.imdb);
+        end
 
-      distance_type = distance_types{k};
+        afprintf(sprintf('[INFO] done!\n'));
+        printConsoleOutputSeparator();
 
-      % -------------------------------------------------------------------------
-      %                                                    Get ratio of distances
-      % -------------------------------------------------------------------------
-      afprintf(sprintf('[INFO] Getting ratio of distances...\n'));
-      for i = 1 : numel(experiments)
-        projected_imdb = experiments{i}.imdb;
-        experiments{i}.between_class_distance_ratios = getPointDistanceRatios(original_imdb, projected_imdb, other_point_type, distance_type, 'between');
-        experiments{i}.within_class_distance_ratios = getPointDistanceRatios(original_imdb, projected_imdb, other_point_type, distance_type, 'within');
-      end
-      afprintf(sprintf('[INFO] done!\n'));
-      printConsoleOutputSeparator();
+        % -------------------------------------------------------------------------
+        %                                                                      Plot
+        % -------------------------------------------------------------------------
+        afprintf(sprintf('[INFO] Plotting...\n'));
+        subplot(numel(distance_types), 1, 1 + (k - 1) * numel(distance_types)),
+        plotBeefAlexRatioDistance(experiments, distance_type);
 
-      % -------------------------------------------------------------------------
-      %                                                                      Plot
-      % -------------------------------------------------------------------------
-      afprintf(sprintf('[INFO] Plotting...\n'));
+        afprintf(sprintf('[INFO] done!\n'));
+        printConsoleOutputSeparator();
 
-      subplot(numel(distance_types), 2, 1 + (k - 1) * numel(distance_types)),
-      within_between = 'between';
-      subplotBeefGiryesRatioDistance(experiments, within_between, distance_type);
-
-      subplot(numel(distance_types), 2, 2 + (k - 1) * numel(distance_types)),
-      within_between = 'within';
-      subplotBeefGiryesRatioDistance(experiments, within_between, distance_type);
-
-      suptitle(sprintf('%s points', other_point_type));
-
-      afprintf(sprintf('[INFO] done!\n'));
-      printConsoleOutputSeparator();
-
-    end
-
-  elseif strcmp(plot_type, 'ratio_distances_discuss_w_alex')
-
-    h = figure;
-    distance_types = {'euclidean', 'cosine'};
-    for k = 1 : numel(distance_types)
-
-      distance_type = distance_types{k};
-
-      % -------------------------------------------------------------------------
-      %                                                    Get ratio of distances
-      % -------------------------------------------------------------------------
-      afprintf(sprintf('[INFO] Getting ratio of distances...\n'));
-      distance_type = 'euclidean';
-      for i = 1 : numel(experiments)
-        [ ...
-          experiments{i}.between_class_to_within_class_distance_ratios, ...
-          experiments{i}.between_class_metric, ...
-          experiments{i}.within_class_metric] = ...
-          getBetweenToWithinPointDistanceRatios(experiments{i}.imdb, distance_type);
-        experiments{i}.fisher_discriminant_ratio = getFisherDiscriminantRatio(experiments{i}.imdb);
       end
 
-      afprintf(sprintf('[INFO] done!\n'));
-      printConsoleOutputSeparator();
-
-      % -------------------------------------------------------------------------
-      %                                                                      Plot
-      % -------------------------------------------------------------------------
-      afprintf(sprintf('[INFO] Plotting...\n'));
-      subplot(numel(distance_types), 1, 1 + (k - 1) * numel(distance_types)),
-      plotBeefAlexRatioDistance(experiments, distance_type);
-
-      afprintf(sprintf('[INFO] done!\n'));
-      printConsoleOutputSeparator();
-
     end
-
   end
 
   if save_results
