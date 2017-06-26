@@ -28,8 +28,8 @@ function tempScriptMeasureClassificationPerformance(dataset, posneg_balance, sav
   % -------------------------------------------------------------------------
   %                                                                     Setup
   % -------------------------------------------------------------------------
-  classification_method = 'cnn';
-  repeat_count = 30;
+  classification_method = 'knn';
+  repeat_count = 10;
   all_experiments_multi_run = {};
 
   for i = 1 : 22
@@ -81,7 +81,7 @@ function all_experiments_single_run = runAllExperimentsOnce(dataset, posneg_bala
   switch classification_method
     case 'knn'
       classificationMethodFunctonHandle = @testKnn;
-      % no additional options
+      opts.single_training_method_options.number_of_nearest_neighbors = 1;
     case 'cnn'
       classificationMethodFunctonHandle = @testCnn;
       opts.single_training_method_options.network_arch = 'convV0P0RL0+fcV1-RF32CH3';

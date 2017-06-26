@@ -36,6 +36,7 @@ function dumb_array = tmpScriptCalculateDistances(dataset, posneg_balance, save_
     for within_between = {'between', 'within'}
       within_between = char(within_between);
       for i = 1 : numel(experiments)
+        dumb_array.(sprintf('exp_%d_name', i)) = experiments{i}.title;
         dumb_array.(sprintf('exp_%d_%s_%s_metric', i, distance_type, within_between)) = [];
       end
     end
