@@ -101,37 +101,37 @@ function imdb = constructSyntheticGaussianImdb(samples_per_class, sample_dim, sa
 
 
 
-sample_dim = 2;
-sample_mean = 3;
-sample_variance_multiplier = 3;
-samples_per_class = 500;
+% sample_dim = 2;
+% sample_mean = 3;
+% sample_variance_multiplier = 3;
+% samples_per_class = 500;
 
-data_m = mvnrnd(- sample_mean * ones(sample_dim, 1), sample_variance_multiplier * [10,1.75;1.75,1], samples_per_class);
-data_p = mvnrnd(+ sample_mean * ones(sample_dim, 1), sample_variance_multiplier * [10,1.75;1.75,1], samples_per_class);
+% data_m = mvnrnd(- sample_mean * ones(sample_dim, 1), sample_variance_multiplier * [10,1.75;1.75,1], samples_per_class);
+% data_p = mvnrnd(+ sample_mean * ones(sample_dim, 1), sample_variance_multiplier * [10,1.75;1.75,1], samples_per_class);
 
-figure,
-hold on,
-grid on,
-scatter(data_m(:,1), data_m(:,2), 'bo'),
-scatter(data_p(:,1), data_p(:,2), 'rs'),
-hold off
+% figure,
+% hold on,
+% grid on,
+% scatter(data_m(:,1), data_m(:,2), 'bo'),
+% scatter(data_p(:,1), data_p(:,2), 'rs'),
+% hold off
 
 
 
-sample_dim = 3;
-sample_mean = 3;
-sample_variance_multiplier = 3;
-samples_per_class = 500;
+% sample_dim = 3;
+% sample_mean = 3;
+% sample_variance_multiplier = 3;
+% samples_per_class = 500;
 
-data_m = mvnrnd(- sample_mean * ones(sample_dim, 1), sample_variance_multiplier * [10,1.75,1;1.75,3,1;1,1,1], samples_per_class);
-data_p = mvnrnd(+ sample_mean * ones(sample_dim, 1), sample_variance_multiplier * [10,1.75,1;1.75,3,1;1,1,1], samples_per_class);
+% data_m = mvnrnd(- sample_mean * ones(sample_dim, 1), sample_variance_multiplier * [10,1.75,1;1.75,3,1;1,1,1], samples_per_class);
+% data_p = mvnrnd(+ sample_mean * ones(sample_dim, 1), sample_variance_multiplier * [10,1.75,1;1.75,3,1;1,1,1], samples_per_class);
 
-figure,
-hold on,
-grid on,
-scatter3(data_m(:,1), data_m(:,2), data_m(:,3), 'bo'),
-scatter3(data_p(:,1), data_p(:,2), data_p(:,3), 'rs'),
-hold off
+% figure,
+% hold on,
+% grid on,
+% scatter3(data_m(:,1), data_m(:,2), data_m(:,3), 'bo'),
+% scatter3(data_p(:,1), data_p(:,2), data_p(:,3), 'rs'),
+% hold off
 
 
 
