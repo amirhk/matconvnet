@@ -109,6 +109,9 @@ function constructMultiClassImdbs(dataset, network_arch)
 
     case 'gaussian-50D-mean-1-var-10'
       all_class_imdb = constructSyntheticGaussianImdb(5500, 50, 1, 10);
+
+    case 'circles-3D-mean-0-var-1-radius-1'
+      all_class_imdb = constructSyntheticCirclesImdb(5000, 3, 0, 1);
   end
 
 

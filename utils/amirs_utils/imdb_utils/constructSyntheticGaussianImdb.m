@@ -49,14 +49,11 @@ function imdb = constructSyntheticGaussianImdb(samples_per_class, sample_dim, sa
   data_m = mvnrnd(- sample_mean * ones(sample_dim, 1), sample_variance_multiplier * covariance_matrix, samples_per_class);
   data_p = mvnrnd(+ sample_mean * ones(sample_dim, 1), sample_variance_multiplier * covariance_matrix, samples_per_class);
 
-  labels_m = 1 * ones(1, samples_per_class);
-  labels_p = 2 * ones(1, samples_per_class);
-
   number_of_training_samples = .5 * samples_per_class * 2;
   number_of_testing_samples = .5 * samples_per_class * 2;
 
   data = cat(1, data_m, data_p);
-  labels = cat(2, labels_m, labels_p)';
+  labels = cat(1, 1 * ones(samples_per_class, 1), 2 * ones(samples_per_class, 1));
   set = cat(1, 1 * ones(number_of_training_samples, 1), 3 * ones(number_of_testing_samples, 1));
 
   assert(length(labels) == length(set));
