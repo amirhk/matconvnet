@@ -83,8 +83,8 @@ function [trained_model, performance_summary] = testMlp(input_opts)
   %                                                                     train
   % -------------------------------------------------------------------------
 
-  % net = patternnet([64,10]);
-  net = patternnet([500,100]);
+  net = patternnet([64,10]);
+  % net = patternnet([500,100]);
   tic;
   assert(size(vectorized_data_train, 1) == opts.train.number_of_features);
   assert(size(vectorized_data_test, 1) == opts.train.number_of_features);
