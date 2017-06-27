@@ -29,7 +29,8 @@ function tempScriptMeasureClassificationPerformance(dataset, posneg_balance, sav
   %                                                                     Setup
   % -------------------------------------------------------------------------
   % classification_method = 'cnn';
-  % classification_method = 'knn';
+  % classification_method = '1-knn';
+  % classification_method = '3-knn';
   classification_method = 'mlp';
   repeat_count = 30;
   all_experiments_multi_run = {};
@@ -46,7 +47,7 @@ function tempScriptMeasureClassificationPerformance(dataset, posneg_balance, sav
     end
   end
 
-  plotBeef(all_experiments_multi_run, dataset, save_results);
+  plotBeef(all_experiments_multi_run, dataset, save_results, classification_method);
 
 % -------------------------------------------------------------------------
 function all_experiments_single_run = runAllExperimentsOnce(dataset, posneg_balance, classification_method)
@@ -109,11 +110,12 @@ function all_experiments_single_run = runAllExperimentsOnce(dataset, posneg_bala
   opts.single_training_method_options.dataset = dataset;
   opts.single_training_method_options.return_performance_summary = true;
   switch classification_method
-    case 'knn'
+    case '1-knn'
       classificationMethodFunctonHandle = @testKnn;
       opts.single_training_method_options.number_of_nearest_neighbors = 1;
-      % opts.single_training_method_options.number_of_nearest_neighbors = 3;
-      % opts.single_training_method_options.number_of_nearest_neighbors = 5;
+    case '1-knn'
+      classificationMethodFunctonHandle = @testKnn;
+      opts.single_training_method_options.number_of_nearest_neighbors = 3;
     case 'mlp'
       classificationMethodFunctonHandle = @testMlp;
     case 'cnn'
@@ -151,7 +153,7 @@ function all_experiments_single_run = runAllExperimentsOnce(dataset, posneg_bala
 
 
 % -------------------------------------------------------------------------
-function plotBeef(all_experiments_multi_run, dataset, save_results)
+function plotBeef(all_experiments_multi_run, dataset, save_results, classification_method)
 % -------------------------------------------------------------------------
   y_all = [];
   y_wo_relu = [];
@@ -194,7 +196,7 @@ function plotBeef(all_experiments_multi_run, dataset, save_results)
   subplot(1,2,2);
   subplotBeef(y_w_relu, std_errors_x_location, std_errors_y_location_w_relu, std_errors_value_w_relu, 'w ReLU');
 
-  tmp_string = sprintf('1-KNN - %s', dataset);
+  tmp_string = sprintf('%s - %s', classification_method, dataset);
   suptitle(tmp_string);
   if save_results
     % saveas(h, fullfile(getDevPath(), 'temp_images', sprintf('%s.png', tmp_string)));
