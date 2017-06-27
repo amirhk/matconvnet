@@ -27,6 +27,7 @@ function fh = projectionUtils()
 
   fh.getAngleSeparatedImdb = @getAngleSeparatedImdb;
   fh.getDenslyProjectedImdb = @getDenslyProjectedImdb;
+  fh.getSparselyProjectedImdb = @getSparselyProjectedImdb;
   fh.projectImdbThroughNetwork = @projectImdbThroughNetwork;
   fh.getProjectionNetworkObject = @getProjectionNetworkObject;
 
@@ -100,6 +101,28 @@ function projected_samples = getProjectedImdbSamplesOnNet(imdb, net, depth)
     'val', find(imdb.images.set == 3));
   projected_samples = info.all_samples_forward_pass_results;
 
+
+% -------------------------------------------------------------------------
+function fn = getBatch()
+% -------------------------------------------------------------------------
+  fn = @(x,y) getSimpleNNBatch(x,y);
+
+% -------------------------------------------------------------------------
+function [images, labels] = getSimpleNNBatch(imdb, batch)
+% -------------------------------------------------------------------------
+  images = imdb.images.data(:,:,:,batch);
+  labels = imdb.images.labels(1,batch);
+  if rand > 0.5, images=fliplr(images); end
+
+
+
+
+
+
+
+
+
+
 % -------------------------------------------------------------------------
 function imdb = getDenslyProjectedImdb(imdb, number_of_projection_layers, number_of_relu_layers)
 % -------------------------------------------------------------------------
@@ -127,17 +150,33 @@ function imdb = getDenslyProjectedImdb(imdb, number_of_projection_layers, number
   % random_projection_matrix = randn(s1 * s2 * s3, s1 * s2 * s3) * 1/100;
   % imdb = projectImdbUsingMatrix(imdb, random_projection_matrix);
 
-% -------------------------------------------------------------------------
-function fn = getBatch()
-% -------------------------------------------------------------------------
-  fn = @(x,y) getSimpleNNBatch(x,y);
 
 % -------------------------------------------------------------------------
-function [images, labels] = getSimpleNNBatch(imdb, batch)
+function imdb = getSparselyProjectedImdb(imdb, number_of_projection_layers, number_of_relu_layers)
 % -------------------------------------------------------------------------
-  images = imdb.images.data(:,:,:,batch);
-  labels = imdb.images.labels(1,batch);
-  if rand > 0.5, images=fliplr(images); end
+  projected_data = zeros(size(imdb.images.data));
+  s1 = size(imdb.images.data, 1);
+  s2 = size(imdb.images.data, 2);
+  s3 = size(imdb.images.data, 3);
+  s4 = size(imdb.images.data, 4);
+  assert(number_of_relu_layers <= number_of_projection_layers);
+  relu_count = 0;
+  for i = 1 : number_of_projection_layers
+    % random_projection_matrix = randn(s1 * s2 * s3, s1 * s2 * s3) * 1/100;
+    random_projection_matrix = randn(s1 * s2 * s3, s1 * s2 * s3);
+    % random_projection_matrix = randn(s1 * s2 * s3, s1 * s2 * s3) / sqrt(s1 * s2 * s3);
+    % random_projection_matrix = randn(s1 * s2 * s3, s1 * s2 * s3) / sqrt(sqrt(s1 * s2 * s3));
+    % random_projection_matrix = randn(s1 * s2 * s3, s1 * s2 * s3) / sqrt(s1 * s2 * s3) * sqrt(2);
+    % random_projection_matrix = (round(rand(s1 * s2 * s3, s1 * s2 * s3)) - 0.5) * 2 / sqrt(s1 * s2 * s3); % Bernoulli
+    imdb = projectImdbUsingMatrix(imdb, random_projection_matrix);
+    if relu_count < number_of_relu_layers
+      % apply relu
+      imdb.images.data(imdb.images.data < 0) = 0;
+      relu_count = relu_count + 1;
+    end
+  end
+  % random_projection_matrix = randn(s1 * s2 * s3, s1 * s2 * s3) * 1/100;
+  % imdb = projectImdbUsingMatrix(imdb, random_projection_matrix);
 
 
 % -------------------------------------------------------------------------
@@ -151,9 +190,6 @@ function imdb = projectImdbUsingMatrix(imdb, projection_matrix)
   all_data_projected_vectorized = projection_matrix * all_data_original_vectorized; % 3072x3072 * 3072xnumber_of_images
   all_data_projected_matricized = reshape(all_data_projected_vectorized, s1, s2, s3, s4);
   imdb.images.data = all_data_projected_matricized;
-
-
-
 
 
 
@@ -210,6 +246,7 @@ function [S, D] = getSimilarityAndDissimilarityEnumerationSets(imdb)
       D = cat(2, D, getEnumerationsOfSampleIndicesFromClasses(imdb, i, j));
     end
   end
+
 
 % -------------------------------------------------------------------------
 function enumerations = getEnumerationsOfSampleIndicesFromClasses(imdb, class_1_label, class_2_label)

@@ -29,10 +29,10 @@ function tempScriptMeasureClassificationPerformance(dataset, posneg_balance, sav
   %                                                                     Setup
   % -------------------------------------------------------------------------
   % classification_method = 'cnn';
-  classification_method = '1-knn';
+  % classification_method = '1-knn';
   % classification_method = '3-knn';
-  % classification_method = 'mlp';
-  repeat_count = 30;
+  classification_method = 'mlp';
+  repeat_count = 1;
   all_experiments_multi_run = {};
 
   for i = 1 : 22
@@ -188,10 +188,10 @@ function plotBeef(all_experiments_multi_run, dataset, save_results, classificati
   h = figure;
 
   subplot(1,2,1);
-  subplotBeef(y_wo_relu, std_errors_x_location, std_errors_y_location_wo_relu, std_errors_value_wo_relu, 'w/o ReLU');
+  subplotBeef(y_wo_relu, std_errors_x_location, std_errors_y_location_wo_relu, std_errors_value_wo_relu, 'dense RP w/o ReLU');
 
   subplot(1,2,2);
-  subplotBeef(y_w_relu, std_errors_x_location, std_errors_y_location_w_relu, std_errors_value_w_relu, 'w ReLU');
+  subplotBeef(y_w_relu, std_errors_x_location, std_errors_y_location_w_relu, std_errors_value_w_relu, 'dense RP w/ ReLU');
 
   tmp_string = sprintf('classification perf - %s - %s', classification_method, dataset);
   suptitle(tmp_string);
