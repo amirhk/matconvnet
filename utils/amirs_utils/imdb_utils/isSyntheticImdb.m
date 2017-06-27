@@ -50,6 +50,10 @@ function output = isSyntheticImdb(dataset)
     output = true;
   end
 
+  if strfind(dataset, 'saved-multi-class-spirals-')
+    output = true;
+  end
+
 
 
 
