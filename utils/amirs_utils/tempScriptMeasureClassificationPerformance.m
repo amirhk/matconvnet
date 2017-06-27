@@ -28,7 +28,7 @@ function tempScriptMeasureClassificationPerformance(dataset, posneg_balance, sav
   % -------------------------------------------------------------------------
   %                                                                     Setup
   % -------------------------------------------------------------------------
-  classification_method = 'knn';
+  classification_method = 'mlp';
   repeat_count = 30;
   all_experiments_multi_run = {};
 
@@ -112,6 +112,8 @@ function all_experiments_single_run = runAllExperimentsOnce(dataset, posneg_bala
       opts.single_training_method_options.number_of_nearest_neighbors = 1;
       % opts.single_training_method_options.number_of_nearest_neighbors = 3;
       % opts.single_training_method_options.number_of_nearest_neighbors = 5;
+    case 'mlp'
+      classificationMethodFunctonHandle = @testMlp;
     case 'cnn'
       classificationMethodFunctonHandle = @testCnn;
       opts.single_training_method_options.network_arch = 'convV0P0RL0+fcV1-RF32CH3';
