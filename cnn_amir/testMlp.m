@@ -40,6 +40,9 @@ function [trained_model, performance_summary] = testMlp(input_opts)
   %                                                                opts.train
   % -------------------------------------------------------------------------
   opts.train.number_of_features = prod(size(imdb.images.data(:,:,:,1))); % 32 x 32 x 3 = 3072
+  opts.train.number_of_hidden_nodes = getValueFromFieldOrDefault(input_opts, 'number_of_hidden_nodes', [64 10]);
+  opts.train.number_of_hidden_nodes
+  keyboard
 
   % -------------------------------------------------------------------------
   %                                                                opts.paths
@@ -83,8 +86,9 @@ function [trained_model, performance_summary] = testMlp(input_opts)
   %                                                                     train
   % -------------------------------------------------------------------------
 
-  net = patternnet([64,10]);
+  % net = patternnet([64,10]);
   % net = patternnet([500,100]);
+  net = patternnet(opts.train.number_of_hidden_nodes);
   tic;
   assert(size(vectorized_data_train, 1) == opts.train.number_of_features);
   assert(size(vectorized_data_test, 1) == opts.train.number_of_features);
