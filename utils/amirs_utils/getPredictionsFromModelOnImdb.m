@@ -81,7 +81,7 @@ function [top_predictions, all_predictions] = getPredictionsFromMinFuncSvmStruct
 % -------------------------------------------------------------------------
   vectorized_data = getVectorizedDataFromImdb(imdb);
   vectorized_data = double(vectorized_data);
-  [~, top_predictions] = max(vectorized_data*theta, [], 2);
+  [~, top_predictions] = max(vectorized_data * theta, [], 2);
   all_predictions = getAllPredictionsFromTopPredictions(top_predictions, imdb);
 
 % -------------------------------------------------------------------------
@@ -95,8 +95,11 @@ function [top_predictions, all_predictions] = getPredictionsFromBoostedForestOnI
 function [top_predictions, all_predictions] = getPredictionsFromMlpOnImdb(net, imdb)
 % -------------------------------------------------------------------------
   vectorized_data = getVectorizedDataFromImdb(imdb);
-  % keyboard
-  top_predictions = net(net, vectorized_data);
+  % top_predictions = net(net, vectorized_data);
+  top_predictions_matrix_all_classes_softmax = net(vectorized_data');
+
+  [~, tmp] = sort(top_predictions_matrix_all_classes_softmax, 1, 'descend');
+  top_predictions = tmp(1,:);
   all_predictions = getAllPredictionsFromTopPredictions(top_predictions, imdb);
 
 % -------------------------------------------------------------------------

@@ -85,13 +85,16 @@ function [trained_model, performance_summary] = testMlp(input_opts)
 
   net = patternnet([64,10]);
   tic;
-  net = train(net, vectorized_data_train, labels_train, 'useGPU', 'no');
+  assert(size(vectorized_data_train, 1) == opts.train.number_of_features);
+  assert(size(vectorized_data_test, 1) == opts.train.number_of_features);
+  labels_train_matrix_form = full(ind2vec(double(labels_train)));
+
+  if ispc
+    net = train(net, vectorized_data_train, labels_train_matrix_form, 'useGPU', 'no', 'showResources', 'yes');
+  else
+    net = train(net, vectorized_data_train, labels_train_matrix_form, 'useGPU', 'no', 'showResources', 'yes');
+  end
   training_duration = toc;
-  % if ispc
-  %   net = train(net, vectorized_data_train, labels_train, 'useGPU', 'yes');
-  % else
-  %   net = train(net, vectorized_data_train, labels_train, 'useGPU', 'no');
-  % end
 
   % -------------------------------------------------------------------------
   %                                                   get performance summary
@@ -120,7 +123,7 @@ function [trained_model, performance_summary] = testMlp(input_opts)
   % -------------------------------------------------------------------------
   %                                                             assign output
   % -------------------------------------------------------------------------
-  trained_model = svm_struct;
+  trained_model = net;
   performance_summary.training.duration = training_duration;
   performance_summary.testing.train.accuracy = train_accuracy;
   performance_summary.testing.train.sensitivity = train_sensitivity;
