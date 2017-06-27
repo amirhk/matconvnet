@@ -28,6 +28,8 @@ function tempScriptMeasureClassificationPerformance(dataset, posneg_balance, sav
   % -------------------------------------------------------------------------
   %                                                                     Setup
   % -------------------------------------------------------------------------
+  % classification_method = 'cnn';
+  % classification_method = 'knn';
   classification_method = 'mlp';
   repeat_count = 30;
   all_experiments_multi_run = {};
