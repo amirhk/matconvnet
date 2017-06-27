@@ -56,5 +56,5 @@ functionHandle = @tempScriptMeasureClassificationPerformance;
 % functionHandle('uci-ion', 'balanced-38', 1);
 % functionHandle('uci-spam', 'balanced-38', 1);
 
-functionHandle('cifar-multi-class-subsampled', 'balanced-38', 1);
-% functionHandle('cifar-multi-class-subsampled', 'balanced-1880', 1);
+% functionHandle('cifar-multi-class-subsampled', 'balanced-38', 1);
+functionHandle('cifar-multi-class-subsampled', 'balanced-1880', 1);

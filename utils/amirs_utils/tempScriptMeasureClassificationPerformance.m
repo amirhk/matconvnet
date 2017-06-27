@@ -73,8 +73,6 @@ function all_experiments_single_run = runAllExperimentsOnce(dataset, posneg_bala
   %   % fh.getImdbInfo(experiments{i}.imdb, 1);
   %   % keyboard
 
-
-
   %   tmp = getVectorizedImdb(experiments{i}.imdb);
   %   % [sorted_labels, sorted_indices] = sort(tmp.images.labels);
   %   % sorted_data = tmp.images.data(sorted_indices, :);
@@ -175,7 +173,6 @@ function plotBeef(all_experiments_multi_run, dataset, save_results, classificati
 
   std_errors_value_wo_relu = reshape([std_errors_value_all(1,:); std_errors_value_all(2:6,:)]', 1, []);
   std_errors_value_w_relu = reshape([std_errors_value_all(1,:); std_errors_value_all(7:11,:)]', 1, []);
-
 
   std_errors_x_location = [ ...
     0.86, 1.14, ...
