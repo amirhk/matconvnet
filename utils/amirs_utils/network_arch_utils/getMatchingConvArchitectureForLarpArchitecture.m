@@ -62,9 +62,9 @@ function matching_conv_architecture = getMatchingConvArchitectureForLarpArchitec
         matching_conv_architecture = 'convV0P0RL0+fcV1-RF32CH3';
       case 'larpV1P0RL0-single-sparse-rp'
         matching_conv_architecture = 'convV0P0RL0+fcV1-RF32CH3';
-      case 'larpV1P0RL0-ensemble-sparse-rp' % = 'larpV1P0'
+      case 'larpV1P0RL0-ensemble-sparse-rp' % = 'larpV1P0RL0'
         matching_conv_architecture = 'convV0P0RL0+fcV1-RF32CH64';
-      case 'larpV1P0RL1-ensemble-sparse-rp' % = 'larpV1P0'
+      case 'larpV1P0RL1-ensemble-sparse-rp' % = 'larpV1P0RL1'
         matching_conv_architecture = 'convV0P0RL0+fcV1-RF32CH64';
 
       case 'larpV1P0RL0' % = 'larpV1P0-ensemble-sparse-rp'
