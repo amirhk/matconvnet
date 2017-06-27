@@ -67,7 +67,7 @@ function [trained_model, performance_summary] = testMlp(input_opts)
   % -------------------------------------------------------------------------
   %                                                   prepare data and labels
   % -------------------------------------------------------------------------
-  vectorized_data = reshape(imdb.images.data, opts.train.number_of_features, [])';
+  vectorized_data = getVectorizedDataFromImdb(imdb);
   labels = imdb.images.labels;
   is_train = imdb.images.set == 1;
   is_test = imdb.images.set == 3;
