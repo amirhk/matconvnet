@@ -49,11 +49,6 @@ function imdb = constructSyntheticCirclesImdb(total_number_of_samples, sample_di
   number_of_training_samples = .5 * total_number_of_samples;
   number_of_testing_samples = .5 * total_number_of_samples;
 
-  number_of_m_samples
-  number_of_p_samples
-  number_of_training_samples
-  number_of_testing_samples
-
   data = cat(1, data_m, data_p);
   labels = cat(1, 1 * ones(number_of_m_samples, 1), 2 * ones(number_of_p_samples, 1));
   set = cat(1, 1 * ones(number_of_training_samples, 1), 3 * ones(number_of_testing_samples, 1));
@@ -61,14 +56,14 @@ function imdb = constructSyntheticCirclesImdb(total_number_of_samples, sample_di
   assert(length(labels) == length(set));
 
   % shuffle
-  ix = randperm(samples_per_class * 2);
+  ix = randperm(total_number_of_samples);
   imdb.images.data = data(ix,:);
   imdb.images.labels = labels(ix);
   imdb.images.set = set; % NOT set(ix).... that way you won't have any of your first class samples in the test set!
   imdb.name = sprintf('circles-%dD-%d-train-%d-test-%.1f-var', sample_dim, number_of_training_samples, number_of_testing_samples, sample_variance_multiplier);
 
   % get the data into 4D format to be compatible with code built for all other imdbs.
-  imdb = get4DImdb(imdb, sample_dim, 1, 1, samples_per_class * 2);
+  imdb = get4DImdb(imdb, sample_dim, 1, 1, total_number_of_samples);
   afprintf(sprintf('done!\n\n'));
   fh = imdbMultiClassUtils;
   fh.getImdbInfo(imdb, 1);
