@@ -193,7 +193,7 @@ function plotBeef(all_experiments_multi_run, dataset, save_results, classificati
   subplot(1,2,2);
   subplotBeef(y_w_relu, std_errors_x_location, std_errors_y_location_w_relu, std_errors_value_w_relu, 'w ReLU');
 
-  tmp_string = sprintf('class perf - %s - %s', classification_method, dataset);
+  tmp_string = sprintf('%s - %s', classification_method, dataset);
   suptitle(tmp_string);
   if save_results
     % saveas(h, fullfile(getDevPath(), 'temp_images', sprintf('%s.png', tmp_string)));
