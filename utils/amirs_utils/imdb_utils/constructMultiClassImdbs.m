@@ -112,6 +112,9 @@ function constructMultiClassImdbs(dataset, network_arch)
 
     case 'circles-3D-mean-0-var-1-radius-1'
       all_class_imdb = constructSyntheticCirclesImdb(5000, 3, 0, 1);
+
+    case 'circles-50D-mean-0-var-1-radius-1'
+      all_class_imdb = constructSyntheticCirclesImdb(5000, 50, 0, 1);
   end
 
 

@@ -30,48 +30,76 @@ function tempScriptPlot3DEuclideanDistances(dataset, posneg_balance, save_result
   % -------------------------------------------------------------------------
   afprintf(sprintf('[INFO] Setting up experiment...\n'));
   [~, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 1);
-  assert(numel(experiments) == 2);
+  % assert(numel(experiments) == 2);
   afprintf(sprintf('[INFO] done!\n'));
   printConsoleOutputSeparator();
 
-  imdb_1 = getVectorizedImdb(experiments{1}.imdb);
-  imdb_2 = getVectorizedImdb(experiments{2}.imdb);
-
-  data_original = imdb_1.images.data;
-  data_original_a = data_original(imdb_1.images.labels == 1,:);
-  data_original_b = data_original(imdb_1.images.labels == 2,:);
-  data_angle_separated = imdb_2.images.data;
-  data_angle_separated_a = data_angle_separated(imdb_2.images.labels == 1,:);
-  data_angle_separated_b = data_angle_separated(imdb_2.images.labels == 2,:);
+  number_of_horizontal_subplots = 4;
+  number_of_vertical_subplots = ceil(numel(experiments) / number_of_horizontal_subplots);
 
   figure;
+  for i = 1 : numel(experiments)
+    imdb = getVectorizedImdb(experiments{i}.imdb);
+    data = imdb.images.data;
+    data_class_1 = data(imdb.images.labels == 1, :);
+    data_class_2 = data(imdb.images.labels == 2, :);
+    subplot(number_of_vertical_subplots, number_of_horizontal_subplots, i),
+    title(experiments{i}.title);
+    hold on,
+    grid on,
+    scatter3(data_class_1(:,1), data_class_1(:,2), data_class_1(:,3), 'bs');
+    scatter3(data_class_2(:,1), data_class_2(:,2), data_class_2(:,3), 'ro');
+    % xlim([-5, 5]);
+    % ylim([-5, 5]);
+    % zlim([-5, 5]);
+    hold off
+    view(15, 25);
 
-  a = strfind(dataset,'var-');
-  b = strfind(dataset(a:end),'-train');
-  variance = str2num(dataset(a+4:a+b-2));
+  end
 
-  subplot(1,2,1),
-  title('Original Data');
-  hold on,
-  grid on,
-  scatter3(data_original_a(:,1), data_original_a(:,2), data_original_a(:,3), 'bs');
-  scatter3(data_original_b(:,1), data_original_b(:,2), data_original_b(:,3), 'ro');
-  xlim([-5, 5]);
-  ylim([-5, 5]);
-  zlim([-5, 5]);
-  hold off
-  view(15, 25);
+  suptitle('3D Scatter plots!');
 
-  subplot(1,2,2),
-  title('Angle Separated Data');
-  hold on,
-  grid on,
-  scatter3(data_angle_separated_a(:,1), data_angle_separated_a(:,2), data_angle_separated_a(:,3), 'bs');
-  scatter3(data_angle_separated_b(:,1), data_angle_separated_b(:,2), data_angle_separated_b(:,3), 'ro');
-  xlim([-5, 5]);
-  ylim([-5, 5]);
-  zlim([-5, 5]);
-  hold off
-  view(15, 25);
 
-  suptitle(sprintf('Gaussian Class Variance: %d', variance));
+
+
+  % imdb_1 = getVectorizedImdb(experiments{1}.imdb);
+  % imdb_2 = getVectorizedImdb(experiments{2}.imdb);
+
+  % data_original = imdb_1.images.data;
+  % data_original_a = data_original(imdb_1.images.labels == 1,:);
+  % data_original_b = data_original(imdb_1.images.labels == 2,:);
+  % data_angle_separated = imdb_2.images.data;
+  % data_angle_separated_a = data_angle_separated(imdb_2.images.labels == 1,:);
+  % data_angle_separated_b = data_angle_separated(imdb_2.images.labels == 2,:);
+
+
+
+  % % a = strfind(dataset,'var-');
+  % % b = strfind(dataset(a:end),'-train');
+  % % variance = str2num(dataset(a+4:a+b-2));
+
+  % subplot(1,2,1),
+  % title(experiments{1}.title);
+  % hold on,
+  % grid on,
+  % scatter3(data_original_a(:,1), data_original_a(:,2), data_original_a(:,3), 'bs');
+  % scatter3(data_original_b(:,1), data_original_b(:,2), data_original_b(:,3), 'ro');
+  % xlim([-5, 5]);
+  % ylim([-5, 5]);
+  % zlim([-5, 5]);
+  % hold off
+  % view(15, 25);
+
+  % subplot(1,2,2),
+  % title(experiments{2}.title);
+  % hold on,
+  % grid on,
+  % scatter3(data_angle_separated_a(:,1), data_angle_separated_a(:,2), data_angle_separated_a(:,3), 'bs');
+  % scatter3(data_angle_separated_b(:,1), data_angle_separated_b(:,2), data_angle_separated_b(:,3), 'ro');
+  % % xlim([-5, 5]);
+  % % ylim([-5, 5]);
+  % % zlim([-5, 5]);
+  % hold off
+  % view(15, 25);
+
+  % suptitle(sprintf('Gaussian Class Variance: %d', variance));

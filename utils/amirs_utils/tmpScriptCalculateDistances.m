@@ -746,3 +746,21 @@ function plotBeefAlexRatioDistance(experiments, distance_type)
 
 
 
+
+% mean_array = [];
+% std_array = [];
+% for distance_type = {'euclidean', 'cosine'}
+%   distance_type = char(distance_type);
+%   for within_between = {'between', 'within'}
+%     within_between = char(within_between);
+%     for i = 1 : numel(fieldnames(dumb_array)) / 5
+%       exp_name = sprintf('%s - %s - %s', dumb_array.(sprintf('exp_%d_name', i)), distance_type, within_between);
+%       key = sprintf('exp_%d_%s_%s_metric', i, distance_type, within_between);
+%       % exp_name = key;
+%       tmp = dumb_array.(key);
+%       mean_array(end + 1) = mean(tmp);
+%       std_array(end + 1) = std(tmp);
+%       fprintf('%s: \t\t %.4f +/- %.4f \n', exp_name, mean(tmp), std(tmp));
+%     end
+%   end
+% end

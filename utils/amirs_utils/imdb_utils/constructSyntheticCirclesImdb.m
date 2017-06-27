@@ -35,7 +35,7 @@ function imdb = constructSyntheticCirclesImdb(total_number_of_samples, sample_di
   data_p = [];
   for i = 1 : size(all_samples, 1)
     sample = all_samples(i, :);
-    if norm(sample) < radius
+    if norm(sample) < radius * sqrt(sample_dim)
       data_m(end+1,:) = sample;
     else
       data_p(end+1,:) = sample;
