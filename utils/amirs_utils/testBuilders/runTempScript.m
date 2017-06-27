@@ -57,5 +57,7 @@ functionHandle = @tempScriptPlot3DEuclideanDistances;
 % functionHandle('uci-spam', 'balanced-38', 1);
 
 % functionHandle('mnist-multi-class-subsampled', 'balanced-38', 1);
-functionHandle('cifar-multi-class-subsampled', 'balanced-38', 1);
+% functionHandle('cifar-multi-class-subsampled', 'balanced-38', 1);
 % functionHandle('cifar-multi-class-subsampled', 'balanced-1880', 1);
+
+functionHandle('saved-multi-class-circles-3D-mean-0-var-1-radius-1-train-balance-500-test-balance-500', 'balanced-38', 1);
