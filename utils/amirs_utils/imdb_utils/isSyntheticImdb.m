@@ -26,8 +26,7 @@ function output = isSyntheticImdb(dataset)
 % POSSIBILITY OF SUCH DAMAGE.
 
   output = false;
-  if strfind(dataset, 'saved-multi-class-gaussian-') || ...
-    strfind(dataset, 'saved-multi-class-circles-')
+  % if ...
     % strcmp(dataset, 'gaussian-5D-160-train-40-test') || ...
     % strcmp(dataset, 'gaussian-10D-160-train-40-test') || ...
     % strcmp(dataset, 'gaussian-25D-160-train-40-test') || ...
@@ -40,8 +39,21 @@ function output = isSyntheticImdb(dataset)
     % ...
     % strcmp(dataset, 'gaussian-50D-800-train-200-test')
 
+  %   output = true;
+  % end
+
+  if strfind(dataset, 'saved-multi-class-gaussian-')
     output = true;
   end
+
+  if strfind(dataset, 'saved-multi-class-circles-')
+    output = true;
+  end
+
+
+
+
+
 
 
 
