@@ -116,6 +116,11 @@ function constructMultiClassImdbs(dataset, network_arch)
       all_class_imdb = constructSyntheticCirclesImdb(5000, 50, 0, 1);
     case 'circles-250D-mean-0-var-1-radius-1'
       all_class_imdb = constructSyntheticCirclesImdb(5000, 250, 0, 1);
+    case 'circles-1000D-mean-0-var-1-radius-1'
+      all_class_imdb = constructSyntheticCirclesImdb(5000, 1000, 0, 1);
+    case 'circles-2500D-mean-0-var-1-radius-1'
+      all_class_imdb = constructSyntheticCirclesImdb(5000, 2500, 0, 1);
+
 
 
     case 'spirals-2D'
