@@ -72,13 +72,13 @@ functionHandle = @tempScriptMeasureClassificationPerformance;
 % functionHandle('saved-multi-class-gaussian-3D-mean-1-var-1-train-balance-500-test-balance-500', 'whatever', 1);
 % functionHandle('saved-multi-class-gaussian-50D-mean-1-var-1-train-balance-500-test-balance-500', 'whatever', 1);
 % functionHandle('saved-multi-class-gaussian-250D-mean-1-var-1-train-balance-500-test-balance-500', 'whatever', 1);
-functionHandle('saved-multi-class-gaussian-1000D-mean-1-var-1-train-balance-500-test-balance-500', 'whatever', 1);
-functionHandle('saved-multi-class-gaussian-2500D-mean-1-var-1-train-balance-500-test-balance-500', 'whatever', 1);
+% functionHandle('saved-multi-class-gaussian-1000D-mean-1-var-1-train-balance-500-test-balance-500', 'whatever', 1);
+% functionHandle('saved-multi-class-gaussian-2500D-mean-1-var-1-train-balance-500-test-balance-500', 'whatever', 1);
 
-% functionHandle('saved-multi-class-gaussian-3D-mean-1-var-10-train-balance-500-test-balance-500', 'whatever', 1);
-% functionHandle('saved-multi-class-gaussian-50D-mean-1-var-10-train-balance-500-test-balance-500', 'whatever', 1);
-% functionHandle('saved-multi-class-gaussian-250D-mean-1-var-10-train-balance-500-test-balance-500', 'whatever', 1);
-functionHandle('saved-multi-class-gaussian-1000D-mean-1-var-10-train-balance-500-test-balance-500', 'whatever', 1);
-functionHandle('saved-multi-class-gaussian-2500D-mean-1-var-10-train-balance-500-test-balance-500', 'whatever', 1);
+functionHandle('saved-multi-class-gaussian-3D-mean-1-var-10-train-balance-500-test-balance-500', 'whatever', 1);
+functionHandle('saved-multi-class-gaussian-50D-mean-1-var-10-train-balance-500-test-balance-500', 'whatever', 1);
+functionHandle('saved-multi-class-gaussian-250D-mean-1-var-10-train-balance-500-test-balance-500', 'whatever', 1);
+% functionHandle('saved-multi-class-gaussian-1000D-mean-1-var-10-train-balance-500-test-balance-500', 'whatever', 1);
+% functionHandle('saved-multi-class-gaussian-2500D-mean-1-var-10-train-balance-500-test-balance-500', 'whatever', 1);
 
 % functionHandle('saved-multi-class-spirals-2D-train-balance-500-test-balance-500', 'whatever', 1);
