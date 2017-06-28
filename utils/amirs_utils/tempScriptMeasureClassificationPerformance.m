@@ -216,7 +216,11 @@ function subplotBeef(y, std_errors_x_location, std_errors_y_location, std_errors
   bar(y);
   ylim([-0.1, 1.1]);
   errorbar(std_errors_x_location, std_errors_y_location, std_errors_value);
-  legend({'original imdb', 'angle separated imdb'}, 'Location','southeast');
+  if isnan(y(1,2))
+    legend({'original imdb'}, 'Location','southeast');
+  else
+    legend({'original imdb', 'angle separated imdb'}, 'Location','southeast');
+  end
   title(title_string);
 
   % Set the X-Tick locations so that every other month is labeled.
