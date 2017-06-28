@@ -67,5 +67,5 @@ function imdb = constructSyntheticCirclesImdb(total_number_of_samples, sample_di
   afprintf(sprintf('done!\n\n'));
   fh = imdbMultiClassUtils;
   fh.getImdbInfo(imdb, 1);
-  save(sprintf('%s.mat', imdb.name), 'imdb');
+  % save(sprintf('%s.mat', imdb.name), 'imdb');
 

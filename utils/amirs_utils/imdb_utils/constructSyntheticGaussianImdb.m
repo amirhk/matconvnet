@@ -49,6 +49,21 @@ function imdb = constructSyntheticGaussianImdb(samples_per_class, sample_dim, sa
   data_m = mvnrnd(- sample_mean * ones(sample_dim, 1), sample_variance_multiplier * covariance_matrix, samples_per_class);
   data_p = mvnrnd(+ sample_mean * ones(sample_dim, 1), sample_variance_multiplier * covariance_matrix, samples_per_class);
 
+  % diag - we want the means in every dimension to be +/- 1, and the variance of
+  % the two classes (again in each dimension) to be say 5 so the classes have some
+  % amount of overlap, but not too much. At the same time, we don't want all dimensions
+  % to have the same variance (i.e., we don't want the original imdb to be spherical),
+  % because we'd like to assert that after angle-separating the original imdb, then
+  % we obtain a spherical imdb. So, we choose means to be +/- 1 and choose variances
+  % to be var = diag([25, 9, 1, 25, 9, 1, ...])
+  variance_basis = [25, 9, 1];
+  repeated_variance_basis = repmat(variance_basis, 1, ceil(sample_dim / length(variance_basis)));
+  % now we must choose the first sample_dim elements of this (say sample_dim = 25, this matrix above will give 27 variance values...)
+  covariance_matrix = diag(repeated_variance_basis(1:sample_dim));
+
+  data_m = mvnrnd(- sample_mean * ones(sample_dim, 1), sample_variance_multiplier * covariance_matrix, samples_per_class);
+  data_p = mvnrnd(+ sample_mean * ones(sample_dim, 1), sample_variance_multiplier * covariance_matrix, samples_per_class);
+
   number_of_training_samples = .5 * samples_per_class * 2;
   number_of_testing_samples = .5 * samples_per_class * 2;
 
