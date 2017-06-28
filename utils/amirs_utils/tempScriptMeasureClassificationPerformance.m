@@ -34,7 +34,7 @@ function tempScriptMeasureClassificationPerformance(dataset, posneg_balance, sav
   % classification_method = 'mlp-64-10';
   % classification_method = 'mlp-500-100';
   % classification_method = 'mlp-500-1000-100';
-  repeat_count = 3;
+  repeat_count = 30;
   all_experiments_multi_run = {};
 
   for i = 1 : 22
@@ -253,7 +253,7 @@ function subplotBeef(y, std_errors_x_location, std_errors_y_location, std_errors
     end
   end
   string_values_matrix = reshape(cell2mat(string_values_cell_array)', 5, [])';
-  t2 = text(std_errors_x_location, values, string_values_matrix);
+  t2 = text(std_errors_x_location - 0.035, values + 0.01, string_values_matrix);
   set(t2, 'HorizontalAlignment', 'Left', 'VerticalAlignment', 'middle', 'Rotation', 90);
   hold off
 
