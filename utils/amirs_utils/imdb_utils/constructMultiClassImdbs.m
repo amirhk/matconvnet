@@ -112,6 +112,7 @@ function constructMultiClassImdbs(dataset, network_arch)
 
 
 
+
     case 'gaussian-3D-mean-1-var-1'
       all_class_imdb = constructSyntheticGaussianImdb(1100, 3, 1, 1);
     case 'gaussian-50D-mean-1-var-1'
@@ -122,6 +123,22 @@ function constructMultiClassImdbs(dataset, network_arch)
       all_class_imdb = constructSyntheticGaussianImdb(1100, 1000, 1, 1);
     case 'gaussian-2500D-mean-1-var-1'
       all_class_imdb = constructSyntheticGaussianImdb(1100, 2500, 1, 1);
+
+
+
+
+    case 'gaussian-3D-mean-1-var-10'
+      all_class_imdb = constructSyntheticGaussianImdb(1100, 3, 1, 10);
+    case 'gaussian-50D-mean-1-var-10'
+      all_class_imdb = constructSyntheticGaussianImdb(1100, 50, 1, 10);
+    case 'gaussian-250D-mean-1-var-10'
+      all_class_imdb = constructSyntheticGaussianImdb(1100, 250, 1, 10);
+    case 'gaussian-1000D-mean-1-var-10'
+      all_class_imdb = constructSyntheticGaussianImdb(1100, 1000, 1, 10);
+    case 'gaussian-2500D-mean-1-var-10'
+      all_class_imdb = constructSyntheticGaussianImdb(1100, 2500, 1, 10);
+
+
 
 
     case 'circles-3D-mean-0-var-1-radius-1'

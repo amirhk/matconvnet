@@ -43,11 +43,11 @@ function imdb = constructSyntheticGaussianImdb(samples_per_class, sample_dim, sa
   % covariance_matrix = diag([sample_dim:-1:1].^2);
 
   % diag2
-  covariance_matrix = diag(ones(1, sample_dim));
-  covariance_matrix(1,1) = 25;
-  covariance_matrix(2,2) = 9;
-  data_m = mvnrnd(- sample_mean * ones(sample_dim, 1), sample_variance_multiplier * covariance_matrix, samples_per_class);
-  data_p = mvnrnd(+ sample_mean * ones(sample_dim, 1), sample_variance_multiplier * covariance_matrix, samples_per_class);
+  % covariance_matrix = diag(ones(1, sample_dim));
+  % covariance_matrix(1,1) = 25;
+  % covariance_matrix(2,2) = 9;
+  % data_m = mvnrnd(- sample_mean * ones(sample_dim, 1), sample_variance_multiplier * covariance_matrix, samples_per_class);
+  % data_p = mvnrnd(+ sample_mean * ones(sample_dim, 1), sample_variance_multiplier * covariance_matrix, samples_per_class);
 
   % diag - we want the means in every dimension to be +/- 1, and the variance of
   % the two classes (again in each dimension) to be say 5 so the classes have some
