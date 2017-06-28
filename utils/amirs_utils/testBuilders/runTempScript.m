@@ -29,7 +29,7 @@ functionHandle = @tempScriptMeasureClassificationPerformance;
 % functionHandle('saved-multi-class-gaussian-3D-mean-3-var-1-diag-train-balance-500-test-balance-500', 'balanced-38', 1);
 
 % ***
-% functionHandle('saved-multi-class-gaussian-3D-mean-3-var-3-train-balance-500-test-balance-500', 'balanced-38', 1);
+functionHandle('saved-multi-class-gaussian-3D-mean-3-var-3-train-balance-500-test-balance-500', 'balanced-38', 1);
 
 % functionHandle('saved-multi-class-gaussian-5D-mean-1-var-0-train-balance-500-test-balance-500', 'balanced-38', 1);
 % functionHandle('saved-multi-class-gaussian-5D-mean-1-var-1-train-balance-500-test-balance-500', 'balanced-38', 1);
@@ -57,13 +57,13 @@ functionHandle = @tempScriptMeasureClassificationPerformance;
 % functionHandle('uci-spam', 'balanced-38', 1);
 
 % functionHandle('mnist-multi-class-subsampled', 'balanced-38', 1);
-functionHandle('mnist', 'whatever', 1);
+% functionHandle('mnist', 'whatever', 1);
 
 % functionHandle('cifar-multi-class-subsampled', 'balanced-38', 1);
 % functionHandle('cifar-multi-class-subsampled', 'balanced-1880', 1);
-functionHandle('cifar', 'whatever', 1);
+% functionHandle('cifar', 'whatever', 1);
 
 % functionHandle('saved-multi-class-circles-3D-mean-0-var-1-radius-1-train-balance-500-test-balance-500', 'balanced-38', 1);
 % functionHandle('saved-multi-class-circles-50D-mean-0-var-1-radius-1-train-balance-500-test-balance-500', 'balanced-38', 1);
 
-functionHandle('saved-multi-class-spirals-2D-train-balance-500-test-balance-500', 'balanced-38', 1);
+% functionHandle('saved-multi-class-spirals-2D-train-balance-500-test-balance-500', 'balanced-38', 1);

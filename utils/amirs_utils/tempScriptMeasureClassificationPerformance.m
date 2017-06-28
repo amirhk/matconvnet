@@ -29,12 +29,12 @@ function tempScriptMeasureClassificationPerformance(dataset, posneg_balance, sav
   %                                                                     Setup
   % -------------------------------------------------------------------------
   % classification_method = 'cnn';
-  % classification_method = '1-knn';
+  classification_method = '1-knn';
   % classification_method = '3-knn';
   % classification_method = 'mlp-64-10';
-  classification_method = 'mlp-500-100';
+  % classification_method = 'mlp-500-100';
   % classification_method = 'mlp-500-1000-100';
-  repeat_count = 30;
+  repeat_count = 3;
   all_experiments_multi_run = {};
 
   for i = 1 : 22
@@ -226,28 +226,37 @@ function subplotBeef(y, std_errors_x_location, std_errors_y_location, std_errors
 
   % Add the months as tick labels.
   labels = ['Default';
-            '-------';
             'RP =  1';
-            '-------';;
             'RP =  2';
-            '-------';;
             'RP =  3';
-            '-------';;
             'RP =  4';
-            '-------';;
-            'RP =  5';
-            '-------';];
+            'RP =  5'];
   ax = axis;     % Current axis limits
   axis(axis);    % Set the axis limit modes (e.g. XLimMode) to manual
   Yl = ax(3:4);  % Y-axis limits
 
   % Place the text labels
-  t = text(Xt, Yl(1) * ones(1, length(Xt)), labels(1:2:12,:));
+  t = text(Xt, Yl(1) * ones(1, length(Xt)), labels);
   set(t, 'HorizontalAlignment', 'right', 'VerticalAlignment', 'top', 'Rotation', 45);
 
   % Remove the default labels
   set(gca,'XTickLabel','');
+
+  % Add values on the bars themselves
+  values = reshape(y', 1, []);
+  string_values_cell_array = {};
+  for value = values
+    if isnan(value)
+      string_values_cell_array{end+1} = '-----';
+    else
+      string_values_cell_array{end+1} = sprintf('%.3f', value); % IMPORTANT: string width = 5
+    end
+  end
+  string_values_matrix = reshape(cell2mat(string_values_cell_array)', 5, [])';
+  t2 = text(std_errors_x_location, values, string_values_matrix);
+  set(t2, 'HorizontalAlignment', 'Left', 'VerticalAlignment', 'middle', 'Rotation', 90);
   hold off
+
 
 
 
