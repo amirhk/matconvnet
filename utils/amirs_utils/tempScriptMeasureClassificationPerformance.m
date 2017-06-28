@@ -31,8 +31,9 @@ function tempScriptMeasureClassificationPerformance(dataset, posneg_balance, sav
   % classification_method = 'cnn';
   % classification_method = '1-knn';
   % classification_method = '3-knn';
-  % classification_method = 'mlp-500-100';
   classification_method = 'mlp-64-10';
+  % classification_method = 'mlp-500-100';
+  % classification_method = 'mlp-500-1000-100';
   repeat_count = 30;
   all_experiments_multi_run = {};
 
@@ -115,12 +116,15 @@ function all_experiments_single_run = runAllExperimentsOnce(dataset, posneg_bala
     case '1-knn'
       classificationMethodFunctonHandle = @testKnn;
       opts.single_training_method_options.number_of_nearest_neighbors = 3;
-    case 'mlp-500-100'
-      classificationMethodFunctonHandle = @testMlp;
-      opts.single_training_method_options.number_of_hidden_nodes = [500, 100];
     case 'mlp-64-10'
       classificationMethodFunctonHandle = @testMlp;
       opts.single_training_method_options.number_of_hidden_nodes = [64, 10];
+    case 'mlp-500-100'
+      classificationMethodFunctonHandle = @testMlp;
+      opts.single_training_method_options.number_of_hidden_nodes = [500, 100];
+    case 'mlp-500-1000-100'
+      classificationMethodFunctonHandle = @testMlp;
+      opts.single_training_method_options.number_of_hidden_nodes = [500, 1000, 100];
     case 'cnn'
       classificationMethodFunctonHandle = @testCnn;
       opts.single_training_method_options.network_arch = 'convV0P0RL0+fcV1-RF32CH3';

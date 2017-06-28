@@ -47,8 +47,13 @@ function tempScriptPlot3DEuclideanDistances(dataset, posneg_balance, save_result
     title(experiments{i}.title);
     hold on,
     grid on,
-    scatter3(data_class_1(:,1), data_class_1(:,2), data_class_1(:,3), 'bs');
-    scatter3(data_class_2(:,1), data_class_2(:,2), data_class_2(:,3), 'ro');
+    if size(data_class_1) >= 3 %&& size(data_class_2) >= 3
+      scatter3(data_class_1(:,1), data_class_1(:,2), data_class_1(:,3), 'bs');
+      scatter3(data_class_2(:,1), data_class_2(:,2), data_class_2(:,3), 'ro');
+    else
+      scatter(data_class_1(:,1), data_class_1(:,2), 'bs');
+      scatter(data_class_2(:,1), data_class_2(:,2), 'ro');
+    end
     % xlim([-5, 5]);
     % ylim([-5, 5]);
     % zlim([-5, 5]);
