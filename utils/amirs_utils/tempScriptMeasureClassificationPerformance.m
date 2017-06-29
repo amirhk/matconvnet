@@ -49,7 +49,7 @@ function tempScriptMeasureClassificationPerformance(dataset, posneg_balance, sav
     end
   end
 
-  plotBeef(all_experiments_multi_run, dataset, save_results, classification_method);
+  plotBeef(all_experiments_multi_run, dataset, posneg_balance, save_results, classification_method);
 
 % -------------------------------------------------------------------------
 function all_experiments_single_run = runAllExperimentsOnce(dataset, posneg_balance, classification_method)
@@ -160,7 +160,7 @@ function all_experiments_single_run = runAllExperimentsOnce(dataset, posneg_bala
 
 
 % -------------------------------------------------------------------------
-function plotBeef(all_experiments_multi_run, dataset, save_results, classification_method)
+function plotBeef(all_experiments_multi_run, dataset, posneg_balance, save_results, classification_method)
 % -------------------------------------------------------------------------
   y_all = [];
   y_wo_relu = [];
@@ -202,7 +202,7 @@ function plotBeef(all_experiments_multi_run, dataset, save_results, classificati
   subplot(1,2,2);
   subplotBeef(y_w_relu, std_errors_x_location, std_errors_y_location_w_relu, std_errors_value_w_relu, 'dense RP w/ ReLU');
 
-  tmp_string = sprintf('classification perf - %s - %s', classification_method, dataset);
+  tmp_string = sprintf('classification perf - %s - %s - %s', classification_method, dataset, posneg_balance);
   suptitle(tmp_string);
   if save_results
     % saveas(h, fullfile(getDevPath(), 'temp_images', sprintf('%s.png', tmp_string)));
