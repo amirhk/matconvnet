@@ -78,13 +78,13 @@ functionHandle = @tempScriptMeasureClassificationPerformance;
 
 
 
-functionHandle('cifar-multi-class-subsampled', 'balanced-10', 1);
-functionHandle('cifar-multi-class-subsampled', 'balanced-50', 1);
-functionHandle('cifar-multi-class-subsampled', 'balanced-100', 1);
-functionHandle('cifar-multi-class-subsampled', 'balanced-250', 1);
-functionHandle('cifar-multi-class-subsampled', 'balanced-500', 1);
-functionHandle('cifar-multi-class-subsampled', 'balanced-1000', 1);
-functionHandle('cifar-multi-class-subsampled', 'balanced-2500', 1);
+% functionHandle('cifar-multi-class-subsampled', 'balanced-10', 1);
+% functionHandle('cifar-multi-class-subsampled', 'balanced-50', 1);
+% functionHandle('cifar-multi-class-subsampled', 'balanced-100', 1);
+% functionHandle('cifar-multi-class-subsampled', 'balanced-250', 1);
+% functionHandle('cifar-multi-class-subsampled', 'balanced-500', 1);
+% functionHandle('cifar-multi-class-subsampled', 'balanced-1000', 1);
+% functionHandle('cifar-multi-class-subsampled', 'balanced-2500', 1);
 % functionHandle('cifar', 'whatever', 1);
 
 
@@ -111,11 +111,11 @@ functionHandle('cifar-multi-class-subsampled', 'balanced-2500', 1);
 % functionHandle('saved-multi-class-gaussian-1000D-mean-1-var-1-train-balance-5000-test-balance-5000', 'whatever', 1);
 % functionHandle('saved-multi-class-gaussian-2500D-mean-1-var-1-train-balance-5000-test-balance-5000', 'whatever', 1);
 
-% functionHandle('saved-multi-class-gaussian-3D-mean-1-var-1-train-balance-50000-test-balance-50000', 'whatever', 1);
-% functionHandle('saved-multi-class-gaussian-50D-mean-1-var-1-train-balance-50000-test-balance-50000', 'whatever', 1);
-% functionHandle('saved-multi-class-gaussian-250D-mean-1-var-1-train-balance-50000-test-balance-50000', 'whatever', 1);
-% functionHandle('saved-multi-class-gaussian-1000D-mean-1-var-1-train-balance-50000-test-balance-50000', 'whatever', 1);
-% functionHandle('saved-multi-class-gaussian-2500D-mean-1-var-1-train-balance-50000-test-balance-50000', 'whatever', 1);
+functionHandle('saved-multi-class-gaussian-3D-mean-1-var-1-train-balance-50000-test-balance-50000', 'whatever', 1);
+functionHandle('saved-multi-class-gaussian-50D-mean-1-var-1-train-balance-50000-test-balance-50000', 'whatever', 1);
+functionHandle('saved-multi-class-gaussian-250D-mean-1-var-1-train-balance-50000-test-balance-50000', 'whatever', 1);
+functionHandle('saved-multi-class-gaussian-1000D-mean-1-var-1-train-balance-50000-test-balance-50000', 'whatever', 1);
+% not built! functionHandle('saved-multi-class-gaussian-2500D-mean-1-var-1-train-balance-50000-test-balance-50000', 'whatever', 1);
 
 
 
