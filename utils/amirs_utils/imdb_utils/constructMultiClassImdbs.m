@@ -119,19 +119,19 @@ function constructMultiClassImdbs(dataset, network_arch)
       % all_class_imdb = constructSyntheticGaussianImdb(110000, 3, 1, 1);
     case 'gaussian-50D-mean-1-var-1'
       % all_class_imdb = constructSyntheticGaussianImdb(1100, 50, 1, 1);
-      all_class_imdb = constructSyntheticGaussianImdb(110000 50, 1, 1);
+      all_class_imdb = constructSyntheticGaussianImdb(11000, 50, 1, 1);
       % all_class_imdb = constructSyntheticGaussianImdb(110000, 50, 1, 1);
     case 'gaussian-250D-mean-1-var-1'
       % all_class_imdb = constructSyntheticGaussianImdb(1100, 250, 1, 1);
-      all_class_imdb = constructSyntheticGaussianImdb(110000,250, 1, 1);
+      all_class_imdb = constructSyntheticGaussianImdb(11000, 250, 1, 1);
       % all_class_imdb = constructSyntheticGaussianImdb(110000, 250, 1, 1);
     case 'gaussian-1000D-mean-1-var-1'
       % all_class_imdb = constructSyntheticGaussianImdb(1100, 1000, 1, 1);
-      all_class_imdb = constructSyntheticGaussianImdb(110000, 000, 1, 1);
+      all_class_imdb = constructSyntheticGaussianImdb(11000, 1000, 1, 1);
       % all_class_imdb = constructSyntheticGaussianImdb(110000, 1000, 1, 1);
     case 'gaussian-2500D-mean-1-var-1'
       % all_class_imdb = constructSyntheticGaussianImdb(1100, 2500, 1, 1);
-      all_class_imdb = constructSyntheticGaussianImdb(110000, 500, 1, 1);
+      all_class_imdb = constructSyntheticGaussianImdb(11000, 2500, 1, 1);
       % all_class_imdb = constructSyntheticGaussianImdb(110000, 2500, 1, 1);
 
 
