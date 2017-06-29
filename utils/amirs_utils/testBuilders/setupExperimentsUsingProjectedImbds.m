@@ -41,7 +41,7 @@ function [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(data
   afprintf(sprintf('[INFO] done!\n'));
 
 
-  if false % TODO... this doesn't actaully cahnge the file name!!!!!!!
+  if true % TODO... this doesn't actaully cahnge the file name!!!!!!!
     fhGetDenslyProjectedImdb = fh_projection_utils.getDenslyProjectedImdb;
     title_prefix = 'Dense RP';
   else
