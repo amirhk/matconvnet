@@ -114,15 +114,20 @@ function constructMultiClassImdbs(dataset, network_arch)
 
 
     case 'gaussian-3D-mean-1-var-1'
-      all_class_imdb = constructSyntheticGaussianImdb(1100, 3, 1, 1);
+      % all_class_imdb = constructSyntheticGaussianImdb(1100, 3, 1, 1);
+      all_class_imdb = constructSyntheticGaussianImdb(110000, 3, 1, 1);
     case 'gaussian-50D-mean-1-var-1'
-      all_class_imdb = constructSyntheticGaussianImdb(1100, 50, 1, 1);
+      % all_class_imdb = constructSyntheticGaussianImdb(1100, 50, 1, 1);
+      all_class_imdb = constructSyntheticGaussianImdb(110000, 50, 1, 1);
     case 'gaussian-250D-mean-1-var-1'
-      all_class_imdb = constructSyntheticGaussianImdb(1100, 250, 1, 1);
+      % all_class_imdb = constructSyntheticGaussianImdb(1100, 250, 1, 1);
+      all_class_imdb = constructSyntheticGaussianImdb(110000, 250, 1, 1);
     case 'gaussian-1000D-mean-1-var-1'
-      all_class_imdb = constructSyntheticGaussianImdb(1100, 1000, 1, 1);
+      % all_class_imdb = constructSyntheticGaussianImdb(1100, 1000, 1, 1);
+      all_class_imdb = constructSyntheticGaussianImdb(110000, 1000, 1, 1);
     case 'gaussian-2500D-mean-1-var-1'
-      all_class_imdb = constructSyntheticGaussianImdb(1100, 2500, 1, 1);
+      % all_class_imdb = constructSyntheticGaussianImdb(1100, 2500, 1, 1);
+      all_class_imdb = constructSyntheticGaussianImdb(110000, 2500, 1, 1);
 
 
 
@@ -158,26 +163,24 @@ function constructMultiClassImdbs(dataset, network_arch)
   end
 
 
-  % logspace(1 + log10(3.76), 3 + log10(5), 6)
+  % OLD: logspace(1 + log10(3.76), 3 + log10(5), 6): [38, 100, 266, 1880, 5000]
+  % NEW:                                             [10, 50, 100, 250, 500, 1000, 2500]
   % -------------------------------------------------------------------------
-  % createImdbWithBalance(dataset, all_class_imdb, 50, 50); % 750);
-  % createImdbWithBalance(dataset, all_class_imdb, 38, 'default'); % 750);
-  % createImdbWithBalance(dataset, all_class_imdb, 50, 'default'); % 750);
-  % createImdbWithBalance(dataset, all_class_imdb, 100, 'default'); % 750);
-  % createImdbWithBalance(dataset, all_class_imdb, 266, 'default'); % 750);
-  % createImdbWithBalance(dataset, all_class_imdb, 707, 'default'); % 750);
-  % createImdbWithBalance(dataset, all_class_imdb, 1880, 'default'); % 750);
-  % createImdbWithBalance(dataset, all_class_imdb, 5000, 'default'); % 750);
-
-  % createImdbWithBalance(dataset, all_class_imdb, 500, 750);
-
+  % createImdbWithBalance(dataset, all_class_imdb, 10, 'default');
+  % createImdbWithBalance(dataset, all_class_imdb, 50, 'default');
+  % createImdbWithBalance(dataset, all_class_imdb, 100, 'default');
+  % createImdbWithBalance(dataset, all_class_imdb, 250, 'default');
+  % createImdbWithBalance(dataset, all_class_imdb, 500, 'default');
+  % createImdbWithBalance(dataset, all_class_imdb, 1000, 'default');
+  % createImdbWithBalance(dataset, all_class_imdb, 2500, 'default');
 
   % createImdbWithBalance(dataset, all_class_imdb, 10, 500);
   % createImdbWithBalance(dataset, all_class_imdb, 50, 500);
   % createImdbWithBalance(dataset, all_class_imdb, 100, 500);
   % createImdbWithBalance(dataset, all_class_imdb, 250, 500);
-  createImdbWithBalance(dataset, all_class_imdb, 500, 500);
+  % createImdbWithBalance(dataset, all_class_imdb, 500, 500);
   % createImdbWithBalance(dataset, all_class_imdb, 2500, 2500);
+  createImdbWithBalance(dataset, all_class_imdb, 50000, 50000);
 
 
 function createImdbWithBalance(dataset, imdb, train_balance_count, test_balance_count)

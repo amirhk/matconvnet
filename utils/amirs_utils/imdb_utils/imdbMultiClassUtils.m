@@ -78,7 +78,11 @@ function imdb = balanceAllClassesInImdb(imdb, set_name, balance_count)
   % set_name = {'train', 'test'}
   % balance_count = {38, 100, 277, 707, 1880, 5000}
 % -------------------------------------------------------------------------
-  afprintf(sprintf('[INFO] Balancing all `%sing` classes of imdb to #%d samples...\n', set_name, balance_count));
+  if isa(balance_count, 'char')
+    afprintf(sprintf('[INFO] Balancing all `%sing` classes of imdb to #%s samples...\n', set_name, balance_count));
+  else
+    afprintf(sprintf('[INFO] Balancing all `%sing` classes of imdb to #%d samples...\n', set_name, balance_count));
+  end
   unique_classes_count = numel(unique(imdb.images.labels));
   % Balance train sets as desired
   for class_number = 1:unique_classes_count
@@ -107,7 +111,7 @@ function imdb = subsampleImdb(imdb, set_name, class_number, subsample_count)
     case 'train'
       data_for_set_and_class = data_train_per_class{class_number};
       if strcmp(subsample_count, 'default')
-        subsampled_data_indices = size(data_for_set_and_class, 4);
+        subsampled_data_indices = 1:size(data_for_set_and_class, 4);
       else
         subsampled_data_indices = randsample(size(data_for_set_and_class, 4), subsample_count);
       end
@@ -116,7 +120,7 @@ function imdb = subsampleImdb(imdb, set_name, class_number, subsample_count)
     case 'test'
       data_for_set_and_class = data_test_per_class{class_number};
       if strcmp(subsample_count, 'default')
-        subsampled_data_indices = size(data_for_set_and_class, 4);
+        subsampled_data_indices = 1:size(data_for_set_and_class, 4);
       else
         subsampled_data_indices = randsample(size(data_for_set_and_class, 4), subsample_count);
       end
@@ -173,11 +177,48 @@ function imdb = constructImdbHelper(data_train_per_class, data_test_per_class)
 %-------------------------------------------------------------------------
 function saveImdb(dataset, imdb, train_balance_count, test_balance_count)
 %-------------------------------------------------------------------------
-imdb.name = sprintf( ...
-  'saved-multi-class-%s-train-balance-%d-test-balance-%d', ...
-  ... % 'saved-multi-class-%s-train-balance-%d-test-balance-%s', ...
-  dataset, ...
-  train_balance_count, ...
-  test_balance_count);
+if isa(test_balance_count, 'char')
+  imdb.name = sprintf( ...
+    'saved-multi-class-%s-train-balance-%d-test-balance-%s', ...
+    dataset, ...
+    train_balance_count, ...
+    test_balance_count);
+else
+  imdb.name = sprintf( ...
+    'saved-multi-class-%s-train-balance-%d-test-balance-%d', ...
+    dataset, ...
+    train_balance_count, ...
+    test_balance_count);
+end
 afprintf(sprintf('[INFO] Saving imdb...\n'));
 save(imdb.name, 'imdb');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
