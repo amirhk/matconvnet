@@ -219,9 +219,9 @@ function imdb = getAngleSeparatedImdb(input_imdb)
   printConsoleOutputSeparator();
 
   % Computing right eigen vectors.
-  jigar = M_S;
-  M_S = M_D;
-  M_D = jigar;
+  % jigar = M_S;
+  % M_S = M_D;
+  % M_D = jigar;
 
   tmp = inv(M_D);
   if ~isinf(tmp) % && ~isnan(tmp)
