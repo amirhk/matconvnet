@@ -84,7 +84,7 @@ functionHandle('mnist-multi-class-subsampled', 'balanced-2500', 1);
 % functionHandle('cifar-multi-class-subsampled', 'balanced-250', 1);
 % functionHandle('cifar-multi-class-subsampled', 'balanced-500', 1);
 % functionHandle('cifar-multi-class-subsampled', 'balanced-1000', 1);
-% functionHandle('cifar-multi-class-subsampled', 'balanced-2500', 1);
+functionHandle('cifar-multi-class-subsampled', 'balanced-2500', 1);
 % functionHandle('cifar', 'whatever', 1);
 
 

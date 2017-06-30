@@ -67,7 +67,7 @@ function runTempTests()
 
 
   % balance_name = 'whatever';
-  balance_name = 'balanced-38';
+  balance_name = 'balanced-100';
 
 
   % larp_network_arch = 'larpV0P0RL0';
@@ -237,11 +237,11 @@ function runTempTests()
 
   larp_network_arch = 'larpV0P0RL0';
   non_larp_network_arch = 'convV0P0RL0+fcV1';
-  % dataset_name = 'cifar-multi-class-subsampled';
+  dataset_name = 'cifar-multi-class-subsampled';
   % dataset_name = 'saved-multi-class-gaussian-3D-mean-3-var-3-train-balance-500-test-balance-500';
   % dataset_name = 'saved-multi-class-gaussian-50D-mean-1-var-10-train-balance-500-test-balance-500';
   % dataset_name = 'uci-ion';
-  dataset_name = 'uci-spam';
+  % dataset_name = 'uci-spam';
   runLarpTests(opts.paths.experiment_dir, dataset_name, balance_name, larp_network_arch, non_larp_network_arch, larp_weight_init_type, opts.train.gpus);
 
 
