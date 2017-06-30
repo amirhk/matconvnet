@@ -41,6 +41,7 @@ function fh = networkInitializationUtils()
   fh.dropoutLayer = @dropoutLayer;
   fh.bnormLayer = @bnormLayer;
   fh.softmaxlossLayer = @softmaxlossLayer;
+  fh.nnlossLayer = @nnlossLayer;
 
   % fh.getConvLayerIndices = @poolingLayer;
   % fh.createBottleneckLayersFromSingleConvLayer = @poolingLayer;
@@ -891,6 +892,11 @@ function structuredLayer = softmaxlossLayer()
 % --------------------------------------------------------------------
   structuredLayer = struct('type', 'softmaxloss');
 
+% --------------------------------------------------------------------
+function structuredLayer = nnlossLayer()
+% --------------------------------------------------------------------
+  structuredLayer = struct('type', 'loss');
+  % structuredLayer = struct('type', 'loss', 'jigar', 'tala');
 
 % --------------------------------------------------------------------
 function [mu, sigma] = getMeanVectorAndCovarianceMatrixOfSmoothedKernel(k, filter_width);

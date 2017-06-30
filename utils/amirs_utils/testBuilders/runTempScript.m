@@ -66,13 +66,13 @@ functionHandle = @tempScriptMeasureClassificationPerformance;
 
 
 
-functionHandle('mnist-multi-class-subsampled', 'balanced-10', 1);
-functionHandle('mnist-multi-class-subsampled', 'balanced-50', 1);
-functionHandle('mnist-multi-class-subsampled', 'balanced-100', 1);
-functionHandle('mnist-multi-class-subsampled', 'balanced-250', 1);
-functionHandle('mnist-multi-class-subsampled', 'balanced-500', 1);
-functionHandle('mnist-multi-class-subsampled', 'balanced-1000', 1);
-functionHandle('mnist-multi-class-subsampled', 'balanced-2500', 1);
+% functionHandle('mnist-multi-class-subsampled', 'balanced-10', 1);
+% functionHandle('mnist-multi-class-subsampled', 'balanced-50', 1);
+% functionHandle('mnist-multi-class-subsampled', 'balanced-100', 1);
+% functionHandle('mnist-multi-class-subsampled', 'balanced-250', 1);
+% functionHandle('mnist-multi-class-subsampled', 'balanced-500', 1);
+% functionHandle('mnist-multi-class-subsampled', 'balanced-1000', 1);
+% functionHandle('mnist-multi-class-subsampled', 'balanced-2500', 1);
 % functionHandle('mnist', 'whatever', 1);
 
 
@@ -84,13 +84,13 @@ functionHandle('mnist-multi-class-subsampled', 'balanced-2500', 1);
 % functionHandle('cifar-multi-class-subsampled', 'balanced-250', 1);
 % functionHandle('cifar-multi-class-subsampled', 'balanced-500', 1);
 % functionHandle('cifar-multi-class-subsampled', 'balanced-1000', 1);
-functionHandle('cifar-multi-class-subsampled', 'balanced-2500', 1);
+% functionHandle('cifar-multi-class-subsampled', 'balanced-2500', 1);
 % functionHandle('cifar', 'whatever', 1);
 
 
 
 
-% functionHandle('saved-multi-class-circles-3D-mean-0-var-1-radius-1-train-balance-500-test-balance-500', 'whatever', 1);
+functionHandle('saved-multi-class-circles-3D-mean-0-var-1-radius-1-train-balance-500-test-balance-500', 'whatever', 1);
 % functionHandle('saved-multi-class-circles-50D-mean-0-var-1-radius-1-train-balance-500-test-balance-500', 'whatever', 1);
 % functionHandle('saved-multi-class-circles-250D-mean-0-var-1-radius-1-train-balance-500-test-balance-500', 'whatever', 1);
 % functionHandle('saved-multi-class-circles-1000D-mean-0-var-1-radius-1-train-balance-500-test-balance-500', 'whatever', 1);
