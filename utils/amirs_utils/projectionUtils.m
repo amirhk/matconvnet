@@ -232,6 +232,8 @@ function imdb = getAngleSeparatedImdb(input_imdb)
     angle_separation_matrix = eye(size(M_D));
   end
 
+  % keyboard
+  % angle_separation_matrix = real(angle_separation_matrix);
   assert(isreal(angle_separation_matrix));
 
   imdb = projectImdbUsingMatrix(input_imdb, angle_separation_matrix);
