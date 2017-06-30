@@ -1,5 +1,5 @@
 % --------------------------------------------------------------------
-function constructMultiClassImdbs(dataset, network_arch)
+function constructMultiClassImdbs(dataset)
 % --------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -29,7 +29,10 @@ function constructMultiClassImdbs(dataset, network_arch)
   opts.imdb.data_dir = fullfile(getDevPath(), 'data', 'source', dataset);
   switch dataset
     case 'mnist'
-      opts.general.network_arch = network_arch;
+      opts.general.network_arch = 'lenet';
+      all_class_imdb = constructMnistImdb(opts);
+    case 'mnist-784'
+      opts.general.network_arch = 'mnistnet';
       all_class_imdb = constructMnistImdb(opts);
     case 'cifar'
       opts.imdb.imdb_portion = 1.0;
@@ -171,16 +174,16 @@ function constructMultiClassImdbs(dataset, network_arch)
   % OLD: logspace(1 + log10(3.76), 3 + log10(5), 6): [38, 100, 266, 1880, 5000]
   % NEW:                                             [10, 50, 100, 250, 500, 1000, 2500]
   % -------------------------------------------------------------------------
-  % createImdbWithBalance(dataset, all_class_imdb, 10, 'default');
-  % createImdbWithBalance(dataset, all_class_imdb, 50, 'default');
-  % createImdbWithBalance(dataset, all_class_imdb, 100, 'default');
-  % createImdbWithBalance(dataset, all_class_imdb, 250, 'default');
-  % createImdbWithBalance(dataset, all_class_imdb, 500, 'default');
-  % createImdbWithBalance(dataset, all_class_imdb, 1000, 'default');
-  % createImdbWithBalance(dataset, all_class_imdb, 2500, 'default');
+  createImdbWithBalance(dataset, all_class_imdb, 10, 'default');
+  createImdbWithBalance(dataset, all_class_imdb, 50, 'default');
+  createImdbWithBalance(dataset, all_class_imdb, 100, 'default');
+  createImdbWithBalance(dataset, all_class_imdb, 250, 'default');
+  createImdbWithBalance(dataset, all_class_imdb, 500, 'default');
+  createImdbWithBalance(dataset, all_class_imdb, 1000, 'default');
+  createImdbWithBalance(dataset, all_class_imdb, 2500, 'default');
 
   % createImdbWithBalance(dataset, all_class_imdb, 500, 500);
-  createImdbWithBalance(dataset, all_class_imdb, 5000, 5000);
+  % createImdbWithBalance(dataset, all_class_imdb, 5000, 5000);
   % createImdbWithBalance(dataset, all_class_imdb, 50000, 50000);
 
 

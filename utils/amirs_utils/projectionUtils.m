@@ -219,9 +219,10 @@ function imdb = getAngleSeparatedImdb(input_imdb)
   printConsoleOutputSeparator();
 
   % Computing right eigen vectors.
-  % jigar = M_S;
-  % M_S = M_D;
-  % M_D = jigar;
+  jigar = M_S;
+  M_S = M_D;
+  M_D = jigar;
+
   tmp = inv(M_D);
   if ~isinf(tmp) % && ~isnan(tmp)
     [V, ~] = eig(tmp * M_S);
@@ -233,8 +234,8 @@ function imdb = getAngleSeparatedImdb(input_imdb)
   end
 
   % keyboard
-  % angle_separation_matrix = real(angle_separation_matrix);
-  assert(isreal(angle_separation_matrix));
+  angle_separation_matrix = real(angle_separation_matrix);
+  % assert(isreal(angle_separation_matrix));
 
   imdb = projectImdbUsingMatrix(input_imdb, angle_separation_matrix);
 

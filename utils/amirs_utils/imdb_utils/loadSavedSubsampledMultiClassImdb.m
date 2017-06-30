@@ -65,6 +65,13 @@ function imdb = loadSavedSubsampledMultiClassImdb(dataset, posneg_balance)
       file_name = sprintf('saved-multi-class-mnist-train-balance-%s-test-balance-default.mat', posneg_balance(10:end));
       dataset_class = dataset(1:strfind(dataset, '-multi-class-subsampled') - 1);
       tmp = load(fullfile(path_to_imdbs, dataset_class, file_name));
+    case 'mnist-784-multi-class-subsampled'
+      % e.g.
+      % posneg_balance = 'balanced-250'
+      % file_name = 'saved-multi-class-mnist-train-balance-250-test-balance-default.mat'
+      file_name = sprintf('saved-multi-class-mnist-train-balance-%s-test-balance-default.mat', posneg_balance(10:end));
+      dataset_class = dataset(1:strfind(dataset, '-multi-class-subsampled') - 1);
+      tmp = load(fullfile(path_to_imdbs, dataset_class, file_name));
     case 'cifar-multi-class-subsampled'
       % e.g.
       % posneg_balance = 'balanced-250'
