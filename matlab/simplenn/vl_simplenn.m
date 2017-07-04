@@ -218,7 +218,6 @@ for i=1:n
     case 'softmax'
       res(i+1).x = vl_nnsoftmax(res(i).x) ;
     case 'loss'
-      keyboard
       res(i+1).x = vl_nnloss(res(i).x, l.class) ;
     case 'softmaxloss'
       res(i+1).x = vl_nnsoftmaxloss(res(i).x, l.class) ;
