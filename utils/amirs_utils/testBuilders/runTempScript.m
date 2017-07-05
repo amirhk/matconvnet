@@ -66,23 +66,23 @@ functionHandle = @tempScriptMeasureClassificationPerformance;
 
 
 
-% functionHandle('mnist-multi-class-subsampled', 'balanced-10', 1);
-% functionHandle('mnist-multi-class-subsampled', 'balanced-50', 1);
-% functionHandle('mnist-multi-class-subsampled', 'balanced-100', 1);
-% functionHandle('mnist-multi-class-subsampled', 'balanced-250', 1);
-% functionHandle('mnist-multi-class-subsampled', 'balanced-500', 1);
-% functionHandle('mnist-multi-class-subsampled', 'balanced-1000', 1);
-% functionHandle('mnist-multi-class-subsampled', 'balanced-2500', 1);
+functionHandle('mnist-multi-class-subsampled', 'balanced-10', 1);
+functionHandle('mnist-multi-class-subsampled', 'balanced-50', 1);
+functionHandle('mnist-multi-class-subsampled', 'balanced-100', 1);
+functionHandle('mnist-multi-class-subsampled', 'balanced-250', 1);
+functionHandle('mnist-multi-class-subsampled', 'balanced-500', 1);
+functionHandle('mnist-multi-class-subsampled', 'balanced-1000', 1);
+functionHandle('mnist-multi-class-subsampled', 'balanced-2500', 1);
 % functionHandle('mnist', 'whatever', 1);
 
 
-functionHandle('mnist-784-multi-class-subsampled', 'balanced-10', 1);
-functionHandle('mnist-784-multi-class-subsampled', 'balanced-50', 1);
-functionHandle('mnist-784-multi-class-subsampled', 'balanced-100', 1);
-functionHandle('mnist-784-multi-class-subsampled', 'balanced-250', 1);
-functionHandle('mnist-784-multi-class-subsampled', 'balanced-500', 1);
-functionHandle('mnist-784-multi-class-subsampled', 'balanced-1000', 1);
-functionHandle('mnist-784-multi-class-subsampled', 'balanced-2500', 1);
+% functionHandle('mnist-784-multi-class-subsampled', 'balanced-10', 1);
+% functionHandle('mnist-784-multi-class-subsampled', 'balanced-50', 1);
+% functionHandle('mnist-784-multi-class-subsampled', 'balanced-100', 1);
+% functionHandle('mnist-784-multi-class-subsampled', 'balanced-250', 1);
+% functionHandle('mnist-784-multi-class-subsampled', 'balanced-500', 1);
+% functionHandle('mnist-784-multi-class-subsampled', 'balanced-1000', 1);
+% functionHandle('mnist-784-multi-class-subsampled', 'balanced-2500', 1);
 % not built! functionHandle('mnist-784', 'whatever', 1);
 
 

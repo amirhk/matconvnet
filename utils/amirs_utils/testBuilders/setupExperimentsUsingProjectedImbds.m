@@ -40,14 +40,27 @@ function [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(data
   end
   afprintf(sprintf('[INFO] done!\n'));
 
-
-  if false % TODO... this doesn't actaully cahnge the file name!!!!!!!
-    fhGetDenslyProjectedImdb = fh_projection_utils.getDenslyProjectedImdb;
-    title_prefix = 'Dense RP';
-  else
-    fhGetDenslyProjectedImdb = fh_projection_utils.getDenslyLogNormalProjectedImdb;
-    title_prefix = 'LogNormal Dense RP';
+  % projection = 'dense_rp';
+  projection = 'dense_rp_normalized';
+  projection = 'dense_lognormal';
+  switch projection
+    case 'dense_rp'
+      fhGetDenslyProjectedImdb = fh_projection_utils.getDenslyProjectedImdb;
+      title_prefix = 'Dense RP';
+    case 'dense_rp_normalized'
+      fhGetDenslyProjectedImdb = fh_projection_utils.getDenslyProjectedAndNormalizedImdb;
+      title_prefix = 'Dense RP Normalized';
+    case 'dense_lognormal'
+      fhGetDenslyProjectedImdb = fh_projection_utils.getDenslyLogNormalProjectedImdb;
+      title_prefix = 'LogNormal Dense RP';
   end
+  % if false % TODO... this doesn't actaully cahnge the file name!!!!!!!
+  %   fhGetDenslyProjectedImdb = fh_projection_utils.getDenslyProjectedImdb;
+  %   title_prefix = 'Dense RP';
+  % else
+  %   fhGetDenslyProjectedImdb = fh_projection_utils.getDenslyLogNormalProjectedImdb;
+  %   title_prefix = 'LogNormal Dense RP';
+  % end
 
 
   % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --

@@ -27,6 +27,7 @@ function fh = projectionUtils()
 
   fh.getAngleSeparatedImdb = @getAngleSeparatedImdb;
   fh.getDenslyProjectedImdb = @getDenslyProjectedImdb;
+  fh.getDenslyProjectedAndNormalizedImdb = @getDenslyProjectedAndNormalizedImdb;
   fh.getDenslyLogNormalProjectedImdb = @getDenslyLogNormalProjectedImdb;
   fh.getSparselyProjectedImdb = @getSparselyProjectedImdb;
   fh.projectImdbThroughNetwork = @projectImdbThroughNetwork;
@@ -137,6 +138,35 @@ function imdb = getDenslyProjectedImdb(imdb, number_of_projection_layers, number
   for i = 1 : number_of_projection_layers
     % random_projection_matrix = randn(s1 * s2 * s3, s1 * s2 * s3) * 1/100;
     random_projection_matrix = randn(s1 * s2 * s3, s1 * s2 * s3);
+    % random_projection_matrix = randn(s1 * s2 * s3, s1 * s2 * s3) / sqrt(s1 * s2 * s3);
+    % random_projection_matrix = randn(s1 * s2 * s3, s1 * s2 * s3) / sqrt(sqrt(s1 * s2 * s3));
+    % random_projection_matrix = randn(s1 * s2 * s3, s1 * s2 * s3) / sqrt(s1 * s2 * s3) * sqrt(2);
+    % random_projection_matrix = (round(rand(s1 * s2 * s3, s1 * s2 * s3)) - 0.5) * 2 / sqrt(s1 * s2 * s3); % Bernoulli
+    imdb = projectImdbUsingMatrix(imdb, random_projection_matrix);
+    if relu_count < number_of_relu_layers
+      % apply relu
+      imdb.images.data(imdb.images.data < 0) = 0;
+      relu_count = relu_count + 1;
+    end
+  end
+  % random_projection_matrix = randn(s1 * s2 * s3, s1 * s2 * s3) * 1/100;
+  % imdb = projectImdbUsingMatrix(imdb, random_projection_matrix);
+
+% -------------------------------------------------------------------------
+function imdb = getDenslyProjectedAndNormalizedImdb(imdb, number_of_projection_layers, number_of_relu_layers)
+% -------------------------------------------------------------------------
+  projected_data = zeros(size(imdb.images.data));
+  s1 = size(imdb.images.data, 1);
+  s2 = size(imdb.images.data, 2);
+  s3 = size(imdb.images.data, 3);
+  s4 = size(imdb.images.data, 4);
+  assert(number_of_relu_layers <= number_of_projection_layers);
+  relu_count = 0;
+  for i = 1 : number_of_projection_layers
+    % random_projection_matrix = randn(s1 * s2 * s3, s1 * s2 * s3) * 1/100;
+    random_projection_matrix = randn(s1 * s2 * s3, s1 * s2 * s3);
+    [Q, R]=qr(random_projection_matrix);
+    random_projection_matrix = normr(Q);
     % random_projection_matrix = randn(s1 * s2 * s3, s1 * s2 * s3) / sqrt(s1 * s2 * s3);
     % random_projection_matrix = randn(s1 * s2 * s3, s1 * s2 * s3) / sqrt(sqrt(s1 * s2 * s3));
     % random_projection_matrix = randn(s1 * s2 * s3, s1 * s2 * s3) / sqrt(s1 * s2 * s3) * sqrt(2);
