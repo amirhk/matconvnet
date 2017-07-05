@@ -40,9 +40,9 @@ function [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(data
   end
   afprintf(sprintf('[INFO] done!\n'));
 
-  % projection = 'dense_rp';
-  projection = 'dense_rp_normalized';
-  projection = 'dense_lognormal';
+  projection = 'dense_rp';
+  % projection = 'dense_rp_normalized';
+  % projection = 'dense_lognormal';
   switch projection
     case 'dense_rp'
       fhGetDenslyProjectedImdb = fh_projection_utils.getDenslyProjectedImdb;
