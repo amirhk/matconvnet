@@ -31,6 +31,19 @@ function dumb_array = tmpScriptCalculateDistances(dataset, posneg_balance, save_
   dumb_array = {};
 
   [~, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 1);
+
+
+  for i = 1 : numel(experiments)
+    imdb = experiments{i}.imdb;
+    imdbv = getVectorizedImdb(imdb);
+    images = imdbv.images.data;
+    cov_images = cov(images);
+    afprintf(sprintf('[INFO] Eccentricity for `%s`: %.30f...\n', experiments{i}.title, getMatrixEccentricity(cov_images)));
+    % imdb = experiments{i}.imdb;
+    % afprintf(sprintf('[INFO] C-separation for `%s`: %.5f...\n', experiments{i}.title, getTwoClassCSeparation(imdb)));
+  end
+  return
+
   for i = 1 : numel(experiments)
     dumb_array.(sprintf('exp_%d_name', i)) = experiments{i}.title;
   end

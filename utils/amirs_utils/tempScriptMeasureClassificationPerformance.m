@@ -38,18 +38,21 @@ function tempScriptMeasureClassificationPerformance(dataset, posneg_balance, sav
   all_experiments_multi_run = {};
 
   for i = 1 : 22
-    all_experiments_multi_run{i}.test_performance = [];
+    all_experiments_multi_run{i}.performance = [];
   end
 
   for kk = 1:repeat_count
     all_experiments_single_run = runAllExperimentsOnce(dataset, posneg_balance, classification_method);
     for i = 1 : numel(all_experiments_single_run)
-      all_experiments_multi_run{i}.test_performance(end + 1) = ...
+      all_experiments_multi_run{i}.performance(end + 1) = ...
         all_experiments_single_run{i}.performance_summary.testing.test.accuracy;
     end
   end
 
-  plotBeef(all_experiments_multi_run, dataset, posneg_balance, save_results, classification_method);
+  % plotBeef(all_experiments_multi_run, dataset, posneg_balance, save_results, classification_method);
+  plot_title = sprintf('classification perf - %s - %s - %s', classification_method, dataset, posneg_balance);
+  % plotBeef(all_experiments_multi_run, plot_title, save_results);
+  tempScriptPlotRPTests(all_experiments_multi_run, plot_title, save_results);
 
 % -------------------------------------------------------------------------
 function all_experiments_single_run = runAllExperimentsOnce(dataset, posneg_balance, classification_method)
@@ -159,107 +162,108 @@ function all_experiments_single_run = runAllExperimentsOnce(dataset, posneg_bala
   all_experiments_single_run = experiments;
 
 
-% -------------------------------------------------------------------------
-function plotBeef(all_experiments_multi_run, dataset, posneg_balance, save_results, classification_method)
-% -------------------------------------------------------------------------
-  y_all = [];
-  y_wo_relu = [];
-  y_w_relu = [];
-  std_errors_value_all = [];
-  std_errors_value_wo_relu = [];
-  std_errors_value_w_relu = [];
-  exp_number = 1;
-  for j = 1:2
-    for i = 1:11
-      y_all(i,j) = mean(all_experiments_multi_run{exp_number}.test_performance);
-      std_errors_value_all(i,j) = std(all_experiments_multi_run{exp_number}.test_performance);
-      exp_number = exp_number + 1;
-    end
-  end
+% % -------------------------------------------------------------------------
+% % function plotBeef(all_experiments_multi_run, dataset, posneg_balance, save_results, classification_method)
+% function plotBeef(all_experiments_multi_run, plot_title, save_results)
+% % -------------------------------------------------------------------------
+%   y_all = [];
+%   y_wo_relu = [];
+%   y_w_relu = [];
+%   std_errors_value_all = [];
+%   std_errors_value_wo_relu = [];
+%   std_errors_value_w_relu = [];
+%   exp_number = 1;
+%   for j = 1:2
+%     for i = 1:11
+%       y_all(i,j) = mean(all_experiments_multi_run{exp_number}.performance);
+%       std_errors_value_all(i,j) = std(all_experiments_multi_run{exp_number}.performance);
+%       exp_number = exp_number + 1;
+%     end
+%   end
 
-  y_wo_relu = [y_all(1,:); y_all(2:6,:)];
-  y_w_relu = [y_all(1,:); y_all(7:11,:)];
+%   y_wo_relu = [y_all(1,:); y_all(2:6,:)];
+%   y_w_relu = [y_all(1,:); y_all(7:11,:)];
 
-  std_errors_value_wo_relu = reshape([std_errors_value_all(1,:); std_errors_value_all(2:6,:)]', 1, []);
-  std_errors_value_w_relu = reshape([std_errors_value_all(1,:); std_errors_value_all(7:11,:)]', 1, []);
+%   std_errors_value_wo_relu = reshape([std_errors_value_all(1,:); std_errors_value_all(2:6,:)]', 1, []);
+%   std_errors_value_w_relu = reshape([std_errors_value_all(1,:); std_errors_value_all(7:11,:)]', 1, []);
 
-  std_errors_x_location = [ ...
-    0.86, 1.14, ...
-    1.86, 2.14, ...
-    2.86, 3.14, ...
-    3.86, 4.14, ...
-    4.86, 5.14, ...
-    5.86, 6.14];
-  std_errors_y_location = reshape(y_all', 1, []);
-  std_errors_y_location_wo_relu = cat(2, std_errors_y_location(1:2), std_errors_y_location(3:12));
-  std_errors_y_location_w_relu = cat(2, std_errors_y_location(1:2), std_errors_y_location(13:22));
+%   std_errors_x_location = [ ...
+%     0.86, 1.14, ...
+%     1.86, 2.14, ...
+%     2.86, 3.14, ...
+%     3.86, 4.14, ...
+%     4.86, 5.14, ...
+%     5.86, 6.14];
+%   std_errors_y_location = reshape(y_all', 1, []);
+%   std_errors_y_location_wo_relu = cat(2, std_errors_y_location(1:2), std_errors_y_location(3:12));
+%   std_errors_y_location_w_relu = cat(2, std_errors_y_location(1:2), std_errors_y_location(13:22));
 
-  h = figure;
+%   h = figure;
 
-  subplot(1,2,1);
-  subplotBeef(y_wo_relu, std_errors_x_location, std_errors_y_location_wo_relu, std_errors_value_wo_relu, 'dense RP w/o ReLU');
+%   subplot(1,2,1);
+%   subplotBeef(y_wo_relu, std_errors_x_location, std_errors_y_location_wo_relu, std_errors_value_wo_relu, 'dense RP w/o ReLU');
 
-  subplot(1,2,2);
-  subplotBeef(y_w_relu, std_errors_x_location, std_errors_y_location_w_relu, std_errors_value_w_relu, 'dense RP w/ ReLU');
+%   subplot(1,2,2);
+%   subplotBeef(y_w_relu, std_errors_x_location, std_errors_y_location_w_relu, std_errors_value_w_relu, 'dense RP w/ ReLU');
 
-  tmp_string = sprintf('classification perf - %s - %s - %s', classification_method, dataset, posneg_balance);
-  suptitle(tmp_string);
-  if save_results
-    % saveas(h, fullfile(getDevPath(), 'temp_images', sprintf('%s.png', tmp_string)));
-    print(fullfile(getDevPath(), 'temp_images', tmp_string), '-dpdf', '-fillpage')
-  end
+%   % suptitle(tmp_string);
+%   suptitle(plot_title);
+%   if save_results
+%     % saveas(h, fullfile(getDevPath(), 'temp_images', sprintf('%s.png', tmp_string)));
+%     print(fullfile(getDevPath(), 'temp_images', tmp_string), '-dpdf', '-fillpage')
+%   end
 
-% -------------------------------------------------------------------------
-function subplotBeef(y, std_errors_x_location, std_errors_y_location, std_errors_value, title_string)
-% -------------------------------------------------------------------------
-  hold on;
-  bar(y);
-  ylim([-0.1, 1.1]);
-  errorbar(std_errors_x_location, std_errors_y_location, std_errors_value);
-  if isnan(y(1,2))
-    legend({'original imdb'}, 'Location','southeast');
-  else
-    legend({'original imdb', 'angle separated imdb'}, 'Location','southeast');
-  end
-  title(title_string);
+% % -------------------------------------------------------------------------
+% function subplotBeef(y, std_errors_x_location, std_errors_y_location, std_errors_value, title_string)
+% % -------------------------------------------------------------------------
+%   hold on;
+%   bar(y);
+%   ylim([-0.1, 1.1]);
+%   errorbar(std_errors_x_location, std_errors_y_location, std_errors_value);
+%   if isnan(y(1,2))
+%     legend({'original imdb'}, 'Location','southeast');
+%   else
+%     legend({'original imdb', 'angle separated imdb'}, 'Location','southeast');
+%   end
+%   title(title_string);
 
-  % Set the X-Tick locations so that every other month is labeled.
-  Xt = 1:1:6;
-  Xl = [0.5 6.5];
-  set(gca, 'XTick', Xt, 'XLim', Xl);
+%   % Set the X-Tick locations so that every other month is labeled.
+%   Xt = 1:1:6;
+%   Xl = [0.5 6.5];
+%   set(gca, 'XTick', Xt, 'XLim', Xl);
 
-  % Add the months as tick labels.
-  labels = ['Default';
-            'RP =  1';
-            'RP =  2';
-            'RP =  3';
-            'RP =  4';
-            'RP =  5'];
-  ax = axis;     % Current axis limits
-  axis(axis);    % Set the axis limit modes (e.g. XLimMode) to manual
-  Yl = ax(3:4);  % Y-axis limits
+%   % Add the months as tick labels.
+%   labels = ['Default';
+%             'RP =  1';
+%             'RP =  2';
+%             'RP =  3';
+%             'RP =  4';
+%             'RP =  5'];
+%   ax = axis;     % Current axis limits
+%   axis(axis);    % Set the axis limit modes (e.g. XLimMode) to manual
+%   Yl = ax(3:4);  % Y-axis limits
 
-  % Place the text labels
-  t = text(Xt, Yl(1) * ones(1, length(Xt)), labels);
-  set(t, 'HorizontalAlignment', 'right', 'VerticalAlignment', 'top', 'Rotation', 45);
+%   % Place the text labels
+%   t = text(Xt, Yl(1) * ones(1, length(Xt)), labels);
+%   set(t, 'HorizontalAlignment', 'right', 'VerticalAlignment', 'top', 'Rotation', 45);
 
-  % Remove the default labels
-  set(gca,'XTickLabel','');
+%   % Remove the default labels
+%   set(gca,'XTickLabel','');
 
-  % Add values on the bars themselves
-  values = reshape(y', 1, []);
-  string_values_cell_array = {};
-  for value = values
-    if isnan(value)
-      string_values_cell_array{end+1} = '-----';
-    else
-      string_values_cell_array{end+1} = sprintf('%.3f', value); % IMPORTANT: string width = 5
-    end
-  end
-  string_values_matrix = reshape(cell2mat(string_values_cell_array)', 5, [])';
-  t2 = text(std_errors_x_location - 0.035, values + 0.01, string_values_matrix);
-  set(t2, 'HorizontalAlignment', 'Left', 'VerticalAlignment', 'middle', 'Rotation', 90);
-  hold off
+%   % Add values on the bars themselves
+%   values = reshape(y', 1, []);
+%   string_values_cell_array = {};
+%   for value = values
+%     if isnan(value)
+%       string_values_cell_array{end+1} = '-----';
+%     else
+%       string_values_cell_array{end+1} = sprintf('%.3f', value); % IMPORTANT: string width = 5
+%     end
+%   end
+%   string_values_matrix = reshape(cell2mat(string_values_cell_array)', 5, [])';
+%   t2 = text(std_errors_x_location - 0.035, values + 0.01, string_values_matrix);
+%   set(t2, 'HorizontalAlignment', 'Left', 'VerticalAlignment', 'middle', 'Rotation', 90);
+%   hold off
 
 
 

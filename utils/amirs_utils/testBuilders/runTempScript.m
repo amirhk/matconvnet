@@ -11,7 +11,9 @@
 % functionHandle = @tempScriptRunMmd
 % functionHandle = @tempScriptRunTsne;
 % functionHandle = @tmpScriptCalculateDistances;
-functionHandle = @tempScriptMeasureClassificationPerformance;
+% functionHandle = @tempScriptMeasureClassificationPerformance;
+% functionHandle = @tempScriptMeasureCSeparation;
+functionHandle = @tempScriptMeasureAverageClassEccentricity;
 % functionHandle = @tempScriptPlot2DEuclideanDistances;
 % functionHandle = @tempScriptPlot3DEuclideanDistances;
 % functionHandle = @tempScriptPlotProgressionOfRandomProjectionFor1Sample;
@@ -88,43 +90,43 @@ functionHandle = @tempScriptMeasureClassificationPerformance;
 
 
 
-functionHandle('cifar-multi-class-subsampled', 'balanced-10', 1);
-functionHandle('cifar-multi-class-subsampled', 'balanced-50', 1);
-functionHandle('cifar-multi-class-subsampled', 'balanced-100', 1);
-functionHandle('cifar-multi-class-subsampled', 'balanced-250', 1);
-functionHandle('cifar-multi-class-subsampled', 'balanced-500', 1);
-functionHandle('cifar-multi-class-subsampled', 'balanced-1000', 1);
-functionHandle('cifar-multi-class-subsampled', 'balanced-2500', 1);
+% functionHandle('cifar-multi-class-subsampled', 'balanced-10', 1);
+% functionHandle('cifar-multi-class-subsampled', 'balanced-50', 1);
+% functionHandle('cifar-multi-class-subsampled', 'balanced-100', 1);
+% functionHandle('cifar-multi-class-subsampled', 'balanced-250', 1);
+% functionHandle('cifar-multi-class-subsampled', 'balanced-500', 1);
+% functionHandle('cifar-multi-class-subsampled', 'balanced-1000', 1);
+% functionHandle('cifar-multi-class-subsampled', 'balanced-2500', 1);
 % functionHandle('cifar', 'whatever', 1);
 
 
 
 
-functionHandle('saved-multi-class-circles-3D-mean-0-var-1-radius-1-train-balance-500-test-balance-500', 'whatever', 1);
-functionHandle('saved-multi-class-circles-50D-mean-0-var-1-radius-1-train-balance-500-test-balance-500', 'whatever', 1);
-functionHandle('saved-multi-class-circles-250D-mean-0-var-1-radius-1-train-balance-500-test-balance-500', 'whatever', 1);
-functionHandle('saved-multi-class-circles-1000D-mean-0-var-1-radius-1-train-balance-500-test-balance-500', 'whatever', 1);
-functionHandle('saved-multi-class-circles-2500D-mean-0-var-1-radius-1-train-balance-500-test-balance-500', 'whatever', 1);
+% functionHandle('saved-multi-class-circles-3D-mean-0-var-1-radius-1-train-balance-500-test-balance-500', 'whatever', 1);
+% functionHandle('saved-multi-class-circles-50D-mean-0-var-1-radius-1-train-balance-500-test-balance-500', 'whatever', 1);
+% functionHandle('saved-multi-class-circles-250D-mean-0-var-1-radius-1-train-balance-500-test-balance-500', 'whatever', 1);
+% functionHandle('saved-multi-class-circles-1000D-mean-0-var-1-radius-1-train-balance-500-test-balance-500', 'whatever', 1);
+% functionHandle('saved-multi-class-circles-2500D-mean-0-var-1-radius-1-train-balance-500-test-balance-500', 'whatever', 1);
 
 
 
 
-% functionHandle('saved-multi-class-gaussian-3D-mean-1-var-1-train-balance-500-test-balance-500', 'whatever', 1);
-% functionHandle('saved-multi-class-gaussian-50D-mean-1-var-1-train-balance-500-test-balance-500', 'whatever', 1);
-% functionHandle('saved-multi-class-gaussian-250D-mean-1-var-1-train-balance-500-test-balance-500', 'whatever', 1);
-% functionHandle('saved-multi-class-gaussian-1000D-mean-1-var-1-train-balance-500-test-balance-500', 'whatever', 1);
-% functionHandle('saved-multi-class-gaussian-2500D-mean-1-var-1-train-balance-500-test-balance-500', 'whatever', 1);
+functionHandle('saved-multi-class-gaussian-3D-mean-1-var-1-train-balance-500-test-balance-500', 'whatever', 1);
+functionHandle('saved-multi-class-gaussian-50D-mean-1-var-1-train-balance-500-test-balance-500', 'whatever', 1);
+functionHandle('saved-multi-class-gaussian-250D-mean-1-var-1-train-balance-500-test-balance-500', 'whatever', 1);
+functionHandle('saved-multi-class-gaussian-1000D-mean-1-var-1-train-balance-500-test-balance-500', 'whatever', 1);
+functionHandle('saved-multi-class-gaussian-2500D-mean-1-var-1-train-balance-500-test-balance-500', 'whatever', 1);
 
-% functionHandle('saved-multi-class-gaussian-3D-mean-1-var-1-train-balance-5000-test-balance-5000', 'whatever', 1);
-% functionHandle('saved-multi-class-gaussian-50D-mean-1-var-1-train-balance-5000-test-balance-5000', 'whatever', 1);
-% functionHandle('saved-multi-class-gaussian-250D-mean-1-var-1-train-balance-5000-test-balance-5000', 'whatever', 1);
-% functionHandle('saved-multi-class-gaussian-1000D-mean-1-var-1-train-balance-5000-test-balance-5000', 'whatever', 1);
-% functionHandle('saved-multi-class-gaussian-2500D-mean-1-var-1-train-balance-5000-test-balance-5000', 'whatever', 1);
+functionHandle('saved-multi-class-gaussian-3D-mean-1-var-1-train-balance-5000-test-balance-5000', 'whatever', 1);
+functionHandle('saved-multi-class-gaussian-50D-mean-1-var-1-train-balance-5000-test-balance-5000', 'whatever', 1);
+functionHandle('saved-multi-class-gaussian-250D-mean-1-var-1-train-balance-5000-test-balance-5000', 'whatever', 1);
+functionHandle('saved-multi-class-gaussian-1000D-mean-1-var-1-train-balance-5000-test-balance-5000', 'whatever', 1);
+functionHandle('saved-multi-class-gaussian-2500D-mean-1-var-1-train-balance-5000-test-balance-5000', 'whatever', 1);
 
-% functionHandle('saved-multi-class-gaussian-3D-mean-1-var-1-train-balance-50000-test-balance-50000', 'whatever', 1);
-% functionHandle('saved-multi-class-gaussian-50D-mean-1-var-1-train-balance-50000-test-balance-50000', 'whatever', 1);
-% functionHandle('saved-multi-class-gaussian-250D-mean-1-var-1-train-balance-50000-test-balance-50000', 'whatever', 1);
-% functionHandle('saved-multi-class-gaussian-1000D-mean-1-var-1-train-balance-50000-test-balance-50000', 'whatever', 1);
+functionHandle('saved-multi-class-gaussian-3D-mean-1-var-1-train-balance-50000-test-balance-50000', 'whatever', 1);
+functionHandle('saved-multi-class-gaussian-50D-mean-1-var-1-train-balance-50000-test-balance-50000', 'whatever', 1);
+functionHandle('saved-multi-class-gaussian-250D-mean-1-var-1-train-balance-50000-test-balance-50000', 'whatever', 1);
+functionHandle('saved-multi-class-gaussian-1000D-mean-1-var-1-train-balance-50000-test-balance-50000', 'whatever', 1);
 % not built! functionHandle('saved-multi-class-gaussian-2500D-mean-1-var-1-train-balance-50000-test-balance-50000', 'whatever', 1);
 
 
