@@ -38,11 +38,11 @@ function tempScriptReproDasgupta()
   % metric = 'eccentricity';
   % metric = '1-knn';
   metric_list = {'c separation', 'eccentricity', '1-knn'};
-  metric_list = {'c separation', '1-knn'};
+  % metric_list = {'c separation', '1-knn'};
 
   fh_projection_utils = projectionUtils;
 
-  repeat_count = 2;
+  repeat_count = 30;
   counter = 1;
   figure;
 
@@ -66,7 +66,7 @@ function tempScriptReproDasgupta()
 
           for original_dim = original_dim_list
             projected_dim = 20;
-            experiments{end+1}.original_imdb = constructSyntheticGaussianImdb(100, original_dim, 1, 4, 1);
+            experiments{end+1}.original_imdb = constructSyntheticGaussianImdb(10000, original_dim, 1, 4, 1);
             experiments{end}.projected_imdb = fh_projection_utils.getDenslyDownProjectedImdb(experiments{end}.original_imdb, 1, 0, projected_dim);
           end
 
@@ -78,7 +78,7 @@ function tempScriptReproDasgupta()
           x_tick_lables = projected_dim_list;
 
           for projected_dim = projected_dim_list
-            experiments{end+1}.original_imdb = constructSyntheticGaussianImdb(100, 50, 1, 1, 1000);
+            experiments{end+1}.original_imdb = constructSyntheticGaussianImdb(10000, 50, 1, 1, 1000);
             experiments{end}.projected_imdb = fh_projection_utils.getDenslyDownProjectedImdb(experiments{end}.original_imdb, 1, 0, projected_dim);
           end
 
