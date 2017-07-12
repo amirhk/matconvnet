@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function tempScriptMeasureAverageClassEccentricity(dataset, posneg_balance, save_results)
+function average_class_eccentricity = getAverageClassEccentricity(imdb)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -25,36 +25,11 @@ function tempScriptMeasureAverageClassEccentricity(dataset, posneg_balance, save
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
 
-  % -------------------------------------------------------------------------
-  %                                                                     Setup
-  % -------------------------------------------------------------------------
-  repeat_count = 10;
-  all_experiments_multi_run = {};
-
-  for i = 1 : 22
-    all_experiments_multi_run{i}.performance = [];
+  vectorized_imdb = getVectorizedImdb(imdb);
+  eccentricity_list = [];
+  for j = reshape(unique(imdb.images.labels), 1, [])
+    data_for_that_class = vectorized_imdb.images.data(imdb.images.labels == j, :);
+    eccentricity = getDataEccentricity(data_for_that_class);
+    eccentricity_list(end+1) = eccentricity;
   end
-
-  for kk = 1:repeat_count
-    all_experiments_single_run = runAllExperimentsOnce(dataset, posneg_balance);
-    for i = 1 : numel(all_experiments_single_run)
-      all_experiments_multi_run{i}.performance(end + 1) = ...
-        all_experiments_single_run{i}.average_eccentricity;
-    end
-  end
-
-  plot_title = sprintf('Average Eccentricity - %s - %s', dataset, posneg_balance);
-  tempScriptPlotRPTests(all_experiments_multi_run, plot_title, save_results);
-
-% -------------------------------------------------------------------------
-function all_experiments_single_run = runAllExperimentsOnce(dataset, posneg_balance)
-% -------------------------------------------------------------------------
-  [~, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 0);
-
-  for i = 1 : numel(experiments)
-    experiments{i}.average_eccentricity = getAverageClassEccentricity(experiments{i}.imdb);
-  end
-
-  all_experiments_single_run = experiments;
-
-
+  average_class_eccentricity = mean(eccentricity_list);

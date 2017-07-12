@@ -28,7 +28,7 @@ function [trained_model, performance_summary] = testEnsemble2(input_opts)
   % -------------------------------------------------------------------------
   %                                                              opts.general
   % -------------------------------------------------------------------------
-  opts.general.dataset = getValueFromFieldOrDefault(input_opts, 'dataset', 'mnist-two-class-9-4');
+  opts.general.dataset = getValueFromFieldOrDefault(input_opts, 'dataset', 'mnist');
   opts.general.return_performance_summary = getValueFromFieldOrDefault(input_opts, 'return_performance_summary', true);
 
   % -------------------------------------------------------------------------

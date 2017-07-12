@@ -29,7 +29,7 @@ function folds = testKFold(input_opts)
   %                                                              opts.general
   % -------------------------------------------------------------------------
 
-  opts.general.dataset = getValueFromFieldOrDefault(input_opts, 'dataset', 'mnist-two-class-9-4');
+  opts.general.dataset = getValueFromFieldOrDefault(input_opts, 'dataset', 'mnist');
 
   % -------------------------------------------------------------------------
   %                                                       opts.k_fold_options

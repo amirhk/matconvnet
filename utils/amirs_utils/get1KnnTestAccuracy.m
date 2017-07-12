@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function tempScriptMeasureAverageClassEccentricity(dataset, posneg_balance, save_results)
+function test_accuracy = get1KnnTestAccuracy(imdb)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -25,36 +25,8 @@ function tempScriptMeasureAverageClassEccentricity(dataset, posneg_balance, save
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
 
-  % -------------------------------------------------------------------------
-  %                                                                     Setup
-  % -------------------------------------------------------------------------
-  repeat_count = 10;
-  all_experiments_multi_run = {};
-
-  for i = 1 : 22
-    all_experiments_multi_run{i}.performance = [];
-  end
-
-  for kk = 1:repeat_count
-    all_experiments_single_run = runAllExperimentsOnce(dataset, posneg_balance);
-    for i = 1 : numel(all_experiments_single_run)
-      all_experiments_multi_run{i}.performance(end + 1) = ...
-        all_experiments_single_run{i}.average_eccentricity;
-    end
-  end
-
-  plot_title = sprintf('Average Eccentricity - %s - %s', dataset, posneg_balance);
-  tempScriptPlotRPTests(all_experiments_multi_run, plot_title, save_results);
-
-% -------------------------------------------------------------------------
-function all_experiments_single_run = runAllExperimentsOnce(dataset, posneg_balance)
-% -------------------------------------------------------------------------
-  [~, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 0);
-
-  for i = 1 : numel(experiments)
-    experiments{i}.average_eccentricity = getAverageClassEccentricity(experiments{i}.imdb);
-  end
-
-  all_experiments_single_run = experiments;
-
-
+  single_training_method_options.return_performance_summary = true;
+  single_training_method_options.number_of_nearest_neighbors = 1;
+  single_training_method_options.imdb = imdb;
+  [~, performance_summary] = testKnn(single_training_method_options);
+  test_accuracy = performance_summary.testing.test.accuracy;

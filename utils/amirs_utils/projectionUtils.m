@@ -27,6 +27,7 @@ function fh = projectionUtils()
 
   fh.getAngleSeparatedImdb = @getAngleSeparatedImdb;
   fh.getDenslyProjectedImdb = @getDenslyProjectedImdb;
+  fh.getDenslyDownProjectedImdb = @getDenslyDownProjectedImdb;
   fh.getDenslyProjectedAndNormalizedImdb = @getDenslyProjectedAndNormalizedImdb;
   fh.getDenslyLogNormalProjectedImdb = @getDenslyLogNormalProjectedImdb;
   fh.getSparselyProjectedImdb = @getSparselyProjectedImdb;
@@ -124,24 +125,20 @@ function [images, labels] = getSimpleNNBatch(imdb, batch)
 
 
 
+% -------------------------------------------------------------------------
+function imdb = getDenslyDownProjectedImdb(imdb, number_of_projection_layers, number_of_relu_layers, projected_dim)
+% -------------------------------------------------------------------------
 
-% -------------------------------------------------------------------------
-function imdb = getDenslyProjectedImdb(imdb, number_of_projection_layers, number_of_relu_layers)
-% -------------------------------------------------------------------------
-  projected_data = zeros(size(imdb.images.data));
-  s1 = size(imdb.images.data, 1);
-  s2 = size(imdb.images.data, 2);
-  s3 = size(imdb.images.data, 3);
-  s4 = size(imdb.images.data, 4);
+  assert(number_of_projection_layers == 1);
+  assert(number_of_projection_layers <= 1);
   assert(number_of_relu_layers <= number_of_projection_layers);
+
+  vectorized_imdb = getVectorizedImdb(imdb);
+  original_dim = size(vectorized_imdb.images.data, 2);
+  % projected_dim = original_dim;
   relu_count = 0;
   for i = 1 : number_of_projection_layers
-    % random_projection_matrix = randn(s1 * s2 * s3, s1 * s2 * s3) * 1/100;
-    random_projection_matrix = randn(s1 * s2 * s3, s1 * s2 * s3);
-    % random_projection_matrix = randn(s1 * s2 * s3, s1 * s2 * s3) / sqrt(s1 * s2 * s3);
-    % random_projection_matrix = randn(s1 * s2 * s3, s1 * s2 * s3) / sqrt(sqrt(s1 * s2 * s3));
-    % random_projection_matrix = randn(s1 * s2 * s3, s1 * s2 * s3) / sqrt(s1 * s2 * s3) * sqrt(2);
-    % random_projection_matrix = (round(rand(s1 * s2 * s3, s1 * s2 * s3)) - 0.5) * 2 / sqrt(s1 * s2 * s3); % Bernoulli
+    random_projection_matrix = randn(projected_dim, original_dim);
     imdb = projectImdbUsingMatrix(imdb, random_projection_matrix);
     if relu_count < number_of_relu_layers
       % apply relu
@@ -149,28 +146,47 @@ function imdb = getDenslyProjectedImdb(imdb, number_of_projection_layers, number
       relu_count = relu_count + 1;
     end
   end
-  % random_projection_matrix = randn(s1 * s2 * s3, s1 * s2 * s3) * 1/100;
+
+
+
+
+% -------------------------------------------------------------------------
+function imdb = getDenslyProjectedImdb(imdb, number_of_projection_layers, number_of_relu_layers)
+% -------------------------------------------------------------------------
+  assert(number_of_relu_layers <= number_of_projection_layers);
+  vectorized_imdb = getVectorizedImdb(imdb);
+  original_dim = size(vectorized_imdb.images.data, 2);
+  projected_dim = original_dim;
+  relu_count = 0;
+  for i = 1 : number_of_projection_layers
+    % random_projection_matrix = randn(projected_dim, original_dim) * 1/100;
+    random_projection_matrix = randn(projected_dim, original_dim);
+    % random_projection_matrix = randn(projected_dim, original_dim) / sqrt(original_dim);
+    % random_projection_matrix = randn(projected_dim, original_dim) / sqrt(sqrt(original_dim));
+    % random_projection_matrix = randn(projected_dim, original_dim) / sqrt(original_dim) * sqrt(2);
+    % random_projection_matrix = (round(rand(projected_dim, original_dim)) - 0.5) * 2 / sqrt(original_dim); % Bernoulli
+    imdb = projectImdbUsingMatrix(imdb, random_projection_matrix);
+    if relu_count < number_of_relu_layers
+      % apply relu
+      imdb.images.data(imdb.images.data < 0) = 0;
+      relu_count = relu_count + 1;
+    end
+  end
+  % random_projection_matrix = randn(projected_dim, original_dim) * 1/100;
   % imdb = projectImdbUsingMatrix(imdb, random_projection_matrix);
 
 % -------------------------------------------------------------------------
 function imdb = getDenslyProjectedAndNormalizedImdb(imdb, number_of_projection_layers, number_of_relu_layers)
 % -------------------------------------------------------------------------
-  projected_data = zeros(size(imdb.images.data));
-  s1 = size(imdb.images.data, 1);
-  s2 = size(imdb.images.data, 2);
-  s3 = size(imdb.images.data, 3);
-  s4 = size(imdb.images.data, 4);
   assert(number_of_relu_layers <= number_of_projection_layers);
+  vectorized_imdb = getVectorizedImdb(imdb);
+  original_dim = size(vectorized_imdb.images.data, 2);
+  projected_dim = original_dim;
   relu_count = 0;
   for i = 1 : number_of_projection_layers
-    % random_projection_matrix = randn(s1 * s2 * s3, s1 * s2 * s3) * 1/100;
-    random_projection_matrix = randn(s1 * s2 * s3, s1 * s2 * s3);
-    [Q, R]=qr(random_projection_matrix);
+    random_projection_matrix = randn(projected_dim, original_dim);
+    [Q, R] = qr(random_projection_matrix);
     random_projection_matrix = normr(Q);
-    % random_projection_matrix = randn(s1 * s2 * s3, s1 * s2 * s3) / sqrt(s1 * s2 * s3);
-    % random_projection_matrix = randn(s1 * s2 * s3, s1 * s2 * s3) / sqrt(sqrt(s1 * s2 * s3));
-    % random_projection_matrix = randn(s1 * s2 * s3, s1 * s2 * s3) / sqrt(s1 * s2 * s3) * sqrt(2);
-    % random_projection_matrix = (round(rand(s1 * s2 * s3, s1 * s2 * s3)) - 0.5) * 2 / sqrt(s1 * s2 * s3); % Bernoulli
     imdb = projectImdbUsingMatrix(imdb, random_projection_matrix);
     if relu_count < number_of_relu_layers
       % apply relu
@@ -178,26 +194,22 @@ function imdb = getDenslyProjectedAndNormalizedImdb(imdb, number_of_projection_l
       relu_count = relu_count + 1;
     end
   end
-  % random_projection_matrix = randn(s1 * s2 * s3, s1 * s2 * s3) * 1/100;
-  % imdb = projectImdbUsingMatrix(imdb, random_projection_matrix);
 
 % -------------------------------------------------------------------------
 function imdb = getDenslyLogNormalProjectedImdb(imdb, number_of_projection_layers, number_of_relu_layers)
 % -------------------------------------------------------------------------
-  projected_data = zeros(size(imdb.images.data));
-  s1 = size(imdb.images.data, 1);
-  s2 = size(imdb.images.data, 2);
-  s3 = size(imdb.images.data, 3);
-  s4 = size(imdb.images.data, 4);
   assert(number_of_relu_layers <= number_of_projection_layers);
+  vectorized_imdb = getVectorizedImdb(imdb);
+  original_dim = size(vectorized_imdb.images.data, 2);
+  projected_dim = original_dim;
   relu_count = 0;
   for i = 1 : number_of_projection_layers
     lognormal_mean = -0.702;
     lognormal_var = 0.9355;
     mu = log( (lognormal_mean ^ 2) / sqrt(lognormal_var + lognormal_mean ^ 2));
     sigma = sqrt( log( lognormal_var / (lognormal_mean ^ 2) + 1));
-    generated_samples = lognrnd(mu, sigma, 1, (s1 * s2 * s3)^2);
-    random_projection_matrix = reshape(generated_samples, s1 * s2 * s3, s1 * s2 * s3);
+    generated_samples = lognrnd(mu, sigma, 1, (original_dim)^2);
+    random_projection_matrix = reshape(generated_samples, projected_dim, original_dim);
     imdb = projectImdbUsingMatrix(imdb, random_projection_matrix);
     if relu_count < number_of_relu_layers
       % apply relu
@@ -205,8 +217,6 @@ function imdb = getDenslyLogNormalProjectedImdb(imdb, number_of_projection_layer
       relu_count = relu_count + 1;
     end
   end
-  % random_projection_matrix = randn(s1 * s2 * s3, s1 * s2 * s3) * 1/100;
-  % imdb = projectImdbUsingMatrix(imdb, random_projection_matrix);
 
 
 % -------------------------------------------------------------------------
@@ -218,14 +228,33 @@ function imdb = getSparselyProjectedImdb(imdb, number_of_projection_layers, numb
 % -------------------------------------------------------------------------
 function imdb = projectImdbUsingMatrix(imdb, projection_matrix)
 % -------------------------------------------------------------------------
-  s1 = size(imdb.images.data, 1);
-  s2 = size(imdb.images.data, 2);
-  s3 = size(imdb.images.data, 3);
-  s4 = size(imdb.images.data, 4);
-  all_data_original_vectorized = reshape(imdb.images.data, s1 * s2 * s3, []); % [] = s4
-  all_data_projected_vectorized = projection_matrix * all_data_original_vectorized; % 3072x3072 * 3072xnumber_of_images
-  all_data_projected_matricized = reshape(all_data_projected_vectorized, s1, s2, s3, s4);
-  imdb.images.data = all_data_projected_matricized;
+  % s1 = size(imdb.images.data, 1);
+  % s2 = size(imdb.images.data, 2);
+  % s3 = size(imdb.images.data, 3);
+  % s4 = size(imdb.images.data, 4);
+  % vectorized_imdb = getVectorizedImdb(imdb);
+  % original_dim = size(vectorized_imdb.images.data, 2);
+  % all_data_original_vectorized = reshape(imdb.images.data, original_dim, []); % [] = s4
+  % all_data_projected_vectorized = projection_matrix * all_data_original_vectorized; % 3072x3072 * 3072xnumber_of_images
+  % all_data_projected_matricized = reshape(all_data_projected_vectorized, s1, s2, s3, s4);
+  % imdb.images.data = all_data_projected_matricized;
+
+
+
+
+  vectorized_original_imdb = getVectorizedImdb(imdb);
+
+  original_dim = size(vectorized_original_imdb.images.data, 2);
+  projected_dim = size(projection_matrix, 1);
+  number_of_samples = size(vectorized_original_imdb.images.data, 1);
+
+  all_data_original_vectorized = vectorized_original_imdb.images.data;
+  all_data_projected_vectorized = all_data_original_vectorized * projection_matrix';
+
+  vectorized_projected_imdb = vectorized_original_imdb;
+  vectorized_projected_imdb.images.data = all_data_projected_vectorized;
+
+  imdb = get4DImdb(vectorized_projected_imdb, projected_dim, 1, 1, number_of_samples);
 
 
 

@@ -116,7 +116,7 @@ function all_experiments_single_run = runAllExperimentsOnce(dataset, posneg_bala
     case '1-knn'
       classificationMethodFunctonHandle = @testKnn;
       opts.single_training_method_options.number_of_nearest_neighbors = 1;
-    case '1-knn'
+    case '3-knn'
       classificationMethodFunctonHandle = @testKnn;
       opts.single_training_method_options.number_of_nearest_neighbors = 3;
     case 'mlp-64-10'

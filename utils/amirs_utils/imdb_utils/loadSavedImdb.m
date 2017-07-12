@@ -25,7 +25,7 @@ function imdb = loadSavedImdb(input_opts, debug_flag)
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
 
-  dataset = getValueFromFieldOrDefault(input_opts, 'dataset', 'mnist-two-class-9-4');
+  dataset = getValueFromFieldOrDefault(input_opts, 'dataset', 'mnist');
   network_arch = getValueFromFieldOrDefault(input_opts, 'network_arch', 'lenet'); % TODO: IMDB SHOULD NOT DEPEND ON NETWORK ARCH!
   posneg_balance = getValueFromFieldOrDefault(input_opts, 'posneg_balance', 'balanced-low');
   fold_number = getValueFromFieldOrDefault(input_opts, 'fold_number', 1); % currently only implemented for prostate data

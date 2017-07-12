@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function imdb = constructSyntheticGaussianImdb(samples_per_class, sample_dim, sample_mean, sample_variance_multiplier)
+function imdb = constructSyntheticGaussianImdb(samples_per_class, sample_dim, sample_mean, sample_variance_multiplier, eccentricity)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -56,7 +56,16 @@ function imdb = constructSyntheticGaussianImdb(samples_per_class, sample_dim, sa
   % because we'd like to assert that after angle-separating the original imdb, then
   % we obtain a spherical imdb. So, we choose means to be +/- 1 and choose variances
   % to be var = diag([25, 9, 1, 25, 9, 1, ...])
-  variance_basis = [25, 9, 1];
+
+  switch eccentricity
+    case 1
+      variance_basis = [1,1,1];
+    case 1000
+      variance_basis = [1000000, 1, 1];
+    otherwise
+      variance_basis = [25, 9, 1];
+  end
+
   repeated_variance_basis = repmat(variance_basis, 1, ceil(sample_dim / length(variance_basis)));
   % now we must choose the first sample_dim elements of this (say sample_dim = 25, this matrix above will give 27 variance values...)
   covariance_matrix = diag(repeated_variance_basis(1:sample_dim));

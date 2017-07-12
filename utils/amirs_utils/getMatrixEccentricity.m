@@ -30,4 +30,12 @@ function eccentricity = getMatrixEccentricity(matrix)
   assert(numel(eigen_values) >= 2);
   % eigen_values = round(eigen_values);
   % keyboard
+  [~,p] = chol(matrix);
+  % p
+  % keyboard
+  assert(p == 0, 'Eccentrity is only defined for Positive Definite matrices.');
+  assert(sum(eigen_values < 0) == 0, 'Positive Definite matrices cannot have negative eigenvalues');
   eccentricity = sqrt(eigen_values(end) / eigen_values(1));
+  % eccentricity
+  % keyboard
+  % eccentricity = sqrt(abs(eigen_values(end)) / abs(eigen_values(1)));
