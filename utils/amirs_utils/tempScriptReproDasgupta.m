@@ -30,8 +30,8 @@ function tempScriptReproDasgupta()
   number_of_samples_list = 25:25:500;
 
   % test_type = 'vary_original_dim';
-  % test_type = 'vary_projected_dim';
-  test_type = 'vary_number_of_samples';
+  test_type = 'vary_projected_dim';
+  % test_type = 'vary_number_of_samples';
 
   % metric = 'c separation';
   % metric = 'eccentricity';
