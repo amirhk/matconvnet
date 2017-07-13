@@ -142,10 +142,10 @@ function tempScriptReproDasgupta()
   subplotBeef(proj_imdb_results_mean, 'Proj. Imdb', x_label, y_label, x_lim, y_lim, x_tick_lables, y_tick_lables, metric);
 
 % -------------------------------------------------------------------------
-function subplotBeef(data, title, x_label, y_label, x_lim, y_lim, x_tick_lables, y_tick_lables, metric)
+function subplotBeef(data, title_string, x_label, y_label, x_lim, y_lim, x_tick_lables, y_tick_lables, metric)
 % -------------------------------------------------------------------------
   mesh(data),
-  title(title),
+  title(title_string),
   xlabel(x_label),
   ylabel(y_label),
   xlim(x_lim),
