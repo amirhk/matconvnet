@@ -26,14 +26,16 @@ function tempScriptReproDasgupta()
 % POSSIBILITY OF SUCH DAMAGE.
 
   % original_dim_list = 25:25:500;
+  original_dim_list = 50:50:500;
   % projected_dim_list = 25:1:50;
   % number_of_samples_list = 25:25:500;
   % original_dim_list = 25:25:500;
-  original_dim_list = 1000;
+  % original_dim_list = 1000;
   projected_dim_list = [10, 20, 40, 80, 160, 320];
   % projected_dim_list = [10, 20, 40, 80, 160];
   % projected_dim_list = [10, 20];
-  number_of_samples_list = [100, 250, 500, 1000, 2500, 5000, 10000, 25000];
+  number_of_samples_list = [10000];
+  % number_of_samples_list = [100, 250, 500, 1000, 2500, 5000, 10000, 25000];
   % number_of_samples_list = [100, 250, 500, 1000, 2500];
   % number_of_samples_list = [100, 250];
   % number_of_samples_list = [10000, 25000, 50000, 100000];
