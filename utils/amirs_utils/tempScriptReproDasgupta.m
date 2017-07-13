@@ -131,13 +131,15 @@ function tempScriptReproDasgupta()
         proj_imdb_results_mean(counter) = mean(tmp_proj_imdb_results);
         proj_imdb_results_std(counter) = std(tmp_proj_imdb_results);
 
+        counter = counter + 1;
+
       end
 
     end
 
-    counter = counter + 1;
-
   end
+
+  orig_imdb_results_mean
 
   figure,
   subplot(1,2,1),
