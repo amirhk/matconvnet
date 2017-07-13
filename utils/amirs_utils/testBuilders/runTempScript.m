@@ -1,4 +1,20 @@
 
+imdb = constructSyntheticGaussianImdbNEW(10000, 100, 1, 1);
+getTwoClassCSeparation(imdb)
+getAverageClassEccentricity(imdb)
+
+imdb = constructSyntheticGaussianImdbNEW(10000, 100, 1000, 1);
+getTwoClassCSeparation(imdb)
+getAverageClassEccentricity(imdb)
+
+imdb = constructSyntheticGaussianImdbNEW(10000, 100, 1, 1000);
+getTwoClassCSeparation(imdb)
+getAverageClassEccentricity(imdb)
+
+imdb = constructSyntheticGaussianImdbNEW(10000, 100, 1000, 1000);
+getTwoClassCSeparation(imdb)
+getAverageClassEccentricity(imdb)
+
 
 
 
@@ -90,12 +106,12 @@ functionHandle = @tempScriptMeasureClassificationPerformance;
 
 
 
-functionHandle('cifar-multi-class-subsampled', 'balanced-10', 1);
-functionHandle('cifar-multi-class-subsampled', 'balanced-50', 1);
-functionHandle('cifar-multi-class-subsampled', 'balanced-100', 1);
-functionHandle('cifar-multi-class-subsampled', 'balanced-250', 1);
-functionHandle('cifar-multi-class-subsampled', 'balanced-500', 1);
-functionHandle('cifar-multi-class-subsampled', 'balanced-1000', 1);
+% functionHandle('cifar-multi-class-subsampled', 'balanced-10', 1);
+% functionHandle('cifar-multi-class-subsampled', 'balanced-50', 1);
+% functionHandle('cifar-multi-class-subsampled', 'balanced-100', 1);
+% functionHandle('cifar-multi-class-subsampled', 'balanced-250', 1);
+% functionHandle('cifar-multi-class-subsampled', 'balanced-500', 1);
+% functionHandle('cifar-multi-class-subsampled', 'balanced-1000', 1);
 % functionHandle('cifar-multi-class-subsampled', 'balanced-2500', 1);
 % functionHandle('cifar', 'whatever', 1);
 
