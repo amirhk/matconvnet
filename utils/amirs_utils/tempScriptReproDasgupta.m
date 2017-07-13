@@ -135,6 +135,8 @@ function tempScriptReproDasgupta()
 
     end
 
+    counter = counter + 1;
+
   end
 
   keyboard
