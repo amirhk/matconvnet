@@ -148,8 +148,8 @@ function subplotBeef(data, title_string, x_label, y_label, x_lim, y_lim, x_tick_
   title(title_string),
   xlabel(x_label),
   ylabel(y_label),
-  xlim(x_lim),
-  ylim(y_lim),
+  % xlim(x_lim),
+  % ylim(y_lim),
   xticklabels(x_tick_lables),
   yticklabels(y_tick_lables),
   zlabel(metric);
