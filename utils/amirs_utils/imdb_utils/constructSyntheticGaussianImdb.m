@@ -70,9 +70,6 @@ function imdb = constructSyntheticGaussianImdb(samples_per_class, sample_dim, sa
   % now we must choose the first sample_dim elements of this (say sample_dim = 25, this matrix above will give 27 variance values...)
   covariance_matrix = diag(repeated_variance_basis(1:sample_dim));
 
-  sample_variance_multiplier * covariance_matrix
-  keyboard
-
   data_m = mvnrnd(- sample_mean * ones(sample_dim, 1), sample_variance_multiplier * covariance_matrix, samples_per_class);
   data_p = mvnrnd(+ sample_mean * ones(sample_dim, 1), sample_variance_multiplier * covariance_matrix, samples_per_class);
 
