@@ -139,8 +139,6 @@ function tempScriptReproDasgupta()
 
   end
 
-  orig_imdb_results_mean
-
   figure,
   subplot(1,2,1),
   subplotBeef(orig_imdb_results_mean, 'Orig. Imdb', x_label, y_label, x_lim, y_lim, x_tick_lables, y_tick_lables, metric);
