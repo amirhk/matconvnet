@@ -17,8 +17,8 @@
 
 
 
-% tempScriptReproDasgupta('measure-mlp-500-100-perf', 'rp_1_relu_0');
-tempScriptReproDasgupta('measure-mlp-500-100-perf', 'rp_1_relu_1');
+tempScriptReproDasgupta('measure-linear-svm-perf', 'rp_1_relu_0');
+% tempScriptReproDasgupta('measure-linear-svm-perf', 'rp_1_relu_1');
 
 
 
