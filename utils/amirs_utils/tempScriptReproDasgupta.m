@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function tempScriptReproDasgupta()
+function tempScriptReproDasgupta(metric, random_projection_type)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -50,21 +50,16 @@ function tempScriptReproDasgupta()
   % test_type = 'vary_projected_dim';
   % test_type = 'vary_number_of_samples';
 
-  metric = 'measure-c-separation';
+  % metric = 'measure-c-separation';
   % metric = 'measure-eccentricity';
   % metric = 'measure-1-knn-perf';
-  % metric_list = {'c_separation', 'eccentricity', '1-knn'};
-  % metric_list = {'c_separation', '1-knn'};
-  % metric_list = {'c_separation'};
-  % metric_list = {'eccentricity'};
-  % for metric = metric_list
 
   % random_projection_type = 'rp_1_relu_0';
-  random_projection_type = 'rp_1_relu_1';
+  % random_projection_type = 'rp_1_relu_1';
 
   fh_projection_utils = projectionUtils;
 
-  repeat_count = 2;
+  repeat_count = 3;
   c_separation = 1;
   eccentricity = 1;
 
@@ -141,6 +136,13 @@ function tempScriptReproDasgupta()
             case 'measure-1-knn-perf'
               tmp_orig_imdb_results(end+1) = get1KnnTestAccuracy(original_imdb);
               tmp_proj_imdb_results(end+1) = get1KnnTestAccuracy(projected_imdb);
+            % case 'measure-linear-svm-perf'
+              % tmp_orig_imdb_results(end+1) = get1KnnTestAccuracy(original_imdb);
+              % tmp_proj_imdb_results(end+1) = get1KnnTestAccuracy(projected_imdb);
+            % case 'measure-mlp-500-100-perf'
+              % tmp_orig_imdb_results(end+1) = get1KnnTestAccuracy(original_imdb);
+              % tmp_proj_imdb_results(end+1) = get1KnnTestAccuracy(projected_imdb);
+
           end
 
         end
@@ -163,7 +165,7 @@ function tempScriptReproDasgupta()
   subplotBeef(orig_imdb_results_mean, 'Orig. Imdb', x_label, y_label, x_lim, y_lim, x_tick_lables, y_tick_lables, metric);
   subplot(1,2,2),
   subplotBeef(proj_imdb_results_mean, 'Proj. Imdb', x_label, y_label, x_lim, y_lim, x_tick_lables, y_tick_lables, metric);
-  plot_title = sprintf('%s - %s', upper(strrep(random_projection_type,'_',' ')), sup_title);
+  plot_title = sprintf('%s - %s - %s', metric, upper(strrep(random_projection_type,'_',' ')), sup_title);
   suptitle(plot_title);
   print(fullfile(getDevPath(), 'temp_images', plot_title), '-dpdf', '-fillpage')
 

@@ -1,19 +1,26 @@
 
-imdb = constructSyntheticGaussianImdbNEW(10000, 100, 1, 1);
-getTwoClassCSeparation(imdb)
-getAverageClassEccentricity(imdb)
+% imdb = constructSyntheticGaussianImdbNEW(10000, 100, 1, 1);
+% getTwoClassCSeparation(imdb)
+% getAverageClassEccentricity(imdb)
 
-imdb = constructSyntheticGaussianImdbNEW(10000, 100, 1000, 1);
-getTwoClassCSeparation(imdb)
-getAverageClassEccentricity(imdb)
+% imdb = constructSyntheticGaussianImdbNEW(10000, 100, 1000, 1);
+% getTwoClassCSeparation(imdb)
+% getAverageClassEccentricity(imdb)
 
-imdb = constructSyntheticGaussianImdbNEW(10000, 100, 1, 1000);
-getTwoClassCSeparation(imdb)
-getAverageClassEccentricity(imdb)
+% imdb = constructSyntheticGaussianImdbNEW(10000, 100, 1, 1000);
+% getTwoClassCSeparation(imdb)
+% getAverageClassEccentricity(imdb)
 
-imdb = constructSyntheticGaussianImdbNEW(10000, 100, 1000, 1000);
-getTwoClassCSeparation(imdb)
-getAverageClassEccentricity(imdb)
+% imdb = constructSyntheticGaussianImdbNEW(10000, 100, 1000, 1000);
+% getTwoClassCSeparation(imdb)
+% getAverageClassEccentricity(imdb)
+
+
+
+tempScriptReproDasgupta('measure-c-separation', 'rp_1_relu_0');
+tempScriptReproDasgupta('measure-1-knn-perf', 'rp_1_relu_0');
+% tempScriptReproDasgupta('measure-c-separation', 'rp_1_relu_1');
+% tempScriptReproDasgupta('measure-1-knn-perf', 'rp_1_relu_1');
 
 
 
@@ -27,7 +34,7 @@ getAverageClassEccentricity(imdb)
 % functionHandle = @tempScriptRunMmd
 % functionHandle = @tempScriptRunTsne;
 % functionHandle = @tmpScriptCalculateDistances;
-functionHandle = @tempScriptMeasureClassificationPerformance;
+% functionHandle = @tempScriptMeasureClassificationPerformance;
 % functionHandle = @tempScriptMeasureCSeparation;
 % functionHandle = @tempScriptMeasureAverageClassEccentricity;
 % functionHandle = @tempScriptPlot2DEuclideanDistances;
