@@ -39,6 +39,7 @@ function tempScriptReproDasgupta()
   % metric = '1-knn';
   metric_list = {'c separation', 'eccentricity', '1-knn'};
   % metric_list = {'c separation', '1-knn'};
+  % metric_list = {'eccentricity'};
 
   fh_projection_utils = projectionUtils;
 
@@ -122,16 +123,20 @@ function tempScriptReproDasgupta()
     end
 
     subplot(numel(metric_list), 2, 1 + (counter - 1) * 2),
-    subplotBeef(test_type, metric, 'Original Imdb', arr_1, 'bs-', x_label_string, x_tick_lables);
+    subplotBeef(metric, 'Orig. Imdb', arr_1, 'bs-', x_label_string, x_tick_lables);
     subplot(numel(metric_list), 2, 2 + (counter - 1) * 2),
-    subplotBeef(test_type, metric, 'Projected Imdb', arr_2, 'rs-', x_label_string, x_tick_lables);
+    subplotBeef(metric, 'Proj. Imdb', arr_2, 'rs-', x_label_string, x_tick_lables);
 
     counter = counter + 1;
   end
+
+  plot_title = sprintf('Repro Dasgupta - %s', test_type);
+  suptitle(plot_title);
+  print(fullfile(getDevPath(), 'temp_images', plot_title), '-dpdf', '-fillpage')
   keyboard
 
 % -------------------------------------------------------------------------
-function subplotBeef(test_type, metric, additional_title_text, arr, color, x_label_string, x_tick_lables)
+function subplotBeef(metric, additional_title_text, arr, color, x_label_string, x_tick_lables)
 % -------------------------------------------------------------------------
   errorbar(1:1:size(arr, 2), mean(arr), std(arr), color),
   ylim([0, inf]),
