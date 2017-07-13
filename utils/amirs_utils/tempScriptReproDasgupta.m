@@ -58,8 +58,8 @@ function tempScriptReproDasgupta()
   % metric_list = {'eccentricity'};
   % for metric = metric_list
 
-  random_projection_type = 'rp_1_relu_0';
-  % random_projection_type = 'rp_1_relu_1';
+  % random_projection_type = 'rp_1_relu_0';
+  random_projection_type = 'rp_1_relu_1';
 
   fh_projection_utils = projectionUtils;
 
