@@ -33,12 +33,12 @@ function tempScriptReproDasgupta()
   test_type = 'vary_projected_dim';
   % test_type = 'vary_number_of_samples';
 
-  % metric = 'c separation';
+  % metric = 'c_separation';
   % metric = 'eccentricity';
   % metric = '1-knn';
-  metric_list = {'c separation', 'eccentricity', '1-knn'};
-  % metric_list = {'c separation', '1-knn'};
-  % metric_list = {'eccentricity'};
+  % metric_list = {'c_separation', 'eccentricity', '1-knn'};
+  % metric_list = {'c_separation', '1-knn'};
+  metric_list = {'eccentricity'};
 
   fh_projection_utils = projectionUtils;
 
@@ -61,7 +61,8 @@ function tempScriptReproDasgupta()
         case 'vary_original_dim'
 
           % 1-separated (also change constructSyntheticGaussianImdb.m)
-          x_label_string = 'Varying Orig. Dim.';
+          experiment_title = 'D = vary - d = 20 - N = 10000 - Orig. Ecc = 1';
+          x_label_string = 'Orig. Dim.';
           x_tick_lables = original_dim_list;
 
           for original_dim = original_dim_list
@@ -74,7 +75,8 @@ function tempScriptReproDasgupta()
         case 'vary_projected_dim'
 
           % Eccentricity 1000 (also change constructSyntheticGaussianImdb.m)
-          x_label_string = 'Varying Proj. Dim.';
+          experiment_title = 'D = 50 - d = vary - N = 10000 - Orig. Ecc = 1000';
+          x_label_string = 'Proj. Dim.';
           x_tick_lables = projected_dim_list;
 
           for projected_dim = projected_dim_list
@@ -86,7 +88,8 @@ function tempScriptReproDasgupta()
         case 'vary_number_of_samples'
 
           % 1-separated (also change constructSyntheticGaussianImdb.m)
-          x_label_string = 'Varying Num. of Samples';
+          experiment_title = 'D = 100 - d = 10log(N) - N = 10000 - Orig. Ecc = 1';
+          x_label_string = 'Num. of Samples';
           x_tick_lables = number_of_samples_list;
 
           for number_of_samples = number_of_samples_list
@@ -94,7 +97,7 @@ function tempScriptReproDasgupta()
             % projected_dim = ceil(5 * log(number_of_samples));
             projected_dim = ceil(10 * log(number_of_samples));
             % projected_dim = ceil(25 * log(number_of_samples));
-            experiments{end+1}.original_imdb = constructSyntheticGaussianImdb(number_of_samples, 100, 1, 4, 1);
+            experiments{end+1}.original_imdb = constructSyntheticGaussianImdb(number_of_samples, 10000, 1, 4, 1);
             experiments{end}.projected_imdb = fh_projection_utils.getDenslyDownProjectedImdb(experiments{end}.original_imdb, 1, 0, projected_dim);
           end
 
@@ -102,7 +105,7 @@ function tempScriptReproDasgupta()
 
       for i = 1 : numel(experiments)
         switch metric
-          case 'c separation'
+          case 'c_separation'
             experiments{i}.c_separation.original_imdb = getTwoClassCSeparation(experiments{i}.original_imdb);
             experiments{i}.c_separation.projected_imdb = getTwoClassCSeparation(experiments{i}.projected_imdb);
             arr_1(j,i) = experiments{i}.c_separation.original_imdb;
@@ -129,7 +132,7 @@ function tempScriptReproDasgupta()
     counter = counter + 1;
   end
 
-  plot_title = sprintf('Repro Dasgupta - %s', test_type);
+  plot_title = sprintf('Repro Dasgupta - %s', experiment_title);
   suptitle(plot_title);
   print(fullfile(getDevPath(), 'temp_images', plot_title), '-dpdf', '-fillpage')
   % keyboard
@@ -143,7 +146,7 @@ function subplotBeef(metric, additional_title_text, arr, color, x_label_string, 
   xticks(1:1:size(arr, 2)),
   xticklabels(x_tick_lables),
   xlabel(x_label_string, 'FontSize', 20);
-  ylabel(sprintf('%s - %s', metric, additional_title_text), 'FontSize', 20);
+  ylabel(sprintf('%s - %s', strrep(metric,'_',' '), strrep(additional_title_text,'_',' ')), 'FontSize', 20);
 
 
 
