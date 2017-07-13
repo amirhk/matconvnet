@@ -93,7 +93,7 @@ function [trained_model, performance_summary] = testLibSvm(input_opts)
   labels_test = labels_test';
 
   tic;
-  libsvm_struct = svmtrain(labels_train, vectorized_data_train, opts.train.libsvm_options);
+  libsvm_struct = svmtrain(labels_train', vectorized_data_train, opts.train.libsvm_options);
   training_duration = toc;
 
   if isTwoClassImdb(opts.general.dataset)
@@ -110,7 +110,7 @@ function [trained_model, performance_summary] = testLibSvm(input_opts)
   dataset = opts.general.dataset;
 
   % evaluate
-    tic;
+  tic;
   [ ...
     train_accuracy, ...
     train_sensitivity, ...

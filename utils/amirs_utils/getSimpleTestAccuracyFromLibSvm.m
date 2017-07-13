@@ -29,7 +29,7 @@ function best_test_accuracy = getSimpleTestAccuracyLibSvm(imdb)
   single_training_method_options.imdb = imdb;
   test_accuracies = [];
   for c = logspace(-5,2,10)
-    single_training_method_options.libsvm_options = sprintf('-q -t 0 -c %f', c)
+    single_training_method_options.libsvm_options = sprintf('-q -t 0 -c %f', c);
     [~, performance_summary] = testLibSvm(single_training_method_options);
     test_accuracies(end+1) = performance_summary.testing.test.accuracy;
   end
