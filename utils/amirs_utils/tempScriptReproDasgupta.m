@@ -31,11 +31,11 @@ function tempScriptReproDasgupta()
   % original_dim_list = 25:25:500;
   original_dim_list = 100;
   % projected_dim_list = [10, 20, 40, 80, 160, 320];
-  % projected_dim_list = [10, 20, 40, 80, 160];
-  projected_dim_list = [10, 20];
+  projected_dim_list = [10, 20, 40, 80, 160];
+  % projected_dim_list = [10, 20];
   % number_of_samples_list = [100, 250, 500, 1000, 2500, 5000];
-  % number_of_samples_list = [100, 250, 500, 1000, 2500];
-  number_of_samples_list = [100, 250];
+  number_of_samples_list = [100, 250, 500, 1000, 2500];
+  % number_of_samples_list = [100, 250];
 
   % test_type = 'vary_original_dim';
   % test_type = 'vary_projected_dim';
@@ -124,11 +124,21 @@ function tempScriptReproDasgupta()
   end
 
   figure,
+
   subplot(1,2,1),
   mesh(orig_imdb_results_mean),
   title('Orig. Imdb.'),
   xlabel(x_label),
   ylabel(y_label),
+  zlabel(metric);
+
+  subplot(1,2,2),
+  mesh(proj_imdb_results_mean),
+  title('Proj. Imdb.'),
+  xlabel(x_label),
+  ylabel(y_label),
+  zlabel(metric);
+
 %   zlabel(metric);
 
 %         for i = 1 : numel(experiments)
