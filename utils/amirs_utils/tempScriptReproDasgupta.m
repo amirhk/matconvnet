@@ -36,9 +36,9 @@ function tempScriptReproDasgupta()
   % metric = 'c_separation';
   % metric = 'eccentricity';
   % metric = '1-knn';
-  % metric_list = {'c_separation', 'eccentricity', '1-knn'};
+  metric_list = {'c_separation', 'eccentricity', '1-knn'};
   % metric_list = {'c_separation', '1-knn'};
-  metric_list = {'eccentricity'};
+  % metric_list = {'eccentricity'};
 
   fh_projection_utils = projectionUtils;
 
