@@ -139,9 +139,9 @@ function tempScriptReproDasgupta(metric, random_projection_type)
             % case 'measure-linear-svm-perf'
               % tmp_orig_imdb_results(end+1) = get1KnnTestAccuracy(original_imdb);
               % tmp_proj_imdb_results(end+1) = get1KnnTestAccuracy(projected_imdb);
-            % case 'measure-mlp-500-100-perf'
-              % tmp_orig_imdb_results(end+1) = get1KnnTestAccuracy(original_imdb);
-              % tmp_proj_imdb_results(end+1) = get1KnnTestAccuracy(projected_imdb);
+            case 'measure-mlp-500-100-perf'
+              tmp_orig_imdb_results(end+1) = getMLPTestAccuracy(original_imdb);
+              tmp_proj_imdb_results(end+1) = getMLPTestAccuracy(projected_imdb);
 
           end
 
