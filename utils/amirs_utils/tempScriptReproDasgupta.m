@@ -58,6 +58,9 @@ function tempScriptReproDasgupta()
   % metric_list = {'eccentricity'};
   % for metric = metric_list
 
+  random_projection_type = 'rp_1_relu_0';
+  % random_projection_type = 'rp_1_relu_1';
+
   fh_projection_utils = projectionUtils;
 
   repeat_count = 30;
@@ -119,7 +122,13 @@ function tempScriptReproDasgupta()
         for j = 1 : repeat_count
 
           original_imdb = constructSyntheticGaussianImdbNEW(number_of_samples, original_dim, 1, 1);
-          projected_imdb = fh_projection_utils.getDenslyDownProjectedImdb(original_imdb, 1, 0, projected_dim);
+
+          switch random_projection_type
+            case 'rp_1_relu_0'
+              projected_imdb = fh_projection_utils.getDenslyDownProjectedImdb(original_imdb, 1, 0, projected_dim);
+            case 'rp_1_relu_1'
+              projected_imdb = fh_projection_utils.getDenslyDownProjectedImdb(original_imdb, 1, 1, projected_dim);
+          end
 
           switch metric
             case 'measure-c-separation'
@@ -153,7 +162,7 @@ function tempScriptReproDasgupta()
   subplotBeef(orig_imdb_results_mean, 'Orig. Imdb', x_label, y_label, x_lim, y_lim, x_tick_lables, y_tick_lables, metric);
   subplot(1,2,2),
   subplotBeef(proj_imdb_results_mean, 'Proj. Imdb', x_label, y_label, x_lim, y_lim, x_tick_lables, y_tick_lables, metric);
-  plot_title = sprintf('Repro Dasgupta - %s', sup_title);
+  plot_title = sprintf('%s - %s', upper(strrep(random_projection_type,'_',' ')), sup_title);
   suptitle(plot_title);
   print(fullfile(getDevPath(), 'temp_images', plot_title), '-dpdf', '-fillpage')
 
