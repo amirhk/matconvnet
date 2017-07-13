@@ -26,7 +26,6 @@ function tempScriptReproDasgupta()
 % POSSIBILITY OF SUCH DAMAGE.
 
   original_dim_list = 25:25:500;
-  % original_dim_list = [25, 50, 75, 100];
   projected_dim_list = 25:1:50;
   number_of_samples_list = 5:5:100;
 
@@ -133,7 +132,7 @@ function tempScriptReproDasgupta()
   plot_title = sprintf('Repro Dasgupta - %s', test_type);
   suptitle(plot_title);
   print(fullfile(getDevPath(), 'temp_images', plot_title), '-dpdf', '-fillpage')
-  keyboard
+  % keyboard
 
 % -------------------------------------------------------------------------
 function subplotBeef(metric, additional_title_text, arr, color, x_label_string, x_tick_lables)
