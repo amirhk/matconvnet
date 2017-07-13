@@ -34,9 +34,9 @@ function tempScriptReproDasgupta()
   % projected_dim_list = [10, 20, 40, 80, 160];
   projected_dim_list = [10, 20];
   % number_of_samples_list = [100, 250, 500, 1000, 2500, 5000];
-  % number_of_samples_list = [100, 250, 500, 1000, 2500];
+  number_of_samples_list = [100, 250, 500, 1000, 2500];
   % number_of_samples_list = [100, 250];
-  number_of_samples_list = [10000, 25000, 50000, 100000];
+  % number_of_samples_list = [10000, 25000, 50000, 100000];
 
 
   % test_type = 'vary_original_dim';
@@ -137,6 +137,7 @@ function tempScriptReproDasgupta()
 
   end
 
+  keyboard
   figure,
   subplot(1,2,1),
   subplotBeef(orig_imdb_results_mean, 'Orig. Imdb', x_label, y_label, x_lim, y_lim, x_tick_lables, y_tick_lables, metric);
