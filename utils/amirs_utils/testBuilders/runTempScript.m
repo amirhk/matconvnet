@@ -17,10 +17,10 @@
 
 
 
-tempScriptReproDasgupta('measure-c-separation', 'rp_1_relu_0');
-tempScriptReproDasgupta('measure-1-knn-perf', 'rp_1_relu_0');
-% tempScriptReproDasgupta('measure-c-separation', 'rp_1_relu_1');
-% tempScriptReproDasgupta('measure-1-knn-perf', 'rp_1_relu_1');
+% tempScriptReproDasgupta('measure-c-separation', 'rp_1_relu_0');
+% tempScriptReproDasgupta('measure-1-knn-perf', 'rp_1_relu_0');
+tempScriptReproDasgupta('measure-c-separation', 'rp_1_relu_1');
+tempScriptReproDasgupta('measure-1-knn-perf', 'rp_1_relu_1');
 
 
 
