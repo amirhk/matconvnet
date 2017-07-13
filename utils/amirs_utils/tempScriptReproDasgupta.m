@@ -67,24 +67,24 @@ function tempScriptReproDasgupta()
     y_label = 'num samples';
     x_tick_lables = 1:1:length(projected_dim_list);
     y_tick_lables = 1:1:length(number_of_samples_list);;
-    x_limit = [1 - 0.2, length(projected_dim_list) + 0.2];
-    y_limit = [1 - 0.2, length(number_of_samples_list) + 0.2];;
+    x_lim = [1 - 0.2, length(projected_dim_list) + 0.2];
+    y_lim = [1 - 0.2, length(number_of_samples_list) + 0.2];;
   elseif length(projected_dim_list) == 1
     results_size = [length(number_of_samples_list), length(original_dim_list)];
     x_label = 'original dim';
     y_label = 'num samples';
     x_tick_lables = 1:1:length(original_dim_list);
     y_tick_lables = 1:1:length(number_of_samples_list);;
-    x_limit = [1 - 0.2, length(original_dim_list) + 0.2];
-    y_limit = [1 - 0.2, length(number_of_samples_list) + 0.2];;
+    x_lim = [1 - 0.2, length(original_dim_list) + 0.2];
+    y_lim = [1 - 0.2, length(number_of_samples_list) + 0.2];;
   elseif length(number_of_samples_list) == 1
     results_size = [length(projected_dim_list), length(original_dim_list)];
     x_label = 'original dim';
     y_label = 'projected dim';
     x_tick_lables = 1:1:length(original_dim_list);
     y_tick_lables = 1:1:length(projected_dim_list);;
-    x_limit = [1 - 0.2, length(original_dim_list) + 0.2];
-    y_limit = [1 - 0.2, length(projected_dim_list) + 0.2];;
+    x_lim = [1 - 0.2, length(original_dim_list) + 0.2];
+    y_lim = [1 - 0.2, length(projected_dim_list) + 0.2];;
   else
     throwException('[ERROR] can only vary 2 parameters!');
   end
