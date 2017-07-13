@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function tempScriptReproDasgupta(metric, random_projection_type)
+function tempScriptReproDasgupta(metric)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -65,7 +65,7 @@ function tempScriptReproDasgupta(metric, random_projection_type)
   repeat_count = 3;
 
   dataset = '2_gaussians';
-  c_separation = 0.05;
+  c_separation = 0.5;
   eccentricity = 1;
 
   assert( ...
@@ -106,8 +106,14 @@ function tempScriptReproDasgupta(metric, random_projection_type)
 
   orig_imdb_results_mean = zeros(results_size);
   orig_imdb_results_std = zeros(results_size);
-  proj_imdb_results_mean = zeros(results_size);
-  proj_imdb_results_std = zeros(results_size);
+  proj_wo_non_lin_imdb_results_mean = zeros(results_size);
+  proj_wo_non_lin_imdb_results_std = zeros(results_size);
+  proj_w_relu_imdb_results_mean = zeros(results_size);
+  proj_w_relu_imdb_results_std = zeros(results_size);
+  proj_w_tanh_imdb_results_mean = zeros(results_size);
+  proj_w_tanh_imdb_results_std = zeros(results_size);
+  proj_w_sigmoid_imdb_results_mean = zeros(results_size);
+  proj_w_sigmoid_imdb_results_std = zeros(results_size);
 
   counter = 1;
   for original_dim = original_dim_list
@@ -118,7 +124,10 @@ function tempScriptReproDasgupta(metric, random_projection_type)
 
         afprintf(sprintf('[INFO] Constructing imdbs...\n'));
         tmp_orig_imdb_results = [];
-        tmp_proj_imdb_results = [];
+        tmp_proj_wo_non_lin_imdb_results = [];
+        tmp_proj_w_relu_imdb_results = [];
+        tmp_proj_w_tanh_imdb_results = [];
+        tmp_proj_w_sigmoid_imdb_results = [];
 
         for j = 1 : repeat_count
 
@@ -129,37 +138,63 @@ function tempScriptReproDasgupta(metric, random_projection_type)
               throwException('[ERROR] dataset not defined!');
           end
 
-          switch random_projection_type
-            case 'rp_1_relu_0'
-              projected_imdb = fh_projection_utils.getDenslyDownProjectedImdb(original_imdb, 1, 0, projected_dim);
-            case 'rp_1_relu_1'
-              projected_imdb = fh_projection_utils.getDenslyDownProjectedImdb(original_imdb, 1, 1, projected_dim);
-          end
+          % switch random_projection_type
+          %   case 'rp_1_relu_0'
+          %     projected_imdb = fh_projection_utils.getDenslyDownProjectedImdb(original_imdb, 1, 0, projected_dim, 'relu');
+          %   case 'rp_1_relu_1'
+          %     projected_imdb = fh_projection_utils.getDenslyDownProjectedImdb(original_imdb, 1, 1, projected_dim, 'relu');
+          % end
+          projected_imdb_wo_non_lin = fh_projection_utils.getDenslyDownProjectedImdb(original_imdb, 1, 0, projected_dim, 'relu');
+          projected_imdb_w_relu = fh_projection_utils.getDenslyDownProjectedImdb(original_imdb, 1, 1, projected_dim, 'relu');
+          projected_imdb_w_tanh = fh_projection_utils.getDenslyDownProjectedImdb(original_imdb, 1, 1, projected_dim, 'tanh');
+          projected_imdb_w_sigmoid = fh_projection_utils.getDenslyDownProjectedImdb(original_imdb, 1, 1, projected_dim, 'sigmoid');
 
           switch metric
             case 'measure-c-separation'
               tmp_orig_imdb_results(end+1) = getTwoClassCSeparation(original_imdb);
-              tmp_proj_imdb_results(end+1) = getTwoClassCSeparation(projected_imdb);
+              tmp_proj_wo_non_lin_imdb_results(end+1) = getTwoClassCSeparation(projected_imdb_wo_non_lin);
+              tmp_proj_w_relu_imdb_results(end+1) = getTwoClassCSeparation(projected_imdb_w_relu);
+              tmp_proj_w_tanh_imdb_results(end+1) = getTwoClassCSeparation(projected_imdb_w_tanh);
+              tmp_proj_w_sigmoid_imdb_results(end+1) = getTwoClassCSeparation(projected_imdb_w_sigmoid);
             case 'measure-eccentricity'
               tmp_orig_imdb_results(end+1) = getAverageClassEccentricity(original_imdb);
-              tmp_proj_imdb_results(end+1) = getAverageClassEccentricity(projected_imdb);
+              tmp_proj_wo_non_lin_imdb_results(end+1) = getAverageClassEccentricity(projected_imdb_wo_non_lin);
+              tmp_proj_w_relu_imdb_results(end+1) = getAverageClassEccentricity(projected_imdb_w_relu);
+              tmp_proj_w_tanh_imdb_results(end+1) = getAverageClassEccentricity(projected_imdb_w_tanh);
+              tmp_proj_w_sigmoid_imdb_results(end+1) = getAverageClassEccentricity(projected_imdb_w_sigmoid);
             case 'measure-1-knn-perf'
               tmp_orig_imdb_results(end+1) = getSimpleTestAccuracyFrom1Knn(original_imdb);
-              tmp_proj_imdb_results(end+1) = getSimpleTestAccuracyFrom1Knn(projected_imdb);
+              tmp_proj_wo_non_lin_imdb_results(end+1) = getSimpleTestAccuracyFrom1Knn(projected_imdb_wo_non_lin);
+              tmp_proj_w_relu_imdb_results(end+1) = getSimpleTestAccuracyFrom1Knn(projected_imdb_w_relu);
+              tmp_proj_w_tanh_imdb_results(end+1) = getSimpleTestAccuracyFrom1Knn(projected_imdb_w_tanh);
+              tmp_proj_w_sigmoid_imdb_results(end+1) = getSimpleTestAccuracyFrom1Knn(projected_imdb_w_sigmoid);
             case 'measure-linear-svm-perf'
               tmp_orig_imdb_results(end+1) = getSimpleTestAccuracyFromLibSvm(original_imdb);
-              tmp_proj_imdb_results(end+1) = getSimpleTestAccuracyFromLibSvm(projected_imdb);
+              tmp_proj_wo_non_lin_imdb_results(end+1) = getSimpleTestAccuracyFromLibSvm(projected_imdb_wo_non_lin);
+              tmp_proj_w_relu_imdb_results(end+1) = getSimpleTestAccuracyFromLibSvm(projected_imdb_w_relu);
+              tmp_proj_w_tanh_imdb_results(end+1) = getSimpleTestAccuracyFromLibSvm(projected_imdb_w_tanh);
+              tmp_proj_w_sigmoid_imdb_results(end+1) = getSimpleTestAccuracyFromLibSvm(projected_imdb_w_sigmoid);
             case 'measure-mlp-500-100-perf'
               tmp_orig_imdb_results(end+1) = getSimpleTestAccuracyFromMLP(original_imdb);
-              tmp_proj_imdb_results(end+1) = getSimpleTestAccuracyFromMLP(projected_imdb);
+              tmp_proj_wo_non_lin_imdb_results(end+1) = getSimpleTestAccuracyFromMLP(projected_imdb_wo_non_lin);
+              tmp_proj_w_relu_imdb_results(end+1) = getSimpleTestAccuracyFromMLP(projected_imdb_w_relu);
+              tmp_proj_w_tanh_imdb_results(end+1) = getSimpleTestAccuracyFromMLP(projected_imdb_w_tanh);
+              tmp_proj_w_sigmoid_imdb_results(end+1) = getSimpleTestAccuracyFromMLP(projected_imdb_w_sigmoid);
           end
 
         end
 
         orig_imdb_results_mean(counter) = mean(tmp_orig_imdb_results);
         orig_imdb_results_std(counter) = std(tmp_orig_imdb_results);
-        proj_imdb_results_mean(counter) = mean(tmp_proj_imdb_results);
-        proj_imdb_results_std(counter) = std(tmp_proj_imdb_results);
+        proj_wo_non_lin_imdb_results_mean(counter) = mean(tmp_proj_wo_non_lin_imdb_results);
+        proj_wo_non_lin_imdb_results_std(counter) = std(tmp_proj_wo_non_lin_imdb_results);
+        proj_w_relu_imdb_results_mean(counter) = mean(tmp_proj_w_relu_imdb_results);
+        proj_w_relu_imdb_results_std(counter) = std(tmp_proj_w_relu_imdb_results);
+        proj_w_tanh_imdb_results_mean(counter) = mean(tmp_proj_w_tanh_imdb_results);
+        proj_w_tanh_imdb_results_std(counter) = std(tmp_proj_w_tanh_imdb_results);
+        proj_w_sigmoid_imdb_results_mean(counter) = mean(tmp_proj_w_sigmoid_imdb_results);
+        proj_w_sigmoid_imdb_results_std(counter) = std(tmp_proj_w_sigmoid_imdb_results);
+
 
         counter = counter + 1;
 
@@ -170,18 +205,36 @@ function tempScriptReproDasgupta(metric, random_projection_type)
   end
 
   h = figure;
-  subplot(1,2,1),
-  subplotBeef(orig_imdb_results_mean, 'Orig. Imdb', x_label, y_label, x_lim, y_lim, x_tick_lables, y_tick_lables, metric);
-  subplot(1,2,2),
-  subplotBeef(proj_imdb_results_mean, 'Proj. Imdb', x_label, y_label, x_lim, y_lim, x_tick_lables, y_tick_lables, metric);
+
+  subplot(1,5,1),
+  title_string = 'Orig. Imdb';
+  subplotBeef(orig_imdb_results_mean, title_string, x_label, y_label, x_lim, y_lim, x_tick_lables, y_tick_lables, metric);
+
+  subplot(1,5,2),
+  title_string = 'Proj. Imdb - RP 1';
+  subplotBeef(proj_wo_non_lin_imdb_results_mean, title_string, x_label, y_label, x_lim, y_lim, x_tick_lables, y_tick_lables, metric);
+
+  subplot(1,5,3),
+  title_string = 'Proj. Imdb - RP 1 RELU 1';
+  subplotBeef(proj_w_relu_imdb_results_mean, title_string, x_label, y_label, x_lim, y_lim, x_tick_lables, y_tick_lables, metric);
+
+  subplot(1,5,4),
+  title_string = 'Proj. Imdb - RP 1 TANH 1';
+  subplotBeef(proj_w_tanh_imdb_results_mean, title_string, x_label, y_label, x_lim, y_lim, x_tick_lables, y_tick_lables, metric);
+
+  subplot(1,5,5),
+  title_string = 'Proj. Imdb - RP 1 SIGMOID 1';
+  subplotBeef(proj_w_sigmoid_imdb_results_mean, title_string, x_label, y_label, x_lim, y_lim, x_tick_lables, y_tick_lables, metric);
+
+
   plot_title = sprintf( ...
-    '%s - c-sep = %d - ecc = %d - %s - %s - %s', ...
+    '%s - c-sep = %d - ecc = %d - %s - %s', ...
     dataset, ...
     c_separation * 100, ...
     eccentricity * 100, ...
     sup_title, ...
-    metric, ...
-    upper(strrep(random_projection_type,'_',' ')));
+    metric);
+    % upper(strrep(random_projection_type,'_',' '))
   suptitle(plot_title);
   print(fullfile(getDevPath(), 'temp_images', plot_title), '-dpdf', '-fillpage')
   savefig(h, fullfile(getDevPath(), 'temp_images', plot_title));
@@ -201,7 +254,7 @@ function subplotBeef(data, title_string, x_label, y_label, x_lim, y_lim, x_tick_
   yticks(1:1:length(y_tick_lables)),
   xticklabels(x_tick_lables),
   yticklabels(y_tick_lables),
-  view(25,15);
+  view(25,10);
 
 
 

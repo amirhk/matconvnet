@@ -126,29 +126,33 @@ function [images, labels] = getSimpleNNBatch(imdb, batch)
 
 
 % -------------------------------------------------------------------------
-function imdb = getDenslyDownProjectedImdb(imdb, number_of_projection_layers, number_of_relu_layers, projected_dim)
+function imdb = getDenslyDownProjectedImdb(imdb, number_of_projection_layers, number_of_non_linear_layers, projected_dim, non_linear_layer_type)
 % -------------------------------------------------------------------------
 
   assert(number_of_projection_layers == 1);
   assert(number_of_projection_layers <= 1);
-  assert(number_of_relu_layers <= number_of_projection_layers);
+  assert(number_of_non_linear_layers <= number_of_projection_layers);
 
   vectorized_imdb = getVectorizedImdb(imdb);
   original_dim = size(vectorized_imdb.images.data, 2);
   % projected_dim = original_dim;
-  relu_count = 0;
+  non_linear_layer_count = 0;
   for i = 1 : number_of_projection_layers
     random_projection_matrix = randn(projected_dim, original_dim);
     imdb = projectImdbUsingMatrix(imdb, random_projection_matrix);
-    if relu_count < number_of_relu_layers
-      % apply relu
-      imdb.images.data(imdb.images.data < 0) = 0;
-      relu_count = relu_count + 1;
+    if non_linear_layer_count < number_of_non_linear_layers
+      switch non_linear_layer_type
+        case 'relu'
+          % apply relu
+          imdb.images.data(imdb.images.data < 0) = 0;
+        case 'sigmoid'
+          imdb.images.data = logsig(imdb.images.data);
+        case 'tanh'
+          imdb.images.data = tanh(imdb.images.data);
+      end
+      non_linear_layer_count = non_linear_layer_count + 1;
     end
   end
-
-
-
 
 % -------------------------------------------------------------------------
 function imdb = getDenslyProjectedImdb(imdb, number_of_projection_layers, number_of_relu_layers)
