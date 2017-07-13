@@ -26,8 +26,8 @@ function tempScriptReproDasgupta(metric, random_projection_type)
 % POSSIBILITY OF SUCH DAMAGE.
 
   % original_dim_list = 25:25:500;
-  original_dim_list = 100:100:1000;
-  % original_dim_list = 100:100:200;
+  % original_dim_list = 100:100:1000;
+  original_dim_list = 100:100:300;
   % original_dim_list = [1000];
 
 
@@ -36,7 +36,8 @@ function tempScriptReproDasgupta(metric, random_projection_type)
   % projected_dim_list = [10, 20, 40, 80, 160];
   % projected_dim_list = [10, 20];
   % projected_dim_list = [10];
-  projected_dim_list = 100:100:1000;
+  % projected_dim_list = 100:100:1000;
+  projected_dim_list = 100:100:300;
 
   % number_of_samples_list = 25:25:500;
   number_of_samples_list = [1000];
@@ -62,7 +63,9 @@ function tempScriptReproDasgupta(metric, random_projection_type)
   fh_projection_utils = projectionUtils;
 
   repeat_count = 3;
-  c_separation = 1;
+
+  dataset = '2_gaussians';
+  c_separation = 0.5;
   eccentricity = 1;
 
   assert( ...
@@ -119,7 +122,12 @@ function tempScriptReproDasgupta(metric, random_projection_type)
 
         for j = 1 : repeat_count
 
-          original_imdb = constructSyntheticGaussianImdbNEW(number_of_samples, original_dim, 1, 1);
+          switch dataset
+            case '2_gaussians'
+              original_imdb = constructSyntheticGaussianImdbNEW(number_of_samples, original_dim, c_separation, eccentricity);
+            otherwise
+              throwException('[ERROR] dataset not defined!');
+          end
 
           switch random_projection_type
             case 'rp_1_relu_0'
@@ -144,7 +152,6 @@ function tempScriptReproDasgupta(metric, random_projection_type)
             case 'measure-mlp-500-100-perf'
               tmp_orig_imdb_results(end+1) = getSimpleTestAccuracyFromMLP(original_imdb);
               tmp_proj_imdb_results(end+1) = getSimpleTestAccuracyFromMLP(projected_imdb);
-
           end
 
         end
@@ -162,14 +169,22 @@ function tempScriptReproDasgupta(metric, random_projection_type)
 
   end
 
-  figure,
+  h = figure;
   subplot(1,2,1),
   subplotBeef(orig_imdb_results_mean, 'Orig. Imdb', x_label, y_label, x_lim, y_lim, x_tick_lables, y_tick_lables, metric);
   subplot(1,2,2),
   subplotBeef(proj_imdb_results_mean, 'Proj. Imdb', x_label, y_label, x_lim, y_lim, x_tick_lables, y_tick_lables, metric);
-  plot_title = sprintf('%s - %s - %s', metric, upper(strrep(random_projection_type,'_',' ')), sup_title);
+  plot_title = sprintf( ...
+    '%s - c-sep = %d - ecc = %d - %s - %s - %s', ...
+    dataset, ...
+    c_separation * 100, ...
+    eccentricity * 100, ...
+    sup_title, ...
+    metric, ...
+    upper(strrep(random_projection_type,'_',' ')));
   suptitle(plot_title);
   print(fullfile(getDevPath(), 'temp_images', plot_title), '-dpdf', '-fillpage')
+  savefig(h, fullfile(getDevPath(), 'temp_images', plot_title));
 
 % -------------------------------------------------------------------------
 function subplotBeef(data, title_string, x_label, y_label, x_lim, y_lim, x_tick_lables, y_tick_lables, metric)

@@ -58,7 +58,6 @@ function imdb = constructSyntheticGaussianImdbNEW(samples_per_class, sample_dim,
   % ==> mu_1i = tmp / \sqrt(4 * sample_dim) \forall i = [1, sample_dim]
   mu_1i = tmp / sqrt(4 * sample_dim);
 
-
   data_m = mvnrnd(- mu_1i * ones(sample_dim, 1), covariance_matrix, samples_per_class);
   data_p = mvnrnd(+ mu_1i * ones(sample_dim, 1), covariance_matrix, samples_per_class);
 

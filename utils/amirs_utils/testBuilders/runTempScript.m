@@ -17,8 +17,26 @@
 
 
 
-% tempScriptReproDasgupta('measure-linear-svm-perf', 'rp_1_relu_0');
+
+
+
+
+
+tempScriptReproDasgupta('measure-c-separation', 'rp_1_relu_0');
+tempScriptReproDasgupta('measure-c-separation', 'rp_1_relu_1');
+
+% tempScriptReproDasgupta('measure-eccentricity', 'rp_1_relu_0');
+% tempScriptReproDasgupta('measure-eccentricity', 'rp_1_relu_1');
+
+tempScriptReproDasgupta('measure-1-knn-perf', 'rp_1_relu_0');
+tempScriptReproDasgupta('measure-1-knn-perf', 'rp_1_relu_1');
+
+tempScriptReproDasgupta('measure-linear-svm-perf', 'rp_1_relu_0');
 tempScriptReproDasgupta('measure-linear-svm-perf', 'rp_1_relu_1');
+
+tempScriptReproDasgupta('measure-mlp-500-100-perf', 'rp_1_relu_0');
+tempScriptReproDasgupta('measure-mlp-500-100-perf', 'rp_1_relu_1');
+
 
 
 
