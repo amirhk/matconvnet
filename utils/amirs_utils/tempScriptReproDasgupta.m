@@ -27,6 +27,7 @@ function tempScriptReproDasgupta()
 
   % original_dim_list = 25:25:500;
   original_dim_list = 100:100:1000;
+  % original_dim_list = 100:100:200;
   % original_dim_list = [1000];
 
 
@@ -58,12 +59,12 @@ function tempScriptReproDasgupta()
   % metric_list = {'eccentricity'};
   % for metric = metric_list
 
-  % random_projection_type = 'rp_1_relu_0';
-  random_projection_type = 'rp_1_relu_1';
+  random_projection_type = 'rp_1_relu_0';
+  % random_projection_type = 'rp_1_relu_1';
 
   fh_projection_utils = projectionUtils;
 
-  repeat_count = 30;
+  repeat_count = 2;
   c_separation = 1;
   eccentricity = 1;
 
@@ -176,7 +177,7 @@ function subplotBeef(data, title_string, x_label, y_label, x_lim, y_lim, x_tick_
   zlabel(metric);
   xlim(x_lim),
   ylim(y_lim),
-  ylim([0,1.2]),
+  zlim([0,1.2]),
   xticks(1:1:length(x_tick_lables)),
   yticks(1:1:length(y_tick_lables)),
   xticklabels(x_tick_lables),
