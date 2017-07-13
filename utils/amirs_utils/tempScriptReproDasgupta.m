@@ -64,15 +64,27 @@ function tempScriptReproDasgupta()
   if length(original_dim_list) == 1
     results_size = [length(number_of_samples_list), length(projected_dim_list)];
     x_label = 'projected dim';
-    y_label = ' num samples';
+    y_label = 'num samples';
+    x_tick_lables = 1:1:length(projected_dim_list);
+    y_tick_lables = 1:1:length(number_of_samples_list);;
+    x_limit = [1 - 0.2, length(projected_dim_list) + 0.2];
+    y_limit = [1 - 0.2, length(number_of_samples_list) + 0.2];;
   elseif length(projected_dim_list) == 1
     results_size = [length(number_of_samples_list), length(original_dim_list)];
     x_label = 'original dim';
-    y_label = ' num samples';
+    y_label = 'num samples';
+    x_tick_lables = 1:1:length(original_dim_list);
+    y_tick_lables = 1:1:length(number_of_samples_list);;
+    x_limit = [1 - 0.2, length(original_dim_list) + 0.2];
+    y_limit = [1 - 0.2, length(number_of_samples_list) + 0.2];;
   elseif length(number_of_samples_list) == 1
     results_size = [length(projected_dim_list), length(original_dim_list)];
     x_label = 'original dim';
-    y_label = ' projected dim';
+    y_label = 'projected dim';
+    x_tick_lables = 1:1:length(original_dim_list);
+    y_tick_lables = 1:1:length(projected_dim_list);;
+    x_limit = [1 - 0.2, length(original_dim_list) + 0.2];
+    y_limit = [1 - 0.2, length(projected_dim_list) + 0.2];;
   else
     throwException('[ERROR] can only vary 2 parameters!');
   end
@@ -124,19 +136,22 @@ function tempScriptReproDasgupta()
   end
 
   figure,
-
   subplot(1,2,1),
-  mesh(orig_imdb_results_mean),
-  title('Orig. Imdb.'),
-  xlabel(x_label),
-  ylabel(y_label),
-  zlabel(metric);
-
+  subplotBeef(orig_imdb_results_mean, 'Orig. Imdb', x_label, y_label, x_lim, y_lim, x_tick_lables, y_tick_lables, metric);
   subplot(1,2,2),
-  mesh(proj_imdb_results_mean),
-  title('Proj. Imdb.'),
+  subplotBeef(proj_imdb_results_mean, 'Proj. Imdb', x_label, y_label, x_lim, y_lim, x_tick_lables, y_tick_lables, metric);
+
+% -------------------------------------------------------------------------
+function subplotBeef(data, title, x_label, y_label, x_lim, y_lim, x_tick_lables, y_tick_lables, metric)
+% -------------------------------------------------------------------------
+  mesh(data),
+  title(title),
   xlabel(x_label),
   ylabel(y_label),
+  xlim(x_lim),
+  ylim(y_lim),
+  xticklabels(x_tick_lables),
+  yticklabels(y_tick_lables),
   zlabel(metric);
 
 %   zlabel(metric);
