@@ -78,7 +78,11 @@ function subplotBeef(y, std_errors_x_location, std_errors_y_location, std_errors
   hold on;
   bar(y);
   % ylim([-0.1, 1.1]);
-  ylim([-0.1, inf]);
+  if max(y(:)) <= 1
+    ylim([-0.1, 1]);
+  else
+    ylim([-0.1, inf]);
+  end
   errorbar(std_errors_x_location, std_errors_y_location, std_errors_value);
   if isnan(y(1,2))
     legend({'original imdb'}, 'Location','southeast');
