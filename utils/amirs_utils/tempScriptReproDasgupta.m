@@ -69,7 +69,7 @@ function tempScriptReproDasgupta()
     results_size = [length(number_of_samples_list), length(original_dim_list)];
     x_label = 'original dim';
     y_label = ' num samples';
-  elseif length(number_of_samples_list) == 1)
+  elseif length(number_of_samples_list) == 1
     results_size = [length(projected_dim_list), length(original_dim_list)];
     x_label = 'original dim';
     y_label = ' projected dim';
