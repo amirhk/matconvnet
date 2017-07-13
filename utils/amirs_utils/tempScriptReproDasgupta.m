@@ -34,8 +34,10 @@ function tempScriptReproDasgupta()
   % projected_dim_list = [10, 20, 40, 80, 160];
   projected_dim_list = [10, 20];
   % number_of_samples_list = [100, 250, 500, 1000, 2500, 5000];
-  number_of_samples_list = [100, 250, 500, 1000, 2500];
+  % number_of_samples_list = [100, 250, 500, 1000, 2500];
   % number_of_samples_list = [100, 250];
+  number_of_samples_list = [10000, 25000, 50000, 100000];
+
 
   % test_type = 'vary_original_dim';
   % test_type = 'vary_projected_dim';
