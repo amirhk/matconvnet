@@ -53,6 +53,8 @@ function tempScriptReproDasgupta(metric, random_projection_type)
   % metric = 'measure-c-separation';
   % metric = 'measure-eccentricity';
   % metric = 'measure-1-knn-perf';
+  % metric = 'measure-linear-svm-perf';
+  % metric = 'measure-mlp-500-100-perf';
 
   % random_projection_type = 'rp_1_relu_0';
   % random_projection_type = 'rp_1_relu_1';
@@ -134,14 +136,14 @@ function tempScriptReproDasgupta(metric, random_projection_type)
               tmp_orig_imdb_results(end+1) = getAverageClassEccentricity(original_imdb);
               tmp_proj_imdb_results(end+1) = getAverageClassEccentricity(projected_imdb);
             case 'measure-1-knn-perf'
-              tmp_orig_imdb_results(end+1) = get1KnnTestAccuracy(original_imdb);
-              tmp_proj_imdb_results(end+1) = get1KnnTestAccuracy(projected_imdb);
-            % case 'measure-linear-svm-perf'
-              % tmp_orig_imdb_results(end+1) = get1KnnTestAccuracy(original_imdb);
-              % tmp_proj_imdb_results(end+1) = get1KnnTestAccuracy(projected_imdb);
+              tmp_orig_imdb_results(end+1) = getSimpleTestAccuracyFrom1Knn(original_imdb);
+              tmp_proj_imdb_results(end+1) = getSimpleTestAccuracyFrom1Knn(projected_imdb);
+            case 'measure-linear-svm-perf'
+              tmp_orig_imdb_results(end+1) = getSimpleTestAccuracyFromLibSvm(original_imdb);
+              tmp_proj_imdb_results(end+1) = getSimpleTestAccuracyFromLibSvm(projected_imdb);
             case 'measure-mlp-500-100-perf'
-              tmp_orig_imdb_results(end+1) = getMLPTestAccuracy(original_imdb);
-              tmp_proj_imdb_results(end+1) = getMLPTestAccuracy(projected_imdb);
+              tmp_orig_imdb_results(end+1) = getSimpleTestAccuracyFromMLP(original_imdb);
+              tmp_proj_imdb_results(end+1) = getSimpleTestAccuracyFromMLP(projected_imdb);
 
           end
 

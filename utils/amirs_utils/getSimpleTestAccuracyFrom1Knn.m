@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function test_accuracy = get1KnnTestAccuracy(imdb)
+function test_accuracy = getSimpleTestAccuracyFrom1Knn(imdb)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.

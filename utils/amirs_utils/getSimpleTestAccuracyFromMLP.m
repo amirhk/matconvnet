@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function test_accuracy = getMLPTestAccuracy(imdb)
+function test_accuracy = getSimpleTestAccuracyFromMLP(imdb)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
