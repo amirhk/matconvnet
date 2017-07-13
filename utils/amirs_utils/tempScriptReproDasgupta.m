@@ -65,7 +65,7 @@ function tempScriptReproDasgupta(metric, random_projection_type)
   repeat_count = 3;
 
   dataset = '2_gaussians';
-  c_separation = 0.5;
+  c_separation = 0.05;
   eccentricity = 1;
 
   assert( ...
