@@ -69,6 +69,7 @@ function imdb = constructSyntheticGaussianImdbNEW(samples_per_class, sample_dim,
   labels = cat(1, 1 * ones(samples_per_class, 1), 2 * ones(samples_per_class, 1));
   set = cat(1, 1 * ones(number_of_training_samples, 1), 3 * ones(number_of_testing_samples, 1));
 
+
   assert(length(labels) == length(set));
 
   % shuffle

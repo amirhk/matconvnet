@@ -80,6 +80,9 @@ function [trained_model, performance_summary] = testMlp(input_opts)
   labels_train = labels(is_train);
   labels_test = labels(is_test);
 
+  labels_train = reshape(labels_train, 1, []);
+  labels_test = reshape(labels_test, 1, []);
+
   % -------------------------------------------------------------------------
   %                                                                     train
   % -------------------------------------------------------------------------
