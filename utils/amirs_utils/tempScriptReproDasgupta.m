@@ -217,8 +217,6 @@ function tempScriptReproDasgupta(dataset, metric, c_separation, eccentricity)
 
   end
 
-
-  keyboard
   afprintf(sprintf('[INFO] Saving plots...\n'));
   print(fullfile(getDevPath(), 'temp_images', plot_title), '-dpdf', '-fillpage')
   savefig(h, fullfile(getDevPath(), 'temp_images', plot_title));
