@@ -39,13 +39,15 @@ function tempScriptReproDasgupta(dataset, metric, c_separation, eccentricity)
   % projected_dim_list = 100:100:1000;
   % projected_dim_list = 100:100:300;
   % projected_dim_list = 10:10:100;
-  projected_dim_list = [10, 768:768:3072];
+  % projected_dim_list = [10, 768:768:3072];
+  projected_dim_list = [10, 768];
 
   % number_of_samples_list = [1000]; % 2_gaussians, 5_gaussians
   % number_of_samples_list = [10, 50, 100, 250, 500, 1000, 2500]; % circle_in_ring
   % number_of_samples_list = 10:10:100; % circle_in_ring
   % number_of_samples_list = [10, 50, 100, 250, 500, 1000, 2500]; % cifar-multi-class-subsampled
-  number_of_samples_list = [10, 50, 100, 250, 500]; % cifar-multi-class-subsampled
+  % number_of_samples_list = [10, 50, 100, 250, 500]; % cifar-multi-class-subsampled
+  number_of_samples_list = [10, 50, 100]; % cifar-multi-class-subsampled
 
   % metric = 'measure-c-separation';
   % metric = 'measure-eccentricity';
@@ -55,7 +57,8 @@ function tempScriptReproDasgupta(dataset, metric, c_separation, eccentricity)
 
   fh_projection_utils = projectionUtils;
 
-  repeat_count = 5;
+  % repeat_count = 5;
+  repeat_count = 2;
 
   % dataset = '2_gaussians';
   % dataset = '5_gaussians';
@@ -147,7 +150,7 @@ function tempScriptReproDasgupta(dataset, metric, c_separation, eccentricity)
               tmp_opts.dataset = dataset;
               tmp_opts.posneg_balance = sprintf('balanced-%d', number_of_samples);
               original_imdb = loadSavedImdb(tmp_opts, 0);
-              original_imdb = filterImdbForSet(original_imdb, 1, 1);
+              % original_imdb = filterImdbForSet(original_imdb, 1, 1);
             otherwise
               throwException('[ERROR] dataset not recognized!');
           end
@@ -217,7 +220,7 @@ function tempScriptReproDasgupta(dataset, metric, c_separation, eccentricity)
   end
 
 
-
+  keyboard
   afprintf(sprintf('[INFO] Saving plots...\n'));
   print(fullfile(getDevPath(), 'temp_images', plot_title), '-dpdf', '-fillpage')
   savefig(h, fullfile(getDevPath(), 'temp_images', plot_title));
@@ -246,8 +249,11 @@ function subplotBeef(data, title_string, x_label, y_label, x_lim, y_lim, x_tick_
 % -------------------------------------------------------------------------
 function volume = getVolumeUnderSurface(z)
 % -------------------------------------------------------------------------
-  x = 1:size(z,2);
-  y = 1:size(z,1);
+  % keyboard
+  % x = 1:0.1:size(z,2);
+  % y = 1:0.1:size(z,1);
+  x = 1:1:size(z,2);
+  y = 1:1:size(z,1);
   volume = trapz(y, trapz(x, z, 2), 1);
 
 
