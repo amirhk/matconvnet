@@ -85,8 +85,8 @@
 tempScriptReproDasgupta('mnist-two-class-0-1', 'measure-c-separation', 1, 1);
 tempScriptReproDasgupta('mnist-two-class-0-1', 'measure-1-knn-perf', 1, 1);
 
-tempScriptReproDasgupta('mnist-two-class-9-4', 'measure-c-separation', 1, 1);
-tempScriptReproDasgupta('mnist-two-class-9-4', 'measure-1-knn-perf', 1, 1);
+% tempScriptReproDasgupta('mnist-two-class-9-4', 'measure-c-separation', 1, 1);
+% tempScriptReproDasgupta('mnist-two-class-9-4', 'measure-1-knn-perf', 1, 1);
 
 
 
