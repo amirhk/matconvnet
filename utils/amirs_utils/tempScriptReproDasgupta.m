@@ -29,7 +29,8 @@ function tempScriptReproDasgupta(dataset, metric, c_separation, eccentricity)
   % original_dim_list = 100:100:1000;
   % original_dim_list = 100:100:300;
   % original_dim_list = [1000];
-  original_dim_list = [-1]; % cifar-multi-class-subsampled
+  % original_dim_list = [-1]; % cifar-multi-class-subsampled
+  original_dim_list = [3072]; % gaussian
 
   % projected_dim_list = 25:1:50;
   % projected_dim_list = [10, 20, 40, 80, 160, 320];
