@@ -36,8 +36,9 @@ function tempScriptReproDasgupta(metric)
   % projected_dim_list = [10, 20, 40, 80, 160];
   % projected_dim_list = [10, 20];
   % projected_dim_list = [10];
-  projected_dim_list = 100:100:1000;
+  % projected_dim_list = 100:100:1000;
   % projected_dim_list = 100:100:300;
+  projected_dim_list = 25:25:250;
 
   % number_of_samples_list = 25:25:500;
   % number_of_samples_list = [10000];
@@ -111,6 +112,9 @@ function tempScriptReproDasgupta(metric)
   proj_w_sigmoid_imdb_results_std = zeros(results_size);
 
   counter = 1;
+
+  h = figure;
+
   for original_dim = original_dim_list
 
     for projected_dim = projected_dim_list
@@ -134,7 +138,7 @@ function tempScriptReproDasgupta(metric)
               afprintf(sprintf('[INFO] Loading original imdb...\n'));
               tmp_opts.dataset = dataset;
               tmp_opts.posneg_balance = sprintf('balanced-%d', number_of_samples);
-              original_imdb = loadSavedImdb(tmp_opts, 1);
+              original_imdb = loadSavedImdb(tmp_opts, 0);
               afprintf(sprintf('[INFO] done!\n'));
             otherwise
               throwException('[ERROR] dataset not defined!');
@@ -198,35 +202,37 @@ function tempScriptReproDasgupta(metric)
 
         counter = counter + 1;
 
+        afprintf(sprintf('[INFO] Updating subplots...\n'));
+        subplot(1,5,1),
+        title_string = 'Orig. Imdb';
+        subplotBeef(orig_imdb_results_mean, title_string, x_label, y_label, x_lim, y_lim, x_tick_lables, y_tick_lables, metric);
+
+        subplot(1,5,2),
+        title_string = 'Proj. Imdb - RP 1';
+        subplotBeef(proj_wo_non_lin_imdb_results_mean, title_string, x_label, y_label, x_lim, y_lim, x_tick_lables, y_tick_lables, metric);
+
+        subplot(1,5,3),
+        title_string = 'Proj. Imdb - RP 1 RELU 1';
+        subplotBeef(proj_w_relu_imdb_results_mean, title_string, x_label, y_label, x_lim, y_lim, x_tick_lables, y_tick_lables, metric);
+
+        subplot(1,5,4),
+        title_string = 'Proj. Imdb - RP 1 TANH 1';
+        subplotBeef(proj_w_tanh_imdb_results_mean, title_string, x_label, y_label, x_lim, y_lim, x_tick_lables, y_tick_lables, metric);
+
+        subplot(1,5,5),
+        title_string = 'Proj. Imdb - RP 1 SIGMOID 1';
+        subplotBeef(proj_w_sigmoid_imdb_results_mean, title_string, x_label, y_label, x_lim, y_lim, x_tick_lables, y_tick_lables, metric);
+        afprintf(sprintf('[INFO] done!\n'));
+
       end
 
     end
 
   end
 
-  h = figure;
-
-  subplot(1,5,1),
-  title_string = 'Orig. Imdb';
-  subplotBeef(orig_imdb_results_mean, title_string, x_label, y_label, x_lim, y_lim, x_tick_lables, y_tick_lables, metric);
-
-  subplot(1,5,2),
-  title_string = 'Proj. Imdb - RP 1';
-  subplotBeef(proj_wo_non_lin_imdb_results_mean, title_string, x_label, y_label, x_lim, y_lim, x_tick_lables, y_tick_lables, metric);
-
-  subplot(1,5,3),
-  title_string = 'Proj. Imdb - RP 1 RELU 1';
-  subplotBeef(proj_w_relu_imdb_results_mean, title_string, x_label, y_label, x_lim, y_lim, x_tick_lables, y_tick_lables, metric);
-
-  subplot(1,5,4),
-  title_string = 'Proj. Imdb - RP 1 TANH 1';
-  subplotBeef(proj_w_tanh_imdb_results_mean, title_string, x_label, y_label, x_lim, y_lim, x_tick_lables, y_tick_lables, metric);
-
-  subplot(1,5,5),
-  title_string = 'Proj. Imdb - RP 1 SIGMOID 1';
-  subplotBeef(proj_w_sigmoid_imdb_results_mean, title_string, x_label, y_label, x_lim, y_lim, x_tick_lables, y_tick_lables, metric);
 
 
+  afprintf(sprintf('[INFO] Saving plots...\n'));
   plot_title = sprintf( ...
     '%s - c-sep = %d - ecc = %d - %s - %s', ...
     strrep(dataset,'_',' '), ...
@@ -238,6 +244,7 @@ function tempScriptReproDasgupta(metric)
   suptitle(plot_title);
   print(fullfile(getDevPath(), 'temp_images', plot_title), '-dpdf', '-fillpage')
   savefig(h, fullfile(getDevPath(), 'temp_images', plot_title));
+  afprintf(sprintf('[INFO] done!\n'));
 
 % -------------------------------------------------------------------------
 function subplotBeef(data, title_string, x_label, y_label, x_lim, y_lim, x_tick_lables, y_tick_lables, metric)
