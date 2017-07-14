@@ -120,7 +120,7 @@ function tempScriptReproDasgupta(metric)
 
       for number_of_samples = number_of_samples_list
 
-        afprintf(sprintf('[INFO] Test # %d / %d...\n', counter, length(original_dim_list) * length(projected_dim_list) * length(number_of_samples_list)));
+        afprintf(sprintf('[INFO] Test # %d / %d...\n', counter, length(original_dim_list) * length(projected_dim_list) * length(number_of_samples_list)), -1);
 
         tmp_orig_imdb_results = [];
         tmp_proj_wo_non_lin_imdb_results = [];
