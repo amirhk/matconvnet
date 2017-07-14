@@ -40,7 +40,7 @@ function tempScriptReproDasgupta(metric)
   % projected_dim_list = 100:100:300;
 
   % number_of_samples_list = 25:25:500;
-  number_of_samples_list = [10000];
+  number_of_samples_list = [25000];
   % number_of_samples_list = [100, 250, 500, 1000, 2500, 5000, 10000, 25000];
   % number_of_samples_list = [100, 250, 500, 1000, 2500];
   % number_of_samples_list = [100, 250];
