@@ -56,8 +56,8 @@ function tempScriptReproDasgupta(metric)
 
   repeat_count = 3;
 
-  % dataset = '2_gaussians';
-  dataset = '5_gaussians';
+  dataset = '2_gaussians';
+  % dataset = '5_gaussians';
   % dataset = 'circle_in_ring';
   % dataset = 'cifar-multi-class-subsampled';
 
