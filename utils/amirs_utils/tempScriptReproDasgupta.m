@@ -54,7 +54,7 @@ function tempScriptReproDasgupta(metric)
 
   fh_projection_utils = projectionUtils;
 
-  repeat_count = 5;
+  repeat_count = 3;
 
   % dataset = '2_gaussians';
   dataset = '5_gaussians';
@@ -128,11 +128,11 @@ function tempScriptReproDasgupta(metric)
           switch dataset
             case '2_gaussians'
               afprintf(sprintf('[INFO] Created new imdb...\n'));
-              original_imdb = constructSyntheticGaussianImdbNEW(2, number_of_samples, original_dim, c_separation, eccentricity, true)
+              original_imdb = constructSyntheticGaussianImdbNEW(2, number_of_samples, original_dim, c_separation, eccentricity, true);
               afprintf(sprintf('[INFO] done!\n'));
             case '5_gaussians'
               afprintf(sprintf('[INFO] Created new imdb...\n'));
-              original_imdb = constructSyntheticGaussianImdbNEW(5, number_of_samples, original_dim, c_separation, eccentricity, true)
+              original_imdb = constructSyntheticGaussianImdbNEW(5, number_of_samples, original_dim, c_separation, eccentricity, true);
               afprintf(sprintf('[INFO] done!\n'));
             case 'circle_in_ring'
               afprintf(sprintf('[INFO] Created new imdb...\n'));
