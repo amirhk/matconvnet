@@ -22,8 +22,8 @@
 
 
 
-tempScriptReproDasgupta('2_gaussians', 'measure-c-separation');
-tempScriptReproDasgupta('2_gaussians', 'measure-1-knn-perf');
+% tempScriptReproDasgupta('2_gaussians', 'measure-c-separation');
+% tempScriptReproDasgupta('2_gaussians', 'measure-1-knn-perf');
 % tempScriptReproDasgupta('2_gaussians', 'measure-eccentricity');
 % tempScriptReproDasgupta('2_gaussians', 'measure-linear-svm-perf');
 % tempScriptReproDasgupta('2_gaussians', 'measure-mlp-500-100-perf');
@@ -31,8 +31,8 @@ tempScriptReproDasgupta('2_gaussians', 'measure-1-knn-perf');
 
 
 
-% tempScriptReproDasgupta('2_gaussians', 'measure-c-separation', 1, 1);
-% tempScriptReproDasgupta('2_gaussians', 'measure-1-knn-perf', 1, 1);
+tempScriptReproDasgupta('2_gaussians', 'measure-c-separation', 1, 1);
+tempScriptReproDasgupta('2_gaussians', 'measure-1-knn-perf', 1, 1);
 
 % tempScriptReproDasgupta('2_gaussians', 'measure-c-separation', 0.3, 1);
 % tempScriptReproDasgupta('2_gaussians', 'measure-1-knn-perf', 0.3, 1);
