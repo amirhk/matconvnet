@@ -262,6 +262,8 @@ function subplotBeef(data, title_string, x_label, y_label, x_lim, y_lim, x_tick_
   xticklabels(x_tick_lables),
   yticklabels(y_tick_lables),
   view(25,10);
+  drawnow
+  pause(0.05);
 
 
 
