@@ -22,11 +22,11 @@
 
 
 
-% tempScriptReproDasgupta('measure-c-separation');
-tempScriptReproDasgupta('measure-eccentricity');
-% tempScriptReproDasgupta('measure-1-knn-perf');
-% tempScriptReproDasgupta('measure-linear-svm-perf');
-% tempScriptReproDasgupta('measure-mlp-500-100-perf');
+tempScriptReproDasgupta('measure-c-separation');
+% tempScriptReproDasgupta('measure-eccentricity');
+tempScriptReproDasgupta('measure-1-knn-perf');
+tempScriptReproDasgupta('measure-linear-svm-perf');
+tempScriptReproDasgupta('measure-mlp-500-100-perf');
 
 
 

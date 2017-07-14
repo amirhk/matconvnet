@@ -29,15 +29,15 @@ function tempScriptReproDasgupta(metric)
   % original_dim_list = 100:100:1000;
   % original_dim_list = 100:100:300;
   % original_dim_list = [1000];
-  original_dim_list = ['whatever'];
+  original_dim_list = [-1];
 
   % projected_dim_list = 25:1:50;
   % projected_dim_list = [10, 20, 40, 80, 160, 320];
   % projected_dim_list = [10, 20, 40, 80, 160];
   % projected_dim_list = [10, 20];
   % projected_dim_list = [10];
-  % projected_dim_list = 100:100:1000;
-  projected_dim_list = 100:100:300;
+  projected_dim_list = 100:100:1000;
+  % projected_dim_list = 100:100:300;
 
   % number_of_samples_list = 25:25:500;
   % number_of_samples_list = [10000];
@@ -46,7 +46,7 @@ function tempScriptReproDasgupta(metric)
   % number_of_samples_list = [100, 250];
   % number_of_samples_list = [10000, 25000, 50000, 100000];
   number_of_samples_list = [10, 50, 100, 250, 500, 1000, 2500];
-  number_of_samples_list = [10, 50];
+  % number_of_samples_list = [10, 50];
 
   % metric = 'measure-c-separation';
   % metric = 'measure-eccentricity';
@@ -58,10 +58,10 @@ function tempScriptReproDasgupta(metric)
 
   repeat_count = 3;
 
-  dataset = '2_gaussians';
-  dataset = 'cifar';
+  % dataset = '2_gaussians';
+  dataset = 'cifar-multi-class-subsampled';
   c_separation = 1;
-  eccentricity = 1000;
+  eccentricity = 1;
 
   assert( ...
     length(original_dim_list) == 1 || ...
@@ -117,7 +117,6 @@ function tempScriptReproDasgupta(metric)
 
       for number_of_samples = number_of_samples_list
 
-        afprintf(sprintf('[INFO] Constructing imdbs...\n'));
         tmp_orig_imdb_results = [];
         tmp_proj_wo_non_lin_imdb_results = [];
         tmp_proj_w_relu_imdb_results = [];
@@ -131,28 +130,31 @@ function tempScriptReproDasgupta(metric)
               afprintf(sprintf('[INFO] Created new imdb...\n'));
               original_imdb = constructSyntheticGaussianImdbNEW(number_of_samples, original_dim, c_separation, eccentricity);
               afprintf(sprintf('[INFO] done!\n'));
-            case 'cifar'
+            case 'cifar-multi-class-subsampled'
               afprintf(sprintf('[INFO] Loading original imdb...\n'));
               tmp_opts.dataset = dataset;
-              tmp_opts.posneg_balance = number_of_samples;
+              tmp_opts.posneg_balance = sprintf('balanced-%d', number_of_samples);
               original_imdb = loadSavedImdb(tmp_opts, 1);
               afprintf(sprintf('[INFO] done!\n'));
             otherwise
               throwException('[ERROR] dataset not defined!');
           end
 
+          afprintf(sprintf('[INFO] Projecting imdb...\n'));
           projected_imdb_wo_non_lin = fh_projection_utils.getDenslyDownProjectedImdb(original_imdb, 1, 0, projected_dim, 'relu');
           projected_imdb_w_relu = fh_projection_utils.getDenslyDownProjectedImdb(original_imdb, 1, 1, projected_dim, 'relu');
           projected_imdb_w_tanh = fh_projection_utils.getDenslyDownProjectedImdb(original_imdb, 1, 1, projected_dim, 'tanh');
           projected_imdb_w_sigmoid = fh_projection_utils.getDenslyDownProjectedImdb(original_imdb, 1, 1, projected_dim, 'sigmoid');
+          afprintf(sprintf('[INFO] done!\n'));
 
+          afprintf(sprintf('[INFO] Evaluating metric...\n'));
           switch metric
             case 'measure-c-separation'
-              tmp_orig_imdb_results(end+1) = getTwoClassCSeparation(original_imdb);
-              tmp_proj_wo_non_lin_imdb_results(end+1) = getTwoClassCSeparation(projected_imdb_wo_non_lin);
-              tmp_proj_w_relu_imdb_results(end+1) = getTwoClassCSeparation(projected_imdb_w_relu);
-              tmp_proj_w_tanh_imdb_results(end+1) = getTwoClassCSeparation(projected_imdb_w_tanh);
-              tmp_proj_w_sigmoid_imdb_results(end+1) = getTwoClassCSeparation(projected_imdb_w_sigmoid);
+              tmp_orig_imdb_results(end+1) = getAverageClassCSeparation(original_imdb);
+              tmp_proj_wo_non_lin_imdb_results(end+1) = getAverageClassCSeparation(projected_imdb_wo_non_lin);
+              tmp_proj_w_relu_imdb_results(end+1) = getAverageClassCSeparation(projected_imdb_w_relu);
+              tmp_proj_w_tanh_imdb_results(end+1) = getAverageClassCSeparation(projected_imdb_w_tanh);
+              tmp_proj_w_sigmoid_imdb_results(end+1) = getAverageClassCSeparation(projected_imdb_w_sigmoid);
             case 'measure-eccentricity'
               tmp_orig_imdb_results(end+1) = getAverageClassEccentricity(original_imdb);
               tmp_proj_wo_non_lin_imdb_results(end+1) = getAverageClassEccentricity(projected_imdb_wo_non_lin);
@@ -178,6 +180,7 @@ function tempScriptReproDasgupta(metric)
               tmp_proj_w_tanh_imdb_results(end+1) = getSimpleTestAccuracyFromMLP(projected_imdb_w_tanh);
               tmp_proj_w_sigmoid_imdb_results(end+1) = getSimpleTestAccuracyFromMLP(projected_imdb_w_sigmoid);
           end
+          afprintf(sprintf('[INFO] done!\n'));
 
         end
 
