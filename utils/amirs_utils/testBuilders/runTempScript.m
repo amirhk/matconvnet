@@ -31,44 +31,44 @@
 
 
 
-tempScriptReproDasgupta('2_gaussians', 'measure-c-separation', 1, 1);
-tempScriptReproDasgupta('2_gaussians', 'measure-1-knn-perf', 1, 1);
+% tempScriptReproDasgupta('2_gaussians', 'measure-c-separation', 1, 1);
+% tempScriptReproDasgupta('2_gaussians', 'measure-1-knn-perf', 1, 1);
 
-tempScriptReproDasgupta('2_gaussians', 'measure-c-separation', 0.3, 1);
-tempScriptReproDasgupta('2_gaussians', 'measure-1-knn-perf', 0.3, 1);
+% tempScriptReproDasgupta('2_gaussians', 'measure-c-separation', 0.3, 1);
+% tempScriptReproDasgupta('2_gaussians', 'measure-1-knn-perf', 0.3, 1);
 
-tempScriptReproDasgupta('2_gaussians', 'measure-c-separation', 0.1, 1);
-tempScriptReproDasgupta('2_gaussians', 'measure-1-knn-perf', 0.1, 1);
+% tempScriptReproDasgupta('2_gaussians', 'measure-c-separation', 0.1, 1);
+% tempScriptReproDasgupta('2_gaussians', 'measure-1-knn-perf', 0.1, 1);
 
-tempScriptReproDasgupta('2_gaussians', 'measure-c-separation', 1, 1000);
-tempScriptReproDasgupta('2_gaussians', 'measure-1-knn-perf', 1, 1000);
+% tempScriptReproDasgupta('2_gaussians', 'measure-c-separation', 1, 1000);
+% tempScriptReproDasgupta('2_gaussians', 'measure-1-knn-perf', 1, 1000);
 
-tempScriptReproDasgupta('2_gaussians', 'measure-c-separation', 0.3, 1000);
-tempScriptReproDasgupta('2_gaussians', 'measure-1-knn-perf', 0.3, 1000);
+% tempScriptReproDasgupta('2_gaussians', 'measure-c-separation', 0.3, 1000);
+% tempScriptReproDasgupta('2_gaussians', 'measure-1-knn-perf', 0.3, 1000);
 
-tempScriptReproDasgupta('2_gaussians', 'measure-c-separation', 0.1, 1000);
-tempScriptReproDasgupta('2_gaussians', 'measure-1-knn-perf', 0.1, 1000);
-
-
+% tempScriptReproDasgupta('2_gaussians', 'measure-c-separation', 0.1, 1000);
+% tempScriptReproDasgupta('2_gaussians', 'measure-1-knn-perf', 0.1, 1000);
 
 
-% tempScriptReproDasgupta('5_gaussians', 'measure-c-separation', 1, 1);
-% tempScriptReproDasgupta('5_gaussians', 'measure-1-knn-perf', 1, 1);
 
-% tempScriptReproDasgupta('5_gaussians', 'measure-c-separation', 0.3, 1);
-% tempScriptReproDasgupta('5_gaussians', 'measure-1-knn-perf', 0.3, 1);
 
-% tempScriptReproDasgupta('5_gaussians', 'measure-c-separation', 0.1, 1);
-% tempScriptReproDasgupta('5_gaussians', 'measure-1-knn-perf', 0.1, 1);
+tempScriptReproDasgupta('5_gaussians', 'measure-c-separation', 1, 1);
+tempScriptReproDasgupta('5_gaussians', 'measure-1-knn-perf', 1, 1);
 
-% tempScriptReproDasgupta('5_gaussians', 'measure-c-separation', 1, 1000);
-% tempScriptReproDasgupta('5_gaussians', 'measure-1-knn-perf', 1, 1000);
+tempScriptReproDasgupta('5_gaussians', 'measure-c-separation', 0.3, 1);
+tempScriptReproDasgupta('5_gaussians', 'measure-1-knn-perf', 0.3, 1);
 
-% tempScriptReproDasgupta('5_gaussians', 'measure-c-separation', 0.3, 1000);
-% tempScriptReproDasgupta('5_gaussians', 'measure-1-knn-perf', 0.3, 1000);
+tempScriptReproDasgupta('5_gaussians', 'measure-c-separation', 0.1, 1);
+tempScriptReproDasgupta('5_gaussians', 'measure-1-knn-perf', 0.1, 1);
 
-% tempScriptReproDasgupta('5_gaussians', 'measure-c-separation', 0.1, 1000);
-% tempScriptReproDasgupta('5_gaussians', 'measure-1-knn-perf', 0.1, 1000);
+tempScriptReproDasgupta('5_gaussians', 'measure-c-separation', 1, 1000);
+tempScriptReproDasgupta('5_gaussians', 'measure-1-knn-perf', 1, 1000);
+
+tempScriptReproDasgupta('5_gaussians', 'measure-c-separation', 0.3, 1000);
+tempScriptReproDasgupta('5_gaussians', 'measure-1-knn-perf', 0.3, 1000);
+
+tempScriptReproDasgupta('5_gaussians', 'measure-c-separation', 0.1, 1000);
+tempScriptReproDasgupta('5_gaussians', 'measure-1-knn-perf', 0.1, 1000);
 
 
 
