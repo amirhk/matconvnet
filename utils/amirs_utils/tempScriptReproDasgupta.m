@@ -38,7 +38,7 @@ function tempScriptReproDasgupta(metric)
   % projected_dim_list = [10];
   % projected_dim_list = 100:100:1000;
   % projected_dim_list = 100:100:300;
-  projected_dim_list = 25:25:250;
+  projected_dim_list = 10:10:100;
 
   % number_of_samples_list = 25:25:500;
   % number_of_samples_list = [10000];
