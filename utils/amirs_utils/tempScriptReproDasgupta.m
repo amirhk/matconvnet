@@ -39,15 +39,13 @@ function tempScriptReproDasgupta(dataset, metric, c_separation, eccentricity)
   % projected_dim_list = 100:100:1000;
   % projected_dim_list = 100:100:300;
   % projected_dim_list = 10:10:100;
-  % projected_dim_list = [10, 768:768:3072];
-  projected_dim_list = [10, 768];
+  projected_dim_list = [10, 768:768:3072];
 
   % number_of_samples_list = [1000]; % 2_gaussians, 5_gaussians
   % number_of_samples_list = [10, 50, 100, 250, 500, 1000, 2500]; % circle_in_ring
   % number_of_samples_list = 10:10:100; % circle_in_ring
   % number_of_samples_list = [10, 50, 100, 250, 500, 1000, 2500]; % cifar-multi-class-subsampled
-  % number_of_samples_list = [10, 50, 100, 250, 500]; % cifar-multi-class-subsampled
-  number_of_samples_list = [10, 50, 100]; % cifar-multi-class-subsampled
+  number_of_samples_list = [10, 50, 100, 250, 500]; % cifar-multi-class-subsampled
 
   % metric = 'measure-c-separation';
   % metric = 'measure-eccentricity';
@@ -57,8 +55,8 @@ function tempScriptReproDasgupta(dataset, metric, c_separation, eccentricity)
 
   fh_projection_utils = projectionUtils;
 
-  % repeat_count = 5;
-  repeat_count = 2;
+  repeat_count = 5;
+  % repeat_count = 2;
 
   % dataset = '2_gaussians';
   % dataset = '5_gaussians';

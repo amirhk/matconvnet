@@ -79,7 +79,7 @@
 
 
 tempScriptReproDasgupta('cifar-multi-class-subsampled', 'measure-c-separation', 1, 1);
-% tempScriptReproDasgupta('cifar-multi-class-subsampled', 'measure-1-knn-perf', 1, 1);
+tempScriptReproDasgupta('cifar-multi-class-subsampled', 'measure-1-knn-perf', 1, 1);
 
 
 
