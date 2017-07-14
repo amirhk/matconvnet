@@ -26,10 +26,10 @@ function tempScriptReproDasgupta(dataset, metric, c_separation, eccentricity)
 % POSSIBILITY OF SUCH DAMAGE.
 
   % original_dim_list = 25:25:500;
-  original_dim_list = 100:100:1000;
+  % original_dim_list = 100:100:1000;
   % original_dim_list = 100:100:300;
   % original_dim_list = [1000];
-  % original_dim_list = [-1];
+  original_dim_list = [-1]; % cifar-multi-class-subsampled
 
   % projected_dim_list = 25:1:50;
   % projected_dim_list = [10, 20, 40, 80, 160, 320];
@@ -38,13 +38,14 @@ function tempScriptReproDasgupta(dataset, metric, c_separation, eccentricity)
   % projected_dim_list = [10];
   % projected_dim_list = 100:100:1000;
   % projected_dim_list = 100:100:300;
-  projected_dim_list = 10:10:100;
+  % projected_dim_list = 10:10:100;
+  projected_dim_list = [10, 768:768:3072];
 
-  number_of_samples_list = [1000]; % 2_gaussians, 5_gaussians
+  % number_of_samples_list = [1000]; % 2_gaussians, 5_gaussians
   % number_of_samples_list = [10, 50, 100, 250, 500, 1000, 2500]; % circle_in_ring
   % number_of_samples_list = 10:10:100; % circle_in_ring
   % number_of_samples_list = [10, 50, 100, 250, 500, 1000, 2500]; % cifar-multi-class-subsampled
-  % number_of_samples_list = [10, 50, 100, 250, 500]; % cifar-multi-class-subsampled
+  number_of_samples_list = [10, 50, 100, 250, 500]; % cifar-multi-class-subsampled
 
   % metric = 'measure-c-separation';
   % metric = 'measure-eccentricity';
@@ -110,6 +111,15 @@ function tempScriptReproDasgupta(dataset, metric, c_separation, eccentricity)
   counter = 1;
 
   h = figure;
+  plot_title = sprintf( ...
+    '%s - c-sep = %d - ecc = %d - %s - %s', ...
+    strrep(dataset,'_',' '), ...
+    c_separation * 100, ...
+    eccentricity * 100, ...
+    sup_title, ...
+    metric);
+    % upper(strrep(random_projection_type,'_',' '))
+  suptitle(plot_title);
 
   for original_dim = original_dim_list
 
@@ -125,28 +135,23 @@ function tempScriptReproDasgupta(dataset, metric, c_separation, eccentricity)
 
         for j = 1 : repeat_count
 
+          afprintf(sprintf('[INFO] Created / loading new imdb...\n'));
           switch dataset
             case '2_gaussians'
-              afprintf(sprintf('[INFO] Created new imdb...\n'));
               original_imdb = constructSyntheticGaussianImdbNEW(2, number_of_samples, original_dim, c_separation, eccentricity, true);
-              afprintf(sprintf('[INFO] done!\n'));
             case '5_gaussians'
-              afprintf(sprintf('[INFO] Created new imdb...\n'));
               original_imdb = constructSyntheticGaussianImdbNEW(5, number_of_samples, original_dim, c_separation, eccentricity, true);
-              afprintf(sprintf('[INFO] done!\n'));
             case 'circle_in_ring'
-              afprintf(sprintf('[INFO] Created new imdb...\n'));
               original_imdb = constructSyntheticCirclesImdb(number_of_samples, original_dim, 0, 1);
-              afprintf(sprintf('[INFO] done!\n'));
             case 'cifar-multi-class-subsampled'
-              afprintf(sprintf('[INFO] Loading original imdb...\n'));
               tmp_opts.dataset = dataset;
               tmp_opts.posneg_balance = sprintf('balanced-%d', number_of_samples);
               original_imdb = loadSavedImdb(tmp_opts, 0);
-              afprintf(sprintf('[INFO] done!\n'));
+              original_imdb = filterImdbForSet(original_imdb, 1, 1);
             otherwise
-              throwException('[ERROR] dataset not defined!');
+              throwException('[ERROR] dataset not recognized!');
           end
+          afprintf(sprintf('[INFO] done!\n'));
 
           afprintf(sprintf('[INFO] Projecting imdb...\n'));
           projected_imdb_wo_non_lin = fh_projection_utils.getDenslyDownProjectedImdb(original_imdb, 1, 0, projected_dim, 'relu');
@@ -214,15 +219,6 @@ function tempScriptReproDasgupta(dataset, metric, c_separation, eccentricity)
 
 
   afprintf(sprintf('[INFO] Saving plots...\n'));
-  plot_title = sprintf( ...
-    '%s - c-sep = %d - ecc = %d - %s - %s', ...
-    strrep(dataset,'_',' '), ...
-    c_separation * 100, ...
-    eccentricity * 100, ...
-    sup_title, ...
-    metric);
-    % upper(strrep(random_projection_type,'_',' '))
-  suptitle(plot_title);
   print(fullfile(getDevPath(), 'temp_images', plot_title), '-dpdf', '-fillpage')
   savefig(h, fullfile(getDevPath(), 'temp_images', plot_title));
   afprintf(sprintf('[INFO] done!\n'));
@@ -231,7 +227,7 @@ function tempScriptReproDasgupta(dataset, metric, c_separation, eccentricity)
 function subplotBeef(data, title_string, x_label, y_label, x_lim, y_lim, x_tick_lables, y_tick_lables, metric)
 % -------------------------------------------------------------------------
   mesh(data),
-  title(title_string),
+  title(sprintf('%s - V: %.3f', title_string, getVolumeUnderSurface(data))),
   xlabel(x_label),
   ylabel(y_label),
   zlabel(metric);
@@ -246,6 +242,13 @@ function subplotBeef(data, title_string, x_label, y_label, x_lim, y_lim, x_tick_
   drawnow
   pause(0.05);
 
+
+% -------------------------------------------------------------------------
+function volume = getVolumeUnderSurface(z)
+% -------------------------------------------------------------------------
+  x = 1:size(z,2);
+  y = 1:size(z,1);
+  volume = trapz(y, trapz(x, z, 2), 1);
 
 
 
