@@ -50,6 +50,13 @@ function imdb = loadSavedTwoClassImdb(dataset, posneg_balance, fold_number)
         case 'balanced-5000'
           tmp = load(fullfile(path_to_imdbs, 'mnist', 'balanced', 'saved-two-class-mnist-pos9-neg4-balanced-5000-5000-train-5000-5000.mat'));
       end
+
+    case 'mnist-two-class-0-1'
+      switch posneg_balance
+        case 'balanced-5000'
+          tmp = load(fullfile(path_to_imdbs, 'mnist', 'balanced', 'saved-two-class-mnist-pos1-neg2-balanced-5000-5000-train-5000-5000.mat'));
+      end
+
     case 'cifar-two-class-deer-horse'
       % currently fold number is not implemented.
       switch posneg_balance
