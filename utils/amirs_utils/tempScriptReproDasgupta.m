@@ -26,30 +26,27 @@ function tempScriptReproDasgupta(metric)
 % POSSIBILITY OF SUCH DAMAGE.
 
   % original_dim_list = 25:25:500;
-  original_dim_list = 100:100:1000;
+  % original_dim_list = 100:100:1000;
   % original_dim_list = 100:100:300;
   % original_dim_list = [1000];
-
+  original_dim_list = ['whatever'];
 
   % projected_dim_list = 25:1:50;
   % projected_dim_list = [10, 20, 40, 80, 160, 320];
   % projected_dim_list = [10, 20, 40, 80, 160];
   % projected_dim_list = [10, 20];
   % projected_dim_list = [10];
-  projected_dim_list = 100:100:1000;
-  % projected_dim_list = 100:100:300;
+  % projected_dim_list = 100:100:1000;
+  projected_dim_list = 100:100:300;
 
   % number_of_samples_list = 25:25:500;
-  number_of_samples_list = [10000];
+  % number_of_samples_list = [10000];
   % number_of_samples_list = [100, 250, 500, 1000, 2500, 5000, 10000, 25000];
   % number_of_samples_list = [100, 250, 500, 1000, 2500];
   % number_of_samples_list = [100, 250];
   % number_of_samples_list = [10000, 25000, 50000, 100000];
-
-
-  % test_type = 'vary_original_dim';
-  % test_type = 'vary_projected_dim';
-  % test_type = 'vary_number_of_samples';
+  number_of_samples_list = [10, 50, 100, 250, 500, 1000, 2500];
+  number_of_samples_list = [10, 50];
 
   % metric = 'measure-c-separation';
   % metric = 'measure-eccentricity';
@@ -57,14 +54,12 @@ function tempScriptReproDasgupta(metric)
   % metric = 'measure-linear-svm-perf';
   % metric = 'measure-mlp-500-100-perf';
 
-  % random_projection_type = 'rp_1_relu_0';
-  % random_projection_type = 'rp_1_relu_1';
-
   fh_projection_utils = projectionUtils;
 
   repeat_count = 3;
 
   dataset = '2_gaussians';
+  dataset = 'cifar';
   c_separation = 1;
   eccentricity = 1000;
 
@@ -133,17 +128,19 @@ function tempScriptReproDasgupta(metric)
 
           switch dataset
             case '2_gaussians'
+              afprintf(sprintf('[INFO] Created new imdb...\n'));
               original_imdb = constructSyntheticGaussianImdbNEW(number_of_samples, original_dim, c_separation, eccentricity);
+              afprintf(sprintf('[INFO] done!\n'));
+            case 'cifar'
+              afprintf(sprintf('[INFO] Loading original imdb...\n'));
+              tmp_opts.dataset = dataset;
+              tmp_opts.posneg_balance = number_of_samples;
+              original_imdb = loadSavedImdb(tmp_opts, 1);
+              afprintf(sprintf('[INFO] done!\n'));
             otherwise
               throwException('[ERROR] dataset not defined!');
           end
 
-          % switch random_projection_type
-          %   case 'rp_1_relu_0'
-          %     projected_imdb = fh_projection_utils.getDenslyDownProjectedImdb(original_imdb, 1, 0, projected_dim, 'relu');
-          %   case 'rp_1_relu_1'
-          %     projected_imdb = fh_projection_utils.getDenslyDownProjectedImdb(original_imdb, 1, 1, projected_dim, 'relu');
-          % end
           projected_imdb_wo_non_lin = fh_projection_utils.getDenslyDownProjectedImdb(original_imdb, 1, 0, projected_dim, 'relu');
           projected_imdb_w_relu = fh_projection_utils.getDenslyDownProjectedImdb(original_imdb, 1, 1, projected_dim, 'relu');
           projected_imdb_w_tanh = fh_projection_utils.getDenslyDownProjectedImdb(original_imdb, 1, 1, projected_dim, 'tanh');
