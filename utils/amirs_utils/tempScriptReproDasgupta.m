@@ -63,6 +63,8 @@ function tempScriptReproDasgupta(dataset, metric, c_separation, eccentricity)
   % dataset = '5_gaussians';
   % dataset = 'circle_in_ring';
   % dataset = 'cifar-multi-class-subsampled';
+  % dataset = 'mnist-two-class-subsampled-0-1';
+  % dataset = 'mnist-two-class-subsampled-9-4';
 
   % c_separation = 1;
   % eccentricity = 1;
@@ -150,6 +152,14 @@ function tempScriptReproDasgupta(dataset, metric, c_separation, eccentricity)
               tmp_opts.posneg_balance = sprintf('balanced-%d', number_of_samples);
               original_imdb = loadSavedImdb(tmp_opts, 0);
               % original_imdb = filterImdbForSet(original_imdb, 1, 1);
+            case 'mnist-two-class-0-1'
+              tmp_opts.dataset = dataset;
+              tmp_opts.posneg_balance = sprintf('balanced-%d', number_of_samples);
+              original_imdb = loadSavedImdb(tmp_opts, 0);
+            case 'mnist-two-class-8-4'
+              tmp_opts.dataset = dataset;
+              tmp_opts.posneg_balance = sprintf('balanced-%d', number_of_samples);
+              original_imdb = loadSavedImdb(tmp_opts, 0);
             otherwise
               throwException('[ERROR] dataset not recognized!');
           end
