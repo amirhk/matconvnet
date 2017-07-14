@@ -38,7 +38,7 @@ function imdb = constructSyntheticGaussianImdbNEW(samples_per_class, sample_dim,
     case 1
       variance_basis = [1,1];
     case 1000
-      variance_basis = [1000000, 1];
+      variance_basis = [1000000, 1, 1];
     otherwise
       variance_basis = [25, 9, 1];
   end

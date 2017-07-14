@@ -26,7 +26,7 @@ function tempScriptReproDasgupta(metric)
 % POSSIBILITY OF SUCH DAMAGE.
 
   % original_dim_list = 25:25:500;
-  original_dim_list = 500:100:1000;
+  original_dim_list = 100:100:1000;
   % original_dim_list = 100:100:300;
   % original_dim_list = [1000];
 
@@ -36,7 +36,7 @@ function tempScriptReproDasgupta(metric)
   % projected_dim_list = [10, 20, 40, 80, 160];
   % projected_dim_list = [10, 20];
   % projected_dim_list = [10];
-  projected_dim_list = 500:100:1000;
+  projected_dim_list = 100:100:1000;
   % projected_dim_list = 100:100:300;
 
   % number_of_samples_list = 25:25:500;
