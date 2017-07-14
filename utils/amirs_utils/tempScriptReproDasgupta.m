@@ -156,7 +156,7 @@ function tempScriptReproDasgupta(dataset, metric, c_separation, eccentricity)
               tmp_opts.dataset = dataset;
               tmp_opts.posneg_balance = sprintf('balanced-%d', number_of_samples);
               original_imdb = loadSavedImdb(tmp_opts, 0);
-            case 'mnist-two-class-8-4'
+            case 'mnist-two-class-8-3'
               tmp_opts.dataset = dataset;
               tmp_opts.posneg_balance = sprintf('balanced-%d', number_of_samples);
               original_imdb = loadSavedImdb(tmp_opts, 0);
