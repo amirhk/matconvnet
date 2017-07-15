@@ -114,17 +114,6 @@ function tempScriptReproDasgupta(dataset, metric, c_separation, eccentricity)
 
   counter = 1;
 
-  h = figure;
-  plot_title = sprintf( ...
-    '%s - c-sep = %d - ecc = %d - %s - %s', ...
-    strrep(dataset,'_',' '), ...
-    c_separation * 100, ...
-    eccentricity * 100, ...
-    sup_title, ...
-    metric);
-    % upper(strrep(random_projection_type,'_',' '))
-  suptitle(plot_title);
-
   for original_dim = original_dim_list
 
     for projected_dim = projected_dim_list
@@ -206,27 +195,38 @@ function tempScriptReproDasgupta(dataset, metric, c_separation, eccentricity)
 
         counter = counter + 1;
 
-        afprintf(sprintf('[INFO] Updating subplots...\n'));
-
-        subplot(1,3,1),
-        title_string = 'Orig. Imdb';
-        subplotBeef(orig_imdb_results_mean, title_string, x_label, y_label, x_lim, y_lim, x_tick_lables, y_tick_lables, metric);
-
-        subplot(1,3,2),
-        title_string = 'Proj. Imdb - RP 1';
-        subplotBeef(proj_wo_non_lin_imdb_results_mean, title_string, x_label, y_label, x_lim, y_lim, x_tick_lables, y_tick_lables, metric);
-
-        subplot(1,3,3),
-        title_string = 'Proj. Imdb - RP 1 RELU 1';
-        subplotBeef(proj_w_relu_imdb_results_mean, title_string, x_label, y_label, x_lim, y_lim, x_tick_lables, y_tick_lables, metric);
-
-        afprintf(sprintf('[INFO] done!\n'));
-
       end
 
     end
 
   end
+
+  h = figure;
+  plot_title = sprintf( ...
+    '%s - c-sep = %d - ecc = %d - %s - %s', ...
+    strrep(dataset,'_',' '), ...
+    c_separation * 100, ...
+    eccentricity * 100, ...
+    sup_title, ...
+    metric);
+    % upper(strrep(random_projection_type,'_',' '))
+  suptitle(plot_title);
+
+  afprintf(sprintf('[INFO] Updating subplots...\n'));
+
+  subplot(1,3,1),
+  title_string = 'Orig. Imdb';
+  subplotBeef(orig_imdb_results_mean, title_string, x_label, y_label, x_lim, y_lim, x_tick_lables, y_tick_lables, metric);
+
+  subplot(1,3,2),
+  title_string = 'Proj. Imdb - RP 1';
+  subplotBeef(proj_wo_non_lin_imdb_results_mean, title_string, x_label, y_label, x_lim, y_lim, x_tick_lables, y_tick_lables, metric);
+
+  subplot(1,3,3),
+  title_string = 'Proj. Imdb - RP 1 RELU 1';
+  subplotBeef(proj_w_relu_imdb_results_mean, title_string, x_label, y_label, x_lim, y_lim, x_tick_lables, y_tick_lables, metric);
+
+  afprintf(sprintf('[INFO] done!\n'));
 
   afprintf(sprintf('[INFO] Saving plots...\n'));
   print(fullfile(getDevPath(), 'temp_images', plot_title), '-dpdf', '-fillpage')
