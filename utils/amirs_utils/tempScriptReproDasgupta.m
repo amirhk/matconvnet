@@ -40,13 +40,13 @@ function tempScriptReproDasgupta(dataset, metric, c_separation, eccentricity)
   % projected_dim_list = 100:100:1000;
   % projected_dim_list = 100:100:300;
   % projected_dim_list = 10:10:100;
-  projected_dim_list = [10, 768:768:3072];
+  projected_dim_list = [10, 768:384:3072];
 
   % number_of_samples_list = [1000]; % 2_gaussians, 5_gaussians
   % number_of_samples_list = [10, 50, 100, 250, 500, 1000, 2500]; % circle_in_ring
   % number_of_samples_list = 10:10:100; % circle_in_ring
   % number_of_samples_list = [10, 50, 100, 250, 500, 1000, 2500]; % cifar-multi-class-subsampled
-  number_of_samples_list = [10, 50, 100, 250, 500]; % cifar-multi-class-subsampled
+  number_of_samples_list = [10, 50, 100, 250, 500, 1000]; % cifar-multi-class-subsampled
 
   % metric = 'measure-c-separation';
   % metric = 'measure-eccentricity';
@@ -249,8 +249,8 @@ function subplotBeef(data, title_string, x_label, y_label, x_lim, y_lim, x_tick_
   xticklabels(x_tick_lables),
   yticklabels(y_tick_lables),
   view(55,10);
-  drawnow
-  pause(0.05);
+  % drawnow
+  % pause(0.05);
 
 
 % -------------------------------------------------------------------------

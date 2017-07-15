@@ -78,12 +78,12 @@
 
 
 
-% tempScriptReproDasgupta('cifar-multi-class-subsampled', 'measure-c-separation', 1, 1);
-% tempScriptReproDasgupta('cifar-multi-class-subsampled', 'measure-1-knn-perf', 1, 1);
+tempScriptReproDasgupta('cifar-multi-class-subsampled', 'measure-c-separation', 1, 1);
+tempScriptReproDasgupta('cifar-multi-class-subsampled', 'measure-1-knn-perf', 1, 1);
 
 
-% tempScriptReproDasgupta('mnist-two-class-0-1', 'measure-c-separation', 1, 1);
-% tempScriptReproDasgupta('mnist-two-class-0-1', 'measure-1-knn-perf', 1, 1);
+tempScriptReproDasgupta('mnist-two-class-0-1', 'measure-c-separation', 1, 1);
+tempScriptReproDasgupta('mnist-two-class-0-1', 'measure-1-knn-perf', 1, 1);
 
 tempScriptReproDasgupta('mnist-two-class-8-3', 'measure-c-separation', 1, 1);
 tempScriptReproDasgupta('mnist-two-class-8-3', 'measure-1-knn-perf', 1, 1);
