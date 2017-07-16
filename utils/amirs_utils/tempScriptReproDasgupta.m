@@ -45,8 +45,8 @@ function tempScriptReproDasgupta(dataset, metric, c_separation, eccentricity)
   % number_of_samples_list = [1000]; % 2_gaussians, 5_gaussians
   % number_of_samples_list = [10, 50, 100, 250, 500, 1000, 2500]; % circle_in_ring
   % number_of_samples_list = 10:10:100; % circle_in_ring
-  % number_of_samples_list = [10, 50, 100, 250, 500, 1000, 2500]; % cifar-multi-class-subsampled
-  number_of_samples_list = [10, 50, 100, 250, 500, 1000]; % cifar-multi-class-subsampled
+  % number_of_samples_list = [10, 50, 100, 250, 500, 1000]; % all datasets, except for stl-10
+  number_of_samples_list = [10, 50, 100, 250, 500]; % only for stl-10
 
   % metric = 'measure-c-separation';
   % metric = 'measure-eccentricity';
@@ -58,16 +58,6 @@ function tempScriptReproDasgupta(dataset, metric, c_separation, eccentricity)
 
   repeat_count = 5;
   % repeat_count = 2;
-
-  % dataset = '2_gaussians';
-  % dataset = '5_gaussians';
-  % dataset = 'circle_in_ring';
-  % dataset = 'cifar-multi-class-subsampled';
-  % dataset = 'mnist-two-class-subsampled-0-1';
-  % dataset = 'mnist-two-class-subsampled-9-4';
-
-  % c_separation = 1;
-  % eccentricity = 1;
 
   assert( ...
     length(original_dim_list) == 1 || ...
@@ -136,21 +126,22 @@ function tempScriptReproDasgupta(dataset, metric, c_separation, eccentricity)
               original_imdb = constructSyntheticGaussianImdbNEW(5, number_of_samples, original_dim, c_separation, eccentricity, true);
             case 'circle_in_ring'
               original_imdb = constructSyntheticCirclesImdb(number_of_samples, original_dim, 0, 1);
-            case 'cifar-multi-class-subsampled'
-              tmp_opts.dataset = dataset;
-              tmp_opts.posneg_balance = sprintf('balanced-%d', number_of_samples);
-              original_imdb = loadSavedImdb(tmp_opts, 0);
-              % original_imdb = filterImdbForSet(original_imdb, 1, 1);
-            case 'mnist-two-class-0-1'
-              tmp_opts.dataset = dataset;
-              tmp_opts.posneg_balance = sprintf('balanced-%d', number_of_samples);
-              original_imdb = loadSavedImdb(tmp_opts, 0);
-            case 'mnist-two-class-8-3'
-              tmp_opts.dataset = dataset;
-              tmp_opts.posneg_balance = sprintf('balanced-%d', number_of_samples);
-              original_imdb = loadSavedImdb(tmp_opts, 0);
             otherwise
-              throwException('[ERROR] dataset not recognized!');
+              if strcmp(dataset, 'cifar-multi-class-subsampled') || ...
+                strcmp(dataset, 'cifar-no-white-multi-class-subsampled') || ...
+                strcmp(dataset, 'stl-10-multi-class-subsampled') || ...
+                strcmp(dataset, 'mnist-784-two-class-0-1') || ...
+                strcmp(dataset, 'mnist-784-two-class-8-3') || ...
+                strcmp(dataset, 'mnist-784-multi-class-subsampled') || ...
+                strcmp(dataset, 'svhn-multi-class-subsampled')
+
+                tmp_opts.dataset = dataset;
+                tmp_opts.posneg_balance = sprintf('balanced-%d', number_of_samples);
+                original_imdb = loadSavedImdb(tmp_opts, 0);
+
+              else
+                throwException('[ERROR] dataset not recognized!');
+              end
           end
           afprintf(sprintf('[INFO] done!\n'));
 
