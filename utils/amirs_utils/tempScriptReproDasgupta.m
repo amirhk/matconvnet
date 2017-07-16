@@ -45,8 +45,8 @@ function tempScriptReproDasgupta(dataset, metric, c_separation, eccentricity)
   % number_of_samples_list = [1000]; % 2_gaussians, 5_gaussians
   % number_of_samples_list = [10, 50, 100, 250, 500, 1000, 2500]; % circle_in_ring
   % number_of_samples_list = 10:10:100; % circle_in_ring
-  % number_of_samples_list = [10, 50, 100, 250, 500, 1000]; % all datasets, except for stl-10
-  number_of_samples_list = [10, 50, 100, 250, 500]; % only for stl-10
+  number_of_samples_list = [10, 50, 100, 250, 500, 1000]; % all datasets, except for stl-10
+  % number_of_samples_list = [10, 50, 100, 250, 500]; % only for stl-10
 
   % metric = 'measure-c-separation';
   % metric = 'measure-eccentricity';
