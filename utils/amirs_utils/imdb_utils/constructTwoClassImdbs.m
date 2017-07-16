@@ -1,5 +1,5 @@
 % --------------------------------------------------------------------
-function constructTwoClassImdbs(dataset, network_arch, positive_class_number, negative_class_number)
+function constructTwoClassImdbs(dataset, positive_class_number, negative_class_number)
 % --------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -29,7 +29,10 @@ function constructTwoClassImdbs(dataset, network_arch, positive_class_number, ne
   opts.imdb.data_dir = fullfile(getDevPath(), 'data', 'source', dataset);
   switch dataset
     case 'mnist'
-      opts.general.network_arch = network_arch;
+      opts.general.network_arch = 'lenet';
+      all_class_imdb = constructMnistImdb(opts);
+    case 'mnist-784'
+      opts.general.network_arch = 'mnistnet';
       all_class_imdb = constructMnistImdb(opts);
     case 'cifar'
       opts.imdb.imdb_portion = 1.0;

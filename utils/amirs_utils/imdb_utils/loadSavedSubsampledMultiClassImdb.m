@@ -27,100 +27,16 @@ function imdb = loadSavedSubsampledMultiClassImdb(dataset, posneg_balance)
 
   afprintf(sprintf('[INFO] Loading subsampled multi-class imdb (dataset: %s, posneg_balance: %s)\n', dataset, posneg_balance));
   path_to_imdbs = fullfile(getDevPath(), 'data', 'multi_class_subsampled_imdbs');
-  switch dataset
-    % case 'mnist-multi-class-subsampled'
-    %   switch posneg_balance
-    %     case 'balanced-38'
-    %       tmp = load(fullfile(path_to_imdbs, 'mnist', 'saved-multi-class-mnist-train-balance-38-test-balance-default.mat'));
-    %     case 'balanced-100'
-    %       tmp = load(fullfile(path_to_imdbs, 'mnist', 'saved-multi-class-mnist-train-balance-100-test-balance-default.mat'));
-    %     case 'balanced-266'
-    %       tmp = load(fullfile(path_to_imdbs, 'mnist', 'saved-multi-class-mnist-train-balance-266-test-balance-default.mat'));
-    %     case 'balanced-707'
-    %       tmp = load(fullfile(path_to_imdbs, 'mnist', 'saved-multi-class-mnist-train-balance-707-test-balance-default.mat'));
-    %     case 'balanced-1880'
-    %       tmp = load(fullfile(path_to_imdbs, 'mnist', 'saved-multi-class-mnist-train-balance-1880-test-balance-default.mat'));
-    %     case 'balanced-5000'
-    %       tmp = load(fullfile(path_to_imdbs, 'mnist', 'saved-multi-class-mnist-train-balance-5000-test-balance-default.mat'));
-    %   end
-    % case 'cifar-multi-class-subsampled'
-    %   switch posneg_balance
-    %     case 'balanced-38'
-    %       tmp = load(fullfile(path_to_imdbs, 'cifar', 'saved-multi-class-cifar-train-balance-38-test-balance-default.mat'));
-    %     case 'balanced-100'
-    %       tmp = load(fullfile(path_to_imdbs, 'cifar', 'saved-multi-class-cifar-train-balance-100-test-balance-default.mat'));
-    %     case 'balanced-266'
-    %       tmp = load(fullfile(path_to_imdbs, 'cifar', 'saved-multi-class-cifar-train-balance-266-test-balance-default.mat'));
-    %     case 'balanced-707'
-    %       tmp = load(fullfile(path_to_imdbs, 'cifar', 'saved-multi-class-cifar-train-balance-707-test-balance-default.mat'));
-    %     case 'balanced-1880'
-    %       tmp = load(fullfile(path_to_imdbs, 'cifar', 'saved-multi-class-cifar-train-balance-1880-test-balance-default.mat'));
-    %     case 'balanced-5000'
-    %       tmp = load(fullfile(path_to_imdbs, 'cifar', 'saved-multi-class-cifar-train-balance-5000-test-balance-default.mat'));
-    %   end
-    case 'mnist-multi-class-subsampled'
-      % e.g.
-      % posneg_balance = 'balanced-250'
-      % file_name = 'saved-multi-class-mnist-train-balance-250-test-balance-default.mat'
-      file_name = sprintf('saved-multi-class-mnist-train-balance-%s-test-balance-default.mat', posneg_balance(10:end));
-      dataset_class = dataset(1:strfind(dataset, '-multi-class-subsampled') - 1);
-      tmp = load(fullfile(path_to_imdbs, dataset_class, file_name));
-    case 'mnist-784-multi-class-subsampled'
-      % e.g.
-      % posneg_balance = 'balanced-250'
-      % file_name = 'saved-multi-class-mnist-train-balance-250-test-balance-default.mat'
-      file_name = sprintf('saved-multi-class-mnist-784-train-balance-%s-test-balance-default.mat', posneg_balance(10:end));
-      dataset_class = dataset(1:strfind(dataset, '-multi-class-subsampled') - 1);
-      tmp = load(fullfile(path_to_imdbs, dataset_class, file_name));
-    case 'cifar-multi-class-subsampled'
-      % e.g.
-      % posneg_balance = 'balanced-250'
-      % file_name = 'saved-multi-class-cifar-train-balance-250-test-balance-default.mat'
-      file_name = sprintf('saved-multi-class-cifar-train-balance-%s-test-balance-default.mat', posneg_balance(10:end));
-      dataset_class = dataset(1:strfind(dataset, '-multi-class-subsampled') - 1);
-      tmp = load(fullfile(path_to_imdbs, dataset_class, file_name));
-    case 'svhn-multi-class-subsampled'
-      switch posneg_balance
-        case 'balanced-38'
-          tmp = load(fullfile(path_to_imdbs, 'svhn', 'saved-multi-class-svhn-train-balance-38-test-balance-default.mat'));
-        case 'balanced-100'
-          tmp = load(fullfile(path_to_imdbs, 'svhn', 'saved-multi-class-svhn-train-balance-100-test-balance-default.mat'));
-        case 'balanced-266'
-          tmp = load(fullfile(path_to_imdbs, 'svhn', 'saved-multi-class-svhn-train-balance-266-test-balance-default.mat'));
-        case 'balanced-707'
-          tmp = load(fullfile(path_to_imdbs, 'svhn', 'saved-multi-class-svhn-train-balance-707-test-balance-default.mat'));
-        case 'balanced-1880'
-          tmp = load(fullfile(path_to_imdbs, 'svhn', 'saved-multi-class-svhn-train-balance-1880-test-balance-default.mat'));
-        case 'balanced-5000'
-          tmp = load(fullfile(path_to_imdbs, 'svhn', 'saved-multi-class-svhn-train-balance-4659-test-balance-default.mat'));
-      end
-    case 'cifar-no-white-multi-class-subsampled'
-      switch posneg_balance
-        case 'balanced-38'
-          tmp = load(fullfile(path_to_imdbs, 'cifar-no-white', 'saved-multi-class-cifar-no-white-train-balance-38-test-balance-default.mat'));
-        case 'balanced-100'
-          tmp = load(fullfile(path_to_imdbs, 'cifar-no-white', 'saved-multi-class-cifar-no-white-train-balance-100-test-balance-default.mat'));
-        case 'balanced-266'
-          tmp = load(fullfile(path_to_imdbs, 'cifar-no-white', 'saved-multi-class-cifar-no-white-train-balance-266-test-balance-default.mat'));
-        case 'balanced-707'
-          tmp = load(fullfile(path_to_imdbs, 'cifar-no-white', 'saved-multi-class-cifar-no-white-train-balance-707-test-balance-default.mat'));
-        case 'balanced-1880'
-          tmp = load(fullfile(path_to_imdbs, 'cifar-no-white', 'saved-multi-class-cifar-no-white-train-balance-1880-test-balance-default.mat'));
-        case 'balanced-5000'
-          tmp = load(fullfile(path_to_imdbs, 'cifar-no-white', 'saved-multi-class-cifar-no-white-train-balance-5000-test-balance-default.mat'));
-      end
-    case 'stl-10-multi-class-subsampled'
-      switch posneg_balance
-        case 'balanced-38'
-          tmp = load(fullfile(path_to_imdbs, 'stl-10', 'saved-multi-class-stl-10-train-balance-38-test-balance-default.mat'));
-        case 'balanced-100'
-          tmp = load(fullfile(path_to_imdbs, 'stl-10', 'saved-multi-class-stl-10-train-balance-100-test-balance-default.mat'));
-        case 'balanced-266'
-          tmp = load(fullfile(path_to_imdbs, 'stl-10', 'saved-multi-class-stl-10-train-balance-266-test-balance-default.mat'));
-        case 'balanced-500'
-          tmp = load(fullfile(path_to_imdbs, 'stl-10', 'saved-multi-class-stl-10-train-balance-500-test-balance-default.mat'));
-      end
-  end
+
+
+  % e.g.
+  % posneg_balance = 'balanced-250'
+  % file_name = 'saved-multi-class-mnist-train-balance-250-test-balance-default.mat'
+  balance_number = posneg_balance(10:end);
+  dataset_class = dataset(1:strfind(dataset, '-multi-class-subsampled') - 1);
+  file_name = sprintf('saved-multi-class-%s-train-balance-%s-test-balance-default.mat', dataset_class, balance_number);
+  tmp = load(fullfile(path_to_imdbs, dataset_class, file_name));
+
   imdb = tmp.imdb;
   afprintf(sprintf('[INFO] done!\n'));
 
