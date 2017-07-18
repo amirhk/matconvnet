@@ -84,13 +84,14 @@ function imdb = constructCifarImdb(opts)
   if opts.imdb.whiten_data
     afprintf(sprintf('[INFO] whitening data... '));
     z = reshape(data,[],number_of_train_and_test_images);
-    W = z(:,set == 1)*z(:,set == 1)'/number_of_train_and_test_images;
+    W = z(:, set == 1) * z(:, set == 1)' / number_of_train_and_test_images; % = covariance matrix, scaled by 1 / number_of_train_and_test_images
     [V,D] = eig(W);
     % the scale is selected to approximately preserve the norm of W
     d2 = diag(D);
     en = sqrt(mean(d2));
-    z = V*diag(en./max(sqrt(d2), 10))*V'*z;
-    data = reshape(z, 32, 32, 3, []);
+    whitening_matrix_W = V * diag(en ./ max(sqrt(d2), 10)) * V';
+    new_z = whitening_matrix_W * z;
+    data = reshape(new_z, 32, 32, 3, []);
     afprintf(sprintf('done.\n'));
   end
 
