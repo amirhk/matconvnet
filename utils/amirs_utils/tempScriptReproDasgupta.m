@@ -41,8 +41,8 @@ function tempScriptReproDasgupta(dataset, metric, c_separation, eccentricity)
   % projected_dim_list = 100:100:300;
   % projected_dim_list = 10:10:100;
   % projected_dim_list = [10, 768:384:3072];
-  projected_dim_list = [10, 25, 50, 75, 100, 250, 500, 1000, 2000, 3072];
-  % projected_dim_list = [10, 25, 100];
+  projected_dim_list = [5, 10, 15, 20, 25, 50, 75, 100, 250, 500, 1000, 2000, 3072];
+  projected_dim_list = [5, 10, 20, 100, 1000, 3072];
 
   % number_of_samples_list = [1000]; % 2_gaussians, 5_gaussians
   % number_of_samples_list = [10, 50, 100, 250, 500, 1000, 2500]; % circle_in_ring
@@ -59,8 +59,8 @@ function tempScriptReproDasgupta(dataset, metric, c_separation, eccentricity)
 
   fh_projection_utils = projectionUtils;
 
-  % repeat_count = 5;
-  repeat_count = 2;
+  repeat_count = 5;
+  % repeat_count = 2;
   assert(repeat_count > 1, 'in order to compute mean and std correctly, we need at least 2 runs???');
 
   assert( ...
@@ -111,9 +111,13 @@ function tempScriptReproDasgupta(dataset, metric, c_separation, eccentricity)
     'proj_imdb_rp_1_relu_0', ...
     'proj_imdb_rp_2_relu_0', ...
     'proj_imdb_rp_3_relu_0', ...
+    'proj_imdb_rp_4_relu_0', ...
+    'proj_imdb_rp_5_relu_0', ...
     'proj_imdb_rp_1_relu_1', ...
     'proj_imdb_rp_2_relu_2', ...
-    'proj_imdb_rp_3_relu_3'};
+    'proj_imdb_rp_3_relu_3', ...
+    'proj_imdb_rp_4_relu_4', ...
+    'proj_imdb_rp_5_relu_5'};
 
   results = {};
   for experiment = experiments_list
@@ -299,7 +303,7 @@ function subplotBeef(data, title_string, x_label, y_label, x_lim, y_lim, x_tick_
   yticks(1:1:length(y_tick_lables)),
   xticklabels(x_tick_lables),
   yticklabels(y_tick_lables),
-  view(55,10);
+  view(25,10);
   % drawnow
   % pause(0.05);
 
