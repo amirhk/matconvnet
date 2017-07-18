@@ -209,8 +209,8 @@ functionHandle = @tempScriptMeasureClassificationPerformance;
 % functionHandle('cifar', 'whatever', 1);
 
 
-functionHandle('cifar-no-white-multi-class-subsampled', 'balanced-10', 1);
-functionHandle('cifar-no-white-multi-class-subsampled', 'balanced-50', 1);
+% functionHandle('cifar-no-white-multi-class-subsampled', 'balanced-10', 1);
+% functionHandle('cifar-no-white-multi-class-subsampled', 'balanced-50', 1);
 functionHandle('cifar-no-white-multi-class-subsampled', 'balanced-100', 1);
 functionHandle('cifar-no-white-multi-class-subsampled', 'balanced-250', 1);
 functionHandle('cifar-no-white-multi-class-subsampled', 'balanced-500', 1);
