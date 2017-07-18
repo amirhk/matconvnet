@@ -34,7 +34,7 @@ function tempScriptMeasureClassificationPerformance(dataset, posneg_balance, sav
   % classification_method = 'mlp-64-10';
   % classification_method = 'mlp-500-100';
   % classification_method = 'mlp-500-1000-100';
-  repeat_count = 10;
+  repeat_count = 5;
   all_experiments_multi_run = {};
 
   for i = 1 : 22
