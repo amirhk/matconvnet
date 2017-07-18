@@ -40,12 +40,15 @@ function tempScriptReproDasgupta(dataset, metric, c_separation, eccentricity)
   % projected_dim_list = 100:100:1000;
   % projected_dim_list = 100:100:300;
   % projected_dim_list = 10:10:100;
-  projected_dim_list = [10, 768:384:3072];
+  % projected_dim_list = [10, 768:384:3072];
+  projected_dim_list = [10, 25, 50, 75, 100, 250, 500, 1000, 2000, 3072];
+  % projected_dim_list = [10, 25, 100];
 
   % number_of_samples_list = [1000]; % 2_gaussians, 5_gaussians
   % number_of_samples_list = [10, 50, 100, 250, 500, 1000, 2500]; % circle_in_ring
   % number_of_samples_list = 10:10:100; % circle_in_ring
   number_of_samples_list = [10, 50, 100, 250, 500, 1000]; % all datasets, except for stl-10
+  % number_of_samples_list = [10, 50, 100];
   % number_of_samples_list = [10, 50, 100, 250, 500]; % only for stl-10
 
   % metric = 'measure-c-separation';
@@ -56,8 +59,9 @@ function tempScriptReproDasgupta(dataset, metric, c_separation, eccentricity)
 
   fh_projection_utils = projectionUtils;
 
-  repeat_count = 5;
-  % repeat_count = 2;
+  % repeat_count = 5;
+  repeat_count = 2;
+  assert(repeat_count > 1, 'in order to compute mean and std correctly, we need at least 2 runs???');
 
   assert( ...
     length(original_dim_list) == 1 || ...
@@ -95,12 +99,28 @@ function tempScriptReproDasgupta(dataset, metric, c_separation, eccentricity)
     throwException('[ERROR] can only vary 2 parameters!');
   end
 
-  orig_imdb_results_mean = zeros(results_size);
-  orig_imdb_results_std = zeros(results_size);
-  proj_wo_non_lin_imdb_results_mean = zeros(results_size);
-  proj_wo_non_lin_imdb_results_std = zeros(results_size);
-  proj_w_relu_imdb_results_mean = zeros(results_size);
-  proj_w_relu_imdb_results_std = zeros(results_size);
+  % orig_imdb_results_mean = zeros(results_size);
+  % orig_imdb_results_std = zeros(results_size);
+  % proj_wo_non_lin_imdb_results_mean = zeros(results_size);
+  % proj_wo_non_lin_imdb_results_std = zeros(results_size);
+  % proj_w_relu_imdb_results_mean = zeros(results_size);
+  % proj_w_relu_imdb_results_std = zeros(results_size);
+
+    experiments_list = { ...
+    'orig_imdb', ...
+    'proj_imdb_rp_1_relu_0', ...
+    'proj_imdb_rp_2_relu_0', ...
+    'proj_imdb_rp_3_relu_0', ...
+    'proj_imdb_rp_1_relu_1', ...
+    'proj_imdb_rp_2_relu_2', ...
+    'proj_imdb_rp_3_relu_3'};
+
+  results = {};
+  for experiment = experiments_list
+    experiment = char(experiment);
+    global_results.(experiment).mean = zeros(results_size);
+    global_results.(experiment).std = zeros(results_size);
+  end
 
   counter = 1;
 
@@ -112,9 +132,12 @@ function tempScriptReproDasgupta(dataset, metric, c_separation, eccentricity)
 
         afprintf(sprintf('[INFO] Test # %d / %d...\n', counter, length(original_dim_list) * length(projected_dim_list) * length(number_of_samples_list)), -1);
 
-        tmp_orig_imdb_results = [];
-        tmp_proj_wo_non_lin_imdb_results = [];
-        tmp_proj_w_relu_imdb_results = [];
+        imdb_list = {};
+        tmp_results = {};
+        for experiment = experiments_list
+          experiment = char(experiment);
+          tmp_results.(experiment) = [];
+        end
 
         for j = 1 : repeat_count
 
@@ -143,46 +166,57 @@ function tempScriptReproDasgupta(dataset, metric, c_separation, eccentricity)
                 throwException('[ERROR] dataset not recognized!');
               end
           end
+          imdb_list.('orig_imdb') = original_imdb;
           afprintf(sprintf('[INFO] done!\n'));
 
           afprintf(sprintf('[INFO] Projecting imdb...\n'));
-          projected_imdb_wo_non_lin = fh_projection_utils.getDenslyDownProjectedImdb(original_imdb, 1, 0, projected_dim, 'relu');
-          projected_imdb_w_relu = fh_projection_utils.getDenslyDownProjectedImdb(original_imdb, 1, 1, projected_dim, 'relu');
+          for experiment = experiments_list
+            experiment = char(experiment);
+            if strcmp(experiment, 'orig_imdb')
+              continue;
+            end
+            tmp_index = strfind(experiment, 'rp_') + 3;
+            number_of_projection_layers = str2num(experiment(tmp_index : tmp_index));
+            tmp_index = strfind(experiment, 'relu_') + 5;
+            number_of_non_linear_layers = str2num(experiment(tmp_index : tmp_index));
+            imdb_list.(experiment) = fh_projection_utils.getDenslyDownProjectedImdb( ...
+              original_imdb, ...
+              number_of_projection_layers, ...
+              number_of_non_linear_layers, ...
+              projected_dim, ...
+              'relu');
+          end
           afprintf(sprintf('[INFO] done!\n'));
 
-          afprintf(sprintf('[INFO] Evaluating metric...\n'));
-          switch metric
-            case 'measure-c-separation'
-              tmp_orig_imdb_results(end+1) = getAverageClassCSeparation(original_imdb);
-              tmp_proj_wo_non_lin_imdb_results(end+1) = getAverageClassCSeparation(projected_imdb_wo_non_lin);
-              tmp_proj_w_relu_imdb_results(end+1) = getAverageClassCSeparation(projected_imdb_w_relu);
-            case 'measure-eccentricity'
-              tmp_orig_imdb_results(end+1) = getAverageClassEccentricity(original_imdb);
-              tmp_proj_wo_non_lin_imdb_results(end+1) = getAverageClassEccentricity(projected_imdb_wo_non_lin);
-              tmp_proj_w_relu_imdb_results(end+1) = getAverageClassEccentricity(projected_imdb_w_relu);
-            case 'measure-1-knn-perf'
-              tmp_orig_imdb_results(end+1) = getSimpleTestAccuracyFrom1Knn(original_imdb);
-              tmp_proj_wo_non_lin_imdb_results(end+1) = getSimpleTestAccuracyFrom1Knn(projected_imdb_wo_non_lin);
-              tmp_proj_w_relu_imdb_results(end+1) = getSimpleTestAccuracyFrom1Knn(projected_imdb_w_relu);
-            case 'measure-linear-svm-perf'
-              tmp_orig_imdb_results(end+1) = getSimpleTestAccuracyFromLibSvm(original_imdb);
-              tmp_proj_wo_non_lin_imdb_results(end+1) = getSimpleTestAccuracyFromLibSvm(projected_imdb_wo_non_lin);
-              tmp_proj_w_relu_imdb_results(end+1) = getSimpleTestAccuracyFromLibSvm(projected_imdb_w_relu);
-            case 'measure-mlp-500-100-perf'
-              tmp_orig_imdb_results(end+1) = getSimpleTestAccuracyFromMLP(original_imdb);
-              tmp_proj_wo_non_lin_imdb_results(end+1) = getSimpleTestAccuracyFromMLP(projected_imdb_wo_non_lin);
-              tmp_proj_w_relu_imdb_results(end+1) = getSimpleTestAccuracyFromMLP(projected_imdb_w_relu);
+
+
+          afprintf(sprintf('[INFO] Evaluating metric on experiments...\n'));
+          for experiment = experiments_list
+            experiment = char(experiment);
+            tmp_imdb = imdb_list.(experiment);
+
+            switch metric
+              case 'measure-c-separation'
+                tmp_results.(experiment)(end+1) = getAverageClassCSeparation(tmp_imdb);
+              case 'measure-eccentricity'
+                tmp_results.(experiment)(end+1) = getAverageClassEccentricity(tmp_imdb);
+              case 'measure-1-knn-perf'
+                tmp_results.(experiment)(end+1) = getSimpleTestAccuracyFrom1Knn(tmp_imdb);
+              case 'measure-linear-svm-perf'
+                tmp_results.(experiment)(end+1) = getSimpleTestAccuracyFromLibSvm(tmp_imdb);
+              case 'measure-mlp-500-100-perf'
+                tmp_results.(experiment)(end+1) = getSimpleTestAccuracyFromMLP(tmp_imdb);
+            end
           end
           afprintf(sprintf('[INFO] done!\n'));
 
         end
 
-        orig_imdb_results_mean(counter) = mean(tmp_orig_imdb_results);
-        orig_imdb_results_std(counter) = std(tmp_orig_imdb_results);
-        proj_wo_non_lin_imdb_results_mean(counter) = mean(tmp_proj_wo_non_lin_imdb_results);
-        proj_wo_non_lin_imdb_results_std(counter) = std(tmp_proj_wo_non_lin_imdb_results);
-        proj_w_relu_imdb_results_mean(counter) = mean(tmp_proj_w_relu_imdb_results);
-        proj_w_relu_imdb_results_std(counter) = std(tmp_proj_w_relu_imdb_results);
+        for experiment = experiments_list
+          experiment = char(experiment);
+          global_results.(experiment).mean(counter) = mean(tmp_results.(experiment));
+          global_results.(experiment).std(counter) = std(tmp_results.(experiment));
+        end
 
         counter = counter + 1;
 
@@ -194,19 +228,44 @@ function tempScriptReproDasgupta(dataset, metric, c_separation, eccentricity)
 
   h = figure;
 
-  afprintf(sprintf('[INFO] Updating subplots...\n'));
+  afprintf(sprintf('[INFO] Plotting results...\n'));
 
-  subplot(1,3,1),
-  title_string = 'Orig. Imdb';
-  subplotBeef(orig_imdb_results_mean, title_string, x_label, y_label, x_lim, y_lim, x_tick_lables, y_tick_lables, metric);
 
-  subplot(1,3,2),
-  title_string = 'Proj. Imdb - RP 1';
-  subplotBeef(proj_wo_non_lin_imdb_results_mean, title_string, x_label, y_label, x_lim, y_lim, x_tick_lables, y_tick_lables, metric);
 
-  subplot(1,3,3),
-  title_string = 'Proj. Imdb - RP 1 RELU 1';
-  subplotBeef(proj_w_relu_imdb_results_mean, title_string, x_label, y_label, x_lim, y_lim, x_tick_lables, y_tick_lables, metric);
+
+  experiment_count = numel(experiments_list);
+  assert( ...
+    mod(experiment_count, 2) == 1, ...
+    'experiments should contain `orig_imdb` and pairs of `proj_imdb` w/ and w/o non-linearities.');
+  % non_orig_imdb_subplot_index_order = []
+  % number_of_non_orig_tests = mod(counter - 1, (experiment_count - 1 ) / 2)
+
+  experiment = 'orig_imdb';
+  subplot_y_length = 2;
+  subplot_x_length = (experiment_count + 1) / 2;
+  subplot(subplot_y_length, subplot_x_length, [1, 1 + subplot_x_length]),
+  title_string = upper(strrep(experiment, '_', ' '));
+  subplotBeef(global_results.(experiment).mean, title_string, x_label, y_label, x_lim, y_lim, x_tick_lables, y_tick_lables, metric);
+
+  counter = 2;
+  for experiment = experiments_list
+    experiment = char(experiment);
+    if strcmp(experiment, 'orig_imdb')
+      continue;
+    end
+
+    subplot(subplot_y_length, subplot_x_length, counter),
+    title_string = upper(strrep(experiment, '_', ' '));
+    subplotBeef(global_results.(experiment).mean, title_string, x_label, y_label, x_lim, y_lim, x_tick_lables, y_tick_lables, metric);
+
+    if counter == subplot_x_length
+      % going to next line in subplots... so incremement index by 2 instead of 1
+      counter = counter + 2;
+    else
+      counter = counter + 1;
+    end
+
+  end
 
   afprintf(sprintf('[INFO] done!\n'));
 

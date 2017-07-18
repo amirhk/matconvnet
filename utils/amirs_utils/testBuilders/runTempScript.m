@@ -89,7 +89,7 @@
 % tempScriptReproDasgupta('stl-10-multi-class-subsampled', 'measure-c-separation', 1, 1);
 % tempScriptReproDasgupta('stl-10-multi-class-subsampled', 'measure-1-knn-perf', 1, 1);
 
-% tempScriptReproDasgupta('mnist-784-two-class-0-1', 'measure-c-separation', 1, 1);
+tempScriptReproDasgupta('mnist-784-two-class-0-1', 'measure-c-separation', 1, 1);
 % tempScriptReproDasgupta('mnist-784-two-class-0-1', 'measure-1-knn-perf', 1, 1);
 
 % tempScriptReproDasgupta('mnist-784-two-class-8-3', 'measure-c-separation', 1, 1);
@@ -120,7 +120,7 @@
 % functionHandle = @tempScriptRunMmd
 % functionHandle = @tempScriptRunTsne;
 % functionHandle = @tmpScriptCalculateDistances;
-functionHandle = @tempScriptMeasureClassificationPerformance;
+% functionHandle = @tempScriptMeasureClassificationPerformance;
 % functionHandle = @tempScriptMeasureCSeparation;
 % functionHandle = @tempScriptMeasureAverageClassEccentricity;
 % functionHandle = @tempScriptPlot2DEuclideanDistances;
@@ -211,10 +211,10 @@ functionHandle = @tempScriptMeasureClassificationPerformance;
 
 % functionHandle('cifar-no-white-multi-class-subsampled', 'balanced-10', 1);
 % functionHandle('cifar-no-white-multi-class-subsampled', 'balanced-50', 1);
-functionHandle('cifar-no-white-multi-class-subsampled', 'balanced-100', 1);
-functionHandle('cifar-no-white-multi-class-subsampled', 'balanced-250', 1);
-functionHandle('cifar-no-white-multi-class-subsampled', 'balanced-500', 1);
-functionHandle('cifar-no-white-multi-class-subsampled', 'balanced-1000', 1);
+% functionHandle('cifar-no-white-multi-class-subsampled', 'balanced-100', 1);
+% functionHandle('cifar-no-white-multi-class-subsampled', 'balanced-250', 1);
+% functionHandle('cifar-no-white-multi-class-subsampled', 'balanced-500', 1);
+% functionHandle('cifar-no-white-multi-class-subsampled', 'balanced-1000', 1);
 % functionHandle('cifar-no-white-multi-class-subsampled', 'balanced-2500', 1);
 % functionHandle('cifar-no-white', 'whatever', 1);
 

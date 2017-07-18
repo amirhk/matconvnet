@@ -129,8 +129,36 @@ function [images, labels] = getSimpleNNBatch(imdb, batch)
 function imdb = getDenslyDownProjectedImdb(imdb, number_of_projection_layers, number_of_non_linear_layers, projected_dim, non_linear_layer_type)
 % -------------------------------------------------------------------------
 
-  assert(number_of_projection_layers == 1);
-  assert(number_of_projection_layers <= 1);
+  %       IMPORTANT: REVERT TO ME BECAUSE CODE BELOW HAS WIERD ASSUMPTIONS
+  % assert(number_of_projection_layers == 1);
+  % assert(number_of_projection_layers <= 1);
+  % assert(number_of_non_linear_layers <= number_of_projection_layers);
+
+  % vectorized_imdb = getVectorizedImdb(imdb);
+  % original_dim = size(vectorized_imdb.images.data, 2);
+  % % projected_dim = original_dim;
+  % non_linear_layer_count = 0;
+  % for i = 1 : number_of_projection_layers
+  %   random_projection_matrix = randn(projected_dim, original_dim);
+  %   imdb = projectImdbUsingMatrix(imdb, random_projection_matrix);
+  %   if non_linear_layer_count < number_of_non_linear_layers
+  %     switch non_linear_layer_type
+  %       case 'relu'
+  %         imdb.images.data(imdb.images.data < 0) = 0;
+  %       case 'sigmoid'
+  %         imdb.images.data = logsig(imdb.images.data);
+  %       case 'tanh'
+  %         imdb.images.data = tanh(imdb.images.data);
+  %     end
+  %     non_linear_layer_count = non_linear_layer_count + 1;
+  %   end
+  % end
+
+
+
+
+  % assert(number_of_projection_layers == 1);
+  % assert(number_of_projection_layers <= 1);
   assert(number_of_non_linear_layers <= number_of_projection_layers);
 
   vectorized_imdb = getVectorizedImdb(imdb);
@@ -138,12 +166,16 @@ function imdb = getDenslyDownProjectedImdb(imdb, number_of_projection_layers, nu
   % projected_dim = original_dim;
   non_linear_layer_count = 0;
   for i = 1 : number_of_projection_layers
-    random_projection_matrix = randn(projected_dim, original_dim);
+    if i == 1
+      tmp_dim = original_dim; % this is original_dim if there's only 1 layer, or an evolving dim as we project further and further
+    else
+      tmp_dim = projected_dim; % this is original_dim if there's only 1 layer, or an evolving dim as we project further and further
+    end
+    random_projection_matrix = randn(projected_dim, tmp_dim);
     imdb = projectImdbUsingMatrix(imdb, random_projection_matrix);
     if non_linear_layer_count < number_of_non_linear_layers
       switch non_linear_layer_type
         case 'relu'
-          % apply relu
           imdb.images.data(imdb.images.data < 0) = 0;
         case 'sigmoid'
           imdb.images.data = logsig(imdb.images.data);
@@ -232,20 +264,6 @@ function imdb = getSparselyProjectedImdb(imdb, number_of_projection_layers, numb
 % -------------------------------------------------------------------------
 function imdb = projectImdbUsingMatrix(imdb, projection_matrix)
 % -------------------------------------------------------------------------
-  % s1 = size(imdb.images.data, 1);
-  % s2 = size(imdb.images.data, 2);
-  % s3 = size(imdb.images.data, 3);
-  % s4 = size(imdb.images.data, 4);
-  % vectorized_imdb = getVectorizedImdb(imdb);
-  % original_dim = size(vectorized_imdb.images.data, 2);
-  % all_data_original_vectorized = reshape(imdb.images.data, original_dim, []); % [] = s4
-  % all_data_projected_vectorized = projection_matrix * all_data_original_vectorized; % 3072x3072 * 3072xnumber_of_images
-  % all_data_projected_matricized = reshape(all_data_projected_vectorized, s1, s2, s3, s4);
-  % imdb.images.data = all_data_projected_matricized;
-
-
-
-
   vectorized_original_imdb = getVectorizedImdb(imdb);
 
   original_dim = size(vectorized_original_imdb.images.data, 2);
