@@ -253,10 +253,11 @@ posneg_balance = 'balanced-38';
 [~, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 0);
 % fh_imdb_utils.getImdbInfo(experiments{1}.imdb, 1);
 
-[best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccuracyFromCnn(dataset, posneg_balance, experiments{1}.imdb, 'convV0P0RL0+fcV1-RF32CH3', 1)
-[best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccuracyFromCnn(dataset, posneg_balance, experiments{2}.imdb, 'convV0P0RL0+fcV1-RF16CH64', 1)
-[best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccuracyFromCnn(dataset, posneg_balance, experiments{3}.imdb, 'convV0P0RL0+fcV1-RF16CH64', 1)
-[best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccuracyFromCnn(dataset, posneg_balance, experiments{5}.imdb, 'convV0P0RL0+fcV1-RF16CH64', 1)
+gpu = 2;
+[best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccuracyFromCnn(dataset, posneg_balance, experiments{1}.imdb, 'convV0P0RL0+fcV1-RF32CH3', gpu);
+[best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccuracyFromCnn(dataset, posneg_balance, experiments{2}.imdb, 'convV0P0RL0+fcV1-RF16CH64', gpu);
+[best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccuracyFromCnn(dataset, posneg_balance, experiments{3}.imdb, 'convV0P0RL0+fcV1-RF16CH64', gpu);
+[best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccuracyFromCnn(dataset, posneg_balance, experiments{5}.imdb, 'convV0P0RL0+fcV1-RF16CH64', gpu);
 
 
 
