@@ -67,7 +67,7 @@ function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccura
     length(batch_size_list) * ...
     length(weight_decay_list);
 
-  counter = 3;
+  counter = 1;
   % loop through hyperparameters
   for learning_rate_divider = learning_rate_divider_list
     for batch_size = batch_size_list
