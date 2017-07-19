@@ -28,7 +28,7 @@ function tempScriptMeasureCSeparation(dataset, posneg_balance, save_results)
   % -------------------------------------------------------------------------
   %                                                                     Setup
   % -------------------------------------------------------------------------
-  repeat_count = 10;
+  repeat_count = 5;
   all_experiments_multi_run = {};
 
   for i = 1 : 22

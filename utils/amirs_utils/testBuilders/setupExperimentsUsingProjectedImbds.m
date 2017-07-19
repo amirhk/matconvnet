@@ -241,8 +241,8 @@ function [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(data
 
 
 
-  experiments{end+1}.imdb = original_imdb;
-  experiments{end}.title = 'Original IMDB';
+  % experiments{end+1}.imdb = original_imdb;
+  % experiments{end}.title = 'Original IMDB';
 
 
   afprintf(sprintf('[INFO] Loading projected imdb...\n'));

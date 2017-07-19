@@ -39,7 +39,9 @@ function average_c_separation = getAverageClassCSeparation(imdb)
   assert(size(class_index_combos, 1) == length(unique_labels) * (length(unique_labels) - 1) / 2, 'wtf!');
 
   all_c_separations = [];
+  afprintf(sprintf('[INFO] computing %d pairs:\t', size(class_index_combos, 1)));
   for j = 1 : size(class_index_combos, 1)
+    fprintf('%d,  ', j);
     class_index_1 = class_index_combos(j,1);
     class_index_2 = class_index_combos(j,2);
     vectorized_data_1 = vectorized_data_per_class{class_index_1};
@@ -54,5 +56,6 @@ function average_c_separation = getAverageClassCSeparation(imdb)
     c_separation = norm(mean_1 - mean_2) / sqrt(max(trace(cov_1), trace(cov_2)));
     all_c_separations(end+1) = c_separation;
   end
+  fprintf('\n');
 
   average_c_separation = mean(all_c_separations);
