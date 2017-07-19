@@ -44,6 +44,8 @@ function tempScriptMeasureCSeparation(dataset, posneg_balance, save_results)
   end
 
   plot_title = sprintf('C-Separation - %s - %s', dataset, posneg_balance);
+  all_experiments_multi_run
+  keyboard
   tempScriptPlotRPTests(all_experiments_multi_run, plot_title, save_results);
 
 % -------------------------------------------------------------------------
