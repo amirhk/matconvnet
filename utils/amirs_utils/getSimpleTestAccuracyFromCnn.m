@@ -124,10 +124,11 @@ function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccura
         tmp_accuracies.test = [];
         afprintf(sprintf('[INFO] Testing hyperparameter setup #%d / %d ...\n', hyperparam_counter, total_number_of_hyperparams));
         for i = 1 : number_of_trials
-          afprintf(sprintf('[INFO] Testing repeat #%d / %d ...\n', i, number_of_trials), 1);
+          afprintf(sprintf('[INFO] Testing trial #%d / %d ...', i, number_of_trials), 1);
           [~, performance_summary] = testCnn(training_options);
           tmp_accuracies.train(end+1) = performance_summary.testing.train.accuracy;
           tmp_accuracies.test(end+1) = performance_summary.testing.test.accuracy;
+          fprintf('done!');
         end
 
         tmp_results = {};
@@ -144,13 +145,13 @@ function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccura
         experiments.(sprintf('hyperparam_setup_%d', hyperparam_counter)) = tmp_results;
 
         hyperparam_counter  = hyperparam_counter + 1;
+
+        % don't amend file, but overwrite...
+        delete(opts.paths.results_file_path);
+        saveStruct2File(experiments, opts.paths.results_file_path, 0);
       end
     end
   end
-
-  keyboard
-  saveStruct2File(experiments, opts.paths.results_file_path, 0);
-  keyboard
 
   best_test_accuracy_mean = 0;
   best_test_accuracy_std = 0;
@@ -161,14 +162,6 @@ function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccura
       best_test_accuracy_std = tmp.std;
     end
   end
-  keyboard
-
-  % [~, indices] = sort(test_accuracies_mean, 'descend');
-  % index_of_best_test_perf = indices(1);
-
-  % best_test_accuracy_mean = test_accuracies_mean(index_of_best_test_perf)
-  % best_test_accuracy_std = test_accuracies_std(index_of_best_test_perf)
-
 
 
 
