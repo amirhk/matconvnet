@@ -25,8 +25,8 @@ function test_accuracy = getSimpleTestAccuracyFromMLP(imdb, number_of_hidden_nod
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
 
-  single_training_method_options.return_performance_summary = true;
-  single_training_method_options.number_of_hidden_nodes = number_of_hidden_nodes;
-  single_training_method_options.imdb = imdb;
-  [~, performance_summary] = testMlp(single_training_method_options);
+  training_options.return_performance_summary = true;
+  training_options.number_of_hidden_nodes = number_of_hidden_nodes;
+  training_options.imdb = imdb;
+  [~, performance_summary] = testMlp(training_options);
   test_accuracy = performance_summary.testing.test.accuracy;

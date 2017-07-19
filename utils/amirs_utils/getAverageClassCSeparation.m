@@ -39,7 +39,7 @@ function average_c_separation = getAverageClassCSeparation(imdb)
   assert(size(class_index_combos, 1) == length(unique_labels) * (length(unique_labels) - 1) / 2, 'wtf!');
 
   all_c_separations = [];
-  afprintf(sprintf('[INFO] computing %d pairs:\t', size(class_index_combos, 1)));
+  afprintf(sprintf('[INFO] computing c-sep for %d pairs:\t', size(class_index_combos, 1)));
   for j = 1 : size(class_index_combos, 1)
     fprintf('%d,  ', j);
     class_index_1 = class_index_combos(j,1);

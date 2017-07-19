@@ -97,7 +97,7 @@
 % functionHandle = @tempScriptRunTsne;
 % functionHandle = @tmpScriptCalculateDistances;
 % functionHandle = @tempScriptMeasureClassificationPerformance;
-functionHandle = @tempScriptMeasureCSeparation;
+% functionHandle = @tempScriptMeasureCSeparation;
 % functionHandle = @tempScriptMeasureAverageClassEccentricity;
 % functionHandle = @tempScriptPlot2DEuclideanDistances;
 % functionHandle = @tempScriptPlot3DEuclideanDistances;
@@ -107,7 +107,7 @@ functionHandle = @tempScriptMeasureCSeparation;
 
 
 
-functionHandle('cifar-multi-class-subsampled', 'balanced-38', 1);
+% functionHandle('cifar-multi-class-subsampled', 'balanced-38', 1);
 
 
 
@@ -246,6 +246,16 @@ functionHandle('cifar-multi-class-subsampled', 'balanced-38', 1);
 
 
 
+fh_imdb_utils = imdbMultiClassUtils;
+
+[~, experiments] = setupExperimentsUsingProjectedImbds('cifar-multi-class-subsampled', 'balanced-50', 1);
+% fh_imdb_utils.getImdbInfo(experiments{1}.imdb, 1);
+
+dataset = 'cifar-multi-class-subsampled';
+imdb = experiments{1}.imdb;
+conv_network_arch = 'convV1P1RL1-RF32CH3+fcV1-RF16CH64';
+gpu = 1;
+test_accuracy = getSimpleTestAccuracyFromCnn(dataset, imdb, conv_network_arch, gpu)
 
 
 

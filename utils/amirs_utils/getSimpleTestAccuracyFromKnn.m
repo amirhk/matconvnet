@@ -25,8 +25,8 @@ function test_accuracy = getSimpleTestAccuracyFromKnn(imdb, number_of_nearest_ne
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
 
-  single_training_method_options.return_performance_summary = true;
-  single_training_method_options.number_of_nearest_neighbors = number_of_nearest_neighbors;
-  single_training_method_options.imdb = imdb;
-  [~, performance_summary] = testKnn(single_training_method_options);
+  training_options.return_performance_summary = true;
+  training_options.number_of_nearest_neighbors = number_of_nearest_neighbors;
+  training_options.imdb = imdb;
+  [~, performance_summary] = testKnn(training_options);
   test_accuracy = performance_summary.testing.test.accuracy;

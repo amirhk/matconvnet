@@ -92,9 +92,9 @@ function runLarpTests(experiment_parent_dir, dataset, posneg_balance, larp_netwo
   experiment_options.larp_weight_init_sequence = getLarpWeightInitSequence(larp_weight_init_type, larp_network_arch);
 
   mlp_version = lower(non_larp_network_arch(end-1:end));
-  conv_arch = getMatchingConvArchitectureForLarpArchitecture(larp_network_arch, non_larp_network_arch, mlp_version);
-  experiment_options.network_arch = conv_arch;
-  experiment_options.backprop_depth = getFullBackPropDepthForConvArchitecture(conv_arch);
+  conv_network_arch = getMatchingConvArchitectureForLarpArchitecture(larp_network_arch, non_larp_network_arch, mlp_version);
+  experiment_options.network_arch = conv_network_arch;
+  experiment_options.backprop_depth = getFullBackPropDepthForConvArchitecture(conv_network_arch);
 
   % base_learning_rate = [0.1*ones(1,25) 0.03*ones(1,25) 0.01*ones(1,50)];
   base_learning_rate = [0.1*ones(1,15) 0.03*ones(1,15) 0.01*ones(1,15)];

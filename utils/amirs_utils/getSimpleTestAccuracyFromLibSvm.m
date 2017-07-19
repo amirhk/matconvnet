@@ -25,12 +25,12 @@ function best_test_accuracy = getSimpleTestAccuracyLibSvm(imdb)
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
 
-  single_training_method_options.return_performance_summary = true;
-  single_training_method_options.imdb = imdb;
+  training_options.return_performance_summary = true;
+  training_options.imdb = imdb;
   test_accuracies = [];
   for c = logspace(-5,2,10)
-    single_training_method_options.libsvm_options = sprintf('-q -t 0 -c %f', c);
-    [~, performance_summary] = testLibSvm(single_training_method_options);
+    training_options.libsvm_options = sprintf('-q -t 0 -c %f', c);
+    [~, performance_summary] = testLibSvm(training_options);
     test_accuracies(end+1) = performance_summary.testing.test.accuracy;
   end
   best_test_accuracy = max(test_accuracies);
