@@ -148,7 +148,7 @@ function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccura
 
         best_test_accuracy_mean = 0;
         best_test_accuracy_std = 0;
-        for hyperparam_counter = 1 : total_number_of_hyperparams
+        for hyperparam_counter = 1 : hyperparam_counter
           tmp = experiments.(sprintf('hyperparam_setup_%d', hyperparam_counter)).accuracy.test;
           if tmp.mean > best_test_accuracy_mean
             best_test_accuracy_mean = tmp.mean;
