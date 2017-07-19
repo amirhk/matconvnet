@@ -128,7 +128,7 @@ function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccura
           [~, performance_summary] = testCnn(training_options);
           tmp_accuracies.train(end+1) = performance_summary.testing.train.accuracy;
           tmp_accuracies.test(end+1) = performance_summary.testing.test.accuracy;
-          fprintf('done!');
+          fprintf('done!\n');
         end
 
         tmp_results = {};
