@@ -30,6 +30,7 @@ function [trained_model, performance_summary] = testEcocSvm(input_opts)
   % -------------------------------------------------------------------------
   opts.general.dataset = getValueFromFieldOrDefault(input_opts, 'dataset', 'mnist');
   opts.general.return_performance_summary = getValueFromFieldOrDefault(input_opts, 'return_performance_summary', true);
+  opts.general.debug_flag = getValueFromFieldOrDefault(input_opts, 'debug_flag', true);
 
   % -------------------------------------------------------------------------
   %                                                                 opts.imdb
@@ -145,14 +146,14 @@ function [trained_model, performance_summary] = testEcocSvm(input_opts)
     train_accuracy, ...
     train_sensitivity, ...
     train_specificity, ...
-  ] = getPerformanceSummary(model_object, model_string, dataset, imdb, labels_train, 'train', true);
+  ] = getPerformanceSummary(model_object, model_string, dataset, imdb, labels_train, 'train', opts.general.return_performance_summary, opts.general.debug_flag);
   train_duration = toc;
   tic;
   [ ...
     test_accuracy, ...
     test_sensitivity, ...
     test_specificity, ...
-  ] = getPerformanceSummary(model_object, model_string, dataset, imdb, labels_test, 'test', true);
+  	] = getPerformanceSummary(model_object, model_string, dataset, imdb, labels_test, 'test', opts.general.return_performance_summary, opts.general.debug_flag);
   test_duration = toc;
 
   % -------------------------------------------------------------------------

@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function [accuracy, sensitivity, specificity] = getPerformanceSummary(model_object, model_string, dataset, imdb, labels, set, should_return_summary)
+function [accuracy, sensitivity, specificity] = getPerformanceSummary(model_object, model_string, dataset, imdb, labels, set, should_return_summary, debug_flag)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -38,15 +38,15 @@ function [accuracy, sensitivity, specificity] = getPerformanceSummary(model_obje
   end
 
   if should_return_summary
-    afprintf(sprintf('[INFO] Getting model performance on `%s` set...\n', set));
-    [top_predictions, ~] = getPredictionsFromModelOnImdb(model_object, model_string, imdb, set_number);
-    afprintf(sprintf('[INFO] Model performance on `%s` set\n', set));
+    if debug_flag, afprintf(sprintf('[INFO] Getting model performance on `%s` set...\n', set)); end;
+    [top_predictions, ~] = getPredictionsFromModelOnImdb(model_object, model_string, imdb, set_number, debug_flag);
+    if debug_flag, afprintf(sprintf('[INFO] Model performance on `%s` set\n', set)); end;
     [ ...
       accuracy, ...
       sensitivity, ...
       specificity, ...
-    ] = fhGetAccSensSpec(labels, top_predictions, true);
-    printConsoleOutputSeparator();
+    ] = fhGetAccSensSpec(labels, top_predictions, debug_flag);
+    if debug_flag, printConsoleOutputSeparator(); end;
   else
     accuracy = -1;
     sensitivity = -1;

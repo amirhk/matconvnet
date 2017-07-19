@@ -38,21 +38,22 @@ function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccura
   training_options.debug_flag = false;
 
   % base_learning_rate = [0.1*ones(1,25) 0.03*ones(1,25) 0.01*ones(1,50)];
-  base_learning_rate = [0.1*ones(1,15) 0.03*ones(1,15) 0.01*ones(1,15)];
-  % base_learning_rate = [0.1*ones(1,3)];
+  % base_learning_rate = [0.1*ones(1,15) 0.03*ones(1,15) 0.01*ones(1,15)];
+  base_learning_rate = [0.1*ones(1,10)];
 
   if strcmp(dataset, 'cifar') || strcmp(dataset, 'cifar-multi-class-subsampled')
-    learning_rate_dividers = [1, 3, 10, 30];
+    learning_rate_divider_list = [1, 3, 10, 30];
+    % learning_rate_divider_list = [3];
   elseif strcmp(dataset, 'stl-10') || strcmp(dataset, 'stl-10-multi-class-subsampled')
-    learning_rate_dividers = [1, 3, 10, 30] / 10; % stl-10 specific
+    learning_rate_divider_list = [1, 3, 10, 30] / 10; % stl-10 specific
   elseif strcmp(dataset, 'mnist') || strcmp(dataset, 'mnist-multi-class-subsampled')
-    learning_rate_dividers = [1, 3, 10, 30];
+    learning_rate_divider_list = [1, 3, 10, 30];
   elseif strcmp(dataset, 'svhn') || strcmp(dataset, 'svhn-multi-class-subsampled')
-    learning_rate_dividers = [1, 3, 10, 30] / 3; % svhn specific
-    % learning_rate_dividers = [10, 30] / 3; % svhn specific
+    learning_rate_divider_list = [1, 3, 10, 30] / 3; % svhn specific
+    % learning_rate_divider_list = [10, 30] / 3; % svhn specific
   else
     throwException('[ERROR] unrecognized dataset.')
-    % learning_rate_dividers = [1, 3, 10, 30];
+    % learning_rate_divider_list = [1, 3, 10, 30];
   end
 
   batch_size_list = [50, 100];
@@ -61,8 +62,14 @@ function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccura
   repeat_count = 3;
   test_accuracies_mean = [];
   test_accuracies_std = [];
+  total_number_of_hyperparams = ...
+    length(learning_rate_divider_list) * ...
+    length(batch_size_list) * ...
+    length(weight_decay_list);
+
+  counter = 3;
   % loop through hyperparameters
-  for learning_rate_divider = learning_rate_dividers
+  for learning_rate_divider = learning_rate_divider_list
     for batch_size = batch_size_list
       for weight_decay = weight_decay_list
         training_options.learning_rate = base_learning_rate / learning_rate_divider;;
@@ -70,10 +77,12 @@ function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccura
         training_options.weight_decay = weight_decay;
         % repeat experiment and get averaged results
         tmp_test_accuracies = [];
+        afprintf(sprintf('[INFO] Testing hyperparameter setup #%d / %d ...\n', counter, total_number_of_hyperparams));
         for i = 1 : repeat_count
           [~, performance_summary] = testCnn(training_options);
           tmp_test_accuracies(end+1) = performance_summary.testing.test.accuracy;
         end
+        counter  = counter + 1;
         test_accuracies_mean(end+1) = mean(tmp_test_accuracies);
         test_accuracies_std(end+1) = std(tmp_test_accuracies);
       end

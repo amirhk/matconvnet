@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function [top_predictions, all_predictions] = getPredictionsFromModelOnImdb(model, training_method, imdb, set)
+function [top_predictions, all_predictions] = getPredictionsFromModelOnImdb(model, training_method, imdb, set, debug_flag)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -25,10 +25,10 @@ function [top_predictions, all_predictions] = getPredictionsFromModelOnImdb(mode
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
 
-  printConsoleOutputSeparator();
-  afprintf(sprintf('[INFO] Computing predictions from `%s` model on imdb (set `%d`)...\n', training_method, set));
+  if debug_flag, printConsoleOutputSeparator(); end;
+  if debug_flag, afprintf(sprintf('[INFO] Computing predictions from `%s` model on imdb (set `%d`)...\n', training_method, set)); end;
   fh_imdb_utils = imdbTwoClassUtils;
-  fh_imdb_utils.getImdbInfo(imdb, 1);
+  fh_imdb_utils.getImdbInfo(imdb, debug_flag);
   imdb = filterImdbForSet(imdb, set, 3);
   switch training_method
     case 'ecocsvm'
