@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccuracyFromCnn(dataset, imdb, conv_network_arch, gpu)
+function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccuracyFromCnn(dataset, imdb, conv_network_arch, gpus)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -27,6 +27,13 @@ function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccura
 
 
   % -------------------------------------------------------------------------
+  %                                                              opts.general
+  % -------------------------------------------------------------------------
+  opts.general.dataset = dataset;
+  opts.general.imdb = imdb;
+  opts.train.gpus = gpus;
+
+  % -------------------------------------------------------------------------
   %                                                                opts.paths
   % -------------------------------------------------------------------------
   opts.paths.time_string = sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
@@ -35,8 +42,9 @@ function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccura
     'experiment_parent_dir', ...
     fullfile(vl_rootnn, 'experiment_results'));
   opts.paths.experiment_dir = fullfile(opts.paths.experiment_parent_dir, sprintf( ...
-    'simple-test-acc-CNN-%s-GPU-%d', ...
+    'simple-test-acc-CNN-%s-%s-GPU-%d', ...
     opts.paths.time_string, ...
+    opts.general.dataset, ...
     opts.train.gpus));
   if ~exist(opts.paths.experiment_dir)
     mkdir(opts.paths.experiment_dir);
@@ -52,14 +60,14 @@ function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccura
 
 
   training_options.experiment_parent_dir = opts.paths.experiment_dir;
-  training_options.imdb = imdb;
+  training_options.imdb = opts.general.imdb;
   training_options.network_arch = conv_network_arch;
   training_options.backprop_depth = getFullBackPropDepthForConvArchitecture(conv_network_arch); % compute `backprop_depth` automatically based on `conv_network_arch`
 
   % remember, we're training conv_network_arch, so the network is going to be initialized with random weights then trained!
   % training_options.weight_init_sequence = weight_init_sequence;
 
-  training_options.gpus = ifNotMacSetGpu(gpu);
+  training_options.gpus = ifNotMacSetGpu(opts.train.gpus);
   training_options.return_performance_summary = true;
   training_options.debug_flag = false;
 
@@ -112,9 +120,8 @@ function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccura
         % repeat experiment and get averaged results
         tmp_test_accuracies = [];
         afprintf(sprintf('[INFO] Testing hyperparameter setup #%d / %d ...\n', hyperparam_counter, total_number_of_hyperparams));
-        trial_counter = 1;
         for i = 1 : number_of_trials
-          afprintf(sprintf('[INFO] Testing repeat #%d / %d ...\n', trial_counter, number_of_trials), 1);
+          afprintf(sprintf('[INFO] Testing repeat #%d / %d ...\n', i, number_of_trials), 1);
           [~, performance_summary] = testCnn(training_options);
           tmp_test_accuracies(end+1) = performance_summary.testing.test.accuracy;
         end
