@@ -42,7 +42,7 @@ function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccura
     'experiment_parent_dir', ...
     fullfile(vl_rootnn, 'experiment_results'));
   opts.paths.experiment_dir = fullfile(opts.paths.experiment_parent_dir, sprintf( ...
-    'simple-test-acc-CNN-%s-%s-GPU-%d', ...
+    'simple-CNN-test-accuracy-%s-%s-GPU-%d', ...
     opts.paths.time_string, ...
     opts.general.dataset, ...
     opts.train.gpus));
@@ -93,10 +93,10 @@ function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccura
 
 
 
-  learning_rate_divider_list = [3, 10];
-  batch_size_list = [50];
-  weight_decay_list = [0.01];
-  base_learning_rate = [0.1*ones(1,3)];
+  % learning_rate_divider_list = [3, 10];
+  % batch_size_list = [50];
+  % weight_decay_list = [0.01];
+  % base_learning_rate = [0.1*ones(1,3)];
 
 
 
@@ -119,23 +119,29 @@ function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccura
         training_options.batch_size = batch_size;
         training_options.weight_decay = weight_decay;
         % repeat experiment and get averaged results
-        tmp_test_accuracies = [];
+        tmp_accuracies = {};
+        tmp_accuracies.train = [];
+        tmp_accuracies.test = [];
         afprintf(sprintf('[INFO] Testing hyperparameter setup #%d / %d ...\n', hyperparam_counter, total_number_of_hyperparams));
         for i = 1 : number_of_trials
           afprintf(sprintf('[INFO] Testing repeat #%d / %d ...\n', i, number_of_trials), 1);
           [~, performance_summary] = testCnn(training_options);
-          tmp_test_accuracies(end+1) = performance_summary.testing.test.accuracy;
+          tmp_accuracies.train(end+1) = performance_summary.testing.train.accuracy;
+          tmp_accuracies.test(end+1) = performance_summary.testing.test.accuracy;
         end
 
         tmp_results = {};
-        tmp_results.learning_rate = training_options.learning_rate;
+        tmp_results.learning_rate = getCompactStringRepresentationForNumbersArray(training_options.learning_rate);
         tmp_results.batch_size = training_options.batch_size;
         tmp_results.weight_decay = training_options.weight_decay;
-        tmp_results.test_accuracy.number_of_trials = number_of_trials;
-        tmp_results.test_accuracy.all_results = tmp_test_accuracies;
-        tmp_results.test_accuracy.mean = mean(tmp_test_accuracies);
-        tmp_results.test_accuracy.std = std(tmp_test_accuracies);
-        experiments{end+1} = tmp_results;
+        tmp_results.accuracy.number_of_trials = number_of_trials;
+        tmp_results.accuracy.train.all_results = tmp_accuracies.train;
+        tmp_results.accuracy.train.mean = mean(tmp_accuracies.train);
+        tmp_results.accuracy.train.std = std(tmp_accuracies.train);
+        tmp_results.accuracy.test.all_results = tmp_accuracies.test;
+        tmp_results.accuracy.test.mean = mean(tmp_accuracies.test);
+        tmp_results.accuracy.test.std = std(tmp_accuracies.test);
+        experiments.(sprintf('hyperparam_setup_%d', hyperparam_counter)) = tmp_results;
 
         hyperparam_counter  = hyperparam_counter + 1;
       end
@@ -148,12 +154,14 @@ function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccura
 
   best_test_accuracy_mean = 0;
   best_test_accuracy_std = 0;
-  for i = 1 : total_number_of_hyperparams
-    if experiments{end+1}.test_accuracy.mean > best_test_accuracy_mean
-      best_test_accuracy_mean = experiments{end+1}.test_accuracy.mean;
-      best_test_accuracy_std = experiments{end+1}.test_accuracy.std;
+  for hyperparam_counter = 1 : total_number_of_hyperparams
+    tmp = experiments.(sprintf('hyperparam_setup_%d', hyperparam_counter)).accuracy.test;
+    if tmp.mean > best_test_accuracy_mean
+      best_test_accuracy_mean = tmp.mean;
+      best_test_accuracy_std = tmp.std;
     end
   end
+  keyboard
 
   % [~, indices] = sort(test_accuracies_mean, 'descend');
   % index_of_best_test_perf = indices(1);

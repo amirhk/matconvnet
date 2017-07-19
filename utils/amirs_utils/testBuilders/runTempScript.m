@@ -254,13 +254,9 @@ posneg_balance = 'balanced-50';
 % fh_imdb_utils.getImdbInfo(experiments{1}.imdb, 1);
 
 [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccuracyFromCnn(dataset, experiments{1}.imdb, 'convV0P0RL0+fcV1-RF32CH3', 1)
-keyboard
-% [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccuracyFromCnn(dataset, experiments{2}.imdb, 'convV0P0RL0+fcV1-RF16CH64', 1)
-% keyboard
-% [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccuracyFromCnn(dataset, experiments{3}.imdb, 'convV0P0RL0+fcV1-RF16CH64', 1)
-% keyboard
-% [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccuracyFromCnn(dataset, experiments{5}.imdb, 'convV0P0RL0+fcV1-RF16CH64', 1)
-% keyboard
+[best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccuracyFromCnn(dataset, experiments{2}.imdb, 'convV0P0RL0+fcV1-RF16CH64', 1)
+[best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccuracyFromCnn(dataset, experiments{3}.imdb, 'convV0P0RL0+fcV1-RF16CH64', 1)
+[best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccuracyFromCnn(dataset, experiments{5}.imdb, 'convV0P0RL0+fcV1-RF16CH64', 1)
 
 
 
