@@ -589,7 +589,7 @@ function [all_samples_top_class_predictions, all_samples_all_class_predictions, 
   % softmax
   net_2.layers = net_1.layers;
   net_2.layers{end}.type = 'softmax';
-  if debug_flag, afprintf(sprintf('Extracting `top`-class and `all`-class predictions based on `softmaxloss`\n')); end;
+  if opts.debug_flag, afprintf(sprintf('Extracting `top`-class and `all`-class predictions based on `softmaxloss`\n')); end;
   [all_samples_top_class_predictions, ~, all_labels_1, ~] = tmpBeef(opts, getBatch, epoch, subset, learning_rate, imdb, net_1, 'softmaxloss', -1);
   all_samples_all_class_predictions = all_samples_top_class_predictions;
 
@@ -603,7 +603,7 @@ function [all_samples_top_class_predictions, all_samples_all_class_predictions, 
 function [all_samples_forward_pass_results] = get_resulting_forward_pass_matrix_from_network_for_all_samples(opts, getBatch, epoch, subset, learning_rate, imdb, net_cpu, forward_pass_only_depth)
   % IMPORTANT: looks at FEATURE MAPS at a certain depth
 % -------------------------------------------------------------------------
-  if debug_flag, afprintf(sprintf('Extracting result of forward pass through network...\n')); end;
+  if opts.debug_flag, afprintf(sprintf('Extracting result of forward pass through network...\n')); end;
 
   [~, ~, ~, all_samples_forward_pass_results] = ...
     tmpBeef(opts, getBatch, epoch, subset, learning_rate, imdb, net_cpu, 'none', forward_pass_only_depth);
@@ -630,7 +630,7 @@ function [all_samples_top_class_predictions, all_samples_all_class_predictions, 
   all_samples_all_class_predictions = [];
   all_samples_forward_pass_results  = [];
   all_labels = [];
-  if debug_flag, afprintf(sprintf('[INFO] processed     %d samples', 0), 1); end;
+  if opts.debug_flag, afprintf(sprintf('[INFO] processed     %d samples', 0), 1); end;
 
   for t=1:opts.batch_size:numel(subset)
     if opts.debug_flag
@@ -711,7 +711,7 @@ function [all_samples_top_class_predictions, all_samples_all_class_predictions, 
       fprintf('%d samples', batchEnd);
     end
   end
-  if debug_flag, fprintf('\n'); end;
+  if opts.debug_flag, fprintf('\n'); end;
 
   if numGpus >= 1
     net_cpu = vl_simplenn_move(net, 'cpu');
