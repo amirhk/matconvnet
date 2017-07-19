@@ -126,13 +126,13 @@ function [net, info] = cnn_train(net, imdb, getBatch, varargin)
   if ~evaluateMode
     if opts.debug_flag, afprintf(sprintf('[INFO] processing epoch #')); end;
     for epoch=1:opts.num_epochs
-      if ~opts.debug_flag
+      if opts.debug_flag
         for j = 0:log10(epoch - 1) + (3 + numel(num2str(opts.num_epochs)))
           fprintf('\b'); % delete previous counter display
         end
         fprintf('%d', epoch);
       end
-      fprintf(' / %d', opts.num_epochs);
+      if opts.debug_flag, fprintf(' / %d', opts.num_epochs); end;
 
       learning_rate = opts.learning_rate(min(epoch, numel(opts.learning_rate)));
 
@@ -221,9 +221,7 @@ function [net, info] = cnn_train(net, imdb, getBatch, varargin)
       drawnow;
       print(1, modelFigPath, '-dpdf');
     end
-    if ~opts.debug_flag
-      fprintf('\n');
-    end
+    if opts.debug_flag, fprintf('\n'); end
   elseif ~opts.forward_pass_only_mode
     % only to be used for validation
     epoch = 1;
@@ -605,7 +603,7 @@ function [all_samples_top_class_predictions, all_samples_all_class_predictions, 
 function [all_samples_forward_pass_results] = get_resulting_forward_pass_matrix_from_network_for_all_samples(opts, getBatch, epoch, subset, learning_rate, imdb, net_cpu, forward_pass_only_depth, debug_flag)
   % IMPORTANT: looks at FEATURE MAPS at a certain depth
 % -------------------------------------------------------------------------
-  afprintf(sprintf('Extracting result of forward pass through network...\n'));
+  if debug_flag, afprintf(sprintf('Extracting result of forward pass through network...\n')); end;
 
   [~, ~, ~, all_samples_forward_pass_results] = ...
     tmpBeef(opts, getBatch, epoch, subset, learning_rate, imdb, net_cpu, 'none', forward_pass_only_depth, debug_flag);
@@ -632,9 +630,7 @@ function [all_samples_top_class_predictions, all_samples_all_class_predictions, 
   all_samples_all_class_predictions = [];
   all_samples_forward_pass_results  = [];
   all_labels = [];
-  if ~opts.debug_flag
-    if debug_flag, afprintf(sprintf('[INFO] processed     %d samples', 0), 1); end;
-  end
+  if debug_flag, afprintf(sprintf('[INFO] processed     %d samples', 0), 1); end;
 
   for t=1:opts.batch_size:numel(subset)
     if opts.debug_flag
@@ -708,14 +704,14 @@ function [all_samples_top_class_predictions, all_samples_all_class_predictions, 
       num_done = num_done + numel(batch);
     end
 
-    if ~opts.debug_flag
+    if opts.debug_flag
       for j = 0:log10(batchEnd - 1) + 8 % + 8 because of ' samples'
         fprintf('\b'); % delete previous counter display
       end
       fprintf('%d samples', batchEnd);
     end
   end
-  fprintf('\n');
+  if debug_flag, fprintf('\n'); end;
 
   if numGpus >= 1
     net_cpu = vl_simplenn_move(net, 'cpu');

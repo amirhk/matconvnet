@@ -26,10 +26,35 @@ function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccura
 % POSSIBILITY OF SUCH DAMAGE.
 
 
+  % -------------------------------------------------------------------------
+  %                                                                opts.paths
+  % -------------------------------------------------------------------------
+  opts.paths.time_string = sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
+  opts.paths.experiment_parent_dir = getValueFromFieldOrDefault( ...
+    {}, ... % no input_opts here! :)
+    'experiment_parent_dir', ...
+    fullfile(vl_rootnn, 'experiment_results'));
+  opts.paths.experiment_dir = fullfile(opts.paths.experiment_parent_dir, sprintf( ...
+    'simple-test-acc-CNN-%s-GPU-%d', ...
+    opts.paths.time_string, ...
+    opts.train.gpus));
+  if ~exist(opts.paths.experiment_dir)
+    mkdir(opts.paths.experiment_dir);
+  end
+  opts.paths.options_file_path = fullfile(opts.paths.experiment_dir, 'options.txt');
+  opts.paths.results_file_path = fullfile(opts.paths.experiment_dir, 'results.txt');
+
+  % -------------------------------------------------------------------------
+  %                                                    save experiment setup!
+  % -------------------------------------------------------------------------
+  saveStruct2File(opts, opts.paths.options_file_path, 0);
+
+
+
+  training_options.experiment_parent_dir = opts.paths.experiment_dir;
   training_options.imdb = imdb;
   training_options.network_arch = conv_network_arch;
   training_options.backprop_depth = getFullBackPropDepthForConvArchitecture(conv_network_arch); % compute `backprop_depth` automatically based on `conv_network_arch`
-  training_options.backprop_depth
 
   % remember, we're training conv_network_arch, so the network is going to be initialized with random weights then trained!
   % training_options.weight_init_sequence = weight_init_sequence;
@@ -44,25 +69,24 @@ function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccura
 
   if strcmp(dataset, 'cifar') || strcmp(dataset, 'cifar-multi-class-subsampled')
     learning_rate_divider_list = [1, 3, 10, 30];
-    % learning_rate_divider_list = [3];
+    learning_rate_divider_list = [3, 10];
   elseif strcmp(dataset, 'stl-10') || strcmp(dataset, 'stl-10-multi-class-subsampled')
-    learning_rate_divider_list = [1, 3, 10, 30] / 10; % stl-10 specific
+    learning_rate_divider_list = [1, 3, 10, 30] / 10;
   elseif strcmp(dataset, 'mnist') || strcmp(dataset, 'mnist-multi-class-subsampled')
     learning_rate_divider_list = [1, 3, 10, 30];
   elseif strcmp(dataset, 'svhn') || strcmp(dataset, 'svhn-multi-class-subsampled')
-    learning_rate_divider_list = [1, 3, 10, 30] / 3; % svhn specific
-    % learning_rate_divider_list = [10, 30] / 3; % svhn specific
+    learning_rate_divider_list = [1, 3, 10, 30] / 3;
   else
     throwException('[ERROR] unrecognized dataset.')
-    % learning_rate_divider_list = [1, 3, 10, 30];
   end
 
-  batch_size_list = [50, 100];
-  weight_decay_list = [0.01, 0.001, 0.0001];
+  batch_size_list = [50]; % , 100];
+  weight_decay_list = [0.01]; % , 0.001, 0.0001];
 
-  number_of_repeats = 3;
+  number_of_trials = 3;
   test_accuracies_mean = [];
   test_accuracies_std = [];
+  test_accuracies = {};
   total_number_of_hyperparams = ...
     length(learning_rate_divider_list) * ...
     length(batch_size_list) * ...
@@ -79,18 +103,31 @@ function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccura
         % repeat experiment and get averaged results
         tmp_test_accuracies = [];
         afprintf(sprintf('[INFO] Testing hyperparameter setup #%d / %d ...\n', hyperparam_counter, total_number_of_hyperparams));
-        repeat_counter = 1;
-        for i = 1 : number_of_repeats
-          afprintf(sprintf('[INFO] Testing repeat #%d / %d ...\n', repeat_counter, number_of_repeats), 1);
+        trial_counter = 1;
+        for i = 1 : number_of_trials
+          afprintf(sprintf('[INFO] Testing repeat #%d / %d ...\n', trial_counter, number_of_trials), 1);
           [~, performance_summary] = testCnn(training_options);
           tmp_test_accuracies(end+1) = performance_summary.testing.test.accuracy;
         end
+
+        tmp_results = {};
+        tmp_results.learning_rate = training_options.learning_rate;
+        tmp_results.batch_size = training_options.batch_size;
+        tmp_results.weight_decay = training_options.weight_decay;
+        tmp_results.test_accuracy.number_of_trials = number_of_trials;
+        tmp_results.test_accuracy.all_results = tmp_test_accuracies;
+        tmp_results.test_accuracy.mean = mean(tmp_test_accuracies);
+        tmp_results.test_accuracy.std = std(tmp_test_accuracies);
+        test_accuracies{end+1} = tmp_results;
+
         hyperparam_counter  = hyperparam_counter + 1;
-        test_accuracies_mean(end+1) = mean(tmp_test_accuracies);
-        test_accuracies_std(end+1) = std(tmp_test_accuracies);
       end
     end
   end
+
+  keyboard
+  saveStruct2File(performance_summary, opts.paths.results_file_path, 0);
+  keyboard
 
   [~, indices] = sort(test_accuracies_mean, 'descend');
   index_of_best_test_perf = indices(1);
