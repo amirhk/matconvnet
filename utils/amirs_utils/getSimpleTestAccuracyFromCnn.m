@@ -30,7 +30,7 @@ function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccura
   %                                                              opts.general
   % -------------------------------------------------------------------------
   opts.general.dataset = dataset;
-  opts.general.imdb = imdb;
+  % opts.general.imdb = imdb; % do not save the imdb!
   opts.train.gpus = gpus;
 
   % -------------------------------------------------------------------------
@@ -59,8 +59,9 @@ function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccura
 
 
 
+
   training_options.experiment_parent_dir = opts.paths.experiment_dir;
-  training_options.imdb = opts.general.imdb;
+  training_options.imdb = imdb;
   training_options.network_arch = conv_network_arch;
   training_options.backprop_depth = getFullBackPropDepthForConvArchitecture(conv_network_arch); % compute `backprop_depth` automatically based on `conv_network_arch`
 
