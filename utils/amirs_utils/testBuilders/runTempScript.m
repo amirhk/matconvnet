@@ -1,27 +1,3 @@
-
-% imdb = constructSyntheticGaussianImdbNEW(10000, 100, 1, 1);
-% getTwoClassCSeparation(imdb)
-% getAverageClassEccentricity(imdb)
-
-% imdb = constructSyntheticGaussianImdbNEW(10000, 100, 1000, 1);
-% getTwoClassCSeparation(imdb)
-% getAverageClassEccentricity(imdb)
-
-% imdb = constructSyntheticGaussianImdbNEW(10000, 100, 1, 1000);
-% getTwoClassCSeparation(imdb)
-% getAverageClassEccentricity(imdb)
-
-% imdb = constructSyntheticGaussianImdbNEW(10000, 100, 1000, 1000);
-% getTwoClassCSeparation(imdb)
-% getAverageClassEccentricity(imdb)
-
-
-
-
-
-
-
-
 % tempScriptReproDasgupta('2_gaussians', 'measure-c-separation');
 % tempScriptReproDasgupta('2_gaussians', 'measure-1-knn-perf');
 % tempScriptReproDasgupta('2_gaussians', 'measure-eccentricity');
@@ -98,7 +74,7 @@
 % tempScriptReproDasgupta('mnist-784-multi-class-subsampled', 'measure-c-separation', 1, 1);
 % tempScriptReproDasgupta('mnist-784-multi-class-subsampled', 'measure-1-knn-perf', 1, 1);
 
-tempScriptReproDasgupta('svhn-multi-class-subsampled', 'measure-c-separation', 1, 1);
+% tempScriptReproDasgupta('svhn-multi-class-subsampled', 'measure-c-separation', 1, 1);
 % tempScriptReproDasgupta('svhn-multi-class-subsampled', 'measure-1-knn-perf', 1, 1);
 
 
@@ -120,13 +96,18 @@ tempScriptReproDasgupta('svhn-multi-class-subsampled', 'measure-c-separation', 1
 % functionHandle = @tempScriptRunMmd
 % functionHandle = @tempScriptRunTsne;
 % functionHandle = @tmpScriptCalculateDistances;
-% functionHandle = @tempScriptMeasureClassificationPerformance;
+functionHandle = @tempScriptMeasureClassificationPerformance;
 % functionHandle = @tempScriptMeasureCSeparation;
 % functionHandle = @tempScriptMeasureAverageClassEccentricity;
 % functionHandle = @tempScriptPlot2DEuclideanDistances;
 % functionHandle = @tempScriptPlot3DEuclideanDistances;
 % functionHandle = @tempScriptPlotProgressionOfRandomProjectionFor1Sample;
 
+
+
+
+
+functionHandle('cifar-multi-class-subsampled', 'balanced-38', 1);
 
 
 

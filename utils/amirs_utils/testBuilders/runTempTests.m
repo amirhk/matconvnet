@@ -95,6 +95,7 @@ function runTempTests()
   % non_larp_network_arch = 'convV3P3RL3+fcV1';
 
 
+  % BACKUP: these were the setups we ran CCN results with!!!!
   larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
   % larp_weight_init_type = 'gaussian-SmoothedCovariance-3-MuDivide-1-SigmaDivide-1';
   % larp_weight_init_type = 'gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1';

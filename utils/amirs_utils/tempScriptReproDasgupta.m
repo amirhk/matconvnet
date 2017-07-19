@@ -39,8 +39,6 @@ function tempScriptReproDasgupta(dataset, metric, c_separation, eccentricity)
   number_of_samples_list = [10, 50, 100, 250, 500, 1000];          % all datasets, except for stl-10
   % number_of_samples_list = [10, 50, 100];
 
-
-  counter = 1;
   repeat_count = 5;
   % repeat_count = 1;
 
@@ -91,6 +89,7 @@ function tempScriptReproDasgupta(dataset, metric, c_separation, eccentricity)
     global_results.(experiment).std = zeros(results_size);
   end
 
+  counter = 1;
   for original_dim = original_dim_list
 
     for projected_dim = projected_dim_list
@@ -109,7 +108,8 @@ function tempScriptReproDasgupta(dataset, metric, c_separation, eccentricity)
 
           imdb_list = getImdbList(experiments_list, dataset, number_of_samples, original_dim, projected_dim, c_separation, eccentricity);
 
-          afprintf(sprintf('[INFO] Evaluating metric on experiments...\n'));
+          afprintf(sprintf('[INFO] Evaluating metric on experiments...\t'));
+          tmp_counter = 1;
           for experiment = experiments_list
             experiment = char(experiment);
             tmp_imdb = imdb_list.(experiment);
@@ -119,14 +119,16 @@ function tempScriptReproDasgupta(dataset, metric, c_separation, eccentricity)
               case 'measure-eccentricity'
                 tmp_results.(experiment)(end+1) = getAverageClassEccentricity(tmp_imdb);
               case 'measure-1-knn-perf'
-                tmp_results.(experiment)(end+1) = getSimpleTestAccuracyFrom1Knn(tmp_imdb);
+                tmp_results.(experiment)(end+1) = getSimpleTestAccuracyFromKnn(tmp_imdb, 1);
               case 'measure-linear-svm-perf'
                 tmp_results.(experiment)(end+1) = getSimpleTestAccuracyFromLibSvm(tmp_imdb);
               case 'measure-mlp-500-100-perf'
-                tmp_results.(experiment)(end+1) = getSimpleTestAccuracyFromMLP(tmp_imdb);
+                tmp_results.(experiment)(end+1) = getSimpleTestAccuracyFromMLP(tmp_imdb, [500, 100]);
             end
+            fprintf('%d\t', tmp_counter);
+            tmp_counter = tmp_counter + 1;
           end
-          afprintf(sprintf('[INFO] done!\n'));
+          fprintf('done!\n');
 
         end
 
@@ -307,7 +309,7 @@ function imdb_list = getImdbList(experiments_list, dataset, number_of_samples, o
 % -------------------------------------------------------------------------
   fh_projection_utils = projectionUtils;
   imdb_list = {};
-  afprintf(sprintf('[INFO] Created / loading new imdb...\t'));
+  afprintf(sprintf('[INFO] Created / loading new imdb...\n'));
   switch dataset
     case '2_gaussians'
       original_imdb = constructSyntheticGaussianImdbNEW(2, number_of_samples, original_dim, c_separation, eccentricity, true);
@@ -333,10 +335,10 @@ function imdb_list = getImdbList(experiments_list, dataset, number_of_samples, o
       end
   end
   imdb_list.('orig_imdb') = original_imdb;
-  fprintf('done!\n');
+  afprintf(sprintf('[INFO] done!\n'));
 
-  afprintf(sprintf('[INFO] Projecting imdbs...\t'));
-  counter = 1;
+  afprintf(sprintf('[INFO] Projecting imdbs...\t\t'));
+  tmp_counter = 1;
   for experiment = experiments_list
     experiment = char(experiment);
     if strcmp(experiment, 'orig_imdb')
@@ -353,8 +355,8 @@ function imdb_list = getImdbList(experiments_list, dataset, number_of_samples, o
       number_of_non_linear_layers, ...
       'relu', ...
       projected_dim);
-    fprintf('%d\t', counter);
-    counter = counter + 1;
+    fprintf('%d\t', tmp_counter);
+    tmp_counter = tmp_counter + 1;
   end
   fprintf('done!\n');
 

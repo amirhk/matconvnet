@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function test_accuracy = getSimpleTestAccuracyFromMLP(imdb)
+function test_accuracy = getSimpleTestAccuracyFromMLP(imdb, number_of_hidden_nodes)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -26,7 +26,7 @@ function test_accuracy = getSimpleTestAccuracyFromMLP(imdb)
 % POSSIBILITY OF SUCH DAMAGE.
 
   single_training_method_options.return_performance_summary = true;
-  single_training_method_options.number_of_hidden_nodes = [500, 100];
+  single_training_method_options.number_of_hidden_nodes = number_of_hidden_nodes;
   single_training_method_options.imdb = imdb;
   [~, performance_summary] = testMlp(single_training_method_options);
   test_accuracy = performance_summary.testing.test.accuracy;

@@ -40,100 +40,104 @@ function [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(data
   end
   afprintf(sprintf('[INFO] done!\n'));
 
-  projection = 'dense_rp';
-  % projection = 'dense_rp_normalized';
-  % projection = 'dense_lognormal';
-  switch projection
-    case 'dense_rp'
-      fhGetDenslyProjectedImdb = fh_projection_utils.getDenslyProjectedImdb;
-      title_prefix = 'Dense RP';
-    case 'dense_rp_normalized'
-      fhGetDenslyProjectedImdb = fh_projection_utils.getDenslyProjectedAndNormalizedImdb;
-      title_prefix = 'Dense RP Normalized';
-    case 'dense_lognormal'
-      fhGetDenslyProjectedImdb = fh_projection_utils.getDenslyLogNormalProjectedImdb;
-      title_prefix = 'LogNormal Dense RP';
-  end
-  % if false % TODO... this doesn't actaully cahnge the file name!!!!!!!
-  %   fhGetDenslyProjectedImdb = fh_projection_utils.getDenslyProjectedImdb;
-  %   title_prefix = 'Dense RP';
-  % else
-  %   fhGetDenslyProjectedImdb = fh_projection_utils.getDenslyLogNormalProjectedImdb;
-  %   title_prefix = 'LogNormal Dense RP';
+
+
+
+
+  % projection = 'dense_rp';
+  % % projection = 'dense_rp_normalized';
+  % % projection = 'dense_lognormal';
+  % switch projection
+  %   case 'dense_rp'
+  %     fhGetDenslyProjectedImdb = fh_projection_utils.getDenslyProjectedImdb;
+  %     title_prefix = 'Dense RP';
+  %   case 'dense_rp_normalized'
+  %     fhGetDenslyProjectedImdb = fh_projection_utils.getDenslyProjectedAndNormalizedImdb;
+  %     title_prefix = 'Dense RP Normalized';
+  %   case 'dense_lognormal'
+  %     fhGetDenslyProjectedImdb = fh_projection_utils.getDenslyLogNormalProjectedImdb;
+  %     title_prefix = 'LogNormal Dense RP';
   % end
+  % % if false % TODO... this doesn't actaully cahnge the file name!!!!!!!
+  % %   fhGetDenslyProjectedImdb = fh_projection_utils.getDenslyProjectedImdb;
+  % %   title_prefix = 'Dense RP';
+  % % else
+  % %   fhGetDenslyProjectedImdb = fh_projection_utils.getDenslyLogNormalProjectedImdb;
+  % %   title_prefix = 'LogNormal Dense RP';
+  % % end
 
 
-  % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 
-  experiments{end+1}.imdb = original_imdb;
-  experiments{end}.title = 'Original IMDB';
+  % experiments{end+1}.imdb = original_imdb;
+  % experiments{end}.title = 'Original IMDB';
 
 
-  % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
 
-  afprintf(sprintf('[INFO] Loading projected imdb...\n'));
-  projected_imdb = fhGetDenslyProjectedImdb(original_imdb, 1, 0);
-  experiments{end+1}.imdb = projected_imdb;
-  experiments{end}.title = sprintf('%s = 1 - ReLU = 0', title_prefix);
-  afprintf(sprintf('[INFO] done!\n'));
+  % afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  % projected_imdb = fhGetDenslyProjectedImdb(original_imdb, 1, 0);
+  % experiments{end+1}.imdb = projected_imdb;
+  % experiments{end}.title = sprintf('%s = 1 - ReLU = 0', title_prefix);
+  % afprintf(sprintf('[INFO] done!\n'));
 
-  afprintf(sprintf('[INFO] Loading projected imdb...\n'));
-  projected_imdb = fhGetDenslyProjectedImdb(original_imdb, 2, 0);
-  experiments{end+1}.imdb = projected_imdb;
-  experiments{end}.title = sprintf('%s = 2 - ReLU = 0', title_prefix);
-  afprintf(sprintf('[INFO] done!\n'));
+  % afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  % projected_imdb = fhGetDenslyProjectedImdb(original_imdb, 2, 0);
+  % experiments{end+1}.imdb = projected_imdb;
+  % experiments{end}.title = sprintf('%s = 2 - ReLU = 0', title_prefix);
+  % afprintf(sprintf('[INFO] done!\n'));
 
-  afprintf(sprintf('[INFO] Loading projected imdb...\n'));
-  projected_imdb = fhGetDenslyProjectedImdb(original_imdb, 3, 0);
-  experiments{end+1}.imdb = projected_imdb;
-  experiments{end}.title = sprintf('%s = 3 - ReLU = 0', title_prefix);
-  afprintf(sprintf('[INFO] done!\n'));
+  % afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  % projected_imdb = fhGetDenslyProjectedImdb(original_imdb, 3, 0);
+  % experiments{end+1}.imdb = projected_imdb;
+  % experiments{end}.title = sprintf('%s = 3 - ReLU = 0', title_prefix);
+  % afprintf(sprintf('[INFO] done!\n'));
 
-  afprintf(sprintf('[INFO] Loading projected imdb...\n'));
-  projected_imdb = fhGetDenslyProjectedImdb(original_imdb, 4, 0);
-  experiments{end+1}.imdb = projected_imdb;
-  experiments{end}.title = sprintf('%s = 4 - ReLU = 0', title_prefix);
-  afprintf(sprintf('[INFO] done!\n'));
+  % afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  % projected_imdb = fhGetDenslyProjectedImdb(original_imdb, 4, 0);
+  % experiments{end+1}.imdb = projected_imdb;
+  % experiments{end}.title = sprintf('%s = 4 - ReLU = 0', title_prefix);
+  % afprintf(sprintf('[INFO] done!\n'));
 
-  afprintf(sprintf('[INFO] Loading projected imdb...\n'));
-  projected_imdb = fhGetDenslyProjectedImdb(original_imdb, 5, 0);
-  experiments{end+1}.imdb = projected_imdb;
-  experiments{end}.title = sprintf('%s = 5 - ReLU = 0', title_prefix);
-  afprintf(sprintf('[INFO] done!\n'));
+  % afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  % projected_imdb = fhGetDenslyProjectedImdb(original_imdb, 5, 0);
+  % experiments{end+1}.imdb = projected_imdb;
+  % experiments{end}.title = sprintf('%s = 5 - ReLU = 0', title_prefix);
+  % afprintf(sprintf('[INFO] done!\n'));
 
-  afprintf(sprintf('[INFO] Loading projected imdb...\n'));
-  projected_imdb = fhGetDenslyProjectedImdb(original_imdb, 1, 1);
-  experiments{end+1}.imdb = projected_imdb;
-  experiments{end}.title = sprintf('%s = 1 - ReLU = 1', title_prefix);
-  afprintf(sprintf('[INFO] done!\n'));
+  % afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  % projected_imdb = fhGetDenslyProjectedImdb(original_imdb, 1, 1);
+  % experiments{end+1}.imdb = projected_imdb;
+  % experiments{end}.title = sprintf('%s = 1 - ReLU = 1', title_prefix);
+  % afprintf(sprintf('[INFO] done!\n'));
 
-  afprintf(sprintf('[INFO] Loading projected imdb...\n'));
-  projected_imdb = fhGetDenslyProjectedImdb(original_imdb, 2, 2);
-  experiments{end+1}.imdb = projected_imdb;
-  experiments{end}.title = sprintf('%s = 2 - ReLU = 2', title_prefix);
-  afprintf(sprintf('[INFO] done!\n'));
+  % afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  % projected_imdb = fhGetDenslyProjectedImdb(original_imdb, 2, 2);
+  % experiments{end+1}.imdb = projected_imdb;
+  % experiments{end}.title = sprintf('%s = 2 - ReLU = 2', title_prefix);
+  % afprintf(sprintf('[INFO] done!\n'));
 
-  afprintf(sprintf('[INFO] Loading projected imdb...\n'));
-  projected_imdb = fhGetDenslyProjectedImdb(original_imdb, 3, 3);
-  experiments{end+1}.imdb = projected_imdb;
-  experiments{end}.title = sprintf('%s = 3 - ReLU = 3', title_prefix);
-  afprintf(sprintf('[INFO] done!\n'));
+  % afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  % projected_imdb = fhGetDenslyProjectedImdb(original_imdb, 3, 3);
+  % experiments{end+1}.imdb = projected_imdb;
+  % experiments{end}.title = sprintf('%s = 3 - ReLU = 3', title_prefix);
+  % afprintf(sprintf('[INFO] done!\n'));
 
-  afprintf(sprintf('[INFO] Loading projected imdb...\n'));
-  projected_imdb = fhGetDenslyProjectedImdb(original_imdb, 4, 4);
-  experiments{end+1}.imdb = projected_imdb;
-  experiments{end}.title = sprintf('%s = 4 - ReLU = 4', title_prefix);
-  afprintf(sprintf('[INFO] done!\n'));
+  % afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  % projected_imdb = fhGetDenslyProjectedImdb(original_imdb, 4, 4);
+  % experiments{end+1}.imdb = projected_imdb;
+  % experiments{end}.title = sprintf('%s = 4 - ReLU = 4', title_prefix);
+  % afprintf(sprintf('[INFO] done!\n'));
 
-  afprintf(sprintf('[INFO] Loading projected imdb...\n'));
-  projected_imdb = fhGetDenslyProjectedImdb(original_imdb, 5, 5);
-  experiments{end+1}.imdb = projected_imdb;
-  experiments{end}.title = sprintf('%s = 5 - ReLU = 5', title_prefix);
-  afprintf(sprintf('[INFO] done!\n'));
+  % afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  % projected_imdb = fhGetDenslyProjectedImdb(original_imdb, 5, 5);
+  % experiments{end+1}.imdb = projected_imdb;
+  % experiments{end}.title = sprintf('%s = 5 - ReLU = 5', title_prefix);
+  % afprintf(sprintf('[INFO] done!\n'));
 
 
   % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
@@ -234,6 +238,38 @@ function [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(data
 
 
 
+
+
+
+  experiments{end+1}.imdb = original_imdb;
+  experiments{end}.title = 'Original IMDB';
+
+
+  afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
+  larp_network_arch = 'larpV1P1RL1';
+  projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
+  experiments{end+1}.imdb = projected_imdb;
+  experiments{end}.title = larp_network_arch;
+  afprintf(sprintf('[INFO] done!\n'));
+
+
+  afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  larp_weight_init_type = 'logNormal-layer5-ratVisualCortex';
+  larp_network_arch = 'larpV1P1RL1';
+  projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
+  experiments{end+1}.imdb = projected_imdb;
+  experiments{end}.title = larp_network_arch;
+  afprintf(sprintf('[INFO] done!\n'));
+
+
+  afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  larp_weight_init_type = 'gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1';
+  larp_network_arch = 'larpV1P1RL1';
+  projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
+  experiments{end+1}.imdb = projected_imdb;
+  experiments{end}.title = larp_network_arch;
+  afprintf(sprintf('[INFO] done!\n'));
 
 
 

@@ -29,9 +29,9 @@ function tempScriptMeasureClassificationPerformance(dataset, posneg_balance, sav
   %                                                                     Setup
   % -------------------------------------------------------------------------
   % classification_method = 'cnn';
-  classification_method = '1-knn';
+  % classification_method = '1-knn';
   % classification_method = '3-knn';
-  % classification_method = 'mlp-64-10';
+  classification_method = 'mlp-64-10';
   % classification_method = 'mlp-500-100';
   % classification_method = 'mlp-500-1000-100';
   repeat_count = 5;
@@ -52,6 +52,8 @@ function tempScriptMeasureClassificationPerformance(dataset, posneg_balance, sav
   % plotBeef(all_experiments_multi_run, dataset, posneg_balance, save_results, classification_method);
   plot_title = sprintf('classification perf - %s - %s - %s', classification_method, dataset, posneg_balance);
   % plotBeef(all_experiments_multi_run, plot_title, save_results);
+  all_experiments_multi_run
+  keyboard
   tempScriptPlotRPTests(all_experiments_multi_run, plot_title, save_results);
 
 % -------------------------------------------------------------------------

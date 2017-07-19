@@ -105,6 +105,9 @@ function projected_samples = getProjectedImdbSamplesOnNet(imdb, net, depth)
   projected_samples = info.all_samples_forward_pass_results;
 
 
+
+
+
 % -------------------------------------------------------------------------
 function fn = getBatch()
 % -------------------------------------------------------------------------

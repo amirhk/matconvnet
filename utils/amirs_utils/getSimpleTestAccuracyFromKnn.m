@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function test_accuracy = getSimpleTestAccuracyFrom1Knn(imdb)
+function test_accuracy = getSimpleTestAccuracyFromKnn(imdb, number_of_nearest_neighbors)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -26,7 +26,7 @@ function test_accuracy = getSimpleTestAccuracyFrom1Knn(imdb)
 % POSSIBILITY OF SUCH DAMAGE.
 
   single_training_method_options.return_performance_summary = true;
-  single_training_method_options.number_of_nearest_neighbors = 1;
+  single_training_method_options.number_of_nearest_neighbors = number_of_nearest_neighbors;
   single_training_method_options.imdb = imdb;
   [~, performance_summary] = testKnn(single_training_method_options);
   test_accuracy = performance_summary.testing.test.accuracy;
