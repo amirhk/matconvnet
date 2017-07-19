@@ -54,7 +54,7 @@ function all_experiments_single_run = runAllExperimentsOnce(dataset, posneg_bala
   [~, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 0);
 
   for i = 1 : numel(experiments)
-    experiments{i}.c_separation = getTwoClassCSeparation(experiments{i}.imdb);
+    experiments{i}.c_separation = getAverageClassCSeparation(experiments{i}.imdb);
   end
 
   all_experiments_single_run = experiments;
