@@ -104,9 +104,9 @@ function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccura
 
 
   number_of_trials = 3;
-  test_accuracies_mean = [];
-  test_accuracies_std = [];
   experiments = {};
+  experiments.best_test_accuracy_mean = best_test_accuracy_mean;
+  experiments.best_test_accuracy_std = best_test_accuracy_std;
   total_number_of_hyperparams = ...
     length(learning_rate_divider_list) * ...
     length(batch_size_list) * ...
@@ -146,6 +146,19 @@ function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccura
         tmp_results.accuracy.test.std = std(tmp_accuracies.test);
         experiments.(sprintf('hyperparam_setup_%d', hyperparam_counter)) = tmp_results;
 
+        best_test_accuracy_mean = 0;
+        best_test_accuracy_std = 0;
+        for hyperparam_counter = 1 : total_number_of_hyperparams
+          tmp = experiments.(sprintf('hyperparam_setup_%d', hyperparam_counter)).accuracy.test;
+          if tmp.mean > best_test_accuracy_mean
+            best_test_accuracy_mean = tmp.mean;
+            best_test_accuracy_std = tmp.std;
+          end
+        end
+
+        experiments.best_test_accuracy_mean = 0;
+        experiments.best_test_accuracy_std = 0;
+
         hyperparam_counter  = hyperparam_counter + 1;
 
         % don't amend file, but overwrite...
@@ -155,22 +168,19 @@ function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccura
     end
   end
 
-  best_test_accuracy_mean = 0;
-  best_test_accuracy_std = 0;
-  for hyperparam_counter = 1 : total_number_of_hyperparams
-    tmp = experiments.(sprintf('hyperparam_setup_%d', hyperparam_counter)).accuracy.test;
-    if tmp.mean > best_test_accuracy_mean
-      best_test_accuracy_mean = tmp.mean;
-      best_test_accuracy_std = tmp.std;
-    end
-  end
 
-  experiments.best_test_accuracy_mean = best_test_accuracy_mean;
-  experiments.best_test_accuracy_std = best_test_accuracy_std;
 
-  % don't amend file, but overwrite...
-  delete(opts.paths.results_file_path);
-  saveStruct2File(experiments, opts.paths.results_file_path, 0);
+
+
+
+
+
+
+
+
+
+
+
 
 
 
