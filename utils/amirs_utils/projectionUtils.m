@@ -126,7 +126,7 @@ function [images, labels] = getSimpleNNBatch(imdb, batch)
 
 
 % -------------------------------------------------------------------------
-function imdb = getDenslyDownProjectedImdb(imdb, number_of_projection_layers, number_of_non_linear_layers, projected_dim, non_linear_layer_type)
+function imdb = getDenslyDownProjectedImdb(imdb, number_of_projection_layers, projection_layer_type, number_of_non_linear_layers, non_linear_layer_type, projected_dim)
 % -------------------------------------------------------------------------
 
   %       IMPORTANT: REVERT TO ME BECAUSE CODE BELOW HAS WIERD ASSUMPTIONS
@@ -171,7 +171,18 @@ function imdb = getDenslyDownProjectedImdb(imdb, number_of_projection_layers, nu
     else
       tmp_dim = projected_dim; % this is original_dim if there's only 1 layer, or an evolving dim as we project further and further
     end
-    random_projection_matrix = randn(projected_dim, tmp_dim);
+
+    switch projection_layer_type
+      case 'dense_gaussian'
+        random_projection_matrix = randn(projected_dim, tmp_dim);
+      case 'dense_log_normal'
+        lognormal_mean = -0.702;
+        lognormal_var = 0.9355;
+        mu = log( (lognormal_mean ^ 2) / sqrt(lognormal_var + lognormal_mean ^ 2));
+        sigma = sqrt( log( lognormal_var / (lognormal_mean ^ 2) + 1));
+        vectorized_generated_samples = lognrnd(mu, sigma, 1, (original_dim)^2);
+        random_projection_matrix = reshape(generated_samples, projected_dim, tmp_dim);
+      end
     imdb = projectImdbUsingMatrix(imdb, random_projection_matrix);
     if non_linear_layer_count < number_of_non_linear_layers
       switch non_linear_layer_type

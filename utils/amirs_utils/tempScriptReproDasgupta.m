@@ -30,11 +30,15 @@ function tempScriptReproDasgupta(dataset, metric, c_separation, eccentricity)
 
   % projected_dim_list = [5, 10, 15, 20, 25, 50, 75, 100, 250, 500, 1000, 2000, 3072];
   projected_dim_list = [5, 10, 20, 100, 1000, 3072];
+  % projected_dim_list = 3072 * [3^0, 3^1, 3^2];
+  % projected_dim_list = 3072 * [3^0, 3^1];
 
   % number_of_samples_list = [1000];                               % 2_gaussians, 5_gaussians
   % number_of_samples_list = [10, 50, 100, 250, 500, 1000, 2500];  % circle_in_ring
-  number_of_samples_list = [10, 50, 100, 250, 500, 1000];          % all datasets, except for stl-10
   % number_of_samples_list = [10, 50, 100, 250, 500];              % only for stl-10
+  number_of_samples_list = [10, 50, 100, 250, 500, 1000];          % all datasets, except for stl-10
+  % number_of_samples_list = [10, 50, 100];
+
 
   counter = 1;
   repeat_count = 5;
@@ -42,16 +46,30 @@ function tempScriptReproDasgupta(dataset, metric, c_separation, eccentricity)
 
   experiments_list = { ...
     'orig_imdb', ...
-    'proj_imdb_rp_1_relu_0', ...
-    'proj_imdb_rp_2_relu_0', ...
-    'proj_imdb_rp_3_relu_0', ...
-    'proj_imdb_rp_4_relu_0', ...
-    'proj_imdb_rp_5_relu_0', ...
-    'proj_imdb_rp_1_relu_1', ...
-    'proj_imdb_rp_2_relu_2', ...
-    'proj_imdb_rp_3_relu_3', ...
-    'proj_imdb_rp_4_relu_4', ...
-    'proj_imdb_rp_5_relu_5'};
+    'proj_imdb_rp_1_dense_gaussian_nonlin_0_relu', ...
+    'proj_imdb_rp_2_dense_gaussian_nonlin_0_relu', ...
+    'proj_imdb_rp_3_dense_gaussian_nonlin_0_relu', ...
+    'proj_imdb_rp_4_dense_gaussian_nonlin_0_relu', ...
+    'proj_imdb_rp_5_dense_gaussian_nonlin_0_relu', ...
+    ...
+    ... 'proj_imdb_rp_1_dense_log_normal_nonlin_0_relu', ...
+    ... 'proj_imdb_rp_2_dense_log_normal_nonlin_0_relu', ...
+    ... 'proj_imdb_rp_3_dense_log_normal_nonlin_0_relu', ...
+    ... 'proj_imdb_rp_4_dense_log_normal_nonlin_0_relu', ...
+    ... 'proj_imdb_rp_5_dense_log_normal_nonlin_0_relu', ...
+    ...
+    'proj_imdb_rp_1_dense_gaussian_nonlin_1_relu', ...
+    'proj_imdb_rp_2_dense_gaussian_nonlin_2_relu', ...
+    'proj_imdb_rp_3_dense_gaussian_nonlin_3_relu', ...
+    'proj_imdb_rp_4_dense_gaussian_nonlin_4_relu', ...
+    'proj_imdb_rp_5_dense_gaussian_nonlin_5_relu'}; %, ...
+    % ...
+    % ... 'proj_imdb_rp_1_dense_log_normal_nonlin_1_relu', ...
+    % ... 'proj_imdb_rp_2_dense_log_normal_nonlin_2_relu', ...
+    % ... 'proj_imdb_rp_3_dense_log_normal_nonlin_3_relu', ...
+    % ... 'proj_imdb_rp_4_dense_log_normal_nonlin_4_relu', ...
+    % ... 'proj_imdb_rp_5_dense_log_normal_nonlin_5_relu', ...
+    % };
 
   [ ...
     sup_title, ...
@@ -126,9 +144,15 @@ function tempScriptReproDasgupta(dataset, metric, c_separation, eccentricity)
 
   end
 
+  plotBeef(experiments_list, global_results, sup_title, x_label, y_label, x_lim, y_lim, x_tick_lables, y_tick_lables, metric, c_separation, eccentricity);
+
+
+% -------------------------------------------------------------------------
+function plotBeef(experiments_list, global_results, sup_title, x_label, y_label, x_lim, y_lim, x_tick_lables, y_tick_lables, metric, c_separation, eccentricity)
+% -------------------------------------------------------------------------
   h = figure;
 
-  afprintf(sprintf('[INFO] Plotting results...\n'));
+  afprintf(sprintf('[INFO] Plotting results...\t'));
 
   experiment_count = numel(experiments_list);
   assert( ...
@@ -137,11 +161,23 @@ function tempScriptReproDasgupta(dataset, metric, c_separation, eccentricity)
 
   % plot for `orig_imdb`
   experiment = 'orig_imdb';
+
+  % subplot_y_length = 2;
+  % subplot_x_length = (experiment_count + 1) / 2;
+  % subplot(subplot_y_length, subplot_x_length, [1, 1 + subplot_x_length]),
+
+  % subplot_y_length = 4;
+  % subplot_x_length = 6;
+  % assert(experiment_count == subplot_y_length * (subplot_x_length - 1) + 1, 'weird number of experiments..');
+  % subplot(subplot_y_length, subplot_x_length, [1, 1 + subplot_x_length * 1, 1 + subplot_x_length * 2, 1 + subplot_x_length * 3]),
+
   subplot_y_length = 2;
-  subplot_x_length = (experiment_count + 1) / 2;
-  subplot(subplot_y_length, subplot_x_length, [1, 1 + subplot_x_length]),
-  title_string = upper(strrep(experiment, '_', ' '));
-  subplotBeef(global_results.(experiment).mean, title_string, x_label, y_label, x_lim, y_lim, x_tick_lables, y_tick_lables, metric);
+  subplot_x_length = 6;
+  assert(experiment_count == subplot_y_length * (subplot_x_length - 1) + 1, 'weird number of experiments..');
+  subplot(subplot_y_length, subplot_x_length, [1, 1 + subplot_x_length * 1]),
+
+  title_list = getExperimentStringForTitle(experiment);
+  subplotBeef(global_results.(experiment).mean, title_list, x_label, y_label, x_lim, y_lim, x_tick_lables, y_tick_lables, metric);
 
   % plot for all experiments except `orig_imdb`
   counter = 2;
@@ -152,10 +188,10 @@ function tempScriptReproDasgupta(dataset, metric, c_separation, eccentricity)
     end
 
     subplot(subplot_y_length, subplot_x_length, counter),
-    title_string = upper(strrep(experiment, '_', ' '));
-    subplotBeef(global_results.(experiment).mean, title_string, x_label, y_label, x_lim, y_lim, x_tick_lables, y_tick_lables, metric);
+    title_list = getExperimentStringForTitle(experiment);
+    subplotBeef(global_results.(experiment).mean, title_list, x_label, y_label, x_lim, y_lim, x_tick_lables, y_tick_lables, metric);
 
-    if counter == subplot_x_length
+    if mod(counter, subplot_x_length) == 0
       % going to next line in subplots... so incremement index by 2 instead of 1
       counter = counter + 2;
     else
@@ -163,7 +199,7 @@ function tempScriptReproDasgupta(dataset, metric, c_separation, eccentricity)
     end
   end
 
-  afprintf(sprintf('[INFO] done!\n'));
+  fprintf('done!\n');
 
   plot_title = sprintf( ...
     '%s - c-sep = %d - ecc = %d - %s - %s', ...
@@ -175,17 +211,18 @@ function tempScriptReproDasgupta(dataset, metric, c_separation, eccentricity)
     % upper(strrep(random_projection_type,'_',' '))
   suptitle(plot_title);
 
-  afprintf(sprintf('[INFO] Saving plots...\n'));
+  afprintf(sprintf('[INFO] Saving plots...\t'));
   print(fullfile(getDevPath(), 'temp_images', plot_title), '-dpdf', '-fillpage')
   savefig(h, fullfile(getDevPath(), 'temp_images', plot_title));
-  afprintf(sprintf('[INFO] done!\n'));
+  fprintf('done!\n');
 
 
 % -------------------------------------------------------------------------
-function subplotBeef(data, title_string, x_label, y_label, x_lim, y_lim, x_tick_lables, y_tick_lables, metric)
+function subplotBeef(data, title_list, x_label, y_label, x_lim, y_lim, x_tick_lables, y_tick_lables, metric)
 % -------------------------------------------------------------------------
   mesh(data),
-  title(sprintf('%s - V: %.3f', title_string, getVolumeUnderSurface(data))),
+  title_list{end+1} = sprintf('V: %.3f', getVolumeUnderSurface(data));
+  title(title_list),
   xlabel(x_label),
   ylabel(y_label),
   zlabel(metric);
@@ -210,6 +247,18 @@ function volume = getVolumeUnderSurface(z)
   x = 1:1:size(z,2);
   y = 1:1:size(z,1);
   volume = trapz(y, trapz(x, z, 2), 1);
+
+
+% -------------------------------------------------------------------------
+function title_list = getExperimentStringForTitle(experiment_string)
+% -------------------------------------------------------------------------
+  tmp = upper(strrep(experiment_string, '_', ' '));
+  index_1 = strfind(tmp, 'RP');
+  index_2 = strfind(tmp, 'NONLIN');
+  str_1 = tmp(1:index_1 - 2);
+  str_2 = tmp(index_1:index_2 - 2);
+  str_3 = tmp(index_2:end);
+  title_list = {str_1, str_2, str_3};
 
 
 % -------------------------------------------------------------------------
@@ -258,7 +307,7 @@ function imdb_list = getImdbList(experiments_list, dataset, number_of_samples, o
 % -------------------------------------------------------------------------
   fh_projection_utils = projectionUtils;
   imdb_list = {};
-  afprintf(sprintf('[INFO] Created / loading new imdb...\n'));
+  afprintf(sprintf('[INFO] Created / loading new imdb...\t'));
   switch dataset
     case '2_gaussians'
       original_imdb = constructSyntheticGaussianImdbNEW(2, number_of_samples, original_dim, c_separation, eccentricity, true);
@@ -284,24 +333,30 @@ function imdb_list = getImdbList(experiments_list, dataset, number_of_samples, o
       end
   end
   imdb_list.('orig_imdb') = original_imdb;
-  afprintf(sprintf('[INFO] done!\n'));
+  fprintf('done!\n');
 
-  afprintf(sprintf('[INFO] Projecting imdb...\n'));
+  afprintf(sprintf('[INFO] Projecting imdbs...\t'));
+  counter = 1;
   for experiment = experiments_list
     experiment = char(experiment);
     if strcmp(experiment, 'orig_imdb')
       continue;
     end
     number_of_projection_layers = str2num(experiment(strfind(experiment, 'rp_') + 3));
-    number_of_non_linear_layers = str2num(experiment(strfind(experiment, 'relu_') + 5));
+    projection_layer_type = experiment(strfind(experiment, 'rp_') + 5 : strfind(experiment, 'nonlin_') - 2);
+    number_of_non_linear_layers = str2num(experiment(strfind(experiment, 'nonlin_') + 7));
+    non_linear_layer_type = experiment(strfind(experiment, 'nonlin_') + 9 : end);
     imdb_list.(experiment) = fh_projection_utils.getDenslyDownProjectedImdb( ...
       original_imdb, ...
       number_of_projection_layers, ...
+      'dense_gaussian', ...
       number_of_non_linear_layers, ...
-      projected_dim, ...
-      'relu');
+      'relu', ...
+      projected_dim);
+    fprintf('%d\t', counter);
+    counter = counter + 1;
   end
-  afprintf(sprintf('[INFO] done!\n'));
+  fprintf('done!\n');
 
 
 
