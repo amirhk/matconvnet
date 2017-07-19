@@ -96,8 +96,8 @@
 % functionHandle = @tempScriptRunMmd
 % functionHandle = @tempScriptRunTsne;
 % functionHandle = @tmpScriptCalculateDistances;
-functionHandle = @tempScriptMeasureClassificationPerformance;
-% functionHandle = @tempScriptMeasureCSeparation;
+% functionHandle = @tempScriptMeasureClassificationPerformance;
+functionHandle = @tempScriptMeasureCSeparation;
 % functionHandle = @tempScriptMeasureAverageClassEccentricity;
 % functionHandle = @tempScriptPlot2DEuclideanDistances;
 % functionHandle = @tempScriptPlot3DEuclideanDistances;

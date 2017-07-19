@@ -52,8 +52,8 @@ function tempScriptMeasureClassificationPerformance(dataset, posneg_balance, sav
   % plotBeef(all_experiments_multi_run, dataset, posneg_balance, save_results, classification_method);
   plot_title = sprintf('classification perf - %s - %s - %s', classification_method, dataset, posneg_balance);
   % plotBeef(all_experiments_multi_run, plot_title, save_results);
-  all_experiments_multi_run
-  keyboard
+  % all_experiments_multi_run
+  % keyboard
   tempScriptPlotRPTests(all_experiments_multi_run, plot_title, save_results);
 
 % -------------------------------------------------------------------------
