@@ -64,12 +64,10 @@ function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccura
   training_options.debug_flag = false;
 
   % base_learning_rate = [0.1*ones(1,25) 0.03*ones(1,25) 0.01*ones(1,50)];
-  % base_learning_rate = [0.1*ones(1,15) 0.03*ones(1,15) 0.01*ones(1,15)];
-  base_learning_rate = [0.1*ones(1,10)];
+  base_learning_rate = [0.1*ones(1,15) 0.03*ones(1,15) 0.01*ones(1,15)];
 
   if strcmp(dataset, 'cifar') || strcmp(dataset, 'cifar-multi-class-subsampled')
     learning_rate_divider_list = [1, 3, 10, 30];
-    learning_rate_divider_list = [3, 10];
   elseif strcmp(dataset, 'stl-10') || strcmp(dataset, 'stl-10-multi-class-subsampled')
     learning_rate_divider_list = [1, 3, 10, 30] / 10;
   elseif strcmp(dataset, 'mnist') || strcmp(dataset, 'mnist-multi-class-subsampled')
@@ -80,13 +78,24 @@ function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccura
     throwException('[ERROR] unrecognized dataset.')
   end
 
-  batch_size_list = [50]; % , 100];
-  weight_decay_list = [0.01]; % , 0.001, 0.0001];
+  batch_size_list = [50, 100];
+  weight_decay_list = [0.01, 0.001, 0.0001];
+
+
+
+
+  learning_rate_divider_list = [3, 10];
+  batch_size_list = [50];
+  weight_decay_list = [0.01];
+  base_learning_rate = [0.1*ones(1,3)];
+
+
+
 
   number_of_trials = 3;
   test_accuracies_mean = [];
   test_accuracies_std = [];
-  test_accuracies = {};
+  experiments = {};
   total_number_of_hyperparams = ...
     length(learning_rate_divider_list) * ...
     length(batch_size_list) * ...
@@ -118,7 +127,7 @@ function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccura
         tmp_results.test_accuracy.all_results = tmp_test_accuracies;
         tmp_results.test_accuracy.mean = mean(tmp_test_accuracies);
         tmp_results.test_accuracy.std = std(tmp_test_accuracies);
-        test_accuracies{end+1} = tmp_results;
+        experiments{end+1} = tmp_results;
 
         hyperparam_counter  = hyperparam_counter + 1;
       end
@@ -126,14 +135,23 @@ function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccura
   end
 
   keyboard
-  saveStruct2File(performance_summary, opts.paths.results_file_path, 0);
+  saveStruct2File(experiments, opts.paths.results_file_path, 0);
   keyboard
 
-  [~, indices] = sort(test_accuracies_mean, 'descend');
-  index_of_best_test_perf = indices(1);
+  best_test_accuracy_mean = 0;
+  best_test_accuracy_std = 0;
+  for i = 1 : total_number_of_hyperparams
+    if experiments{end+1}.test_accuracy.mean > best_test_accuracy_mean
+      best_test_accuracy_mean = experiments{end+1}.test_accuracy.mean;
+      best_test_accuracy_std = experiments{end+1}.test_accuracy.std;
+    end
+  end
 
-  best_test_accuracy_mean = test_accuracies_mean(index_of_best_test_perf)
-  best_test_accuracy_std = test_accuracies_std(index_of_best_test_perf)
+  % [~, indices] = sort(test_accuracies_mean, 'descend');
+  % index_of_best_test_perf = indices(1);
+
+  % best_test_accuracy_mean = test_accuracies_mean(index_of_best_test_perf)
+  % best_test_accuracy_std = test_accuracies_std(index_of_best_test_perf)
 
 
 
