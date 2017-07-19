@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccuracyFromCnn(dataset, imdb, conv_network_arch, gpus)
+function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccuracyFromCnn(dataset, posneg_balance, imdb, conv_network_arch, gpus)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -30,6 +30,7 @@ function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccura
   %                                                              opts.general
   % -------------------------------------------------------------------------
   opts.general.dataset = dataset;
+  opts.general.posneg_balance = posneg_balance;
   % opts.general.imdb = imdb; % do not save the imdb!
   opts.train.gpus = gpus;
 
@@ -42,9 +43,10 @@ function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccura
     'experiment_parent_dir', ...
     fullfile(vl_rootnn, 'experiment_results'));
   opts.paths.experiment_dir = fullfile(opts.paths.experiment_parent_dir, sprintf( ...
-    'simple-CNN-test-accuracy-%s-%s-GPU-%d', ...
+    'simple-CNN-test-accuracy-%s-%s-%s-GPU-%d', ...
     opts.paths.time_string, ...
     opts.general.dataset, ...
+    opts.general.posneg_balance, ...
     opts.train.gpus));
   if ~exist(opts.paths.experiment_dir)
     mkdir(opts.paths.experiment_dir);
@@ -162,6 +164,13 @@ function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccura
       best_test_accuracy_std = tmp.std;
     end
   end
+
+  experiments.best_test_accuracy_mean = best_test_accuracy_mean;
+  experiments.best_test_accuracy_std = best_test_accuracy_std;
+
+  % don't amend file, but overwrite...
+  delete(opts.paths.results_file_path);
+  saveStruct2File(experiments, opts.paths.results_file_path, 0);
 
 
 
