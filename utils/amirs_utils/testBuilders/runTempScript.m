@@ -248,14 +248,18 @@
 
 fh_imdb_utils = imdbMultiClassUtils;
 
-[~, experiments] = setupExperimentsUsingProjectedImbds('cifar-multi-class-subsampled', 'balanced-50', 0);
+dataset = 'cifar-multi-class-subsampled';
+posneg_balance = 'balanced-50';
+[~, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 0);
 % fh_imdb_utils.getImdbInfo(experiments{1}.imdb, 1);
 
-dataset = 'cifar-multi-class-subsampled';
-imdb = experiments{1}.imdb;
-conv_network_arch = 'convV1P1RL1-RF32CH3+fcV1-RF16CH64';
-gpu = 1;
-[best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccuracyFromCnn(dataset, imdb, conv_network_arch, gpu)
+[best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccuracyFromCnn(dataset, experiments{1}.imdb, 'convV0P0RL0+fcV1-RF32CH3', 1)
+keyboard
+[best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccuracyFromCnn(dataset, experiments{2}.imdb, 'convV0P0RL0+fcV1-RF16CH64', 1)
+keyboard
+[best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccuracyFromCnn(dataset, experiments{3}.imdb, 'convV0P0RL0+fcV1-RF16CH64', 1)
+keyboard
+[best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccuracyFromCnn(dataset, experiments{5}.imdb, 'convV0P0RL0+fcV1-RF16CH64', 1)
 keyboard
 
 

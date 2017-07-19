@@ -29,6 +29,7 @@ function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccura
   training_options.imdb = imdb;
   training_options.network_arch = conv_network_arch;
   training_options.backprop_depth = getFullBackPropDepthForConvArchitecture(conv_network_arch); % compute `backprop_depth` automatically based on `conv_network_arch`
+  training_options.backprop_depth
 
   % remember, we're training conv_network_arch, so the network is going to be initialized with random weights then trained!
   % training_options.weight_init_sequence = weight_init_sequence;
@@ -59,7 +60,7 @@ function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccura
   batch_size_list = [50, 100];
   weight_decay_list = [0.01, 0.001, 0.0001];
 
-  repeat_count = 3;
+  number_of_repeats = 3;
   test_accuracies_mean = [];
   test_accuracies_std = [];
   total_number_of_hyperparams = ...
@@ -67,7 +68,7 @@ function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccura
     length(batch_size_list) * ...
     length(weight_decay_list);
 
-  counter = 1;
+  hyperparam_counter = 1;
   % loop through hyperparameters
   for learning_rate_divider = learning_rate_divider_list
     for batch_size = batch_size_list
@@ -77,12 +78,14 @@ function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccura
         training_options.weight_decay = weight_decay;
         % repeat experiment and get averaged results
         tmp_test_accuracies = [];
-        afprintf(sprintf('[INFO] Testing hyperparameter setup #%d / %d ...\n', counter, total_number_of_hyperparams));
-        for i = 1 : repeat_count
+        afprintf(sprintf('[INFO] Testing hyperparameter setup #%d / %d ...\n', hyperparam_counter, total_number_of_hyperparams));
+        repeat_counter = 1;
+        for i = 1 : number_of_repeats
+          afprintf(sprintf('[INFO] Testing repeat #%d / %d ...\n', repeat_counter, number_of_repeats), 1);
           [~, performance_summary] = testCnn(training_options);
           tmp_test_accuracies(end+1) = performance_summary.testing.test.accuracy;
         end
-        counter  = counter + 1;
+        hyperparam_counter  = hyperparam_counter + 1;
         test_accuracies_mean(end+1) = mean(tmp_test_accuracies);
         test_accuracies_std(end+1) = std(tmp_test_accuracies);
       end
@@ -92,8 +95,8 @@ function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccura
   [~, indices] = sort(test_accuracies_mean, 'descend');
   index_of_best_test_perf = indices(1);
 
-  best_test_accuracy_mean = test_accuracies_mean(index_of_best_test_perf);
-  best_test_accuracy_std = test_accuracies_std(index_of_best_test_perf);
+  best_test_accuracy_mean = test_accuracies_mean(index_of_best_test_perf)
+  best_test_accuracy_std = test_accuracies_std(index_of_best_test_perf)
 
 
 

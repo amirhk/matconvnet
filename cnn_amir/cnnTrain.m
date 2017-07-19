@@ -124,9 +124,7 @@ function [net, info] = cnn_train(net, imdb, getBatch, varargin)
   % -------------------------------------------------------------------------
 
   if ~evaluateMode
-    if ~opts.debug_flag
-      afprintf(sprintf('[INFO] processing epoch #'));
-    end
+    if opts.debug_flag, afprintf(sprintf('[INFO] processing epoch #')); end;
     for epoch=1:opts.num_epochs
       if ~opts.debug_flag
         for j = 0:log10(epoch - 1) + (3 + numel(num2str(opts.num_epochs)))
