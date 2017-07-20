@@ -273,20 +273,20 @@ function [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(data
 
 
 
-  afprintf(sprintf('[INFO] Loading projected imdb...\n'));
-  projection_net = loadTrainedNet('larpV0P0RL0+convV1P1RL1', 'cifar', 'balanced-38');
-  projected_imdb = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, 3);
-  experiments{end+1}.imdb = projected_imdb;
-  experiments{end}.title = 'Trained larpV0P0RL0+convV1P0RL0 - trained on all';
-  afprintf(sprintf('[INFO] done!\n'));
-
-
   % afprintf(sprintf('[INFO] Loading projected imdb...\n'));
-  % projection_net = loadTrainedNet('larpV0P0RL0+convV1P1RL1', 'cifar', 'balanced-50');
+  % projection_net = loadTrainedNet('larpV0P0RL0+convV1P1RL1', 'cifar', 'balanced-38');
   % projected_imdb = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, 3);
   % experiments{end+1}.imdb = projected_imdb;
   % experiments{end}.title = 'Trained larpV0P0RL0+convV1P0RL0 - trained on all';
   % afprintf(sprintf('[INFO] done!\n'));
+
+
+  afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  projection_net = loadTrainedNet('larpV0P0RL0+convV1P1RL1', 'cifar', 'balanced-50');
+  projected_imdb = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, 3);
+  experiments{end+1}.imdb = projected_imdb;
+  experiments{end}.title = 'Trained larpV0P0RL0+convV1P0RL0 - trained on all';
+  afprintf(sprintf('[INFO] done!\n'));
 
 
 

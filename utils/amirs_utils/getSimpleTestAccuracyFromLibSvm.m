@@ -34,10 +34,16 @@ function best_test_accuracy = getSimpleTestAccuracyLibSvm(input_opts)
     fullfile(vl_rootnn, 'experiment_results'));
 
   test_accuracies = [];
-  for c = logspace(-5,2,10)
+
+  hyperparam_counter = 1;
+  hyperparameter_list = logspace(-5,2,10);
+  total_number_of_hyperparams = length(hyperparameter_list);
+  for c = hyperparameter_list
+    afprintf(sprintf('[INFO] Testing hyperparameter setup #%d / %d ...\n', hyperparam_counter, total_number_of_hyperparams));
     training_options.libsvm_options = sprintf('-q -t 0 -c %f', c);
     [~, performance_summary] = testLibSvm(training_options);
     test_accuracies(end+1) = performance_summary.testing.test.accuracy;
+    hyperparam_counter = hyperparam_counter + 1;
   end
   best_test_accuracy = max(test_accuracies);
 
