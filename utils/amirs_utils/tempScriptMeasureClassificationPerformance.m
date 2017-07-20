@@ -55,7 +55,7 @@ function tempScriptMeasureClassificationPerformance(dataset, posneg_balance, sav
     'experiment_parent_dir', ...
     fullfile(vl_rootnn, 'experiment_results'));
   opts.paths.experiment_dir = fullfile(opts.paths.experiment_parent_dir, sprintf( ...
-    'test-classification-perf-rp-tests-%s-%s-%s-GPU-%d', ...
+    'test-classification-perf-rp-tests-%s-%s-%s', ...
     opts.paths.time_string, ...
     opts.general.dataset, ...
     opts.general.posneg_balance));
@@ -106,6 +106,8 @@ function tempScriptMeasureClassificationPerformance(dataset, posneg_balance, sav
 
 
 
+
+
 % -------------------------------------------------------------------------
 function all_experiments_single_run = runAllExperimentsOnce(experiment_dir, dataset, posneg_balance, classification_method)
 % -------------------------------------------------------------------------
@@ -139,7 +141,7 @@ function all_experiments_single_run = runAllExperimentsOnce(experiment_dir, data
 
         % TODO: this has to somehow be detected automatically....
         % experiment_options.conv_network_arch = 'convV0P0RL0+fcV1-RF16CH64';
-        experiment_options.conv_network_arch = 'convV1P1RL1-RF32CH3+fcV1-RF16CH64'
+        experiment_options.conv_network_arch = 'convV1P1RL1-RF32CH3+fcV1-RF16CH64';
 
         [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccuracyFromCnn(experiment_options);
         test_accuracy = best_test_accuracy_mean;

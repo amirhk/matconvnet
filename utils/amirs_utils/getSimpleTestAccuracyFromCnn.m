@@ -100,10 +100,10 @@ function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccura
 
 
 
-  learning_rate_divider_list = [3, 10];
-  batch_size_list = [50];
-  weight_decay_list = [0.01];
-  base_learning_rate = [0.1*ones(1,3)];
+  % learning_rate_divider_list = [3, 10];
+  % batch_size_list = [50];
+  % weight_decay_list = [0.01];
+  % base_learning_rate = [0.1*ones(1,3)];
 
 
 

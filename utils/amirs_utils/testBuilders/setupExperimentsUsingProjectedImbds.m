@@ -241,17 +241,17 @@ function [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(data
 
 
 
-  % experiments{end+1}.imdb = original_imdb;
-  % experiments{end}.title = 'Original IMDB';
+  experiments{end+1}.imdb = original_imdb;
+  experiments{end}.title = 'Original IMDB';
 
 
-  afprintf(sprintf('[INFO] Loading projected imdb...\n'));
-  larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
-  larp_network_arch = 'larpV1P1RL1';
-  projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
-  experiments{end+1}.imdb = projected_imdb;
-  experiments{end}.title = larp_network_arch;
-  afprintf(sprintf('[INFO] done!\n'));
+  % afprintf(sprintf('[INFO] Loading projected imdb...\n'));
+  % larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
+  % larp_network_arch = 'larpV1P1RL1';
+  % projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
+  % experiments{end+1}.imdb = projected_imdb;
+  % experiments{end}.title = larp_network_arch;
+  % afprintf(sprintf('[INFO] done!\n'));
 
 
   % afprintf(sprintf('[INFO] Loading projected imdb...\n'));
