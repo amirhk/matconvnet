@@ -31,8 +31,8 @@ function tempScriptMeasureClassificationPerformance(dataset, posneg_balance, sav
   % classification_method = 'cnn';
   % classification_method = '1-knn';
   % classification_method = '3-knn';
-  % classification_method = 'libsvm';
-  classification_method = 'mlp-64-10';
+  classification_method = 'libsvm';
+  % classification_method = 'mlp-64-10';
   % classification_method = 'mlp-500-100';
   % classification_method = 'mlp-500-1000-100';
   number_of_trials = 3;
@@ -121,6 +121,7 @@ function all_experiments_single_run = runAllExperimentsOnce(experiment_dir, data
     experiment_options.dataset = dataset;
     experiment_options.posneg_balance = posneg_balance;
     experiment_options.experiment_parent_dir = experiment_dir;
+    experiment_options.debug_flag = false;
     switch classification_method
       case '1-knn'
         experiment_options.number_of_nearest_neighbors = 1;
