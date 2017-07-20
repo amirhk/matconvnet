@@ -107,8 +107,12 @@ functionHandle = @tempScriptMeasureClassificationPerformance;
 
 
 
-% functionHandle('cifar-multi-class-subsampled', 'balanced-38', 1);
-functionHandle('cifar-multi-class-subsampled', 'balanced-50', 1);
+
+functionHandle('cifar-multi-class-subsampled', 'balanced-38', '1-knn', 1);
+functionHandle('cifar-multi-class-subsampled', 'balanced-38', 'cnn', 1);
+
+% functionHandle('cifar-multi-class-subsampled', 'balanced-50', '1-knn', 1);
+% functionHandle('cifar-multi-class-subsampled', 'balanced-50', 'cnn', 1);
 
 
 
@@ -251,7 +255,7 @@ functionHandle('cifar-multi-class-subsampled', 'balanced-50', 1);
 
 % dataset = 'cifar-multi-class-subsampled';
 % posneg_balance = 'balanced-38';
-% [~, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 0);
+% [~, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, false, false);
 % % fh_imdb_utils.getImdbInfo(experiments{1}.imdb, 1);
 
 % gpu = 1;

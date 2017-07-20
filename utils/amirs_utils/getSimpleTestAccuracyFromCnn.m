@@ -167,7 +167,9 @@ function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccura
         hyperparam_counter  = hyperparam_counter + 1;
 
         % don't amend file, but overwrite...
-        delete(opts.paths.results_file_path);
+        if exist(opts.paths.results_file_path)
+          delete(opts.paths.results_file_path);
+        end
         saveStruct2File(experiments, opts.paths.results_file_path, 0);
       end
     end

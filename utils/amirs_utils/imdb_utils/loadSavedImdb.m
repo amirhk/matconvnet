@@ -31,13 +31,13 @@ function imdb = loadSavedImdb(input_opts, debug_flag)
   fold_number = getValueFromFieldOrDefault(input_opts, 'fold_number', 1); % currently only implemented for prostate data
 
   if isMultiClassImdb(dataset)
-    imdb = loadSavedMultiClassImdb(dataset, network_arch);
+    imdb = loadSavedMultiClassImdb(dataset, network_arch, debug_flag);
   elseif isSubsampledMultiClassImdb(dataset)
-    imdb = loadSavedSubsampledMultiClassImdb(dataset, posneg_balance);
+    imdb = loadSavedSubsampledMultiClassImdb(dataset, posneg_balance, debug_flag);
   elseif isTwoClassImdb(dataset)
-    imdb = loadSavedTwoClassImdb(dataset, posneg_balance, fold_number);
+    imdb = loadSavedTwoClassImdb(dataset, posneg_balance, fold_number, debug_flag);
   elseif isSyntheticImdb(dataset)
-    imdb = loadSyntheticImdb(dataset);
+    imdb = loadSyntheticImdb(dataset, debug_flag);
   else
     throwException('[ERROR] imdb not recognized, or type not supported.')
   end

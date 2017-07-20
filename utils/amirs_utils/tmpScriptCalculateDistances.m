@@ -30,7 +30,7 @@ function dumb_array = tmpScriptCalculateDistances(dataset, posneg_balance, save_
   % -------------------------------------------------------------------------
   dumb_array = {};
 
-  [~, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 1);
+  [~, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, true, false);
 
 
   for i = 1 : numel(experiments)
@@ -60,7 +60,7 @@ function dumb_array = tmpScriptCalculateDistances(dataset, posneg_balance, save_
 
   for kkk = 1:10
     afprintf(sprintf('[INFO] Setting up experiment...\n'));
-    [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 1);
+    [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, true, false);
 
 
     % % keyboard

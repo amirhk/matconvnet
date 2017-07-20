@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function imdb = loadSavedTwoClassImdb(dataset, posneg_balance, fold_number)
+function imdb = loadSavedTwoClassImdb(dataset, posneg_balance, fold_number, debug_flag)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -25,7 +25,7 @@ function imdb = loadSavedTwoClassImdb(dataset, posneg_balance, fold_number)
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
 
-  afprintf(sprintf('[INFO] Loading two-class imdb (dataset: %s, posneg_balance: %s)\n', dataset, posneg_balance));
+  if debug_flag, afprintf(sprintf('[INFO] Loading two-class imdb (dataset: %s, posneg_balance: %s)\n', dataset, posneg_balance)); end;
   path_to_imdbs = fullfile(getDevPath(), 'data', 'two_class_imdbs');
   switch dataset
     % case 'mnist-784-two-class-9-4'
@@ -210,7 +210,7 @@ function imdb = loadSavedTwoClassImdb(dataset, posneg_balance, fold_number)
       fprintf('TODO: implement!');
   end
   imdb = tmp.imdb;
-  afprintf(sprintf('[INFO] done!\n'));
+  if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
 
 
 

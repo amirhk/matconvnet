@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function imdb = loadSyntheticImdb(dataset)
+function imdb = loadSyntheticImdb(dataset, debug_flag)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -49,11 +49,11 @@ function imdb = loadSyntheticImdb(dataset)
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
 
-  afprintf(sprintf('[INFO] Loading synthetic (dataset: %s)\n', dataset));
+  if debug_flag, afprintf(sprintf('[INFO] Loading synthetic (dataset: %s)\n', dataset)); end;
   path_to_imdbs = fullfile(getDevPath(), 'data', 'synthetic_imdbs');
   tmp = load(fullfile(path_to_imdbs, sprintf('%s.mat', dataset)));
   imdb = tmp.imdb;
-  afprintf(sprintf('[INFO] done!\n'));
+  if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
 
 
 

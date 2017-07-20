@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function imdb = loadSavedSubsampledMultiClassImdb(dataset, posneg_balance)
+function imdb = loadSavedSubsampledMultiClassImdb(dataset, posneg_balance, debug_flag)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -25,7 +25,7 @@ function imdb = loadSavedSubsampledMultiClassImdb(dataset, posneg_balance)
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
 
-  afprintf(sprintf('[INFO] Loading subsampled multi-class imdb (dataset: %s, posneg_balance: %s)\n', dataset, posneg_balance));
+  if debug_flag, afprintf(sprintf('[INFO] Loading subsampled multi-class imdb (dataset: %s, posneg_balance: %s)\n', dataset, posneg_balance)); end;
   path_to_imdbs = fullfile(getDevPath(), 'data', 'multi_class_subsampled_imdbs');
 
 
@@ -38,7 +38,7 @@ function imdb = loadSavedSubsampledMultiClassImdb(dataset, posneg_balance)
   tmp = load(fullfile(path_to_imdbs, dataset_class, file_name));
 
   imdb = tmp.imdb;
-  afprintf(sprintf('[INFO] done!\n'));
+  if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
 
 
 

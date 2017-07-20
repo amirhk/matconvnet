@@ -29,7 +29,7 @@ function tempScriptPlot2DEuclideanDistances(dataset, posneg_balance, save_result
   %                                                                     Setup
   % -------------------------------------------------------------------------
   afprintf(sprintf('[INFO] Setting up experiment...\n'));
-  [~, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 1);
+  [~, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, true, false);
   assert(numel(experiments) == 2);
   afprintf(sprintf('[INFO] done!\n'));
   printConsoleOutputSeparator();

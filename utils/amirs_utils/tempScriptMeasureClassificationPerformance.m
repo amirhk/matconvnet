@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function tempScriptMeasureClassificationPerformance(dataset, posneg_balance, save_results)
+function tempScriptMeasureClassificationPerformance(dataset, posneg_balance, classification_method, save_results)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -31,7 +31,7 @@ function tempScriptMeasureClassificationPerformance(dataset, posneg_balance, sav
   % classification_method = 'cnn';
   % classification_method = '1-knn';
   % classification_method = '3-knn';
-  classification_method = 'libsvm';
+  % classification_method = 'libsvm';
   % classification_method = 'mlp-64-10';
   % classification_method = 'mlp-500-100';
   % classification_method = 'mlp-500-1000-100';
@@ -75,7 +75,7 @@ function tempScriptMeasureClassificationPerformance(dataset, posneg_balance, sav
   % -------------------------------------------------------------------------
   %                                                                      beef
   % -------------------------------------------------------------------------
-  [~, tmp_experiments] = setupExperimentsUsingProjectedImbds(opts.general.dataset, opts.general.posneg_balance, 0);
+  [~, tmp_experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, false, false);
   for i = 1 : numel(tmp_experiments)
     all_experiments_multi_run{i}.performance = [];
   end
@@ -89,6 +89,7 @@ function tempScriptMeasureClassificationPerformance(dataset, posneg_balance, sav
     afprintf(sprintf('[INFO] done!'));
 
     for i = 1 : numel(tmp_experiments)
+      all_experiments_multi_run{i}.performance_metric = classification_method;
       all_experiments_multi_run{i}.performance_mean = mean(all_experiments_multi_run{i}.performance);
       all_experiments_multi_run{i}.performance_std = std(all_experiments_multi_run{i}.performance);
     end
@@ -97,7 +98,9 @@ function tempScriptMeasureClassificationPerformance(dataset, posneg_balance, sav
     %                                                               save output
     % -------------------------------------------------------------------------
     % don't amend file, but overwrite...
-    delete(opts.paths.results_file_path);
+    if exist(opts.paths.results_file_path)
+      delete(opts.paths.results_file_path);
+    end
     saveStruct2File(all_experiments_multi_run, opts.paths.results_file_path, 0);
   end
 
@@ -114,9 +117,9 @@ function tempScriptMeasureClassificationPerformance(dataset, posneg_balance, sav
 % -------------------------------------------------------------------------
 function all_experiments_single_run = runAllExperimentsOnce(experiment_dir, dataset, posneg_balance, classification_method)
 % -------------------------------------------------------------------------
-  afprintf(sprintf('[INFO] Setting up experiment imdbs...'));
-  [~, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 0);
-  fprintf('done!\n');
+  afprintf(sprintf('[INFO] Setting up experiment imdbs...\n'));
+  [~, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, false, true);
+  afprintf(sprintf('done!\n'));
   for i = 1 : numel(experiments)
     experiment_options = {};
     experiment_options.imdb = experiments{i}.imdb;
@@ -144,11 +147,11 @@ function all_experiments_single_run = runAllExperimentsOnce(experiment_dir, data
         test_accuracy = getSimpleTestAccuracyFromMLP(experiment_options);
       case 'cnn'
 
-        experiment_options.gpus = 2;
+        experiment_options.gpus = 1;
 
         % TODO: this has to somehow be detected automatically....
-        % experiment_options.conv_network_arch = 'convV0P0RL0+fcV1-RF16CH64';
-        experiment_options.conv_network_arch = 'convV1P1RL1-RF32CH3+fcV1-RF16CH64';
+        experiment_options.conv_network_arch = 'convV0P0RL0+fcV1-RF16CH64';
+        % experiment_options.conv_network_arch = 'convV1P1RL1-RF32CH3+fcV1-RF16CH64';
 
         [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccuracyFromCnn(experiment_options);
         test_accuracy = best_test_accuracy_mean;

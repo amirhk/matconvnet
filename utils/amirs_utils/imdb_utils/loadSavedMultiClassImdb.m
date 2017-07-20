@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function imdb = loadSavedMultiClassImdb(dataset, network_arch)
+function imdb = loadSavedMultiClassImdb(dataset, network_arch, debug_flag)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -25,8 +25,8 @@ function imdb = loadSavedMultiClassImdb(dataset, network_arch)
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
 
-  afprintf(sprintf('[INFO] Loading all-class imdb (dataset: %s, network_arch: %s)\n', dataset, network_arch));
+  if debug_flag, afprintf(sprintf('[INFO] Loading all-class imdb (dataset: %s, network_arch: %s)\n', dataset, network_arch)); end;
   imdb = load(fullfile(getDevPath(), 'data', 'imdb', sprintf('%s-%s', dataset, network_arch), 'imdb.mat'));
-  afprintf(sprintf('[INFO] done!\n'));
+  if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
 
 

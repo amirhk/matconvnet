@@ -29,7 +29,7 @@ function tmpScriptCalculateDistances(dataset, posneg_balance, save_results)
   %                                                                     Setup
   % -------------------------------------------------------------------------
   afprintf(sprintf('[INFO] Setting up experiment...\n'));
-  [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 1);
+  [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, true, false);
   afprintf(sprintf('[INFO] done!\n'));
   printConsoleOutputSeparator();
 

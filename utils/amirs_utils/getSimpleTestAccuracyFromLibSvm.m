@@ -36,7 +36,7 @@ function best_test_accuracy = getSimpleTestAccuracyLibSvm(input_opts)
   test_accuracies = [];
 
   hyperparam_counter = 1;
-  hyperparameter_list = logspace(-5,2,10);
+  hyperparameter_list = logspace(-5,2,8);
   total_number_of_hyperparams = length(hyperparameter_list);
   for c = hyperparameter_list
     afprintf(sprintf('[INFO] Testing hyperparameter setup #%d / %d ...\n', hyperparam_counter, total_number_of_hyperparams));

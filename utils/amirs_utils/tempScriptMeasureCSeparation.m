@@ -51,7 +51,7 @@ function tempScriptMeasureCSeparation(dataset, posneg_balance, save_results)
 % -------------------------------------------------------------------------
 function all_experiments_single_run = runAllExperimentsOnce(dataset, posneg_balance)
 % -------------------------------------------------------------------------
-  [~, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 1);
+  [~, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, true, false);
 
   for i = 1 : numel(experiments)
     experiments{i}.c_separation = getAverageClassCSeparation(experiments{i}.imdb);

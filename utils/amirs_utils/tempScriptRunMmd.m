@@ -29,7 +29,7 @@ function tempScriptRunMmd(dataset, posneg_balance)
   %                                                                     Setup
   % -------------------------------------------------------------------------
   afprintf(sprintf('[INFO] Setting up experiment...\n'));
-  [~, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 1);
+  [~, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, true, false);
   afprintf(sprintf('[INFO] done!\n'));
   printConsoleOutputSeparator();
 

@@ -49,7 +49,7 @@ function tempScriptMeasureAverageClassEccentricity(dataset, posneg_balance, save
 % -------------------------------------------------------------------------
 function all_experiments_single_run = runAllExperimentsOnce(dataset, posneg_balance)
 % -------------------------------------------------------------------------
-  [~, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 0);
+  [~, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, false, false);
 
   for i = 1 : numel(experiments)
     experiments{i}.average_eccentricity = getAverageClassEccentricity(experiments{i}.imdb);
