@@ -60,6 +60,10 @@ function weight_init_sequence = getLarpWeightInitSequence(larp_weight_init_type,
       weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type};
     case 'larpV3P3RL3'
       weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type};
+
+    case 'larpV5P1RL5'
+      weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, larp_weight_init_type};
+
     case 'larpV5P0RL0'
       weight_init_sequence = {larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, larp_weight_init_type, larp_weight_init_type};
     case 'larpV5P0RL5'
