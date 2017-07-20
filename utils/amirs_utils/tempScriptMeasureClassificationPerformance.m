@@ -29,9 +29,9 @@ function tempScriptMeasureClassificationPerformance(dataset, posneg_balance, sav
   %                                                                     Setup
   % -------------------------------------------------------------------------
   % classification_method = 'cnn';
-  % classification_method = '1-knn';
+  classification_method = '1-knn';
   % classification_method = '3-knn';
-  classification_method = 'libsvm';
+  % classification_method = 'libsvm';
   % classification_method = 'mlp-64-10';
   % classification_method = 'mlp-500-100';
   % classification_method = 'mlp-500-1000-100';
@@ -87,17 +87,19 @@ function tempScriptMeasureClassificationPerformance(dataset, posneg_balance, sav
       all_experiments_multi_run{i}.performance(end+1) = all_experiments_single_run{i}.test_accuracy;
     end
     afprintf(sprintf('[INFO] done!'));
-  end
 
-  for i = 1 : numel(tmp_experiments)
-    all_experiments_multi_run{i}.performance_mean = mean(all_experiments_multi_run{i}.performance);
-    all_experiments_multi_run{i}.performance_std = std(all_experiments_multi_run{i}.performance);
-  end
+    for i = 1 : numel(tmp_experiments)
+      all_experiments_multi_run{i}.performance_mean = mean(all_experiments_multi_run{i}.performance);
+      all_experiments_multi_run{i}.performance_std = std(all_experiments_multi_run{i}.performance);
+    end
 
-  % -------------------------------------------------------------------------
-  %                                                               save output
-  % -------------------------------------------------------------------------
-  saveStruct2File(all_experiments_multi_run, opts.paths.results_file_path, 0);
+    % -------------------------------------------------------------------------
+    %                                                               save output
+    % -------------------------------------------------------------------------
+    % don't amend file, but overwrite...
+    delete(opts.paths.results_file_path);
+    saveStruct2File(all_experiments_multi_run, opts.paths.results_file_path, 0);
+  end
 
   % plot_title = sprintf('classification perf - %s - %s - %s', classification_method, dataset, posneg_balance);
   % tempScriptPlotRPTests(all_experiments_multi_run, plot_title, save_results);
