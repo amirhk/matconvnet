@@ -29,10 +29,10 @@ function tempScriptMeasureClassificationPerformance(dataset, posneg_balance, sav
   %                                                                     Setup
   % -------------------------------------------------------------------------
   % classification_method = 'cnn';
-  classification_method = '1-knn';
+  % classification_method = '1-knn';
   % classification_method = '3-knn';
   % classification_method = 'libsvm';
-  % classification_method = 'mlp-64-10';
+  classification_method = 'mlp-64-10';
   % classification_method = 'mlp-500-100';
   % classification_method = 'mlp-500-1000-100';
   number_of_trials = 3;
@@ -56,9 +56,9 @@ function tempScriptMeasureClassificationPerformance(dataset, posneg_balance, sav
     fullfile(vl_rootnn, 'experiment_results'));
   opts.paths.experiment_dir = fullfile(opts.paths.experiment_parent_dir, sprintf( ...
     'test-classification-perf-%s-rp-tests-%s-%s-%s', ...
+    classification_method, ...
     opts.paths.time_string, ...
     opts.general.dataset, ...
-    classification_method, ...
     opts.general.posneg_balance));
   if ~exist(opts.paths.experiment_dir)
     mkdir(opts.paths.experiment_dir);
