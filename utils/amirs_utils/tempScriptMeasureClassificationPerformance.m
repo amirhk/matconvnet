@@ -74,7 +74,8 @@ function tempScriptMeasureClassificationPerformance(dataset, posneg_balance, sav
   % -------------------------------------------------------------------------
   %                                                                      beef
   % -------------------------------------------------------------------------
-  for i = 1 : 22
+  [~, tmp_experiments] = setupExperimentsUsingProjectedImbds(opts.general.dataset, opts.general.posneg_balance, 0);
+  for i = 1 : numel(tmp_experiments)
     all_experiments_multi_run{i}.performance = [];
   end
 
@@ -87,7 +88,7 @@ function tempScriptMeasureClassificationPerformance(dataset, posneg_balance, sav
     afprintf(sprintf('[INFO] done!'));
   end
 
-  for i = 1 : 22
+  for i = 1 : numel(tmp_experiments)
     all_experiments_multi_run{i}.performance_mean = mean(all_experiments_multi_run{i}.performance);
     all_experiments_multi_run{i}.performance_std = std(all_experiments_multi_run{i}.performance);
   end
@@ -135,7 +136,11 @@ function all_experiments_single_run = runAllExperimentsOnce(experiment_dir, data
         test_accuracy = getSimpleTestAccuracyFromMLP(experiment_options);
       case 'cnn'
         experiment_options.gpus = 1;
-        experiment_options.conv_network_arch = 'convV0P0RL0+fcV1-RF16CH64'; % TODO: this has to somehow be detected automatically....
+
+        % TODO: this has to somehow be detected automatically....
+        % experiment_options.conv_network_arch = 'convV0P0RL0+fcV1-RF16CH64';
+        experiment_options.conv_network_arch = 'convV1P1RL1-RF32CH3+fcV1-RF16CH64'
+
         [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccuracyFromCnn(experiment_options);
         test_accuracy = best_test_accuracy_mean;
     end

@@ -108,7 +108,7 @@ function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccura
 
 
 
-  number_of_trials = 3;
+  number_of_trials = 2;
   experiments = {};
   experiments.best_test_accuracy_mean = 0;
   experiments.best_test_accuracy_std = 0;
