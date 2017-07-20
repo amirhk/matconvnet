@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function test_accuracy = getSimpleTestAccuracyFromKnn(imdb, number_of_nearest_neighbors)
+function test_accuracy = getSimpleTestAccuracyFromKnn(input_opts)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -25,8 +25,13 @@ function test_accuracy = getSimpleTestAccuracyFromKnn(imdb, number_of_nearest_ne
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
 
-  training_options.return_performance_summary = true;
-  training_options.number_of_nearest_neighbors = number_of_nearest_neighbors;
-  training_options.imdb = imdb;
+  training_options.imdb = input_opts.imdb;
+  training_options.number_of_nearest_neighbors = getValueFromFieldOrDefault(input_opts, 'number_of_nearest_neighbors', 1);
+  training_options.return_performance_summary = getValueFromFieldOrDefault(input_opts, 'return_performance_summary', true);
+  training_options.experiment_parent_dir = getValueFromFieldOrDefault( ...
+    input_opts, ...
+    'experiment_parent_dir', ...
+    fullfile(vl_rootnn, 'experiment_results'));
+
   [~, performance_summary] = testKnn(training_options);
   test_accuracy = performance_summary.testing.test.accuracy;

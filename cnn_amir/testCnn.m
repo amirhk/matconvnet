@@ -94,8 +94,8 @@ function [trained_model, performance_summary] = testCnn(input_opts)
     opts.general.dataset, ...
     opts.general.network_arch));
   opts.paths.imdb_path = fullfile(opts.paths.imdb_dir, 'imdb.mat');
-  opts.paths.options_file_path = fullfile(opts.paths.experiment_dir, 'options.txt');
-  opts.paths.results_file_path = fullfile(opts.paths.experiment_dir, 'results.txt');
+  opts.paths.options_file_path = fullfile(opts.paths.experiment_dir, '_options.txt');
+  opts.paths.results_file_path = fullfile(opts.paths.experiment_dir, '_results.txt');
 
   % create dirs if not exist
   if ~exist(opts.paths.experiment_dir)

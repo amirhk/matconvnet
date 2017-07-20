@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function best_test_accuracy = getSimpleTestAccuracyLibSvm(imdb)
+function best_test_accuracy = getSimpleTestAccuracyLibSvm(input_opts)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -25,8 +25,13 @@ function best_test_accuracy = getSimpleTestAccuracyLibSvm(imdb)
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
 
-  training_options.return_performance_summary = true;
-  training_options.imdb = imdb;
+  training_options.imdb = input_opts.imdb;
+  training_options.return_performance_summary = getValueFromFieldOrDefault(input_opts, 'return_performance_summary', true);
+  training_options.experiment_parent_dir = getValueFromFieldOrDefault( ...
+    input_opts, ...
+    'experiment_parent_dir', ...
+    fullfile(vl_rootnn, 'experiment_results'));
+
   test_accuracies = [];
   for c = logspace(-5,2,10)
     training_options.libsvm_options = sprintf('-q -t 0 -c %f', c);

@@ -90,8 +90,8 @@ function folds = testKFold(input_opts)
     mkdir(opts.paths.experiment_dir);
   end
   opts.paths.folds_file_path = fullfile(opts.paths.experiment_dir, 'folds.mat');
-  opts.paths.options_file_path = fullfile(opts.paths.experiment_dir, 'options.txt');
-  opts.paths.results_file_path = fullfile(opts.paths.experiment_dir, 'results.txt');
+  opts.paths.options_file_path = fullfile(opts.paths.experiment_dir, '_options.txt');
+  opts.paths.results_file_path = fullfile(opts.paths.experiment_dir, '_results.txt');
 
   % -------------------------------------------------------------------------
   %                                       opts.single_training_method_options

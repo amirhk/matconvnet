@@ -28,6 +28,13 @@ function saveStruct2File(input_struct, filePath, recursion_depth)
   % fileID = fopen(fullfile(expDir, 'sensitivity_specificity.txt'), 'w');
   format shortG
   fileID = fopen(filePath, 'a');
+  if strcmp(class(input_struct), 'cell')
+    tmp = {};
+    for i = 1:numel(input_struct)
+      tmp.(sprintf('index_%d', i)) = input_struct{i};
+    end
+    input_struct = tmp;
+  end
   fields = fieldnames(input_struct);
   for i = 1:numel(fields)
     value = input_struct.(fields{i});

@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccuracyFromCnn(dataset, posneg_balance, imdb, conv_network_arch, gpus)
+function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccuracyFromCnn(input_opts)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -29,18 +29,19 @@ function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccura
   % -------------------------------------------------------------------------
   %                                                              opts.general
   % -------------------------------------------------------------------------
-  opts.general.dataset = dataset;
-  opts.general.posneg_balance = posneg_balance;
-  opts.general.conv_network_arch = conv_network_arch;
   % opts.general.imdb = imdb; % do not save the imdb!
-  opts.train.gpus = gpus;
+  imdb = input_opts.imdb;
+  opts.general.dataset = getValueFromFieldOrDefault(input_opts, 'dataset;', 'cifar');
+  opts.general.posneg_balance = getValueFromFieldOrDefault(input_opts, 'posneg_balance;', 'balanced-50');
+  opts.general.conv_network_arch = getValueFromFieldOrDefault(input_opts, 'conv_network_arch;', 'convV0P0RL0+fcV1-RF16CH64');
+  opts.train.gpus = ifNotMacSetGpu(getValueFromFieldOrDefault(input_opts, 'gpus', 1));
 
   % -------------------------------------------------------------------------
   %                                                                opts.paths
   % -------------------------------------------------------------------------
   opts.paths.time_string = sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
   opts.paths.experiment_parent_dir = getValueFromFieldOrDefault( ...
-    {}, ... % no input_opts here! :)
+    input_opts, ...
     'experiment_parent_dir', ...
     fullfile(vl_rootnn, 'experiment_results'));
   opts.paths.experiment_dir = fullfile(opts.paths.experiment_parent_dir, sprintf( ...
@@ -53,8 +54,9 @@ function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccura
   if ~exist(opts.paths.experiment_dir)
     mkdir(opts.paths.experiment_dir);
   end
-  opts.paths.options_file_path = fullfile(opts.paths.experiment_dir, 'options.txt');
-  opts.paths.results_file_path = fullfile(opts.paths.experiment_dir, 'results.txt');
+  opts.paths.options_file_path = fullfile(opts.paths.experiment_dir, '_options.txt');
+  opts.paths.results_file_path = fullfile(opts.paths.experiment_dir, '_results.txt');
+
 
   % -------------------------------------------------------------------------
   %                                                    save experiment setup!
@@ -62,30 +64,31 @@ function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccura
   saveStruct2File(opts, opts.paths.options_file_path, 0);
 
 
-
-
+  % -------------------------------------------------------------------------
+  %                                                                      beef
+  % -------------------------------------------------------------------------
   training_options.experiment_parent_dir = opts.paths.experiment_dir;
   training_options.imdb = imdb;
-  training_options.network_arch = conv_network_arch;
-  training_options.backprop_depth = getFullBackPropDepthForConvArchitecture(conv_network_arch); % compute `backprop_depth` automatically based on `conv_network_arch`
+  training_options.network_arch = opts.general.conv_network_arch;
+  training_options.backprop_depth = getFullBackPropDepthForConvArchitecture(opts.general.conv_network_arch); % compute `backprop_depth` automatically based on `conv_network_arch`
 
   % remember, we're training conv_network_arch, so the network is going to be initialized with random weights then trained!
   % training_options.weight_init_sequence = weight_init_sequence;
 
   training_options.gpus = ifNotMacSetGpu(opts.train.gpus);
-  training_options.return_performance_summary = true;
-  training_options.debug_flag = false;
+  training_options.return_performance_summary = getValueFromFieldOrDefault(input_opts, 'return_performance_summary', true);;
+  training_options.debug_flag = getValueFromFieldOrDefault(input_opts, 'debug_flag', false);;
 
   % base_learning_rate = [0.1*ones(1,25) 0.03*ones(1,25) 0.01*ones(1,50)];
   base_learning_rate = [0.1*ones(1,15) 0.03*ones(1,15) 0.01*ones(1,15)];
 
-  if strcmp(dataset, 'cifar') || strcmp(dataset, 'cifar-multi-class-subsampled')
+  if strcmp(opts.general.dataset, 'cifar') || strcmp(opts.general.dataset, 'cifar-multi-class-subsampled')
     learning_rate_divider_list = [1, 3, 10, 30];
-  elseif strcmp(dataset, 'stl-10') || strcmp(dataset, 'stl-10-multi-class-subsampled')
+  elseif strcmp(opts.general.dataset, 'stl-10') || strcmp(opts.general.dataset, 'stl-10-multi-class-subsampled')
     learning_rate_divider_list = [1, 3, 10, 30] / 10;
-  elseif strcmp(dataset, 'mnist') || strcmp(dataset, 'mnist-multi-class-subsampled')
+  elseif strcmp(opts.general.dataset, 'mnist') || strcmp(opts.general.dataset, 'mnist-multi-class-subsampled')
     learning_rate_divider_list = [1, 3, 10, 30];
-  elseif strcmp(dataset, 'svhn') || strcmp(dataset, 'svhn-multi-class-subsampled')
+  elseif strcmp(opts.general.dataset, 'svhn') || strcmp(opts.general.dataset, 'svhn-multi-class-subsampled')
     learning_rate_divider_list = [1, 3, 10, 30] / 3;
   else
     throwException('[ERROR] unrecognized dataset.')

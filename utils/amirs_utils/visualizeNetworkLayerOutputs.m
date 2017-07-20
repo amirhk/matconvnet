@@ -56,8 +56,8 @@ function visualizeNetworkLayerOutputs(input_opts)
   if ~exist(opts.paths.experiment_dir)
     mkdir(opts.paths.experiment_dir);
   end
-  opts.paths.options_file_path = fullfile(opts.paths.experiment_dir, 'options.txt');
-  opts.paths.results_file_path = fullfile(opts.paths.experiment_dir, 'results.txt');
+  opts.paths.options_file_path = fullfile(opts.paths.experiment_dir, '_options.txt');
+  opts.paths.results_file_path = fullfile(opts.paths.experiment_dir, '_results.txt');
 
   % -------------------------------------------------------------------------
   %                                                    save experiment setup!
