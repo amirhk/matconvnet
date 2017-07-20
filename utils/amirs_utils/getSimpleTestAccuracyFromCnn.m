@@ -31,9 +31,9 @@ function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccura
   % -------------------------------------------------------------------------
   % opts.general.imdb = imdb; % do not save the imdb!
   imdb = input_opts.imdb;
-  opts.general.dataset = getValueFromFieldOrDefault(input_opts, 'dataset;', 'cifar');
-  opts.general.posneg_balance = getValueFromFieldOrDefault(input_opts, 'posneg_balance;', 'balanced-50');
-  opts.general.conv_network_arch = getValueFromFieldOrDefault(input_opts, 'conv_network_arch;', 'convV0P0RL0+fcV1-RF16CH64');
+  opts.general.dataset = getValueFromFieldOrDefault(input_opts, 'dataset', 'cifar');
+  opts.general.posneg_balance = getValueFromFieldOrDefault(input_opts, 'posneg_balance', 'balanced-50');
+  opts.general.conv_network_arch = getValueFromFieldOrDefault(input_opts, 'conv_network_arch', 'convV0P0RL0+fcV1-RF16CH64');
   opts.train.gpus = ifNotMacSetGpu(getValueFromFieldOrDefault(input_opts, 'gpus', 1));
 
   % -------------------------------------------------------------------------

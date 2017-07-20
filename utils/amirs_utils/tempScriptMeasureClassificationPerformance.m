@@ -80,7 +80,7 @@ function tempScriptMeasureClassificationPerformance(dataset, posneg_balance, sav
   end
 
   for kk = 1:number_of_trials
-    afprintf(sprintf('[INFO] Testing trial #%d / %d ...', kk, number_of_trials));
+    afprintf(sprintf('[INFO] Testing trial #%d / %d ...\n', kk, number_of_trials));
     all_experiments_single_run = runAllExperimentsOnce(opts.paths.experiment_dir, dataset, posneg_balance, classification_method);
     for i = 1 : numel(all_experiments_single_run)
       all_experiments_multi_run{i}.performance(end+1) = all_experiments_single_run{i}.test_accuracy;
@@ -111,7 +111,9 @@ function tempScriptMeasureClassificationPerformance(dataset, posneg_balance, sav
 % -------------------------------------------------------------------------
 function all_experiments_single_run = runAllExperimentsOnce(experiment_dir, dataset, posneg_balance, classification_method)
 % -------------------------------------------------------------------------
+  afprintf(sprintf('[INFO] Setting up experiment imdbs...'));
   [~, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, 0);
+  fprintf('done!\n');
   for i = 1 : numel(experiments)
     experiment_options = {};
     experiment_options.imdb = experiments{i}.imdb;
@@ -137,7 +139,8 @@ function all_experiments_single_run = runAllExperimentsOnce(experiment_dir, data
         experiment_options.number_of_hidden_nodes = [500, 1000, 100];
         test_accuracy = getSimpleTestAccuracyFromMLP(experiment_options);
       case 'cnn'
-        experiment_options.gpus = 2;
+
+        experiment_options.gpus = 1;
 
         % TODO: this has to somehow be detected automatically....
         % experiment_options.conv_network_arch = 'convV0P0RL0+fcV1-RF16CH64';
