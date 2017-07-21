@@ -259,6 +259,13 @@ function net = getConvArchitecture(dataset, network_arch)
 
 
 
+
+
+
+
+
+
+
     % ------------------------------------------------------------------------------------------------------------------------------------------------------------
     case 'convV5P0RL5-RF32CH3+fcV1-RF32CH64'
       layer_number = numel(net.layers) + 1;
