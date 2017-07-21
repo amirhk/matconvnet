@@ -136,7 +136,7 @@ function all_experiments_single_run = runAllExperimentsOnce(experiment_dir, data
         experiment_options.number_of_nearest_neighbors = 3;
         performance = getSimpleTestAccuracyFromKnn(experiment_options);
       case 'c-sep'
-        performance = getAverageClassCSeparation(tmp_imdb);
+        performance = getAverageClassCSeparation(experiment_options.imdb);
       case 'libsvm'
         performance = getSimpleTestAccuracyFromLibSvm(experiment_options);
       case 'mlp-64-10'
