@@ -26,6 +26,7 @@ function test_accuracy = getSimpleTestAccuracyFromKnn(input_opts)
 % POSSIBILITY OF SUCH DAMAGE.
 
   training_options.imdb = input_opts.imdb;
+  training_options.dataset = getValueFromFieldOrDefault(input_opts, 'dataset', 'mnist');
   training_options.number_of_nearest_neighbors = getValueFromFieldOrDefault(input_opts, 'number_of_nearest_neighbors', 1);
   training_options.return_performance_summary = getValueFromFieldOrDefault(input_opts, 'return_performance_summary', true);
   training_options.debug_flag = getValueFromFieldOrDefault(input_opts, 'debug_flag', false);
