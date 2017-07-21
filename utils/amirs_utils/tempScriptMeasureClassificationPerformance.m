@@ -57,8 +57,8 @@ function tempScriptMeasureClassificationPerformance(dataset, posneg_balance, cla
     fullfile(vl_rootnn, 'experiment_results'));
   opts.paths.experiment_dir = fullfile(opts.paths.experiment_parent_dir, sprintf( ...
     'test-classification-perf-%s-rp-tests-%s-%s-%s', ...
-    classification_method, ...
     opts.paths.time_string, ...
+    classification_method, ...
     opts.general.dataset, ...
     opts.general.posneg_balance));
   if ~exist(opts.paths.experiment_dir)
@@ -154,9 +154,15 @@ function all_experiments_single_run = runAllExperimentsOnce(experiment_dir, data
 
         % TODO: this has to somehow be detected automatically....
         % experiment_options.conv_network_arch = 'convV0P0RL0+fcV1-RF16CH64';
+        % experiment_options.conv_network_arch = 'convV0P0RL0+fcV1-RF32CH64';
+
         % experiment_options.conv_network_arch = 'convV1P1RL1-RF32CH3+fcV1-RF16CH64';
         % experiment_options.conv_network_arch = 'convV3P1RL3-RF32CH3+fcV1-RF16CH64';
-        experiment_options.conv_network_arch = 'convV5P1RL5-RF32CH3+fcV1-RF16CH64';
+        % experiment_options.conv_network_arch = 'convV5P1RL5-RF32CH3+fcV1-RF16CH64';
+
+        % experiment_options.conv_network_arch = 'convV1P0RL1-RF32CH3+fcV1-RF32CH64';
+        % experiment_options.conv_network_arch = 'convV3P0RL3-RF32CH3+fcV1-RF32CH64';
+        % experiment_options.conv_network_arch = 'convV5P0RL5-RF32CH3+fcV1-RF32CH64';
 
         [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccuracyFromCnn(experiment_options);
         performance = best_test_accuracy_mean;
