@@ -31,6 +31,7 @@ function tempScriptMeasureClassificationPerformance(dataset, posneg_balance, cla
   % classification_method = 'cnn';
   % classification_method = '1-knn';
   % classification_method = '3-knn';
+  % classification_method = 'c-sep';
   % classification_method = 'libsvm';
   % classification_method = 'mlp-64-10';
   % classification_method = 'mlp-500-100';
@@ -84,7 +85,7 @@ function tempScriptMeasureClassificationPerformance(dataset, posneg_balance, cla
     afprintf(sprintf('[INFO] Testing trial #%d / %d ...\n', kk, number_of_trials));
     all_experiments_single_run = runAllExperimentsOnce(opts.paths.experiment_dir, dataset, posneg_balance, classification_method);
     for i = 1 : numel(all_experiments_single_run)
-      all_experiments_multi_run{i}.performance(end+1) = all_experiments_single_run{i}.test_accuracy;
+      all_experiments_multi_run{i}.performance(end+1) = all_experiments_single_run{i}.performance;
     end
     afprintf(sprintf('[INFO] done!'));
 
@@ -130,21 +131,23 @@ function all_experiments_single_run = runAllExperimentsOnce(experiment_dir, data
     switch classification_method
       case '1-knn'
         experiment_options.number_of_nearest_neighbors = 1;
-        test_accuracy = getSimpleTestAccuracyFromKnn(experiment_options);
+        performance = getSimpleTestAccuracyFromKnn(experiment_options);
       case '3-knn'
         experiment_options.number_of_nearest_neighbors = 3;
-        test_accuracy = getSimpleTestAccuracyFromKnn(experiment_options);
+        performance = getSimpleTestAccuracyFromKnn(experiment_options);
+      case 'c-sep'
+        performance = getAverageClassCSeparation(tmp_imdb);
       case 'libsvm'
-        test_accuracy = getSimpleTestAccuracyFromLibSvm(experiment_options);
+        performance = getSimpleTestAccuracyFromLibSvm(experiment_options);
       case 'mlp-64-10'
         experiment_options.number_of_hidden_nodes = [64, 10];
-        test_accuracy = getSimpleTestAccuracyFromMLP(experiment_options);
+        performance = getSimpleTestAccuracyFromMLP(experiment_options);
       case 'mlp-500-100'
         experiment_options.number_of_hidden_nodes = [500, 100];
-        test_accuracy = getSimpleTestAccuracyFromMLP(experiment_options);
+        performance = getSimpleTestAccuracyFromMLP(experiment_options);
       case 'mlp-500-1000-100'
         experiment_options.number_of_hidden_nodes = [500, 1000, 100];
-        test_accuracy = getSimpleTestAccuracyFromMLP(experiment_options);
+        performance = getSimpleTestAccuracyFromMLP(experiment_options);
       case 'cnn'
 
         experiment_options.gpus = 3;
@@ -156,9 +159,9 @@ function all_experiments_single_run = runAllExperimentsOnce(experiment_dir, data
         experiment_options.conv_network_arch = 'convV5P1RL5-RF32CH3+fcV1-RF16CH64';
 
         [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccuracyFromCnn(experiment_options);
-        test_accuracy = best_test_accuracy_mean;
+        performance = best_test_accuracy_mean;
     end
-    experiments{i}.test_accuracy = test_accuracy;
+    experiments{i}.performance = performance;
   end
 
   all_experiments_single_run = experiments;
