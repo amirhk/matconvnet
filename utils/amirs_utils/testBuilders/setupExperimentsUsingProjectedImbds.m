@@ -282,305 +282,8 @@ function [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(data
 
 
 
-  experiments{end+1}.imdb = original_imdb;
-  experiments{end}.title = sprintf('%s - %s - Original IMDB', dataset, posneg_balance);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
-  projection_description = 'larpD1P0RL0 w/ dense_gaussian into 16384';
-  projected_imdb = fh_projection_utils.getDenslyDownProjectedImdb(original_imdb, 1, 'dense_gaussian', 0, 'relu', 16384);
-  experiments{end+1}.imdb = projected_imdb;
-  experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
-  if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
-
-
-  if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
-  projection_description = 'larpD1P0RL1 w/ dense_gaussian into 16384';
-  projected_imdb = fh_projection_utils.getDenslyDownProjectedImdb(original_imdb, 1, 'dense_gaussian', 1, 'relu', 16384);
-  experiments{end+1}.imdb = projected_imdb;
-  experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
-  if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
-  projection_description = 'larpD1P0RL0 w/ dense_gaussian into 65536';
-  projected_imdb = fh_projection_utils.getDenslyDownProjectedImdb(original_imdb, 1, 'dense_gaussian', 0, 'relu', 65536);
-  experiments{end+1}.imdb = projected_imdb;
-  experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
-  if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
-
-
-  if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
-  projection_description = 'larpD1P0RL1 w/ dense_gaussian into 65536';
-  projected_imdb = fh_projection_utils.getDenslyDownProjectedImdb(original_imdb, 1, 'dense_gaussian', 1, 'relu', 65536);
-  experiments{end+1}.imdb = projected_imdb;
-  experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
-  if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
-  larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
-  larp_network_arch = 'larpV1P1RL1';
-  projection_description = 'larpV1P1RL1 w/ gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
-  projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
-  experiments{end+1}.imdb = projected_imdb;
-  experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
-  if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
-
-
-  if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
-  larp_weight_init_type = 'logNormal-layer5-ratVisualCortex';
-  larp_network_arch = 'larpV1P1RL1';
-  projection_description = 'larpV1P1RL1 w/ logNormal-layer5-ratVisualCortex';
-  projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
-  experiments{end+1}.imdb = projected_imdb;
-  experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
-  if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
-
-
-  if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
-  larp_weight_init_type = 'gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1';
-  larp_network_arch = 'larpV1P1RL1';
-  projection_description = 'larpV1P1RL1 w/ gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1';
-  projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
-  experiments{end+1}.imdb = projected_imdb;
-  experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
-  if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
-
-
-  % if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
-  % projection_net = loadTrainedNet('larpV0P0RL0+convV1P1RL1', 'cifar', 'balanced-50');
-  % projection_description = 'larpV0P0RL0+convV1P1RL1 trained on cifar balanced-50';
-  % projected_imdb = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, 3);
-  % experiments{end+1}.imdb = projected_imdb;
-  % experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
-  % if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
-
-
-
-
-
-
-
-
-
-  if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
-  larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
-  larp_network_arch = 'larpV3P1RL3';
-  projection_description = 'larpV3P1RL3 w/ gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
-  projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
-  experiments{end+1}.imdb = projected_imdb;
-  experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
-  if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
-
-
-  if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
-  larp_weight_init_type = 'logNormal-layer5-ratVisualCortex';
-  larp_network_arch = 'larpV3P1RL3';
-  projection_description = 'larpV3P1RL3 w/ logNormal-layer5-ratVisualCortex';
-  projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
-  experiments{end+1}.imdb = projected_imdb;
-  experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
-  if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
-
-
-  if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
-  larp_weight_init_type = 'gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1';
-  larp_network_arch = 'larpV3P1RL3';
-  projection_description = 'larpV3P1RL3 w/ gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1';
-  projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
-  experiments{end+1}.imdb = projected_imdb;
-  experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
-  if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
-
-
-  % if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
-  % projection_net = loadTrainedNet('larpV0P0RL0+convV3P1RL3', 'cifar', 'balanced-50');
-  % projection_description = 'larpV0P0RL0+convV3P1RL3 trained on cifar balanced-50';
-  % projected_imdb = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, 3);
-  % experiments{end+1}.imdb = projected_imdb;
-  % experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
-  % if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
-
-
-
-
-
-
-
-
-
-  if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
-  larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
-  larp_network_arch = 'larpV5P1RL5';
-  projection_description = 'larpV5P1RL5 w/ gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
-  projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
-  experiments{end+1}.imdb = projected_imdb;
-  experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
-  if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
-
-
-  if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
-  larp_weight_init_type = 'logNormal-layer5-ratVisualCortex';
-  larp_network_arch = 'larpV5P1RL5';
-  projection_description = 'larpV5P1RL5 w/ logNormal-layer5-ratVisualCortex';
-  projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
-  experiments{end+1}.imdb = projected_imdb;
-  experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
-  if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
-
-
-  if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
-  larp_weight_init_type = 'gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1';
-  larp_network_arch = 'larpV5P1RL5';
-  projection_description = 'larpV5P1RL5 w/ gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1';
-  projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
-  experiments{end+1}.imdb = projected_imdb;
-  experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
-  if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
-
-
-  % if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
-  % projection_net = loadTrainedNet('larpV0P0RL0+convV5P1RL5', 'cifar', 'balanced-50');
-  % projection_description = 'larpV0P0RL0+convV5P1RL5 trained on cifar balanced-50';
-  % projected_imdb = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, 3);
-  % experiments{end+1}.imdb = projected_imdb;
-  % experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
-  % if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  % experiments{end+1}.imdb = original_imdb;
+  % experiments{end}.title = sprintf('%s - %s - Original IMDB', dataset, posneg_balance);
 
 
 
@@ -620,174 +323,19 @@ function [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(data
 
 
   % if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
-  % larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
-  % larp_network_arch = 'larpV1P1RL1-non-decimated-pooling';
-  % projection_description = 'larpV1P1RL1-non-decimated-pooling w/ gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
-  % projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
+  % projection_description = 'larpD1P0RL0 w/ dense_gaussian into 16384';
+  % projected_imdb = fh_projection_utils.getDenslyDownProjectedImdb(original_imdb, 1, 'dense_gaussian', 0, 'relu', 16384);
   % experiments{end+1}.imdb = projected_imdb;
   % experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
   % if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
 
 
   % if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
-  % larp_weight_init_type = 'logNormal-layer5-ratVisualCortex';
-  % larp_network_arch = 'larpV1P1RL1-non-decimated-pooling';
-  % projection_description = 'larpV1P1RL1-non-decimated-pooling w/ logNormal-layer5-ratVisualCortex';
-  % projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
+  % projection_description = 'larpD1P0RL1 w/ dense_gaussian into 16384';
+  % projected_imdb = fh_projection_utils.getDenslyDownProjectedImdb(original_imdb, 1, 'dense_gaussian', 1, 'relu', 16384);
   % experiments{end+1}.imdb = projected_imdb;
   % experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
   % if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
-
-
-  % if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
-  % larp_weight_init_type = 'gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1';
-  % larp_network_arch = 'larpV1P1RL1-non-decimated-pooling';
-  % projection_description = 'larpV1P1RL1-non-decimated-pooling w/ gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1';
-  % projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
-  % experiments{end+1}.imdb = projected_imdb;
-  % experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
-  % if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
-
-
-  % if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
-  % projection_net = loadTrainedNet('larpV0P0RL0+convV1P1RL1', 'cifar', 'balanced-50');
-  % projection_description = 'larpV0P0RL0+convV1P1RL1 trained on cifar balanced-50';
-  % projected_imdb = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, 3);
-  % experiments{end+1}.imdb = projected_imdb;
-  % experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
-  % if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
-
-
-
-
-
-
-
-
-
-  % if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
-  % larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
-  % larp_network_arch = 'larpV3P1RL3-non-decimated-pooling';
-  % projection_description = 'larpV3P1RL3-non-decimated-pooling w/ gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
-  % projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
-  % experiments{end+1}.imdb = projected_imdb;
-  % experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
-  % if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
-
-
-  % if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
-  % larp_weight_init_type = 'logNormal-layer5-ratVisualCortex';
-  % larp_network_arch = 'larpV3P1RL3-non-decimated-pooling';
-  % projection_description = 'larpV3P1RL3-non-decimated-pooling w/ logNormal-layer5-ratVisualCortex';
-  % projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
-  % experiments{end+1}.imdb = projected_imdb;
-  % experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
-  % if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
-
-
-  % if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
-  % larp_weight_init_type = 'gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1';
-  % larp_network_arch = 'larpV3P1RL3-non-decimated-pooling';
-  % projection_description = 'larpV3P1RL3-non-decimated-pooling w/ gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1';
-  % projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
-  % experiments{end+1}.imdb = projected_imdb;
-  % experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
-  % if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
-
-
-  % if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
-  % projection_net = loadTrainedNet('larpV0P0RL0+convV3P1RL3', 'cifar', 'balanced-50');
-  % projection_description = 'larpV0P0RL0+convV3P1RL3 trained on cifar balanced-50';
-  % projected_imdb = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, 3);
-  % experiments{end+1}.imdb = projected_imdb;
-  % experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
-  % if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
-
-
-
-
-
-
-
-
-
-  % if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
-  % larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
-  % larp_network_arch = 'larpV5P1RL5-non-decimated-pooling';
-  % projection_description = 'larpV5P1RL5-non-decimated-pooling w/ gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
-  % projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
-  % experiments{end+1}.imdb = projected_imdb;
-  % experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
-  % if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
-
-
-  % if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
-  % larp_weight_init_type = 'logNormal-layer5-ratVisualCortex';
-  % larp_network_arch = 'larpV5P1RL5-non-decimated-pooling';
-  % projection_description = 'larpV5P1RL5-non-decimated-pooling w/ logNormal-layer5-ratVisualCortex';
-  % projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
-  % experiments{end+1}.imdb = projected_imdb;
-  % experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
-  % if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
-
-
-  % if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
-  % larp_weight_init_type = 'gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1';
-  % larp_network_arch = 'larpV5P1RL5-non-decimated-pooling';
-  % projection_description = 'larpV5P1RL5-non-decimated-pooling w/ gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1';
-  % projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
-  % experiments{end+1}.imdb = projected_imdb;
-  % experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
-  % if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
-
-
-  % if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
-  % projection_net = loadTrainedNet('larpV0P0RL0+convV5P1RL5', 'cifar', 'balanced-50');
-  % projection_description = 'larpV0P0RL0+convV5P1RL5 trained on cifar balanced-50';
-  % projected_imdb = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, 3);
-  % experiments{end+1}.imdb = projected_imdb;
-  % experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
-  % if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -837,10 +385,52 @@ function [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(data
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   % if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
   % larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
-  % larp_network_arch = 'larpV1P0RL1';
-  % projection_description = 'larpV1P0RL1 w/ gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
+  % larp_network_arch = 'larpV1P1RL1';
+  % projection_description = 'larpV1P1RL1 w/ gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
   % projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
   % experiments{end+1}.imdb = projected_imdb;
   % experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
@@ -849,8 +439,8 @@ function [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(data
 
   % if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
   % larp_weight_init_type = 'logNormal-layer5-ratVisualCortex';
-  % larp_network_arch = 'larpV1P0RL1';
-  % projection_description = 'larpV1P0RL1 w/ logNormal-layer5-ratVisualCortex';
+  % larp_network_arch = 'larpV1P1RL1';
+  % projection_description = 'larpV1P1RL1 w/ logNormal-layer5-ratVisualCortex';
   % projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
   % experiments{end+1}.imdb = projected_imdb;
   % experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
@@ -859,12 +449,388 @@ function [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(data
 
   % if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
   % larp_weight_init_type = 'gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1';
-  % larp_network_arch = 'larpV1P0RL1';
-  % projection_description = 'larpV1P0RL1 w/ gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1';
+  % larp_network_arch = 'larpV1P1RL1';
+  % projection_description = 'larpV1P1RL1 w/ gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1';
   % projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
   % experiments{end+1}.imdb = projected_imdb;
   % experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
   % if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
+
+
+  % if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
+  % projection_net = loadTrainedNet('larpV0P0RL0+convV1P1RL1', 'cifar', 'balanced-50');
+  % projection_description = 'larpV0P0RL0+convV1P1RL1 trained on cifar balanced-50';
+  % projected_imdb = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, 3);
+  % experiments{end+1}.imdb = projected_imdb;
+  % experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
+  % if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
+
+
+
+
+
+
+
+
+
+  % if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
+  % larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
+  % larp_network_arch = 'larpV3P1RL3';
+  % projection_description = 'larpV3P1RL3 w/ gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
+  % projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
+  % experiments{end+1}.imdb = projected_imdb;
+  % experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
+  % if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
+
+
+  % if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
+  % larp_weight_init_type = 'logNormal-layer5-ratVisualCortex';
+  % larp_network_arch = 'larpV3P1RL3';
+  % projection_description = 'larpV3P1RL3 w/ logNormal-layer5-ratVisualCortex';
+  % projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
+  % experiments{end+1}.imdb = projected_imdb;
+  % experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
+  % if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
+
+
+  % if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
+  % larp_weight_init_type = 'gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1';
+  % larp_network_arch = 'larpV3P1RL3';
+  % projection_description = 'larpV3P1RL3 w/ gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1';
+  % projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
+  % experiments{end+1}.imdb = projected_imdb;
+  % experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
+  % if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
+
+  % if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
+  % projection_net = loadTrainedNet('larpV0P0RL0+convV3P1RL3', 'cifar', 'balanced-50');
+  % projection_description = 'larpV0P0RL0+convV3P1RL3 trained on cifar balanced-50';
+  % projected_imdb = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, 3);
+  % experiments{end+1}.imdb = projected_imdb;
+  % experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
+  % if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
+
+
+
+
+
+
+
+
+
+  % if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
+  % larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
+  % larp_network_arch = 'larpV5P1RL5';
+  % projection_description = 'larpV5P1RL5 w/ gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
+  % projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
+  % experiments{end+1}.imdb = projected_imdb;
+  % experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
+  % if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
+
+
+  % if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
+  % larp_weight_init_type = 'logNormal-layer5-ratVisualCortex';
+  % larp_network_arch = 'larpV5P1RL5';
+  % projection_description = 'larpV5P1RL5 w/ logNormal-layer5-ratVisualCortex';
+  % projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
+  % experiments{end+1}.imdb = projected_imdb;
+  % experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
+  % if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
+
+
+  % if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
+  % larp_weight_init_type = 'gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1';
+  % larp_network_arch = 'larpV5P1RL5';
+  % projection_description = 'larpV5P1RL5 w/ gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1';
+  % projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
+  % experiments{end+1}.imdb = projected_imdb;
+  % experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
+  % if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
+
+
+  % if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
+  % projection_net = loadTrainedNet('larpV0P0RL0+convV5P1RL5', 'cifar', 'balanced-50');
+  % projection_description = 'larpV0P0RL0+convV5P1RL5 trained on cifar balanced-50';
+  % projected_imdb = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, 3);
+  % experiments{end+1}.imdb = projected_imdb;
+  % experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
+  % if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
+  larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
+  larp_network_arch = 'larpV1P1RL1-non-decimated-pooling';
+  projection_description = 'larpV1P1RL1-non-decimated-pooling w/ gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
+  projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
+  experiments{end+1}.imdb = projected_imdb;
+  experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
+  if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
+
+
+  if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
+  larp_weight_init_type = 'logNormal-layer5-ratVisualCortex';
+  larp_network_arch = 'larpV1P1RL1-non-decimated-pooling';
+  projection_description = 'larpV1P1RL1-non-decimated-pooling w/ logNormal-layer5-ratVisualCortex';
+  projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
+  experiments{end+1}.imdb = projected_imdb;
+  experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
+  if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
+
+
+  if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
+  larp_weight_init_type = 'gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1';
+  larp_network_arch = 'larpV1P1RL1-non-decimated-pooling';
+  projection_description = 'larpV1P1RL1-non-decimated-pooling w/ gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1';
+  projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
+  experiments{end+1}.imdb = projected_imdb;
+  experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
+  if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
+
+
+  % if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
+  % projection_net = loadTrainedNet('larpV0P0RL0+convV1P1RL1', 'cifar', 'balanced-50');
+  % projection_description = 'larpV0P0RL0+convV1P1RL1 trained on cifar balanced-50';
+  % projected_imdb = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, 3);
+  % experiments{end+1}.imdb = projected_imdb;
+  % experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
+  % if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
+
+
+
+
+
+
+
+
+
+  if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
+  larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
+  larp_network_arch = 'larpV3P1RL3-non-decimated-pooling';
+  projection_description = 'larpV3P1RL3-non-decimated-pooling w/ gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
+  projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
+  experiments{end+1}.imdb = projected_imdb;
+  experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
+  if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
+
+
+  if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
+  larp_weight_init_type = 'logNormal-layer5-ratVisualCortex';
+  larp_network_arch = 'larpV3P1RL3-non-decimated-pooling';
+  projection_description = 'larpV3P1RL3-non-decimated-pooling w/ logNormal-layer5-ratVisualCortex';
+  projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
+  experiments{end+1}.imdb = projected_imdb;
+  experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
+  if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
+
+
+  if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
+  larp_weight_init_type = 'gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1';
+  larp_network_arch = 'larpV3P1RL3-non-decimated-pooling';
+  projection_description = 'larpV3P1RL3-non-decimated-pooling w/ gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1';
+  projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
+  experiments{end+1}.imdb = projected_imdb;
+  experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
+  if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
+
+
+  % if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
+  % projection_net = loadTrainedNet('larpV0P0RL0+convV3P1RL3', 'cifar', 'balanced-50');
+  % projection_description = 'larpV0P0RL0+convV3P1RL3 trained on cifar balanced-50';
+  % projected_imdb = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, 3);
+  % experiments{end+1}.imdb = projected_imdb;
+  % experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
+  % if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
+
+
+
+
+
+
+
+
+
+  if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
+  larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
+  larp_network_arch = 'larpV5P1RL5-non-decimated-pooling';
+  projection_description = 'larpV5P1RL5-non-decimated-pooling w/ gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
+  projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
+  experiments{end+1}.imdb = projected_imdb;
+  experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
+  if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
+
+
+  if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
+  larp_weight_init_type = 'logNormal-layer5-ratVisualCortex';
+  larp_network_arch = 'larpV5P1RL5-non-decimated-pooling';
+  projection_description = 'larpV5P1RL5-non-decimated-pooling w/ logNormal-layer5-ratVisualCortex';
+  projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
+  experiments{end+1}.imdb = projected_imdb;
+  experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
+  if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
+
+
+  if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
+  larp_weight_init_type = 'gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1';
+  larp_network_arch = 'larpV5P1RL5-non-decimated-pooling';
+  projection_description = 'larpV5P1RL5-non-decimated-pooling w/ gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1';
+  projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
+  experiments{end+1}.imdb = projected_imdb;
+  experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
+  if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
+
+
+  % if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
+  % projection_net = loadTrainedNet('larpV0P0RL0+convV5P1RL5', 'cifar', 'balanced-50');
+  % projection_description = 'larpV0P0RL0+convV5P1RL5 trained on cifar balanced-50';
+  % projected_imdb = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, 3);
+  % experiments{end+1}.imdb = projected_imdb;
+  % experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
+  % if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
+  larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
+  larp_network_arch = 'larpV1P0RL1';
+  projection_description = 'larpV1P0RL1 w/ gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
+  projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
+  experiments{end+1}.imdb = projected_imdb;
+  experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
+  if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
+
+
+  if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
+  larp_weight_init_type = 'logNormal-layer5-ratVisualCortex';
+  larp_network_arch = 'larpV1P0RL1';
+  projection_description = 'larpV1P0RL1 w/ logNormal-layer5-ratVisualCortex';
+  projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
+  experiments{end+1}.imdb = projected_imdb;
+  experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
+  if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
+
+
+  if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
+  larp_weight_init_type = 'gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1';
+  larp_network_arch = 'larpV1P0RL1';
+  projection_description = 'larpV1P0RL1 w/ gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1';
+  projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
+  experiments{end+1}.imdb = projected_imdb;
+  experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
+  if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
 
 
   % if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
@@ -883,34 +849,35 @@ function [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(data
 
 
 
-  % if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
-  % larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
-  % larp_network_arch = 'larpV3P0RL3';
-  % projection_description = 'larpV3P0RL3 w/ gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
-  % projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
-  % experiments{end+1}.imdb = projected_imdb;
-  % experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
-  % if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
+  if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
+  larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
+  larp_network_arch = 'larpV3P0RL3';
+  projection_description = 'larpV3P0RL3 w/ gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
+  projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
+  experiments{end+1}.imdb = projected_imdb;
+  experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
+  if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
 
 
-  % if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
-  % larp_weight_init_type = 'logNormal-layer5-ratVisualCortex';
-  % larp_network_arch = 'larpV3P0RL3';
-  % projection_description = 'larpV3P0RL3 w/ logNormal-layer5-ratVisualCortex';
-  % projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
-  % experiments{end+1}.imdb = projected_imdb;
-  % experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
-  % if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
+  if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
+  larp_weight_init_type = 'logNormal-layer5-ratVisualCortex';
+  larp_network_arch = 'larpV3P0RL3';
+  projection_description = 'larpV3P0RL3 w/ logNormal-layer5-ratVisualCortex';
+  projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
+  experiments{end+1}.imdb = projected_imdb;
+  experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
+  if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
 
 
-  % if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
-  % larp_weight_init_type = 'gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1';
-  % larp_network_arch = 'larpV3P0RL3';
-  % projection_description = 'larpV3P0RL3 w/ gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1';
-  % projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
-  % experiments{end+1}.imdb = projected_imdb;
-  % experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
-  % if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
+  if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
+  larp_weight_init_type = 'gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1';
+  larp_network_arch = 'larpV3P0RL3';
+  projection_description = 'larpV3P0RL3 w/ gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1';
+  projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
+  experiments{end+1}.imdb = projected_imdb;
+  experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
+  if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
+
 
   % if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
   % projection_net = loadTrainedNet('larpV0P0RL0+convV3P0RL3', 'cifar', 'balanced-50');
@@ -928,34 +895,34 @@ function [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(data
 
 
 
-  % if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
-  % larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
-  % larp_network_arch = 'larpV5P0RL5';
-  % projection_description = 'larpV5P0RL5 w/ gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
-  % projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
-  % experiments{end+1}.imdb = projected_imdb;
-  % experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
-  % if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
+  if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
+  larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
+  larp_network_arch = 'larpV5P0RL5';
+  projection_description = 'larpV5P0RL5 w/ gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
+  projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
+  experiments{end+1}.imdb = projected_imdb;
+  experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
+  if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
 
 
-  % if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
-  % larp_weight_init_type = 'logNormal-layer5-ratVisualCortex';
-  % larp_network_arch = 'larpV5P0RL5';
-  % projection_description = 'larpV5P0RL5 w/ logNormal-layer5-ratVisualCortex';
-  % projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
-  % experiments{end+1}.imdb = projected_imdb;
-  % experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
-  % if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
+  if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
+  larp_weight_init_type = 'logNormal-layer5-ratVisualCortex';
+  larp_network_arch = 'larpV5P0RL5';
+  projection_description = 'larpV5P0RL5 w/ logNormal-layer5-ratVisualCortex';
+  projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
+  experiments{end+1}.imdb = projected_imdb;
+  experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
+  if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
 
 
-  % if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
-  % larp_weight_init_type = 'gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1';
-  % larp_network_arch = 'larpV5P0RL5';
-  % projection_description = 'larpV5P0RL5 w/ gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1';
-  % projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
-  % experiments{end+1}.imdb = projected_imdb;
-  % experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
-  % if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
+  if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
+  larp_weight_init_type = 'gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1';
+  larp_network_arch = 'larpV5P0RL5';
+  projection_description = 'larpV5P0RL5 w/ gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1';
+  projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
+  experiments{end+1}.imdb = projected_imdb;
+  experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
+  if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
 
 
   % if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
