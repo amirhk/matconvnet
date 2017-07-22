@@ -36,7 +36,7 @@ function tempScriptMeasureClassificationPerformance(dataset, posneg_balance, cla
   % classification_method = 'mlp-64-10';
   % classification_method = 'mlp-500-100';
   % classification_method = 'mlp-500-1000-100';
-  number_of_trials = 1;
+  number_of_trials = 3;
   all_experiments_multi_run = {};
 
   % -------------------------------------------------------------------------
