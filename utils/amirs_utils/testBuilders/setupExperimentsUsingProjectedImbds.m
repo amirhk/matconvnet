@@ -282,8 +282,8 @@ function [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(data
 
 
 
-  % experiments{end+1}.imdb = original_imdb;
-  % experiments{end}.title = sprintf('%s - %s - Original IMDB', dataset, posneg_balance);
+  experiments{end+1}.imdb = original_imdb;
+  experiments{end}.title = sprintf('%s - %s - Original IMDB', dataset, posneg_balance);
 
 
 
