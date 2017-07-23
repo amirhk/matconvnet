@@ -48,6 +48,11 @@ function constructMultiClassImdbs(dataset)
       all_class_imdb = constructStl10Imdb(opts);
     case 'svhn'
       opts.imdb.contrast_normalization = true;
+      opts.imdb.whiten_data = false;
+      all_class_imdb = constructSvhnImdb(opts);
+    case 'svhn-yes-white'
+      opts.imdb.contrast_normalization = true;
+      opts.imdb.whiten_data = true;
       all_class_imdb = constructSvhnImdb(opts);
     case 'uci-ion'
       all_class_imdb = constructUCIIonImdb(opts);
