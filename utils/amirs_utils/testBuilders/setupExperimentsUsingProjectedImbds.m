@@ -316,8 +316,8 @@ function [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(data
 
 
 
-  % projected_dim_list = [4, 16, 64, 256, 1024, 4096, 16384, 65536];
-  projected_dim_list = [4, 16, 64, 256, 1024, 4096, 16384];
+  projected_dim_list = [4, 16, 64, 256, 1024, 4096, 16384, 65536];
+  % projected_dim_list = [4, 16, 64, 256, 1024, 4096, 16384];
   % projected_dim_list = [4, 16, 64];
 
   for projected_dim = projected_dim_list
