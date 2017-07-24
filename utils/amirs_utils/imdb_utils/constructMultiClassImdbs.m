@@ -177,7 +177,6 @@ function constructMultiClassImdbs(dataset)
       all_class_imdb = constructSyntheticSpiralsImdb(2000);
   end
 
-  keyboard
   % OLD: logspace(1 + log10(3.76), 3 + log10(5), 6): [38, 100, 266, 1880, 5000]
   % NEW:                                             [10, 50, 100, 250, 500, 1000, 2500]
   % -------------------------------------------------------------------------

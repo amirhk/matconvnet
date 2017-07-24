@@ -56,8 +56,8 @@ function imdb = constructImageNetTinyImdb(input_opts)
   imdb.images.set = set(ix);
   afprintf(sprintf('[INFO] done!\n'));
 
-  fh = imdbMultiClassUtils;
-  fh.getImdbInfo(imdb, 1);
+  % fh = imdbMultiClassUtils;
+  % fh.getImdbInfo(imdb, 1);
   afprintf(sprintf('done!\n\n'));
 
 
@@ -69,6 +69,9 @@ function [data, labels, set] = getTrainingDataAndLabels(data_dir, class_name_to_
   expected_number_of_classes = 200;
   expected_number_of_samples_per_class = 500;
   expeced_total_number_of_samples = expected_number_of_classes * expected_number_of_samples_per_class;
+
+  % max_number_of_samples_per_class = 500;
+  % expeced_total_number_of_samples = expected_number_of_classes * max_number_of_samples_per_class;
 
   fileID = fopen(fullfile(data_dir, 'wnids.txt'), 'r');
   formatSpec = '%s';
@@ -90,6 +93,7 @@ function [data, labels, set] = getTrainingDataAndLabels(data_dir, class_name_to_
     all_training_sample_files_for_class = dir(fullfile(data_dir, 'train', class_name, 'images', '*.JPEG'));
     assert(numel(all_training_sample_files_for_class) == expected_number_of_samples_per_class);
     for j = 1 : numel(all_training_sample_files_for_class)
+    % for j = 1 : max_number_of_samples_per_class
       single_training_sample_file_name = all_training_sample_files_for_class(i).name;
       single_training_sample_label = getLabelForClassName(class_name,class_name_to_class_label_mapping);
       tmp_data(:,:,:,sample_index) = getProcessedSample(fullfile(data_dir, 'train', class_name, 'images', single_training_sample_file_name));
