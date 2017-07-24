@@ -107,13 +107,21 @@ functionHandle = @tempScriptMeasureClassificationPerformance;
 
 
 
-% functionHandle('cifar-multi-class-subsampled', 'balanced-50', '1-knn', 1);
+functionHandle('cifar-multi-class-subsampled', 'balanced-50', '1-knn', 1);
 % functionHandle('cifar-multi-class-subsampled', 'balanced-50', 'c-sep', 1);
 % functionHandle('cifar-multi-class-subsampled', 'balanced-50', 'cnn', 1);
 
-% functionHandle('cifar-no-white-multi-class-subsampled', 'balanced-50', '1-knn', 1);
+functionHandle('cifar-no-white-multi-class-subsampled', 'balanced-50', '1-knn', 1);
 % functionHandle('cifar-no-white-multi-class-subsampled', 'balanced-50', 'c-sep', 1);
 % functionHandle('cifar-no-white-multi-class-subsampled', 'balanced-50', 'cnn', 1);
+
+functionHandle('stl-10-multi-class-subsampled', 'balanced-50', '1-knn', 1);
+% functionHandle('stl-10-multi-class-subsampled', 'balanced-50', 'c-sep', 1);
+% functionHandle('stl-10-multi-class-subsampled', 'balanced-50', 'cnn', 1);
+
+% functionHandle('mnist-multi-class-subsampled', 'balanced-50', '1-knn', 1);
+% functionHandle('mnist-multi-class-subsampled', 'balanced-50', 'c-sep', 1);
+% functionHandle('mnist-multi-class-subsampled', 'balanced-50', 'cnn', 1);
 
 % functionHandle('svhn-multi-class-subsampled', 'balanced-50', '1-knn', 1);
 % functionHandle('svhn-multi-class-subsampled', 'balanced-50', 'c-sep', 1);
@@ -123,13 +131,7 @@ functionHandle = @tempScriptMeasureClassificationPerformance;
 % functionHandle('svhn-yes-white-multi-class-subsampled', 'balanced-50', 'c-sep', 1);
 % functionHandle('svhn-yes-white-multi-class-subsampled', 'balanced-50', 'cnn', 1);
 
-% functionHandle('mnist-multi-class-subsampled', 'balanced-50', '1-knn', 1);
-% functionHandle('mnist-multi-class-subsampled', 'balanced-50', 'c-sep', 1);
-% functionHandle('mnist-multi-class-subsampled', 'balanced-50', 'cnn', 1);
 
-functionHandle('stl-10-multi-class-subsampled', 'balanced-50', '1-knn', 1);
-% functionHandle('stl-10-multi-class-subsampled', 'balanced-50', 'c-sep', 1);
-% functionHandle('stl-10-multi-class-subsampled', 'balanced-50', 'cnn', 1);
 
 
 

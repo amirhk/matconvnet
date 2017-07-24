@@ -38,6 +38,7 @@ function fh = networkInitializationUtils()
   fh.poolingLayerLeNetAvg = @poolingLayerLeNetAvg;
   fh.poolingLayerLeNetMax = @poolingLayerLeNetMax;
   fh.poolingLayerLeNetMaxNonDecimated = @poolingLayerLeNetMaxNonDecimated;
+  fh.poolingLayerSpecial = @poolingLayerSpecial;
   fh.dropoutLayer = @dropoutLayer;
   fh.bnormLayer = @bnormLayer;
   fh.softmaxlossLayer = @softmaxlossLayer;
@@ -859,7 +860,7 @@ function structuredLayer = poolingLayerLeNetMax(layer_number)
     'stride', 2, ...
     'pad', [0 1 0 1]); % Emulate caffe_n
 
-  % --------------------------------------------------------------------
+% --------------------------------------------------------------------
 function structuredLayer = poolingLayerLeNetMaxNonDecimated(layer_number)
 % --------------------------------------------------------------------
   structuredLayer = struct( ...
@@ -869,6 +870,18 @@ function structuredLayer = poolingLayerLeNetMaxNonDecimated(layer_number)
     'pool', [3 3], ...
     'stride', 1, ...
     'pad', [0 2 0 2]); % Emulate caffe_n
+
+% --------------------------------------------------------------------
+function structuredLayer = poolingLayerSpecial(layer_number, method, pool, stride, pad)
+% --------------------------------------------------------------------
+  structuredLayer = struct( ...
+    'type', 'pool', ...
+    'name', sprintf('pool%s', layer_number), ...
+    'method', method, ...
+    'pool', pool, ...
+    'stride', stride, ...
+    'pad', pad); % Emulate caffe_n
+
 
 % --------------------------------------------------------------------
 function structuredLayer = dropoutLayer(layer_number, dropout_ratio)
