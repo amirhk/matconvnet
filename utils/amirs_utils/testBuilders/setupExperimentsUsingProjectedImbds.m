@@ -278,35 +278,35 @@ function [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(data
 
 
 
-  % % projected_dim_list = [4, 16, 64, 256, 1024, 4096, 16384, 65536];
-  % % projected_dim_list = [4, 16, 64, 256, 1024, 4096, 16384];
-  projected_dim_list = [4, 16, 64, 256, 1024, 4096];
-  % % projected_dim_list = [4, 16, 64];
-  % projected_dim_list = [16384];
+  % % % projected_dim_list = [4, 16, 64, 256, 1024, 4096, 16384, 65536];
+  % % % projected_dim_list = [4, 16, 64, 256, 1024, 4096, 16384];
+  % projected_dim_list = [4, 16, 64, 256, 1024, 4096];
+  % % % projected_dim_list = [4, 16, 64];
+  % % projected_dim_list = [16384];
 
-  for projected_dim = projected_dim_list
+  % for projected_dim = projected_dim_list
 
-    if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
-    projection_description = sprintf('larpD1P0RL0 w/ dense_gaussian into %d', projected_dim);
-    projected_imdb = fh_projection_utils.getDenslyDownProjectedImdb(original_imdb, 1, 'dense_gaussian', 0, 'relu', projected_dim);
-    experiments{end+1}.imdb = projected_imdb;
-    experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
-    if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
+  %   if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
+  %   projection_description = sprintf('larpD1P0RL0 w/ dense_gaussian into %d', projected_dim);
+  %   projected_imdb = fh_projection_utils.getDenslyDownProjectedImdb(original_imdb, 1, 'dense_gaussian', 0, 'relu', projected_dim);
+  %   experiments{end+1}.imdb = projected_imdb;
+  %   experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
+  %   if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
 
-  end
+  % end
 
 
 
-  for projected_dim = projected_dim_list
+  % for projected_dim = projected_dim_list
 
-    if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
-    projection_description = sprintf('larpD1P0RL1 w/ dense_gaussian into %d', projected_dim);
-    projected_imdb = fh_projection_utils.getDenslyDownProjectedImdb(original_imdb, 1, 'dense_gaussian', 1, 'relu', projected_dim);
-    experiments{end+1}.imdb = projected_imdb;
-    experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
-    if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
+  %   if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
+  %   projection_description = sprintf('larpD1P0RL1 w/ dense_gaussian into %d', projected_dim);
+  %   projected_imdb = fh_projection_utils.getDenslyDownProjectedImdb(original_imdb, 1, 'dense_gaussian', 1, 'relu', projected_dim);
+  %   experiments{end+1}.imdb = projected_imdb;
+  %   experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
+  %   if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
 
-  end
+  % end
 
 
 
