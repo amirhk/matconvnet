@@ -202,7 +202,8 @@ function net = getLarpArchitecture(dataset, network_arch, weight_init_sequence)
       net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
 
       layer_number = numel(net.layers) + 1;
-      net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 32, 64, 5/100, 2, char(weight_init_sequence{3}), 'gen');
+      % net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 32, 64, 5/100, 2, char(weight_init_sequence{3}), 'gen');
+      net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 32, 16, 5/100, 2, char(weight_init_sequence{3}), 'gen');
       net.layers{end+1} = fh.reluLayer(layer_number);
       net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
 
@@ -346,7 +347,8 @@ function net = getLarpArchitecture(dataset, network_arch, weight_init_sequence)
       net.layers{end+1} = fh.reluLayer(layer_number);
 
       layer_number = numel(net.layers) + 1;
-      net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 32, 64, 5/100, 2, char(weight_init_sequence{5}), 'gen');
+      % net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 32, 64, 5/100, 2, char(weight_init_sequence{5}), 'gen');
+      net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 32, 16, 5/100, 2, char(weight_init_sequence{5}), 'gen');
       net.layers{end+1} = fh.reluLayer(layer_number);
       net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
 
