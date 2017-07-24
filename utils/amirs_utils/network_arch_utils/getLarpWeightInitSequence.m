@@ -56,9 +56,9 @@ function weight_init_sequence = getLarpWeightInitSequence(larp_weight_init_type,
 
 
 
-    case 'larpV1P1RL1-special-pooling-1'
+    case 'larpV1P1RL1-special-1'
       weight_init_sequence = {larp_weight_init_type};
-    case 'larpV1P1RL1-special-pooling-2'
+    case 'larpV1P1RL1-special-2'
       weight_init_sequence = {larp_weight_init_type};
 
 

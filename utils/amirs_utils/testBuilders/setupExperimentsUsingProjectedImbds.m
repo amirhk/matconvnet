@@ -330,8 +330,8 @@ function [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(data
     'gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1'};
 
   % larp_network_arch_list = { ...
-  %   'larpV1P1RL1-special-pooling-1', ...     % 256
-  %   'larpV1P1RL1-special-pooling-2', ...     % 256
+  %   'larpV1P1RL1-special-1', ...             % 256
+  %   'larpV1P1RL1-special-2', ...             % 256
   %   'larpV3P3RL3-final-conv-16-kernels', ... % 256 (change # filters in final layer in getLarpArch.m)
   %   'larpV5P3RL5-final-conv-16-kernels', ... % 256 (change # filters in final layer in getLarpArch.m)
   %   'larpV3P3RL3', ...                       % 1,024
@@ -349,8 +349,8 @@ function [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(data
   %   'larpV5P0RL5'};                          % 65,536
 
   larp_network_arch_list = { ...
-    'larpV1P1RL1-special-pooling-1', ...
-    'larpV1P1RL1-special-pooling-2'};
+    'larpV1P1RL1-special-1', ...
+    'larpV1P1RL1-special-2'};
 
 
   for larp_network_arch = larp_network_arch_list
