@@ -282,8 +282,8 @@ function [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(data
 
 
 
-  % experiments{end+1}.imdb = original_imdb;
-  % experiments{end}.title = sprintf('%s - %s - Original IMDB', dataset, posneg_balance);
+  experiments{end+1}.imdb = original_imdb;
+  experiments{end}.title = sprintf('%s - %s - Original IMDB', dataset, posneg_balance);
 
 
 
@@ -318,9 +318,9 @@ function [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(data
 
   % % projected_dim_list = [4, 16, 64, 256, 1024, 4096, 16384, 65536];
   % % projected_dim_list = [4, 16, 64, 256, 1024, 4096, 16384];
-  % projected_dim_list = [4, 16, 64, 256, 1024, 4096];
+  projected_dim_list = [4, 16, 64, 256, 1024, 4096];
   % % projected_dim_list = [4, 16, 64];
-  projected_dim_list = [16384, 65536];
+  % projected_dim_list = [16384, 65536];
 
   for projected_dim = projected_dim_list
 
