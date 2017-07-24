@@ -208,6 +208,13 @@ function net = getLarpArchitecture(dataset, network_arch, weight_init_sequence)
 
 
 
+
+
+
+
+
+
+
     % ------------------------------------------------------------------------------------------------------------------------------------------------------------
     case 'larpV5P0RL5'
       layer_number = numel(net.layers) + 1;
