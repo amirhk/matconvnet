@@ -329,20 +329,26 @@ function [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(data
     'logNormal-layer5-ratVisualCortex', ...
     'gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1'};
 
+  % larp_network_arch_list = { ...
+  %   'larpV3P3RL3', ...                       % 1,024
+  %   'larpV5P3RL5', ...                       % 1,024
+  %   'larpV3P2RL3', ...                       % 4,096
+  %   'larpV5P2RL5', ...                       % 4,096
+  %   'larpV1P1RL1', ...                       % 16,384
+  %   'larpV3P1RL3', ...                       % 16,384
+  %   'larpV5P1RL5', ...                       % 16,384
+  %   'larpV1P1RL1-non-decimated-pooling', ... % 65,536
+  %   'larpV3P1RL3-non-decimated-pooling', ... % 65,536
+  %   'larpV5P1RL5-non-decimated-pooling', ... % 65,536
+  %   'larpV1P0RL1', ...                       % 65,536
+  %   'larpV3P0RL3', ...                       % 65,536
+  %   'larpV5P0RL5'};                          % 65,536
+
   larp_network_arch_list = { ...
-    'larpV3P3RL3', ...                       % 1,024
-    'larpV5P3RL5', ...                       % 1,024
-    'larpV3P2RL3', ...                       % 4,096
-    'larpV5P2RL5', ...                       % 4,096
-    'larpV1P1RL1', ...                       % 16,384
-    'larpV3P1RL3', ...                       % 16,384
-    'larpV5P1RL5', ...                       % 16,384
-    'larpV1P1RL1-non-decimated-pooling', ... % 65,536
-    'larpV3P1RL3-non-decimated-pooling', ... % 65,536
-    'larpV5P1RL5-non-decimated-pooling', ... % 65,536
-    'larpV1P0RL1', ...                       % 65,536
-    'larpV3P0RL3', ...                       % 65,536
-    'larpV5P0RL5'};                          % 65,536
+    'larpV3P3RL3', ...
+    'larpV5P3RL5', ...
+    'larpV3P2RL3', ...
+    'larpV5P2RL5'};
 
 
   for larp_network_arch = larp_network_arch_list
