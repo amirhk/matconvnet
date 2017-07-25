@@ -91,6 +91,19 @@ function imdb = loadSavedTwoClassImdb(dataset, posneg_balance, fold_number, debu
     %     case 'balanced-5000'
     %       tmp = load(fullfile(path_to_imdbs, 'mnist-784', 'balanced', 'saved-two-class-mnist-pos1-neg2-balanced-5000-5000-train-5000-5000.mat'));
     %   end
+    case 'imagenet-tiny-two-class-brown-bear-german-shepherd'
+      switch posneg_balance
+        case 'balanced-10'
+          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos73-neg192-balanced-10-10-train-10-10.mat'));
+        case 'balanced-50'
+          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos73-neg192-balanced-50-50-train-50-50.mat'));
+        case 'balanced-100'
+          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos73-neg192-balanced-100-100-train-100-100.mat'));
+        case 'balanced-250'
+          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos73-neg192-balanced-250-250-train-250-250.mat'));
+        case 'balanced-500'
+          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos73-neg192-balanced-500-500-train-500-500.mat'));
+      end
 
     case 'cifar-two-class-deer-horse'
       % currently fold number is not implemented.
