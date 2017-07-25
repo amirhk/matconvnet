@@ -28,6 +28,8 @@ function constructTwoClassImdbs(dataset, positive_class_number, negative_class_n
   afprintf(sprintf('[INFO] Constructing two-class `%s` imdbs...\n', dataset));
   opts.imdb.data_dir = fullfile(getDevPath(), 'data', 'source', dataset);
   switch dataset
+    case 'imagenet-tiny'
+      all_class_imdb = constructImageNetTinyImdb(opts);
     case 'mnist'
       opts.general.network_arch = 'lenet';
       all_class_imdb = constructMnistImdb(opts);
@@ -99,8 +101,8 @@ function constructTwoClassImdbs(dataset, positive_class_number, negative_class_n
   balance_count = 100; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
   balance_count = 250; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
   balance_count = 500; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
-  balance_count = 1000; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
-  balance_count = 2500; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
+  % balance_count = 1000; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
+  % balance_count = 2500; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
 
   % balance_count = 500; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
 
