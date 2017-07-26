@@ -186,11 +186,15 @@ function imdb = getDenslyDownProjectedImdb(imdb, number_of_projection_layers, pr
         vectorized_generated_samples = lognrnd(mu, sigma, 1, (original_dim)^2);
         random_projection_matrix = reshape(generated_samples, projected_dim, tmp_dim);
       end
+    % result below is 4D imdb
     imdb = projectImdbUsingMatrix(imdb, random_projection_matrix);
     if non_linear_layer_count < number_of_non_linear_layers
       switch non_linear_layer_type
         case 'relu'
           imdb.images.data(imdb.images.data < 0) = 0;
+        case 'pooling-max-3x3-stride-2-pad-0101'
+          % great, we can apply vl_nnpool on top of a 4D data...
+          imdb.images.data = vl_nnpool(single(imdb.images.data), [3, 3], 'Stride', 2, 'Pad', [0 1 0 1], 'method', 'max');
         case 'sigmoid'
           imdb.images.data = logsig(imdb.images.data);
         case 'tanh'

@@ -265,8 +265,8 @@ function [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(data
 
 
 
-  experiments{end+1}.imdb = original_imdb;
-  experiments{end}.title = sprintf('%s - %s - Original IMDB', dataset, posneg_balance);
+  % experiments{end+1}.imdb = original_imdb;
+  % experiments{end}.title = sprintf('%s - %s - Original IMDB', dataset, posneg_balance);
 
 
 
@@ -284,16 +284,31 @@ function [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(data
   % % projected_dim_list = [4, 16, 64];
   % projected_dim_list = [16384];
 
-  for projected_dim = projected_dim_list
+  % for projected_dim = projected_dim_list
 
-    if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
-    projection_description = sprintf('larpD1P0RL0 w/ dense_gaussian into %d', projected_dim);
-    projected_imdb = fh_projection_utils.getDenslyDownProjectedImdb(original_imdb, 1, 'dense_gaussian', 0, 'relu', projected_dim);
-    experiments{end+1}.imdb = projected_imdb;
-    experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
-    if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
+  %   if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
+  %   projection_description = sprintf('larpD1P0RL0 w/ dense_gaussian into %d', projected_dim);
+  %   projected_imdb = fh_projection_utils.getDenslyDownProjectedImdb(original_imdb, 1, 'dense_gaussian', 0, 'relu', projected_dim);
+  %   experiments{end+1}.imdb = projected_imdb;
+  %   experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
+  %   if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
 
-  end
+  % end
+
+
+
+  % for projected_dim = projected_dim_list
+
+  %   projected_dim = projected_dim * 4; % because we are doing max pooling!
+
+  %   if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
+  %   projection_description = sprintf('larpD1P0RL1 w/ dense_gaussian into %d', projected_dim);
+  %   projected_imdb = fh_projection_utils.getDenslyDownProjectedImdb(original_imdb, 1, 'dense_gaussian', 1, 'pooling-3x3-stride-2-pad-0101', projected_dim);
+  %   experiments{end+1}.imdb = projected_imdb;
+  %   experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
+  %   if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
+
+  % end
 
 
 
@@ -324,57 +339,57 @@ function [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(data
 
 
 
-  weight_distribution_list = { ...,
-    'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1', ...
-    'logNormal-layer5-ratVisualCortex', ...
-    'gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1'};
+  % weight_distribution_list = { ...,
+  %   'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1', ...
+  %   'logNormal-layer5-ratVisualCortex', ...
+  %   'gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1'};
+
+  % % larp_network_arch_list = { ...
+  % %   'larpV1P1RL1-special-1', ...             % 256
+  % %   'larpV1P1RL1-special-2', ...             % 256
+  % %   'larpV3P3RL3-final-conv-16-kernels', ... % 256 (change # filters in final layer in getLarpArch.m)
+  % %   'larpV5P3RL5-final-conv-16-kernels', ... % 256 (change # filters in final layer in getLarpArch.m)
+  % %   'larpV3P3RL3', ...                       % 1,024
+  % %   'larpV5P3RL5', ...                       % 1,024
+  % %   'larpV3P2RL3', ...                       % 4,096
+  % %   'larpV5P2RL5', ...                       % 4,096
+  % %   'larpV1P1RL1', ...                       % 16,384
+  % %   'larpV3P1RL3', ...                       % 16,384
+  % %   'larpV5P1RL5', ...                       % 16,384
+  % %   'larpV1P1RL1-non-decimated-pooling', ... % 65,536
+  % %   'larpV3P1RL3-non-decimated-pooling', ... % 65,536
+  % %   'larpV5P1RL5-non-decimated-pooling', ... % 65,536
+  % %   'larpV1P0RL1', ...                       % 65,536
+  % %   'larpV3P0RL3', ...                       % 65,536
+  % %   'larpV5P0RL5'};                          % 65,536
 
   % larp_network_arch_list = { ...
-  %   'larpV1P1RL1-special-1', ...             % 256
-  %   'larpV1P1RL1-special-2', ...             % 256
-  %   'larpV3P3RL3-final-conv-16-kernels', ... % 256 (change # filters in final layer in getLarpArch.m)
-  %   'larpV5P3RL5-final-conv-16-kernels', ... % 256 (change # filters in final layer in getLarpArch.m)
-  %   'larpV3P3RL3', ...                       % 1,024
-  %   'larpV5P3RL5', ...                       % 1,024
-  %   'larpV3P2RL3', ...                       % 4,096
-  %   'larpV5P2RL5', ...                       % 4,096
-  %   'larpV1P1RL1', ...                       % 16,384
-  %   'larpV3P1RL3', ...                       % 16,384
-  %   'larpV5P1RL5', ...                       % 16,384
-  %   'larpV1P1RL1-non-decimated-pooling', ... % 65,536
-  %   'larpV3P1RL3-non-decimated-pooling', ... % 65,536
-  %   'larpV5P1RL5-non-decimated-pooling', ... % 65,536
-  %   'larpV1P0RL1', ...                       % 65,536
-  %   'larpV3P0RL3', ...                       % 65,536
-  %   'larpV5P0RL5'};                          % 65,536
-
-  larp_network_arch_list = { ...
-    'larpV1P1RL1-special-1', ...
-    'larpV1P1RL1-special-2', ...
-    'larpV3P3RL3-final-conv-16-kernels', ...
-    'larpV5P3RL5-final-conv-16-kernels', ...
-    'larpV3P3RL3', ...
-    'larpV5P3RL5', ...
-    'larpV3P2RL3', ...
-    'larpV5P2RL5'};
+  %   'larpV1P1RL1-special-1', ...
+  %   'larpV1P1RL1-special-2', ...
+  %   'larpV3P3RL3-final-conv-16-kernels', ...
+  %   'larpV5P3RL5-final-conv-16-kernels', ...
+  %   'larpV3P3RL3', ...
+  %   'larpV5P3RL5', ...
+  %   'larpV3P2RL3', ...
+  %   'larpV5P2RL5'};
 
 
-  for larp_network_arch = larp_network_arch_list
-    larp_network_arch = char(larp_network_arch);
+  % for larp_network_arch = larp_network_arch_list
+  %   larp_network_arch = char(larp_network_arch);
 
-    for weight_distribution = weight_distribution_list
-      larp_weight_init_type = char(weight_distribution);
+  %   for weight_distribution = weight_distribution_list
+  %     larp_weight_init_type = char(weight_distribution);
 
-      if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
-      projection_description = sprintf('%s w/ %s', larp_network_arch, larp_weight_init_type);
-      projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
-      experiments{end+1}.imdb = projected_imdb;
-      experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
-      if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
+  %     if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
+  %     projection_description = sprintf('%s w/ %s', larp_network_arch, larp_weight_init_type);
+  %     projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
+  %     experiments{end+1}.imdb = projected_imdb;
+  %     experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
+  %     if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
 
-    end
+  %   end
 
-  end
+  % end
 
 
 
