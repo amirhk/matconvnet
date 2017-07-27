@@ -195,6 +195,10 @@ function imdb = getDenslyDownProjectedImdb(imdb, number_of_projection_layers, pr
         case 'pooling-max-3x3-stride-2-pad-0101'
           % great, we can apply vl_nnpool on top of a 4D data...
           imdb.images.data = vl_nnpool(single(imdb.images.data), [3, 3], 'Stride', 2, 'Pad', [0 1 0 1], 'method', 'max');
+        case 'relu_w_pooling-3x3-stride-2-pad-0101'
+          % great, we can apply vl_nnpool on top of a 4D data...
+          imdb.images.data = vl_nnpool(single(imdb.images.data), [3, 3], 'Stride', 2, 'Pad', [0 1 0 1], 'method', 'max');
+          imdb.images.data(imdb.images.data < 0) = 0;
         case 'sigmoid'
           imdb.images.data = logsig(imdb.images.data);
         case 'tanh'
