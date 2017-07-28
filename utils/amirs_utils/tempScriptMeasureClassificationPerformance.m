@@ -192,6 +192,15 @@ function all_experiments_single_run = runAllExperimentsOnce(experiment_dir, data
   % afprintf(sprintf('done!\n'));
   larp_network_arch_list = { ...
     'larpV0P0RL0', ...
+    ...
+    ...
+    ...
+    ...
+    ...
+    ...
+    ...
+    ...
+    ...
     ... 'custom-1-L-3-4-', ...                                                      % proj dim = 32 x 32 x 4 = 4096
     ... 'custom-1-L-3-4-relu', ...                                                  % proj dim = 32 x 32 x 4 = 4096
     'custom-1-L-3-4-max-pool', ...                                              % proj dim = 32 x 32 x 4 / (4 ^ 1) = 1024
@@ -409,20 +418,13 @@ function all_experiments_single_run = runAllExperimentsOnce(experiment_dir, data
   [~, tmp_experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, false, false);
   original_imdb = tmp_experiments{1}.imdb;
 
-  % experiments = {};
-  % experiments{end+1} = 'jigar';
-  % experiments = repmat(experiments, 1, 200);
-
-  % keyboard
   for i = 1 : numel(larp_network_arch_list)
     larp_network_arch = larp_network_arch_list{i};
 
-    % weight_init_sequence = getLarpWeightInitSequence(weight_distribution, larp_network_arch);
-  %   getCustomLarpArchitecture(dataset, larp_network_arch, weight_init_sequence)
-  % end
     experiment_options = {};
     % experiment_options.imdb = experiments{i}.imdb;
     experiment_options.imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
+
     experiment_options.dataset = dataset;
     experiment_options.posneg_balance = posneg_balance;
     experiment_options.experiment_parent_dir = experiment_dir;
