@@ -38,6 +38,11 @@ function fh = projectionUtils()
 % -------------------------------------------------------------------------
 function projected_imdb = projectImdbThroughNetwork(imdb, net, forward_pass_depth)
 % -------------------------------------------------------------------------
+  if numel(net.layers) == 0 % net = 'larpV0P0RL0'
+    projected_imdb = imdb;
+    return
+  end
+
   % get imdb
   input_imdb = imdb;
   train_imdb = filterImdbForSet(input_imdb, 1, 3);
