@@ -78,7 +78,8 @@ function tempScriptMeasureClassificationPerformance(dataset, posneg_balance, cla
   % -------------------------------------------------------------------------
   % [~, tmp_experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, false, false);
   % for i = 1 : numel(tmp_experiments)
-  for i = 1 : 200
+  larp_network_arch_list = getLarpNetworkArchList()
+  for i = 1 : numel(larp_network_arch_list)
     all_experiments_multi_run{i}.performance = [];
   end
 
@@ -91,7 +92,7 @@ function tempScriptMeasureClassificationPerformance(dataset, posneg_balance, cla
     afprintf(sprintf('[INFO] done!'));
 
     % for i = 1 : numel(tmp_experiments)
-    for i = 1 : 200
+    for i = 1 : numel(larp_network_arch_list)
       all_experiments_multi_run{i}.performance_metric = classification_method;
       all_experiments_multi_run{i}.performance_mean = mean(all_experiments_multi_run{i}.performance);
       all_experiments_multi_run{i}.performance_std = std(all_experiments_multi_run{i}.performance);
@@ -190,6 +191,88 @@ function all_experiments_single_run = runAllExperimentsOnce(experiment_dir, data
   % afprintf(sprintf('[INFO] Setting up experiment imdbs...\n'));
   % [~, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, false, true);
   % afprintf(sprintf('done!\n'));
+  larp_network_arch_list = getLarpNetworkArchList();
+
+  larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
+
+  [~, tmp_experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, false, false);
+  original_imdb = tmp_experiments{1}.imdb;
+
+  for i = 1 : numel(larp_network_arch_list)
+    larp_network_arch = larp_network_arch_list{i};
+    afprintf(sprintf('[INFO] Testing experiment #%d / %d (larp_network_arch: %s) ...', i, numel(larp_network_arch_list), larp_network_arch));
+
+
+    experiment_options = {};
+    % experiment_options.imdb = experiments{i}.imdb;
+    experiment_options.imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
+
+    experiment_options.dataset = dataset;
+    experiment_options.posneg_balance = posneg_balance;
+    experiment_options.experiment_parent_dir = experiment_dir;
+    experiment_options.debug_flag = false;
+    switch classification_method
+      case '1-knn'
+        experiment_options.number_of_nearest_neighbors = 1;
+        performance = getSimpleTestAccuracyFromKnn(experiment_options);
+      case '3-knn'
+        experiment_options.number_of_nearest_neighbors = 3;
+        performance = getSimpleTestAccuracyFromKnn(experiment_options);
+      case 'c-sep'
+        performance = getAverageClassCSeparation(experiment_options.imdb);
+      case 'libsvm'
+        performance = getSimpleTestAccuracyFromLibSvm(experiment_options);
+      case 'mlp-64-10'
+        experiment_options.number_of_hidden_nodes = [64, 10];
+        performance = getSimpleTestAccuracyFromMLP(experiment_options);
+      case 'mlp-500-100'
+        experiment_options.number_of_hidden_nodes = [500, 100];
+        performance = getSimpleTestAccuracyFromMLP(experiment_options);
+      case 'mlp-500-1000-100'
+        experiment_options.number_of_hidden_nodes = [500, 1000, 100];
+        performance = getSimpleTestAccuracyFromMLP(experiment_options);
+      case 'cnn'
+
+        experiment_options.gpus = 3;
+
+        % TODO: this has to somehow be detected automatically....
+        % experiment_options.conv_network_arch = 'convV0P0RL0+fcV1-RF16CH64';
+        % experiment_options.conv_network_arch = 'convV0P0RL0+fcV1-RF32CH64';
+
+        % experiment_options.conv_network_arch = 'convV1P1RL1-RF32CH3+fcV1-RF16CH64';
+        % experiment_options.conv_network_arch = 'convV3P1RL3-RF32CH3+fcV1-RF16CH64';
+        % experiment_options.conv_network_arch = 'convV5P1RL5-RF32CH3+fcV1-RF16CH64';
+
+        % experiment_options.conv_network_arch = 'convV1P0RL1-RF32CH3+fcV1-RF32CH64';
+        % experiment_options.conv_network_arch = 'convV3P0RL3-RF32CH3+fcV1-RF32CH64';
+        % experiment_options.conv_network_arch = 'convV5P0RL5-RF32CH3+fcV1-RF32CH64';
+
+        [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccuracyFromCnn(experiment_options);
+        performance = best_test_accuracy_mean;
+    end
+    experiments{i}.performance = performance;
+    afprintf(sprintf('[INFO] done!\n'));
+  end
+
+  all_experiments_single_run = experiments;
+
+
+
+
+
+
+% -------------------------------------------------------------------------
+function projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, projection_depth)
+% -------------------------------------------------------------------------
+  fh_projection_utils = projectionUtils;
+  larp_weight_init_sequence = getLarpWeightInitSequence(larp_weight_init_type, larp_network_arch);
+  projection_net = fh_projection_utils.getProjectionNetworkObject(dataset, larp_network_arch, larp_weight_init_sequence);
+  projected_imdb = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, projection_depth);
+
+
+% -------------------------------------------------------------------------
+function larp_network_arch_list = getLarpNetworkArchList()
+% -------------------------------------------------------------------------
   larp_network_arch_list = { ...
     'larpV0P0RL0', ...
     ...
@@ -412,82 +495,6 @@ function all_experiments_single_run = runAllExperimentsOnce(experiment_dir, data
     'custom-5-L-11-4096-max-pool', ...                                           % proj dim = 32 x 32 x 4096 / (4 ^ 5) = 4096
     'custom-5-L-11-4096-relu-max-pool', ...                                      % proj dim = 32 x 32 x 4096 / (4 ^ 5) = 4096
   };
-
-  larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
-
-  [~, tmp_experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, false, false);
-  original_imdb = tmp_experiments{1}.imdb;
-
-  for i = 1 : numel(larp_network_arch_list)
-    larp_network_arch = larp_network_arch_list{i};
-    afprintf(sprintf('[INFO] Testing experiment #%d / %d (larp_network_arch: %s) ...', i, numel(larp_network_arch_list), larp_network_arch));
-
-
-    experiment_options = {};
-    % experiment_options.imdb = experiments{i}.imdb;
-    experiment_options.imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
-
-    experiment_options.dataset = dataset;
-    experiment_options.posneg_balance = posneg_balance;
-    experiment_options.experiment_parent_dir = experiment_dir;
-    experiment_options.debug_flag = false;
-    switch classification_method
-      case '1-knn'
-        experiment_options.number_of_nearest_neighbors = 1;
-        performance = getSimpleTestAccuracyFromKnn(experiment_options);
-      case '3-knn'
-        experiment_options.number_of_nearest_neighbors = 3;
-        performance = getSimpleTestAccuracyFromKnn(experiment_options);
-      case 'c-sep'
-        performance = getAverageClassCSeparation(experiment_options.imdb);
-      case 'libsvm'
-        performance = getSimpleTestAccuracyFromLibSvm(experiment_options);
-      case 'mlp-64-10'
-        experiment_options.number_of_hidden_nodes = [64, 10];
-        performance = getSimpleTestAccuracyFromMLP(experiment_options);
-      case 'mlp-500-100'
-        experiment_options.number_of_hidden_nodes = [500, 100];
-        performance = getSimpleTestAccuracyFromMLP(experiment_options);
-      case 'mlp-500-1000-100'
-        experiment_options.number_of_hidden_nodes = [500, 1000, 100];
-        performance = getSimpleTestAccuracyFromMLP(experiment_options);
-      case 'cnn'
-
-        experiment_options.gpus = 3;
-
-        % TODO: this has to somehow be detected automatically....
-        % experiment_options.conv_network_arch = 'convV0P0RL0+fcV1-RF16CH64';
-        % experiment_options.conv_network_arch = 'convV0P0RL0+fcV1-RF32CH64';
-
-        % experiment_options.conv_network_arch = 'convV1P1RL1-RF32CH3+fcV1-RF16CH64';
-        % experiment_options.conv_network_arch = 'convV3P1RL3-RF32CH3+fcV1-RF16CH64';
-        % experiment_options.conv_network_arch = 'convV5P1RL5-RF32CH3+fcV1-RF16CH64';
-
-        % experiment_options.conv_network_arch = 'convV1P0RL1-RF32CH3+fcV1-RF32CH64';
-        % experiment_options.conv_network_arch = 'convV3P0RL3-RF32CH3+fcV1-RF32CH64';
-        % experiment_options.conv_network_arch = 'convV5P0RL5-RF32CH3+fcV1-RF32CH64';
-
-        [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccuracyFromCnn(experiment_options);
-        performance = best_test_accuracy_mean;
-    end
-    experiments{i}.performance = performance;
-    afprintf(sprintf('[INFO] done!\n'));
-  end
-
-  all_experiments_single_run = experiments;
-
-
-
-
-
-
-% -------------------------------------------------------------------------
-function projected_imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, projection_depth)
-% -------------------------------------------------------------------------
-  fh_projection_utils = projectionUtils;
-  larp_weight_init_sequence = getLarpWeightInitSequence(larp_weight_init_type, larp_network_arch);
-  projection_net = fh_projection_utils.getProjectionNetworkObject(dataset, larp_network_arch, larp_weight_init_sequence);
-  projected_imdb = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, projection_depth);
 
 
 
