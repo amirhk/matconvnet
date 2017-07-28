@@ -52,6 +52,8 @@ function network_opts = cnnInit(input_opts)
   switch architecture_type
     case 'larp'
       net = getLarpArchitecture(dataset, network_arch, weight_init_sequence);
+    case 'cust' % custom-
+      net = getLarpArchitecture(dataset, network_arch, weight_init_sequence);
     case 'conv'
       net = getConvArchitecture(dataset, network_arch);
     otherwise
