@@ -82,10 +82,10 @@ function dumb_array = tmpScriptCalculateDistances2(dataset, posneg_balance, igno
     end
 
     subplot(numel(experiments) - 1, 2, 1 + 2 * (k - 2)),
-    subplotHistogramOfWithinAndBetweenDistances(within_class_distances_original_imdb, between_class_distances_original_imdb, 'Normalized Original Distances');
+    subplotHistogramOfWithinAndBetweenDistances(within_class_distances_original_imdb, between_class_distances_original_imdb, sprintf('Normalized Distances - %s', experiments{1}.title));
 
     subplot(numel(experiments) - 1, 2, 2 + 2 * (k - 2)),
-    subplotHistogramOfWithinAndBetweenDistances(within_class_distances_projected_imdb, between_class_distances_projected_imdb, 'Normalized Projected Distances');
+    subplotHistogramOfWithinAndBetweenDistances(within_class_distances_projected_imdb, between_class_distances_projected_imdb, sprintf('Normalized Distances - %s', experiments{k}.title));
 
     % keyboard
     % ratio_of_distances = pdist_original_imdb ./ pdist_projected_imdb;
@@ -130,13 +130,21 @@ function subplotHistogramOfWithinAndBetweenDistances(within_class_distances, bet
   normalized_within_class_distances = (within_class_distances - min_distance) / (max_distance - min_distance);
   normalized_between_class_distances = (between_class_distances - min_distance) / (max_distance - min_distance);
 
+  % normalized_within_class_distances = within_class_distances;
+  % normalized_between_class_distances = between_class_distances;
+
   legend_entries = { ...
     sprintf('within dist - %.3f +/- %.3f', mean(normalized_within_class_distances), std(normalized_within_class_distances)),  ...
     sprintf('between dist - %.3f +/- %.3f', mean(normalized_between_class_distances), std(normalized_between_class_distances))};
 
-  x_ticks = -0.1:0.025:1.1;
+  x_ticks = 0:0.025:1;
+  % x_ticks = 0:100:10000;
+  % x_ticks = 0:250:25000;
   % y_limits = [0, numel(all_distances)];
-  y_limits = [0, 1] / 3;
+  % y_limits = [0, 1] / 3;
+  % y_limits = [0, 0.1];
+  y_limits = [0, 0.3];
+
 
   hold on
   histogram( ...
@@ -157,6 +165,8 @@ function subplotHistogramOfWithinAndBetweenDistances(within_class_distances, bet
     color_palette{2}, ...
     'facealpha', ...
     0.4);
+  % xlim([0, 7000]);
+  % ylim([0, 0.05]);
   ylim(y_limits);
   title(title_string);
   hold off

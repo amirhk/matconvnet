@@ -248,8 +248,9 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
 
         case 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1'
           tmp_kernels = getGaussianKernelsWithIdentityCovariance(k, m, n, 1, 1);
-          layerWeights{1} = init_multiplier * tmp_kernels;
-          % layerWeights{1} = tmp_kernels / sqrt(n);
+          % layerWeights{1} = init_multiplier * tmp_kernels;
+          % layerWeights{1} = tmp_kernels;
+          layerWeights{1} = tmp_kernels / sqrt(n);
           layerWeights{2} = zeros(1, n, 'single');
         case 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-10'
           tmp_kernels = getGaussianKernelsWithIdentityCovariance(k, m, n, 1, 10);
