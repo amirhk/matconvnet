@@ -419,6 +419,7 @@ function all_experiments_single_run = runAllExperimentsOnce(experiment_dir, data
   original_imdb = tmp_experiments{1}.imdb;
 
   for i = 1 : numel(larp_network_arch_list)
+    afprintf(sprintf('[INFO] Testing experiment #%d / %d ...\n', i, numel(larp_network_arch_list)));
     larp_network_arch = larp_network_arch_list{i};
 
     experiment_options = {};
@@ -469,6 +470,7 @@ function all_experiments_single_run = runAllExperimentsOnce(experiment_dir, data
         performance = best_test_accuracy_mean;
     end
     experiments{i}.performance = performance;
+    afprintf(sprintf('[INFO] done!'));
   end
 
   all_experiments_single_run = experiments;
