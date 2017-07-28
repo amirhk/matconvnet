@@ -78,7 +78,7 @@ function tempScriptMeasureClassificationPerformance(dataset, posneg_balance, cla
   % -------------------------------------------------------------------------
   % [~, tmp_experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, false, false);
   % for i = 1 : numel(tmp_experiments)
-  larp_network_arch_list = getLarpNetworkArchList()
+  larp_network_arch_list = getLarpNetworkArchList();
   for i = 1 : numel(larp_network_arch_list)
     all_experiments_multi_run{i}.performance = [];
   end
