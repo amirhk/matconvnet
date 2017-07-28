@@ -29,7 +29,7 @@ function net = getLarpArchitecture(dataset, network_arch, weight_init_sequence)
   net.layers = {};
 
   if strfind(network_arch, 'custom-')
-    net = getCustomLarpArchitecture(dataset, network_arch, weight_init_sequence)
+    net = getCustomLarpArchitecture(dataset, network_arch, weight_init_sequence);
   end
   return
 
