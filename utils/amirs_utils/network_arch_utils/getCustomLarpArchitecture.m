@@ -38,7 +38,7 @@ function net = getCustomLarpArchitecture(dataset, network_arch, weight_init_sequ
 
   number_of_blocks = str2num(getStringParameterStartingAtIndex(network_arch, 8));
   larp_layer_kernel_width = str2num(getStringParameterStartingAtIndex(network_arch, 12)); assert(mod(larp_layer_kernel_width, 2) == 1);
-  larp_layer_kernel_count = str2num(getStringParameterStartingAtIndex(network_arch, 14));
+  larp_layer_kernel_count = str2num(getStringParameterStartingAtIndex(network_arch, 12 + length(num2str(larp_layer_kernel_width)) + 1)); % what a hack, smh
 
   should_add_relu_per_block = false;
   should_add_max_pooling_per_block = false;
