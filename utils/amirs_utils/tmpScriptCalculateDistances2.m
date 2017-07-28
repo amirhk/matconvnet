@@ -130,7 +130,9 @@ function subplotHistogramOfWithinAndBetweenDistances(within_class_distances, bet
   normalized_within_class_distances = (within_class_distances - min_distance) / (max_distance - min_distance);
   normalized_between_class_distances = (between_class_distances - min_distance) / (max_distance - min_distance);
 
-  legend_entries = {'within class dist', 'between class dist'};
+  legend_entries = { ...
+    sprintf('within dist - %.3f +/- %.3f', mean(normalized_within_class_distances), std(normalized_within_class_distances)),  ...
+    sprintf('between dist - %.3f +/- %.3f', mean(normalized_between_class_distances), std(normalized_between_class_distances))};
 
   x_ticks = -0.1:0.025:1.1;
   % y_limits = [0, numel(all_distances)];
