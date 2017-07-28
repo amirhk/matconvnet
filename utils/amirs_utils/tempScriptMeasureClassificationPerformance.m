@@ -420,7 +420,7 @@ function all_experiments_single_run = runAllExperimentsOnce(experiment_dir, data
 
   for i = 1 : numel(larp_network_arch_list)
     larp_network_arch = larp_network_arch_list{i};
-    afprintf(sprintf('[INFO] Testing experiment #%d / %d (larp_network_arch: %s) ...\n', i, numel(larp_network_arch_list), larp_network_arch));
+    afprintf(sprintf('[INFO] Testing experiment #%d / %d (larp_network_arch: %s) ...', i, numel(larp_network_arch_list), larp_network_arch));
 
 
     experiment_options = {};
@@ -471,7 +471,7 @@ function all_experiments_single_run = runAllExperimentsOnce(experiment_dir, data
         performance = best_test_accuracy_mean;
     end
     experiments{i}.performance = performance;
-    afprintf(sprintf('[INFO] done!'));
+    afprintf(sprintf('[INFO] done!\n'));
   end
 
   all_experiments_single_run = experiments;
