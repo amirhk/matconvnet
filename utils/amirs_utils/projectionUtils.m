@@ -177,7 +177,8 @@ function imdb = getDenslyDownProjectedImdb(imdb, number_of_projection_layers, pr
 
     switch projection_layer_type
       case 'dense_gaussian'
-        random_projection_matrix = randn(projected_dim, tmp_dim);
+        % keyboard
+        random_projection_matrix = randn(projected_dim, tmp_dim) / sqrt(projected_dim);
       case 'dense_log_normal'
         lognormal_mean = -0.702;
         lognormal_var = 0.9355;
@@ -203,6 +204,8 @@ function imdb = getDenslyDownProjectedImdb(imdb, number_of_projection_layers, pr
           imdb.images.data = logsig(imdb.images.data);
         case 'tanh'
           imdb.images.data = tanh(imdb.images.data);
+        otherwise
+          throwException('[ERROR] non_linear_layer_type not recognized.');
       end
       non_linear_layer_count = non_linear_layer_count + 1;
     end
