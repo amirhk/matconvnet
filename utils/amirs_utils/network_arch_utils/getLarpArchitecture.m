@@ -28,6 +28,11 @@ function net = getLarpArchitecture(dataset, network_arch, weight_init_sequence)
   fh = networkInitializationUtils;
   net.layers = {};
 
+  if strfind(network_arch, 'custom-')
+    net = getCustomLarpArchitecture(dataset, network_arch, weight_init_sequence)
+  end
+  return
+
   switch network_arch
 
     % ------------------------------------------------------------------------------------------------------------------------------------------------------------

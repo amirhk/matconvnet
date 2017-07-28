@@ -285,28 +285,28 @@ function [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(data
   % projected_dim_list = [4, 16, 64];
   % projected_dim_list = [16384];
 
-  for projected_dim = projected_dim_list
+  % for projected_dim = projected_dim_list
 
-    if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
-    projection_description = sprintf('larpD1P0RL0 w/ dense_gaussian into %d', projected_dim);
-    projected_imdb = fh_projection_utils.getDenslyDownProjectedImdb(original_imdb, 1, 'dense_gaussian', 0, 'relu', projected_dim);
-    experiments{end+1}.imdb = projected_imdb;
-    experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
-    if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
+  %   if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
+  %   projection_description = sprintf('larpD1P0RL0 w/ dense_gaussian into %d', projected_dim);
+  %   projected_imdb = fh_projection_utils.getDenslyDownProjectedImdb(original_imdb, 1, 'dense_gaussian', 0, 'relu', projected_dim);
+  %   experiments{end+1}.imdb = projected_imdb;
+  %   experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
+  %   if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
 
-  end
+  % end
 
 
-  for projected_dim = projected_dim_list
+  % for projected_dim = projected_dim_list
 
-    if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
-    projection_description = sprintf('larpD1P0RL1 w/ dense_gaussian into %d', projected_dim);
-    projected_imdb = fh_projection_utils.getDenslyDownProjectedImdb(original_imdb, 1, 'dense_gaussian', 1, 'relu', projected_dim);
-    experiments{end+1}.imdb = projected_imdb;
-    experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
-    if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
+  %   if debug_flag, afprintf(sprintf('[INFO] Loading projected imdb...\n')); end;
+  %   projection_description = sprintf('larpD1P0RL1 w/ dense_gaussian into %d', projected_dim);
+  %   projected_imdb = fh_projection_utils.getDenslyDownProjectedImdb(original_imdb, 1, 'dense_gaussian', 1, 'relu', projected_dim);
+  %   experiments{end+1}.imdb = projected_imdb;
+  %   experiments{end}.title = sprintf('%s - %s - projected through: %s', dataset, posneg_balance, projection_description);
+  %   if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
 
-  end
+  % end
 
 
   % for projected_dim = projected_dim_list
@@ -354,15 +354,15 @@ function [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(data
 
 
 
-  weight_distribution_list = { ...,
-    'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1', ...
-    'logNormal-layer5-ratVisualCortex', ...
-    'gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1'};
-
   % weight_distribution_list = { ...,
-  %   'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1'};%, ...
-  %   % 'logNormal-layer5-ratVisualCortex', ...
-  %   % 'gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1'};
+  %   'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1', ...
+  %   'logNormal-layer5-ratVisualCortex', ...
+  %   'gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1'};
+
+  weight_distribution_list = { ...,
+    'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1'};%, ...
+    % 'logNormal-layer5-ratVisualCortex', ...
+    % 'gaussian-CentreSurroundCovariance-randomDivide-10-MuDivide-1-SigmaDivide-1'};
 
   % larp_network_arch_list = { ...
   %   'larpV1P1RL1-special-1', ...             % 256
@@ -384,14 +384,178 @@ function [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(data
   %   'larpV5P0RL5'};                          % 65,536
 
   larp_network_arch_list = { ...
-    'larpV1P1RL1-special-1', ...
-    'larpV1P1RL1-special-2', ...
-    'larpV3P3RL3-final-conv-16-kernels', ...
-    'larpV5P3RL5-final-conv-16-kernels', ...
-    'larpV3P3RL3', ...
-    'larpV5P3RL5', ...
-    'larpV3P2RL3', ...
-    'larpV5P2RL5'};
+    ... 'custom-1-L-3-4-', ...                                                      % proj dim = 32 x 32 x 4 = 4096
+    ... 'custom-1-L-3-4-relu', ...                                                  % proj dim = 32 x 32 x 4 = 4096
+    'custom-1-L-3-4-max-pool', ...                                              % proj dim = 32 x 32 x 4 / (4 ^ 1) = 1024
+    'custom-1-L-3-4-relu-max-pool', ...                                         % proj dim = 32 x 32 x 4 / (4 ^ 1) = 1024
+    ... 'custom-1-L-5-4-', ...                                                      % proj dim = 32 x 32 x 4 = 4096
+    ... 'custom-1-L-5-4-relu', ...                                                  % proj dim = 32 x 32 x 4 = 4096
+    'custom-1-L-5-4-max-pool', ...                                              % proj dim = 32 x 32 x 4 / (4 ^ 1) = 1024
+    'custom-1-L-5-4-relu-max-pool', ...                                         % proj dim = 32 x 32 x 4 / (4 ^ 1) = 1024
+    ... 'custom-1-L-7-4-', ...                                                      % proj dim = 32 x 32 x 4 = 4096
+    ... 'custom-1-L-7-4-relu', ...                                                  % proj dim = 32 x 32 x 4 = 4096
+    'custom-1-L-7-4-max-pool', ...                                              % proj dim = 32 x 32 x 4 / (4 ^ 1) = 1024
+    'custom-1-L-7-4-relu-max-pool', ...                                         % proj dim = 32 x 32 x 4 / (4 ^ 1) = 1024
+    ...
+    ... 'custom-1-L-3-16-', ...                                                     % proj dim = 32 x 32 x 16 = 16384
+    ... 'custom-1-L-3-16-relu', ...                                                 % proj dim = 32 x 32 x 16 = 16384
+    'custom-1-L-3-16-max-pool', ...                                             % proj dim = 32 x 32 x 16 / (4 ^ 1) = 4096
+    'custom-1-L-3-16-relu-max-pool', ...                                        % proj dim = 32 x 32 x 16 / (4 ^ 1) = 4096
+    ... 'custom-1-L-5-16-', ...                                                     % proj dim = 32 x 32 x 16 = 16384
+    ... 'custom-1-L-5-16-relu', ...                                                 % proj dim = 32 x 32 x 16 = 16384
+    'custom-1-L-5-16-max-pool', ...                                             % proj dim = 32 x 32 x 16 / (4 ^ 1) = 4096
+    'custom-1-L-5-16-relu-max-pool', ...                                        % proj dim = 32 x 32 x 16 / (4 ^ 1) = 4096
+    ... 'custom-1-L-7-16-', ...                                                     % proj dim = 32 x 32 x 16 = 16384
+    ... 'custom-1-L-7-16-relu', ...                                                 % proj dim = 32 x 32 x 16 = 16384
+    'custom-1-L-7-16-max-pool', ...                                             % proj dim = 32 x 32 x 16 / (4 ^ 1) = 4096
+    'custom-1-L-7-16-relu-max-pool', ...                                        % proj dim = 32 x 32 x 16 / (4 ^ 1) = 4096
+    ...
+    ... 'custom-1-L-3-64-', ...                                                     % proj dim = 32 x 32 x 64 = 65536
+    ... 'custom-1-L-3-64-relu', ...                                                 % proj dim = 32 x 32 x 64 = 65536
+    'custom-1-L-3-64-max-pool', ...                                             % proj dim = 32 x 32 x 64 / (4 ^ 1) = 16384
+    'custom-1-L-3-64-relu-max-pool', ...                                        % proj dim = 32 x 32 x 64 / (4 ^ 1) = 16384
+    ... 'custom-1-L-5-64-', ...                                                     % proj dim = 32 x 32 x 64 = 65536
+    ... 'custom-1-L-5-64-relu', ...                                                 % proj dim = 32 x 32 x 64 = 65536
+    'custom-1-L-5-64-max-pool', ...                                             % proj dim = 32 x 32 x 64 / (4 ^ 1) = 16384
+    'custom-1-L-5-64-relu-max-pool', ...                                        % proj dim = 32 x 32 x 64 / (4 ^ 1) = 16384
+    ... 'custom-1-L-7-64-', ...                                                     % proj dim = 32 x 32 x 64 = 65536
+    ... 'custom-1-L-7-64-relu', ...                                                 % proj dim = 32 x 32 x 64 = 65536
+    'custom-1-L-7-64-max-pool', ...                                             % proj dim = 32 x 32 x 64 / (4 ^ 1) = 16384
+    'custom-1-L-7-64-relu-max-pool', ...                                        % proj dim = 32 x 32 x 64 / (4 ^ 1) = 16384
+    ...
+    ... 'custom-1-L-3-256-', ...                                                    % proj dim = 32 x 32 x 256 = 262144
+    ... 'custom-1-L-3-256-relu', ...                                                % proj dim = 32 x 32 x 256 = 262144
+    'custom-1-L-3-256-max-pool', ...                                            % proj dim = 32 x 32 x 256 / (4 ^ 1) = 65536
+    'custom-1-L-3-256-relu-max-pool', ...                                       % proj dim = 32 x 32 x 256 / (4 ^ 1) = 65536
+    ... 'custom-1-L-5-256-', ...                                                    % proj dim = 32 x 32 x 256 = 262144
+    ... 'custom-1-L-5-256-relu', ...                                                % proj dim = 32 x 32 x 256 = 262144
+    'custom-1-L-5-256-max-pool', ...                                            % proj dim = 32 x 32 x 256 / (4 ^ 1) = 65536
+    'custom-1-L-5-256-relu-max-pool', ...                                       % proj dim = 32 x 32 x 256 / (4 ^ 1) = 65536
+    ... 'custom-1-L-7-256-', ...                                                    % proj dim = 32 x 32 x 256 = 262144
+    ... 'custom-1-L-7-256-relu', ...                                                % proj dim = 32 x 32 x 256 = 262144
+    'custom-1-L-7-256-max-pool', ...                                            % proj dim = 32 x 32 x 256 / (4 ^ 1) = 65536
+    'custom-1-L-7-256-relu-max-pool', ...                                       % proj dim = 32 x 32 x 256 / (4 ^ 1) = 65536
+    ...
+    ...
+    ...
+    ...
+    ...
+    ...
+    ...
+    ...
+    ...
+    ... 'custom-3-L-3-4-', ...                                                      % proj dim = 32 x 32 x 4 = 4096
+    ... 'custom-3-L-3-4-relu', ...                                                  % proj dim = 32 x 32 x 4 = 4096
+    'custom-3-L-3-4-max-pool', ...                                              % proj dim = 32 x 32 x 4 / (4 ^ 3) = 64
+    'custom-3-L-3-4-relu-max-pool', ...                                         % proj dim = 32 x 32 x 4 / (4 ^ 3) = 64
+    ... 'custom-3-L-5-4-', ...                                                      % proj dim = 32 x 32 x 4 = 4096
+    ... 'custom-3-L-5-4-relu', ...                                                  % proj dim = 32 x 32 x 4 = 4096
+    'custom-3-L-5-4-max-pool', ...                                              % proj dim = 32 x 32 x 4 / (4 ^ 3) = 64
+    'custom-3-L-5-4-relu-max-pool', ...                                         % proj dim = 32 x 32 x 4 / (4 ^ 3) = 64
+    ... 'custom-3-L-7-4-', ...                                                      % proj dim = 32 x 32 x 4 = 4096
+    ... 'custom-3-L-7-4-relu', ...                                                  % proj dim = 32 x 32 x 4 = 4096
+    'custom-3-L-7-4-max-pool', ...                                              % proj dim = 32 x 32 x 4 / (4 ^ 3) = 64
+    'custom-3-L-7-4-relu-max-pool', ...                                         % proj dim = 32 x 32 x 4 / (4 ^ 3) = 64
+    ...
+    ... 'custom-3-L-3-16-', ...                                                     % proj dim = 32 x 32 x 16 = 16384
+    ... 'custom-3-L-3-16-relu', ...                                                 % proj dim = 32 x 32 x 16 = 16384
+    'custom-3-L-3-16-max-pool', ...                                             % proj dim = 32 x 32 x 16 / (4 ^ 3) = 256
+    'custom-3-L-3-16-relu-max-pool', ...                                        % proj dim = 32 x 32 x 16 / (4 ^ 3) = 256
+    ... 'custom-3-L-5-16-', ...                                                     % proj dim = 32 x 32 x 16 = 16384
+    ... 'custom-3-L-5-16-relu', ...                                                 % proj dim = 32 x 32 x 16 = 16384
+    'custom-3-L-5-16-max-pool', ...                                             % proj dim = 32 x 32 x 16 / (4 ^ 3) = 256
+    'custom-3-L-5-16-relu-max-pool', ...                                        % proj dim = 32 x 32 x 16 / (4 ^ 3) = 256
+    ... 'custom-3-L-7-16-', ...                                                     % proj dim = 32 x 32 x 16 = 16384
+    ... 'custom-3-L-7-16-relu', ...                                                 % proj dim = 32 x 32 x 16 = 16384
+    'custom-3-L-7-16-max-pool', ...                                             % proj dim = 32 x 32 x 16 / (4 ^ 3) = 256
+    'custom-3-L-7-16-relu-max-pool', ...                                        % proj dim = 32 x 32 x 16 / (4 ^ 3) = 256
+    ...
+    ... 'custom-3-L-3-64-', ...                                                     % proj dim = 32 x 32 x 64 = 65536
+    ... 'custom-3-L-3-64-relu', ...                                                 % proj dim = 32 x 32 x 64 = 65536
+    'custom-3-L-3-64-max-pool', ...                                             % proj dim = 32 x 32 x 64 / (4 ^ 3) = 1024
+    'custom-3-L-3-64-relu-max-pool', ...                                        % proj dim = 32 x 32 x 64 / (4 ^ 3) = 1024
+    ... 'custom-3-L-5-64-', ...                                                     % proj dim = 32 x 32 x 64 = 65536
+    ... 'custom-3-L-5-64-relu', ...                                                 % proj dim = 32 x 32 x 64 = 65536
+    'custom-3-L-5-64-max-pool', ...                                             % proj dim = 32 x 32 x 64 / (4 ^ 3) = 1024
+    'custom-3-L-5-64-relu-max-pool', ...                                        % proj dim = 32 x 32 x 64 / (4 ^ 3) = 1024
+    ... 'custom-3-L-7-64-', ...                                                     % proj dim = 32 x 32 x 64 = 65536
+    ... 'custom-3-L-7-64-relu', ...                                                 % proj dim = 32 x 32 x 64 = 65536
+    'custom-3-L-7-64-max-pool', ...                                             % proj dim = 32 x 32 x 64 / (4 ^ 3) = 1024
+    'custom-3-L-7-64-relu-max-pool', ...                                        % proj dim = 32 x 32 x 64 / (4 ^ 3) = 1024
+    ...
+    ... 'custom-3-L-3-256-', ...                                                    % proj dim = 32 x 32 x 256 = 262144
+    ... 'custom-3-L-3-256-relu', ...                                                % proj dim = 32 x 32 x 256 = 262144
+    'custom-3-L-3-256-max-pool', ...                                            % proj dim = 32 x 32 x 256 / (4 ^ 3) = 4096
+    'custom-3-L-3-256-relu-max-pool', ...                                       % proj dim = 32 x 32 x 256 / (4 ^ 3) = 4096
+    ... 'custom-3-L-5-256-', ...                                                    % proj dim = 32 x 32 x 256 = 262144
+    ... 'custom-3-L-5-256-relu', ...                                                % proj dim = 32 x 32 x 256 = 262144
+    'custom-3-L-5-256-max-pool', ...                                            % proj dim = 32 x 32 x 256 / (4 ^ 3) = 4096
+    'custom-3-L-5-256-relu-max-pool', ...                                       % proj dim = 32 x 32 x 256 / (4 ^ 3) = 4096
+    ... 'custom-3-L-7-256-', ...                                                    % proj dim = 32 x 32 x 256 = 262144
+    ... 'custom-3-L-7-256-relu', ...                                                % proj dim = 32 x 32 x 256 = 262144
+    'custom-3-L-7-256-max-pool', ...                                            % proj dim = 32 x 32 x 256 / (4 ^ 3) = 4096
+    'custom-3-L-7-256-relu-max-pool', ...                                       % proj dim = 32 x 32 x 256 / (4 ^ 3) = 4096
+    ...
+    ...
+    ...
+    ...
+    ...
+    ...
+    ...
+    ...
+    ...
+    ... 'custom-5-L-3-4-', ...                                                      % proj dim = 32 x 32 x 4 = 4096
+    ... 'custom-5-L-3-4-relu', ...                                                  % proj dim = 32 x 32 x 4 = 4096
+    'custom-5-L-3-4-max-pool', ...                                              % proj dim = 32 x 32 x 4 / (4 ^ 5) = 4
+    'custom-5-L-3-4-relu-max-pool', ...                                         % proj dim = 32 x 32 x 4 / (4 ^ 5) = 4
+    ... 'custom-5-L-5-4-', ...                                                      % proj dim = 32 x 32 x 4 = 4096
+    ... 'custom-5-L-5-4-relu', ...                                                  % proj dim = 32 x 32 x 4 = 4096
+    'custom-5-L-5-4-max-pool', ...                                              % proj dim = 32 x 32 x 4 / (4 ^ 5) = 4
+    'custom-5-L-5-4-relu-max-pool', ...                                         % proj dim = 32 x 32 x 4 / (4 ^ 5) = 4
+    ... 'custom-5-L-7-4-', ...                                                      % proj dim = 32 x 32 x 4 = 4096
+    ... 'custom-5-L-7-4-relu', ...                                                  % proj dim = 32 x 32 x 4 = 4096
+    'custom-5-L-7-4-max-pool', ...                                              % proj dim = 32 x 32 x 4 / (4 ^ 5) = 4
+    'custom-5-L-7-4-relu-max-pool', ...                                         % proj dim = 32 x 32 x 4 / (4 ^ 5) = 4
+    ...
+    ... 'custom-5-L-3-16-', ...                                                     % proj dim = 32 x 32 x 16 = 16384
+    ... 'custom-5-L-3-16-relu', ...                                                 % proj dim = 32 x 32 x 16 = 16384
+    'custom-5-L-3-16-max-pool', ...                                             % proj dim = 32 x 32 x 16 / (4 ^ 5) = 16
+    'custom-5-L-3-16-relu-max-pool', ...                                        % proj dim = 32 x 32 x 16 / (4 ^ 5) = 16
+    ... 'custom-5-L-5-16-', ...                                                     % proj dim = 32 x 32 x 16 = 16384
+    ... 'custom-5-L-5-16-relu', ...                                                 % proj dim = 32 x 32 x 16 = 16384
+    'custom-5-L-5-16-max-pool', ...                                             % proj dim = 32 x 32 x 16 / (4 ^ 5) = 16
+    'custom-5-L-5-16-relu-max-pool', ...                                        % proj dim = 32 x 32 x 16 / (4 ^ 5) = 16
+    ... 'custom-5-L-7-16-', ...                                                     % proj dim = 32 x 32 x 16 = 16384
+    ... 'custom-5-L-7-16-relu', ...                                                 % proj dim = 32 x 32 x 16 = 16384
+    'custom-5-L-7-16-max-pool', ...                                             % proj dim = 32 x 32 x 16 / (4 ^ 5) = 16
+    'custom-5-L-7-16-relu-max-pool', ...                                        % proj dim = 32 x 32 x 16 / (4 ^ 5) = 16
+    ...
+    ... 'custom-5-L-3-64-', ...                                                     % proj dim = 32 x 32 x 64 = 65536
+    ... 'custom-5-L-3-64-relu', ...                                                 % proj dim = 32 x 32 x 64 = 65536
+    'custom-5-L-3-64-max-pool', ...                                             % proj dim = 32 x 32 x 64 / (4 ^ 5) = 64
+    'custom-5-L-3-64-relu-max-pool', ...                                        % proj dim = 32 x 32 x 64 / (4 ^ 5) = 64
+    ... 'custom-5-L-5-64-', ...                                                     % proj dim = 32 x 32 x 64 = 65536
+    ... 'custom-5-L-5-64-relu', ...                                                 % proj dim = 32 x 32 x 64 = 65536
+    'custom-5-L-5-64-max-pool', ...                                             % proj dim = 32 x 32 x 64 / (4 ^ 5) = 64
+    'custom-5-L-5-64-relu-max-pool', ...                                        % proj dim = 32 x 32 x 64 / (4 ^ 5) = 64
+    ... 'custom-5-L-7-64-', ...                                                     % proj dim = 32 x 32 x 64 = 65536
+    ... 'custom-5-L-7-64-relu', ...                                                 % proj dim = 32 x 32 x 64 = 65536
+    'custom-5-L-7-64-max-pool', ...                                             % proj dim = 32 x 32 x 64 / (4 ^ 5) = 64
+    'custom-5-L-7-64-relu-max-pool', ...                                        % proj dim = 32 x 32 x 64 / (4 ^ 5) = 64
+    ...
+    ... 'custom-5-L-3-256-', ...                                                    % proj dim = 32 x 32 x 256 = 262144
+    ... 'custom-5-L-3-256-relu', ...                                                % proj dim = 32 x 32 x 256 = 262144
+    'custom-5-L-3-256-max-pool', ...                                            % proj dim = 32 x 32 x 256 / (4 ^ 5) = 256
+    'custom-5-L-3-256-relu-max-pool', ...                                       % proj dim = 32 x 32 x 256 / (4 ^ 5) = 256
+    ... 'custom-5-L-5-256-', ...                                                    % proj dim = 32 x 32 x 256 = 262144
+    ... 'custom-5-L-5-256-relu', ...                                                % proj dim = 32 x 32 x 256 = 262144
+    'custom-5-L-5-256-max-pool', ...                                            % proj dim = 32 x 32 x 256 / (4 ^ 5) = 256
+    'custom-5-L-5-256-relu-max-pool', ...                                       % proj dim = 32 x 32 x 256 / (4 ^ 5) = 256
+    ... 'custom-5-L-7-256-', ...                                                    % proj dim = 32 x 32 x 256 = 262144
+    ... 'custom-5-L-7-256-relu', ...                                                % proj dim = 32 x 32 x 256 = 262144
+    'custom-5-L-7-256-max-pool', ...                                            % proj dim = 32 x 32 x 256 / (4 ^ 5) = 256
+    'custom-5-L-7-256-relu-max-pool', ...                                       % proj dim = 32 x 32 x 256 / (4 ^ 5) = 256
+  };
 
 
   for larp_network_arch = larp_network_arch_list

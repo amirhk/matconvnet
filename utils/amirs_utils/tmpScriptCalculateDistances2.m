@@ -28,7 +28,8 @@ function dumb_array = tmpScriptCalculateDistances2(dataset, posneg_balance, igno
   % -------------------------------------------------------------------------
   %                                                                     Setup
   % -------------------------------------------------------------------------
-  dumb_array = {};
+  distance_metric = 'Euclidean';
+  % distance_metric = 'Mahalanobis';
 
   [~, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, true, false);
   % keyboard
@@ -47,11 +48,9 @@ function dumb_array = tmpScriptCalculateDistances2(dataset, posneg_balance, igno
     number_of_pairs = number_of_samples * (number_of_samples - 1) / 2;
 
     % TODO... do any of the RPs change ordering of data points???????
-    pdist_original_imdb = pdist(vectorized_original_imdb.images.data);
-    pdist_projected_imdb = pdist(vectorized_projected_imdb.images.data);
 
-    squareform_pdist_original_imdb = squareform(pdist(vectorized_original_imdb.images.data));
-    squareform_pdist_projected_imdb = squareform(pdist(vectorized_projected_imdb.images.data));
+    squareform_pdist_original_imdb = getSquareformPdist(vectorized_original_imdb, distance_metric);
+    squareform_pdist_projected_imdb = getSquareformPdist(vectorized_projected_imdb, distance_metric);
 
     between_class_distances_original_imdb = [];
     between_class_distances_projected_imdb = [];
@@ -93,6 +92,46 @@ function dumb_array = tmpScriptCalculateDistances2(dataset, posneg_balance, igno
     % subplot_title = (sprintf('Ratio of Distances - %s to Original', experiments{k}.title));
     % subplotBeef(ratio_of_distances, subplot_title)
   end
+
+% -------------------------------------------------------------------------
+function distance_matrix = getSquareformPdist(imdb, distance_metric)
+% -------------------------------------------------------------------------
+  switch distance_metric
+    case 'Euclidean'
+      distance_matrix = squareform(pdist(imdb.images.data));
+    case 'Mahalanobis'
+      distance_matrix = getSquareformPdistMahalanobis(imdb);
+    otherwise
+      throwException('[ERROR] Euclidean not recognized.');
+  end
+
+
+% -------------------------------------------------------------------------
+function distance_matrix_mahalanobis = getSquareformPdistMahalanobis(vectorized_imdb)
+% -------------------------------------------------------------------------
+  % imdb is already vectorized, do not vectorize again!
+  number_of_samples = size(vectorized_imdb.images.data, 4);
+  number_of_classes = numel(unique(vectorized_imdb.images.labels));
+  distance_matrix_mahalanobis = zeros(number_of_samples, number_of_samples);
+
+  mean_vectors = {};
+  covariance_matrices = {};
+
+  for i = 1 : number_of_classes
+    data_for_class = vectorized_imdb.images.data(vectorized_imdb.images.labels == i, :);
+    mean_vectors.(sprintf('class_%d', i)) = mean(data_for_class);
+    covariance_matrices.(sprintf('class_%d', i)) = cov(data_for_class);
+  end
+
+
+  for i = 1 : number_of_samples
+    for j = i + 1 : number_of_samples
+
+    end
+  end
+
+
+
 
 
 % -------------------------------------------------------------------------
