@@ -389,15 +389,15 @@ function all_experiments_single_run = runAllExperimentsOnce(experiment_dir, data
     ... 'custom-5-L-3-1024-', ...                                                   % proj dim = 32 x 32 x 1024 = 1048576
     ... 'custom-5-L-3-1024-relu', ...                                               % proj dim = 32 x 32 x 1024 = 1048576
     'custom-5-L-3-1024-max-pool', ...                                           % proj dim = 32 x 32 x 1024 / (4 ^ 5) = 1024
-    'custom-5-L-3-1024-relu-max-pool', ..                                       % proj dim = 32 x 32 x 1024 / (4 ^ 5) = 1024
+    'custom-5-L-3-1024-relu-max-pool', ...                                       % proj dim = 32 x 32 x 1024 / (4 ^ 5) = 1024
     ... 'custom-5-L-7-1024-', ...                                                   % proj dim = 32 x 32 x 1024 = 1048576
     ... 'custom-5-L-7-1024-relu', ...                                               % proj dim = 32 x 32 x 1024 = 1048576
     'custom-5-L-7-1024-max-pool', ...                                           % proj dim = 32 x 32 x 1024 / (4 ^ 5) = 1024
-    'custom-5-L-7-1024-relu-max-pool', ..                                       % proj dim = 32 x 32 x 1024 / (4 ^ 5) = 1024
+    'custom-5-L-7-1024-relu-max-pool', ...                                       % proj dim = 32 x 32 x 1024 / (4 ^ 5) = 1024
     ... 'custom-5-L-11-1024-', ...                                                  % proj dim = 32 x 32 x 1024 = 1048576
     ... 'custom-5-L-11-1024-relu', ...                                              % proj dim = 32 x 32 x 1024 = 1048576
     'custom-5-L-11-1024-max-pool', ...                                          % proj dim = 32 x 32 x 1024 / (4 ^ 5) = 1024
-    'custom-5-L-11-1024-relu-max-pool', ..                                      % proj dim = 32 x 32 x 1024 / (4 ^ 5) = 1024
+    'custom-5-L-11-1024-relu-max-pool', ...                                      % proj dim = 32 x 32 x 1024 / (4 ^ 5) = 1024
     ...
     ... 'custom-5-L-3-4096-', ...                                                    % proj dim = 32 x 32 x 4096 = 4194304
     ... 'custom-5-L-3-4096-relu', ...                                                % proj dim = 32 x 32 x 4096 = 4194304
