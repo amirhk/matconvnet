@@ -120,7 +120,7 @@ functionHandle('cifar-no-white-multi-class-subsampled', 'balanced-50', '1-knn', 
 
 % functionHandle('cifar-no-white-two-class-deer-truck', 'balanced-266', '1-knn', 1);
 
-functionHandle('stl-10-multi-class-subsampled', 'balanced-50', '1-knn', 1);
+% functionHandle('stl-10-multi-class-subsampled', 'balanced-50', '1-knn', 1);
 % functionHandle('stl-10-multi-class-subsampled', 'balanced-50', 'c-sep', 1);
 % functionHandle('stl-10-multi-class-subsampled', 'balanced-50', 'cnn', 1);
 % functionHandle('stl-10-multi-class-subsampled', 'balanced-500', '1-knn', 1);
@@ -128,13 +128,13 @@ functionHandle('stl-10-multi-class-subsampled', 'balanced-50', '1-knn', 1);
 % functionHandle('imagenet-tiny-multi-class-subsampled', 'balanced-50', '1-knn', 1);
 % functionHandle('imagenet-tiny-multi-class-subsampled', 'balanced-500', '1-knn', 1);
 
-functionHandle('imagenet-tiny-two-class-brown-bear-german-shepherd', 'balanced-50', '1-knn', 1);
+% functionHandle('imagenet-tiny-two-class-brown-bear-german-shepherd', 'balanced-50', '1-knn', 1);
 % functionHandle('imagenet-tiny-two-class-brown-bear-german-shepherd', 'balanced-500', '1-knn', 1);
 
-functionHandle('imagenet-tiny-two-class-school-bus-german-shepherd', 'balanced-50', '1-knn', 1);
+% functionHandle('imagenet-tiny-two-class-school-bus-german-shepherd', 'balanced-50', '1-knn', 1);
 % functionHandle('imagenet-tiny-two-class-school-bus-german-shepherd', 'balanced-500', '1-knn', 1);
 
-functionHandle('mnist-multi-class-subsampled', 'balanced-50', '1-knn', 1);
+% functionHandle('mnist-multi-class-subsampled', 'balanced-50', '1-knn', 1);
 % functionHandle('mnist-multi-class-subsampled', 'balanced-50', 'c-sep', 1);
 % functionHandle('mnist-multi-class-subsampled', 'balanced-50', 'cnn', 1);
 
@@ -142,7 +142,7 @@ functionHandle('mnist-multi-class-subsampled', 'balanced-50', '1-knn', 1);
 % functionHandle('svhn-yes-white-multi-class-subsampled', 'balanced-50', 'c-sep', 1);
 % functionHandle('svhn-yes-white-multi-class-subsampled', 'balanced-50', 'cnn', 1);
 
-functionHandle('svhn-multi-class-subsampled', 'balanced-50', '1-knn', 1);
+% functionHandle('svhn-multi-class-subsampled', 'balanced-50', '1-knn', 1);
 % functionHandle('svhn-multi-class-subsampled', 'balanced-50', 'c-sep', 1);
 % functionHandle('svhn-multi-class-subsampled', 'balanced-50', 'cnn', 1);
 
