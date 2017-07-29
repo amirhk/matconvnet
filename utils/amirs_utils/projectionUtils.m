@@ -100,6 +100,7 @@ function projected_samples = getProjectedImdbSamplesOnNet(imdb, net, depth)
   assert(numel(find(imdb.images.set == 1)) == 0); % cnn_train only projects test data. sad, i know.
   [net, info] = cnnTrain(net, imdb, getBatch(), ...
     'gpus', ifNotMacSetGpu(2), ...
+    'batch_size', 25, ...
     'forward_pass_only_mode', true, ...
     'forward_pass_only_depth', depth + 1, ... % +1 is critical because for a 3 layer network, cnn_train's res variable has 4 layers incl'd the input.
     'debug_flag', false, ...
@@ -182,7 +183,6 @@ function imdb = getDenslyDownProjectedImdb(imdb, number_of_projection_layers, pr
 
     switch projection_layer_type
       case 'dense_gaussian'
-        % keyboard
         random_projection_matrix = randn(projected_dim, tmp_dim) / sqrt(projected_dim);
       case 'dense_log_normal'
         lognormal_mean = -0.702;
@@ -345,7 +345,6 @@ function imdb = getAngleSeparatedImdb(input_imdb)
     angle_separation_matrix = eye(size(M_D));
   end
 
-  % keyboard
   angle_separation_matrix = real(angle_separation_matrix);
   % assert(isreal(angle_separation_matrix));
 

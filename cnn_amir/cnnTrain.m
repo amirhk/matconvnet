@@ -48,7 +48,7 @@ function [net, info] = cnn_train(net, imdb, getBatch, varargin)
   opts.memoryMapFile = fullfile(tempdir, 'matconvnet.bin');
   opts = vl_argparse(opts, varargin);
 
-   if ~exist(opts.experiment_dir, 'dir'), mkdir(opts.experiment_dir); end
+  if ~exist(opts.experiment_dir, 'dir'), mkdir(opts.experiment_dir); end
   if isempty(opts.train), opts.train = find(imdb.images.set==1); end
   if isempty(opts.val), opts.val = find(imdb.images.set==2); end
   if isnan(opts.train), opts.train = []; end
