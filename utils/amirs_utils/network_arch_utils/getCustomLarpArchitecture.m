@@ -77,7 +77,7 @@ function net = getCustomLarpArchitecture(dataset, network_arch, weight_init_sequ
   end
 
   % we want the last block to have fewer kernels so the output dimension is small!
-  final_layer_kernel_count = 4;
+  final_layer_kernel_count = 16;
   block_number = numel(net.layers) + 1;
   padding = (larp_layer_kernel_width - 1) / 2; % to retain size
 
