@@ -50,7 +50,7 @@ function net = getCustomLarpArchitecture(dataset, network_arch, weight_init_sequ
   end
 
   previous_layer_feature_map_channel_count = 3; % input RGB
-  for i = 1 : number_of_blocks - 1 % -1 see below... the final block is assigned differentlty
+  for block_layer_number = 1 : number_of_blocks - 1 % -1 see below... the final block is assigned differentlty
     block_number = numel(net.layers) + 1;
     padding = (larp_layer_kernel_width - 1) / 2; % to retain size
 
@@ -63,7 +63,7 @@ function net = getCustomLarpArchitecture(dataset, network_arch, weight_init_sequ
       larp_layer_kernel_count, ...
       1/100, ...
       padding, ...
-      char(weight_init_sequence{i}), ...
+      char(weight_init_sequence{block_layer_number}), ...
       'gen');
 
     previous_layer_feature_map_channel_count = larp_layer_kernel_count;
