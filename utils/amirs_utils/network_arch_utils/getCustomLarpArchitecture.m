@@ -108,7 +108,8 @@ function tmp_net = addBlockLayerElements(block_number, dataset, network_arch, la
     if block_number == 1
       tmp_net.layers{end+1} = fh.poolingLayerLeNetMax(block_number);
     else
-      tmp_net.layers{end+1} = fh.poolingLayerLeNetAvg(block_number);
+      tmp_net.layers{end+1} = fh.poolingLayerLeNetMax(block_number);
+      % tmp_net.layers{end+1} = fh.poolingLayerLeNetAvg(block_number);
     end
   end
 
