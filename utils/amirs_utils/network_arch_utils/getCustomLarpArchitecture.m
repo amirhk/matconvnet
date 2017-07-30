@@ -72,7 +72,7 @@ function net = getCustomLarpArchitecture(dataset, network_arch, weight_init_sequ
       net.layers{end+1} = fh.reluLayer(block_number);
     end
     if should_add_max_pooling_per_block
-      net.layers{end+1} = fh.poolingLayerLeNetMax(block_number);
+      net.layers{end+1} = fh.poolingLayerLeNetAvg(block_number);
     end
   end
 
@@ -99,7 +99,7 @@ function net = getCustomLarpArchitecture(dataset, network_arch, weight_init_sequ
     net.layers{end+1} = fh.reluLayer(block_number);
   end
   if should_add_max_pooling_per_block
-    net.layers{end+1} = fh.poolingLayerLeNetMax(block_number);
+    net.layers{end+1} = fh.poolingLayerLeNetAvg(block_number);
   end
 
 
