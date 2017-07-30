@@ -57,7 +57,7 @@ function net = getCustomLarpArchitecture(dataset, network_arch, weight_init_sequ
   end
 
   % we want the last block to have fewer kernels so the output dimension is small!
-  final_larp_layer_kernel_count = 16;
+  final_larp_layer_kernel_count = 4;
   block_number = block_number + 1;
   assert(block_number == number_of_blocks);
   current_layer_kernel_count = final_larp_layer_kernel_count;
@@ -106,8 +106,8 @@ function tmp_net = addBlockLayerElements(block_number, dataset, network_arch, la
   end
   if should_add_max_pooling_per_block
     if block_number == 1
-      % tmp_net.layers{end+1} = fh.poolingLayerLeNetMax(block_number);
-      tmp_net.layers{end+1} = fh.poolingLayerLeNetAvg(block_number);
+      tmp_net.layers{end+1} = fh.poolingLayerLeNetMax(block_number);
+      % tmp_net.layers{end+1} = fh.poolingLayerLeNetAvg(block_number);
     else
       % tmp_net.layers{end+1} = fh.poolingLayerLeNetMax(block_number);
       tmp_net.layers{end+1} = fh.poolingLayerLeNetAvg(block_number);
