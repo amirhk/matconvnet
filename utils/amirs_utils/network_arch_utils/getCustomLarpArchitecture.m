@@ -25,7 +25,6 @@ function net = getCustomLarpArchitecture(dataset, network_arch, weight_init_sequ
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
 
-  fh = networkInitializationUtils;
   net.layers = {};
 
   assert(logical(strfind(network_arch, 'custom-')), 'this file is only to be used to construct `custom` larp architectures');
@@ -40,6 +39,42 @@ function net = getCustomLarpArchitecture(dataset, network_arch, weight_init_sequ
   larp_layer_kernel_width = str2num(getStringParameterStartingAtIndex(network_arch, 12)); assert(mod(larp_layer_kernel_width, 2) == 1);
   larp_layer_kernel_count = str2num(getStringParameterStartingAtIndex(network_arch, 12 + length(num2str(larp_layer_kernel_width)) + 1)); % what a hack, smh
 
+  previous_layer_feature_map_channel_count = 3; % input RGB
+  for block_number = 1 : number_of_blocks - 1 % -1 see below... the final block is assigned differentlty
+
+    current_layer_kernel_count = larp_layer_kernel_count;
+    tmp = addBlockLayerElements( ...
+      block_number, ...
+      dataset, ...
+      network_arch, ...
+      larp_layer_kernel_width, ...
+      previous_layer_feature_map_channel_count, ...
+      current_layer_kernel_count, ...
+      weight_init_sequence);
+    net.layers = cat(2, net.layers, tmp.layers);
+
+    previous_layer_feature_map_channel_count = larp_layer_kernel_count;
+  end
+
+  % we want the last block to have fewer kernels so the output dimension is small!
+  final_larp_layer_kernel_count = 16;
+  block_number = block_number + 1;
+  assert(block_number == number_of_blocks);
+  current_layer_kernel_count = final_larp_layer_kernel_count;
+  tmp = addBlockLayerElements( ...
+    block_number, ...
+    dataset, ...
+    network_arch, ...
+    larp_layer_kernel_width, ...
+    previous_layer_feature_map_channel_count, ...
+    current_layer_kernel_count, ...
+    weight_init_sequence);
+  net.layers = cat(2, net.layers, tmp.layers);
+
+
+% -------------------------------------------------------------------------
+function tmp_net = addBlockLayerElements(block_number, dataset, network_arch, larp_layer_kernel_width, previous_layer_feature_map_channel_count, current_layer_kernel_count, weight_init_sequence)
+% -------------------------------------------------------------------------
   should_add_relu_per_block = false;
   should_add_max_pooling_per_block = false;
   if strfind(network_arch, 'relu')
@@ -49,57 +84,32 @@ function net = getCustomLarpArchitecture(dataset, network_arch, weight_init_sequ
     should_add_max_pooling_per_block = true;
   end
 
-  previous_layer_feature_map_channel_count = 3; % input RGB
-  for block_layer_number = 1 : number_of_blocks - 1 % -1 see below... the final block is assigned differentlty
-    block_number = numel(net.layers) + 1;
-    padding = (larp_layer_kernel_width - 1) / 2; % to retain size
+  tmp_net.layers = {};
 
-    net.layers{end+1} = fh.convLayer( ...
-      dataset, ...
-      network_arch, ...
-      block_number, ...
-      larp_layer_kernel_width, ...
-      previous_layer_feature_map_channel_count, ...
-      larp_layer_kernel_count, ...
-      1/100, ...
-      padding, ...
-      char(weight_init_sequence{block_layer_number}), ...
-      'gen');
-
-    previous_layer_feature_map_channel_count = larp_layer_kernel_count;
-
-    if should_add_relu_per_block
-      net.layers{end+1} = fh.reluLayer(block_number);
-    end
-    if should_add_max_pooling_per_block
-      net.layers{end+1} = fh.poolingLayerLeNetAvg(block_number);
-    end
-  end
-
-  % we want the last block to have fewer kernels so the output dimension is small!
-  final_layer_kernel_count = 16;
-  block_number = numel(net.layers) + 1;
   padding = (larp_layer_kernel_width - 1) / 2; % to retain size
 
-  net.layers{end+1} = fh.convLayer( ...
+  fh = networkInitializationUtils;
+  tmp_net.layers{end+1} = fh.convLayer( ...
     dataset, ...
     network_arch, ...
     block_number, ...
     larp_layer_kernel_width, ...
     previous_layer_feature_map_channel_count, ...
-    final_layer_kernel_count, ...
+    current_layer_kernel_count, ...
     1/100, ...
     padding, ...
-    char(weight_init_sequence{end}), ...
+    char(weight_init_sequence{block_number}), ...
     'gen');
 
-  previous_layer_feature_map_channel_count = larp_layer_kernel_count;
-
   if should_add_relu_per_block
-    net.layers{end+1} = fh.reluLayer(block_number);
+      tmp_net.layers{end+1} = fh.reluLayer(block_number);
   end
   if should_add_max_pooling_per_block
-    net.layers{end+1} = fh.poolingLayerLeNetAvg(block_number);
+    if block_number == 1
+      tmp_net.layers{end+1} = fh.poolingLayerLeNetMax(block_number);
+    else
+      tmp_net.layers{end+1} = fh.poolingLayerLeNetAvg(block_number);
+    end
   end
 
 
@@ -109,3 +119,9 @@ function string_parameter = getStringParameterStartingAtIndex(input_string, star
 % -------------------------------------------------------------------------
   delimeter = '-';
   string_parameter = input_string(start_index : start_index + strfind(input_string(start_index:end), delimeter) - 2);
+
+
+
+
+
+
