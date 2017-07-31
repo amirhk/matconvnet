@@ -38,6 +38,7 @@ function net = getCustomLarpArchitecture(dataset, network_arch, weight_init_sequ
   number_of_blocks = str2num(getStringParameterStartingAtIndex(network_arch, 8));
   larp_layer_kernel_width = str2num(getStringParameterStartingAtIndex(network_arch, 12)); assert(mod(larp_layer_kernel_width, 2) == 1);
   larp_layer_kernel_count = str2num(getStringParameterStartingAtIndex(network_arch, 12 + length(num2str(larp_layer_kernel_width)) + 1)); % what a hack, smh
+  final_larp_layer_kernel_count = str2num(getStringParameterStartingAtIndex(network_arch, 12 + length(num2str(larp_layer_kernel_width)) + length(num2str(larp_layer_kernel_count)) + 2)); % what a hack, smh
 
   previous_layer_feature_map_channel_count = 3; % input RGB
   for block_number = 1 : number_of_blocks - 1 % -1 see below... the final block is assigned differentlty
