@@ -62,6 +62,8 @@ function net = getCustomLarpArchitecture(dataset, network_arch, weight_init_sequ
   if block_number ~= 1
     block_number = block_number + 1;
     assert(block_number == number_of_blocks);
+  else
+    block_number = 1;
   end
   current_layer_kernel_count = final_larp_layer_kernel_count;
   tmp = addBlockLayerElements( ...
