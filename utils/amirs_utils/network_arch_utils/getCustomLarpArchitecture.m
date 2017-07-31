@@ -59,8 +59,10 @@ function net = getCustomLarpArchitecture(dataset, network_arch, weight_init_sequ
 
   % we want the last block to have fewer kernels so the output dimension is small!
   % final_larp_layer_kernel_count = 64;
-  block_number = block_number + 1;
-  assert(block_number == number_of_blocks);
+  if block_number ~= 1
+    block_number = block_number + 1;
+    assert(block_number == number_of_blocks);
+  end
   current_layer_kernel_count = final_larp_layer_kernel_count;
   tmp = addBlockLayerElements( ...
     block_number, ...
