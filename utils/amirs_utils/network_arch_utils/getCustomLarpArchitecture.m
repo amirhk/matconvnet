@@ -94,6 +94,7 @@ function tmp_net = addBlockLayerElements(block_number, dataset, network_arch, la
   %   larp_layer_kernel_width = 3;
   %   padding = (larp_layer_kernel_width - 1) / 2; % to retain size
   % end
+  padding = (larp_layer_kernel_width - 1) / 2; % to retain size
 
   fh = networkInitializationUtils;
   tmp_net.layers{end+1} = fh.convLayer( ...
