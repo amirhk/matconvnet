@@ -102,7 +102,7 @@ function sample = getProcessedImage(file_name, expected_image_size)
 % --------------------------------------------------------------------
   sample = im2double(imread(file_name));
   if ~isequal(size(sample), expected_image_size)
-    keyboard
+    size(sample)
   end
   % assert(isequal(size(sample), expected_image_size), 'file size incorrect');
 
