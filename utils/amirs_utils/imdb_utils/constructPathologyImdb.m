@@ -78,7 +78,7 @@ function [data, labels, set] = getDataAndLabels(data_dir, sub_folder_1, sub_fold
   tmp_labels = zeros(expected_total_number_of_images, 1);
 
   patch_counter = 1;
-  for i = 1 : total_number_of_images
+  for i = 1150 : total_number_of_images
     afprintf(sprintf('[INFO] Loading image # %d / %d\t\t', i, total_number_of_images));
     single_image_file_name = all_image_file_names(i).name;
     single_image_file_name_with_path = fullfile(all_image_file_names(i).folder, all_image_file_names(i).name);
@@ -101,6 +101,9 @@ function [data, labels, set] = getDataAndLabels(data_dir, sub_folder_1, sub_fold
 function sample = getProcessedImage(file_name, expected_image_size)
 % --------------------------------------------------------------------
   sample = im2double(imread(file_name));
+  if ~isequal(size(sample), expected_image_size)
+    keyboard
+  end
   assert(isequal(size(sample), expected_image_size), 'file size incorrect');
 
 
