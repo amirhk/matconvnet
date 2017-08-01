@@ -117,16 +117,16 @@ function tmp_net = addBlockLayerElements(block_number, dataset, network_arch, la
       tmp_net.layers{end+1} = fh.reluLayer(block_number);
   end
   if should_add_max_pooling_per_block
-    if block_number == 2 || block_number == 3 || block_number == 5
-      tmp_net.layers{end+1} = fh.poolingLayerAlexNet(block_number);
-      % tmp_net.layers{end+1} = fh.poolingLayerLeNetMax(block_number);
-      % tmp_net.layers{end+1} = fh.poolingLayerLeNetAvg(block_number);
+    % if block_number == 2 || block_number == 3 || block_number == 5
+    %   tmp_net.layers{end+1} = fh.poolingLayerAlexNet(block_number);
+    %   % tmp_net.layers{end+1} = fh.poolingLayerLeNetMax(block_number);
+    %   % tmp_net.layers{end+1} = fh.poolingLayerLeNetAvg(block_number);
     % else
-      % continue
-      % tmp_net.layers{end+1} = fh.poolingLayerLeNetMax(block_number);
-      % tmp_net.layers{end+1} = fh.poolingLayerLeNetAvg(block_number);
-    end
-    % tmp_net.layers{end+1} = fh.poolingLayerLeNetMax(block_number);
+    %   % continue
+    %   % tmp_net.layers{end+1} = fh.poolingLayerLeNetMax(block_number);
+    %   % tmp_net.layers{end+1} = fh.poolingLayerLeNetAvg(block_number);
+    % end
+    tmp_net.layers{end+1} = fh.poolingLayerLeNetMax(block_number);
     % tmp_net.layers{end+1} = fh.poolingLayerLeNetAvg(block_number);
   end
 
