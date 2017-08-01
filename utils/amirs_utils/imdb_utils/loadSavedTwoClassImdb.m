@@ -91,6 +91,140 @@ function imdb = loadSavedTwoClassImdb(dataset, posneg_balance, fold_number, debu
     %     case 'balanced-5000'
     %       tmp = load(fullfile(path_to_imdbs, 'mnist-784', 'balanced', 'saved-two-class-mnist-pos1-neg2-balanced-5000-5000-train-5000-5000.mat'));
     %   end
+
+
+
+
+
+
+
+
+    case 'imagenet-tiny-two-class-school-bus-remote-control'
+      switch posneg_balance
+        case 'balanced-10'
+          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos8-neg24-balanced-10-10-train-10-10.mat'));
+        case 'balanced-50'
+          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos8-neg24-balanced-50-50-train-50-50.mat'));
+        case 'balanced-100'
+          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos8-neg24-balanced-100-100-train-100-100.mat'));
+        case 'balanced-250'
+          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos8-neg24-balanced-250-250-train-250-250.mat'));
+        case 'balanced-500'
+          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos8-neg24-balanced-500-500-train-500-500.mat'));
+      end
+
+    case 'imagenet-tiny-two-class-school-bus-rocking-chair'
+      switch posneg_balance
+        case 'balanced-10'
+          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos8-neg34-balanced-10-10-train-10-10.mat'));
+        case 'balanced-50'
+          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos8-neg34-balanced-50-50-train-50-50.mat'));
+        case 'balanced-100'
+          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos8-neg34-balanced-100-100-train-100-100.mat'));
+        case 'balanced-250'
+          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos8-neg34-balanced-250-250-train-250-250.mat'));
+        case 'balanced-500'
+          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos8-neg34-balanced-500-500-train-500-500.mat'));
+      end
+
+    case 'imagenet-tiny-two-class-school-bus-monarch-butterfly'
+      switch posneg_balance
+        case 'balanced-10'
+          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos8-neg36-balanced-10-10-train-10-10.mat'));
+        case 'balanced-50'
+          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos8-neg36-balanced-50-50-train-50-50.mat'));
+        case 'balanced-100'
+          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos8-neg36-balanced-100-100-train-100-100.mat'));
+        case 'balanced-250'
+          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos8-neg36-balanced-250-250-train-250-250.mat'));
+        case 'balanced-500'
+          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos8-neg36-balanced-500-500-train-500-500.mat'));
+      end
+
+    case 'imagenet-tiny-two-class-school-bus-steel-arch-bridge'
+      switch posneg_balance
+        case 'balanced-10'
+          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos8-neg109-balanced-10-10-train-10-10.mat'));
+        case 'balanced-50'
+          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos8-neg109-balanced-50-50-train-50-50.mat'));
+        case 'balanced-100'
+          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos8-neg109-balanced-100-100-train-100-100.mat'));
+        case 'balanced-250'
+          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos8-neg109-balanced-250-250-train-250-250.mat'));
+        case 'balanced-500'
+          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos8-neg109-balanced-500-500-train-500-500.mat'));
+      end
+
+    case 'imagenet-tiny-two-class-remote-control-rocking-chair'
+      switch posneg_balance
+        case 'balanced-10'
+          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos24-neg34-balanced-10-10-train-10-10.mat'));
+        case 'balanced-50'
+          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos24-neg34-balanced-50-50-train-50-50.mat'));
+        case 'balanced-100'
+          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos24-neg34-balanced-100-100-train-100-100.mat'));
+        case 'balanced-250'
+          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos24-neg34-balanced-250-250-train-250-250.mat'));
+        case 'balanced-500'
+          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos24-neg34-balanced-500-500-train-500-500.mat'));
+      end
+
+    case 'imagenet-tiny-two-class-monarch-butterfly-lion'
+      switch posneg_balance
+        case 'balanced-10'
+          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos36-neg44-balanced-10-10-train-10-10.mat'));
+        case 'balanced-50'
+          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos36-neg44-balanced-50-50-train-50-50.mat'));
+        case 'balanced-100'
+          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos36-neg44-balanced-100-100-train-100-100.mat'));
+        case 'balanced-250'
+          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos36-neg44-balanced-250-250-train-250-250.mat'));
+        case 'balanced-500'
+          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos36-neg44-balanced-500-500-train-500-500.mat'));
+      end
+
+    case 'imagenet-tiny-two-class-monarch-butterfly-steel-arch-bridge'
+      switch posneg_balance
+        case 'balanced-10'
+          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos36-neg109-balanced-10-10-train-10-10.mat'));
+        case 'balanced-50'
+          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos36-neg109-balanced-50-50-train-50-50.mat'));
+        case 'balanced-100'
+          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos36-neg109-balanced-100-100-train-100-100.mat'));
+        case 'balanced-250'
+          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos36-neg109-balanced-250-250-train-250-250.mat'));
+        case 'balanced-500'
+          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos36-neg109-balanced-500-500-train-500-500.mat'));
+      end
+
+    case 'imagenet-tiny-two-class-lion-brown-bear'
+      switch posneg_balance
+        case 'balanced-10'
+          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos44-neg73-balanced-10-10-train-10-10.mat'));
+        case 'balanced-50'
+          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos44-neg73-balanced-50-50-train-50-50.mat'));
+        case 'balanced-100'
+          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos44-neg73-balanced-100-100-train-100-100.mat'));
+        case 'balanced-250'
+          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos44-neg73-balanced-250-250-train-250-250.mat'));
+        case 'balanced-500'
+          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos44-neg73-balanced-500-500-train-500-500.mat'));
+      end
+
+    case 'imagenet-tiny-two-class-lion-german-shepherd'
+      switch posneg_balance
+        case 'balanced-10'
+          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos44-neg192-balanced-10-10-train-10-10.mat'));
+        case 'balanced-50'
+          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos44-neg192-balanced-50-50-train-50-50.mat'));
+        case 'balanced-100'
+          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos44-neg192-balanced-100-100-train-100-100.mat'));
+        case 'balanced-250'
+          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos44-neg192-balanced-250-250-train-250-250.mat'));
+        case 'balanced-500'
+          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos44-neg192-balanced-500-500-train-500-500.mat'));
+      end
+
     case 'imagenet-tiny-two-class-brown-bear-german-shepherd'
       switch posneg_balance
         case 'balanced-10'
@@ -118,6 +252,44 @@ function imdb = loadSavedTwoClassImdb(dataset, posneg_balance, fold_number, debu
         case 'balanced-500'
           tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos8-neg192-balanced-500-500-train-500-500.mat'));
       end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     case 'cifar-two-class-deer-horse'
       % currently fold number is not implemented.
