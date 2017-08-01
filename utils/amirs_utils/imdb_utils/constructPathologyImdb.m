@@ -33,7 +33,7 @@ function imdb = constructPathologyImdb(input_opts)
   [data_train, labels_train, set_train, file_names_train] = getDataAndLabels(input_opts.imdb.data_dir, 'BreaKHis_v1', 'fold1', 'train', '40X');
   [data_test, labels_test, set_test, file_names_test] = getDataAndLabels(input_opts.imdb.data_dir, 'BreaKHis_v1', 'fold1', 'test', '40X');
 
-  keyboard
+  % keyboard
 
   afprintf(sprintf('[INFO] Concatinating training data and testing data...\n'));
   data = single(cat(4, data_train, data_test));
@@ -60,18 +60,18 @@ function imdb = constructPathologyImdb(input_opts)
   imdb.images.file_names = file_names(ix);
   afprintf(sprintf('[INFO] done!\n'));
 
-  keyboard
+  % keyboard
 
-  fh = imdbMultiClassUtils;
-  fh.getImdbInfo(imdb, 1);
+  % fh = imdbMultiClassUtils;
+  % fh.getImdbInfo(imdb, 1);
 
-  keyboard
+  % keyboard
 
   imdb.name = 'pathology-imdb'
   afprintf(sprintf('[INFO] Saving imdb...\n'));
-  save(imdb.name, 'imdb');
+  save(imdb.name, 'imdb', '-v7.3');
 
-  keyboard
+  % keyboard
 
   afprintf(sprintf('done!\n\n'));
 

@@ -280,33 +280,19 @@ function larp_network_arch_list = getLarpNetworkArchList()
     ...
     ...
     ... 'larpV0P0RL0', ...
-    ... 'custom-1-L-3-1-1-', ... % -relu-max-pool
-    ... 'custom-1-L-5-1-1-', ... % -relu-max-pool
-    ... 'custom-1-L-7-1-1-', ... % -relu-max-pool
+    'custom-1-L-3-16-1-max-pool', ... % -relu
     ...
-    ... 'custom-1-L-3-1-2-', ... % -relu-max-pool
-    ... 'custom-1-L-5-1-2-', ... % -relu-max-pool
-    ... 'custom-1-L-7-1-2-', ... % -relu-max-pool
+    'custom-1-L-3-16-2-max-pool', ... % -relu
     ...
-    ... 'custom-1-L-3-1-3-', ... % -relu-max-pool
-    ... 'custom-1-L-5-1-3-', ... % -relu-max-pool
-    ... 'custom-1-L-7-1-3-', ... % -relu-max-pool
+    'custom-1-L-3-16-3-max-pool', ... % -relu
     ...
-    ... 'custom-1-L-3-1-4-', ... % -relu-max-pool
-    ... 'custom-1-L-5-1-4-', ... % -relu-max-pool
-    ... 'custom-1-L-7-1-4-', ... % -relu-max-pool
+    'custom-1-L-3-16-4-max-pool', ... % -relu
     ...
-    'custom-1-L-3-1-8-', ... % -relu-max-pool
-    ... 'custom-1-L-5-1-8-', ... % -relu-max-pool
-    ... 'custom-1-L-7-1-8-', ... % -relu-max-pool
+    'custom-1-L-3-16-8-max-pool', ... % -relu
     ...
-    'custom-1-L-3-1-16-', ... % -relu-max-pool
-    ... 'custom-1-L-5-1-16-', ... % -relu-max-pool
-    ... 'custom-1-L-7-1-16-', ... % -relu-max-pool
+    'custom-1-L-3-16-16-max-pool', ... % -relu
     ...
-    'custom-1-L-3-1-32-', ... % -relu-max-pool
-    ... 'custom-1-L-5-1-32-', ... % -relu-max-pool
-    ... 'custom-1-L-7-1-32-', ... % -relu-max-pool
+    'custom-1-L-3-16-32-max-pool', ... % -relu
     ... ... ...
     ... ... ...
     ... ... ...
