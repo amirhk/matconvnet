@@ -79,7 +79,7 @@ function [data, labels, set, file_names] = getDataAndLabels(data_dir, sub_folder
 
   tmp_data = zeros(cat(2, target_patch_size, expected_total_number_of_patches));
   tmp_labels = zeros(expected_total_number_of_patches, 1);
-  tmp_file_names = {}
+  tmp_file_names = {};
 
   patch_counter = 1;
   for i = 1 : total_number_of_images
@@ -114,7 +114,7 @@ function [data, labels, set, file_names] = getDataAndLabels(data_dir, sub_folder
 function sample = getProcessedImage(file_name, expected_image_size)
 % --------------------------------------------------------------------
   sample = im2double(imread(file_name));
-  if ~isequal(size(sample), expected_image_size) || ~isequal(size(sample), [456, 700, 3])
+  if ~(isequal(size(sample), expected_image_size) || isequal(size(sample), [456, 700, 3]))
     keyboard
     throwException('[ERROR] file size incorrect');
   end
