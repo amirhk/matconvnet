@@ -30,13 +30,14 @@ function imdb = constructPathologyImdb(input_opts)
   % dataset = 'pathology';
   % input_opts.imdb.data_dir = fullfile('/Volumes/Amir', 'data', 'source', dataset);
 
-  [data_train, labels_train, set_train] = getDataAndLabels(input_opts.imdb.data_dir, 'BreaKHis_v1', 'fold1', 'train', '40X');
-  [data_test, labels_test, set_test] = getDataAndLabels(input_opts.imdb.data_dir, 'BreaKHis_v1', 'fold1', 'test', '40X');
+  [data_train, labels_train, set_train, file_names_train] = getDataAndLabels(input_opts.imdb.data_dir, 'BreaKHis_v1', 'fold1', 'train', '40X');
+  [data_test, labels_test, set_test, file_names_test] = getDataAndLabels(input_opts.imdb.data_dir, 'BreaKHis_v1', 'fold1', 'test', '40X');
 
   afprintf(sprintf('[INFO] Concatinating training data and testing data...\n'));
   data = single(cat(4, data_train, data_test));
   labels = single(cat(1, labels_train, labels_test));
   set = single(cat(1, set_train, set_test));
+  file_names = cat(2, file_names_train, file_names_test));
   afprintf(sprintf('[INFO] done!\n'));
 
   assert(length(labels) == length(set));
@@ -54,15 +55,17 @@ function imdb = constructPathologyImdb(input_opts)
   imdb.images.data = data(:,:,:,ix);
   imdb.images.labels = labels(ix);
   imdb.images.set = set(ix);
+  imdb.images.file_names = file_names(ix);
   afprintf(sprintf('[INFO] done!\n'));
 
-  % fh = imdbMultiClassUtils;
-  % fh.getImdbInfo(imdb, 1);
+  fh = imdbMultiClassUtils;
+  fh.getImdbInfo(imdb, 1);
+  keyboard
   afprintf(sprintf('done!\n\n'));
 
 
 % --------------------------------------------------------------------
-function [data, labels, set] = getDataAndLabels(data_dir, sub_folder_1, sub_folder_2, sub_folder_3, sub_folder_4)
+function [data, labels, file_names, set] = getDataAndLabels(data_dir, sub_folder_1, sub_folder_2, sub_folder_3, sub_folder_4)
 % --------------------------------------------------------------------
   afprintf(sprintf('[INFO] Retrieving training data...\n'));
 
@@ -76,9 +79,10 @@ function [data, labels, set] = getDataAndLabels(data_dir, sub_folder_1, sub_fold
 
   tmp_data = zeros(cat(2, target_patch_size, expected_total_number_of_images));
   tmp_labels = zeros(expected_total_number_of_images, 1);
+  tmp_file_names = {}
 
   patch_counter = 1;
-  for i = 1150 : total_number_of_images
+  for i = 1 : total_number_of_images
     afprintf(sprintf('[INFO] Loading image # %d / %d\t\t', i, total_number_of_images));
     single_image_file_name = all_image_file_names(i).name;
     single_image_file_name_with_path = fullfile(all_image_file_names(i).folder, all_image_file_names(i).name);
@@ -90,19 +94,28 @@ function [data, labels, set] = getDataAndLabels(data_dir, sub_folder_1, sub_fold
     for j = 1 : numel(patches)
       tmp_data(:,:,:, patch_counter) = patches{j};
       tmp_labels(patch_counter) = single_training_image_label; % all patches for the same image share that image's label
+      tmp_file_names{end+1} = single_image_file_name; % all patches for the same image share that image's name
     end
     fprintf('Done!\n');
   end
 
-  keyboard
+  data = tmp_data;
+  labels = tmp_labels;
+  file_names = tmp_file_names;
 
+  switch sub_folder_3
+    case 'train'
+      set = 1 * ones(expeced_total_number_of_samples, 1);
+    case 'test'
+      set = 3 * ones(expeced_total_number_of_samples, 1);
+  end
 
 % --------------------------------------------------------------------
 function sample = getProcessedImage(file_name, expected_image_size)
 % --------------------------------------------------------------------
   sample = im2double(imread(file_name));
-  if ~isequal(size(sample), expected_image_size)
-    size(sample)
+  if ~isequal(size(sample), expected_image_size) || ~isequal(size(sample), [456, 700, 3])
+    throwException('[ERROR] file size incorrect');
   end
   % assert(isequal(size(sample), expected_image_size), 'file size incorrect');
 
