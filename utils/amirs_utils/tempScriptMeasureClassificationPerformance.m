@@ -279,9 +279,9 @@ function larp_network_arch_list = getLarpNetworkArchList()
     ...
     ...
     'larpV0P0RL0', ...
-    ... 'custom-1-L-3-1-1-', ... % -relu-max-pool
-    ... 'custom-1-L-5-1-1-', ... % -relu-max-pool
-    ... 'custom-1-L-7-1-1-', ... % -relu-max-pool
+    'custom-1-L-3-1-1-', ... % -relu-max-pool
+    'custom-1-L-5-1-1-', ... % -relu-max-pool
+    'custom-1-L-7-1-1-', ... % -relu-max-pool
     'custom-1-L-3-1-2-', ... % -relu-max-pool
     'custom-1-L-5-1-2-', ... % -relu-max-pool
     'custom-1-L-7-1-2-', ... % -relu-max-pool
