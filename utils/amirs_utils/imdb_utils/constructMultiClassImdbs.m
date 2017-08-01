@@ -28,6 +28,8 @@ function constructMultiClassImdbs(dataset)
   afprintf(sprintf('[INFO] Constructing multi-class `%s` imdbs...\n', dataset));
   opts.imdb.data_dir = fullfile(getDevPath(), 'data', 'source', dataset);
   switch dataset
+  case 'pathology'
+      all_class_imdb = constructPathologyImdb(opts);
     case 'imagenet-tiny'
       all_class_imdb = constructImageNetTinyImdb(opts);
     case 'mnist'
