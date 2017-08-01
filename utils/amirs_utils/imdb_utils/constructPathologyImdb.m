@@ -37,7 +37,7 @@ function imdb = constructPathologyImdb(input_opts)
   data = single(cat(4, data_train, data_test));
   labels = single(cat(1, labels_train, labels_test));
   set = single(cat(1, set_train, set_test));
-  file_names = cat(2, file_names_train, file_names_test));
+  file_names = cat(2, file_names_train, file_names_test);
   afprintf(sprintf('[INFO] done!\n'));
 
   assert(length(labels) == length(set));
@@ -65,7 +65,7 @@ function imdb = constructPathologyImdb(input_opts)
 
 
 % --------------------------------------------------------------------
-function [data, labels, file_names, set] = getDataAndLabels(data_dir, sub_folder_1, sub_folder_2, sub_folder_3, sub_folder_4)
+function [data, labels, set, file_names] = getDataAndLabels(data_dir, sub_folder_1, sub_folder_2, sub_folder_3, sub_folder_4)
 % --------------------------------------------------------------------
   afprintf(sprintf('[INFO] Retrieving training data...\n'));
 
@@ -75,10 +75,10 @@ function [data, labels, file_names, set] = getDataAndLabels(data_dir, sub_folder
   expected_image_size = [460,700,3];
   expected_number_of_patches_per_image = 126;
   target_patch_size = [64 64 3];
-  expected_total_number_of_images = total_number_of_images * expected_number_of_patches_per_image;
+  expected_total_number_of_patches = total_number_of_images * expected_number_of_patches_per_image;
 
-  tmp_data = zeros(cat(2, target_patch_size, expected_total_number_of_images));
-  tmp_labels = zeros(expected_total_number_of_images, 1);
+  tmp_data = zeros(cat(2, target_patch_size, expected_total_number_of_patches));
+  tmp_labels = zeros(expected_total_number_of_patches, 1);
   tmp_file_names = {}
 
   patch_counter = 1;
@@ -105,9 +105,9 @@ function [data, labels, file_names, set] = getDataAndLabels(data_dir, sub_folder
 
   switch sub_folder_3
     case 'train'
-      set = 1 * ones(expeced_total_number_of_samples, 1);
+      set = 1 * ones(expected_total_number_of_patches, 1);
     case 'test'
-      set = 3 * ones(expeced_total_number_of_samples, 1);
+      set = 3 * ones(expected_total_number_of_patches, 1);
   end
 
 % --------------------------------------------------------------------
