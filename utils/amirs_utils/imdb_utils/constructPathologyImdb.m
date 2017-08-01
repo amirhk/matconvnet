@@ -60,9 +60,19 @@ function imdb = constructPathologyImdb(input_opts)
   imdb.images.file_names = file_names(ix);
   afprintf(sprintf('[INFO] done!\n'));
 
+  keyboard
+
   fh = imdbMultiClassUtils;
   fh.getImdbInfo(imdb, 1);
+
   keyboard
+
+  imdb.name = 'pathology-imdb'
+  afprintf(sprintf('[INFO] Saving imdb...\n'));
+  save(imdb.name, 'imdb');
+
+  keyboard
+
   afprintf(sprintf('done!\n\n'));
 
 
@@ -97,6 +107,7 @@ function [data, labels, set, file_names] = getDataAndLabels(data_dir, sub_folder
       tmp_data(:,:,:, patch_counter) = patches{j};
       tmp_labels(patch_counter) = single_training_image_label; % all patches for the same image share that image's label
       tmp_file_names{end+1} = single_image_file_name; % all patches for the same image share that image's name
+      patch_counter = patch_counter + 1;
     end
     fprintf('Done!\n');
   end
