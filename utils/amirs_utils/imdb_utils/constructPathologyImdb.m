@@ -33,6 +33,8 @@ function imdb = constructPathologyImdb(input_opts)
   [data_train, labels_train, set_train, file_names_train] = getDataAndLabels(input_opts.imdb.data_dir, 'BreaKHis_v1', 'fold1', 'train', '40X');
   [data_test, labels_test, set_test, file_names_test] = getDataAndLabels(input_opts.imdb.data_dir, 'BreaKHis_v1', 'fold1', 'test', '40X');
 
+  keyboard
+
   afprintf(sprintf('[INFO] Concatinating training data and testing data...\n'));
   data = single(cat(4, data_train, data_test));
   labels = single(cat(1, labels_train, labels_test));
@@ -83,13 +85,13 @@ function [data, labels, set, file_names] = getDataAndLabels(data_dir, sub_folder
 
   patch_counter = 1;
   for i = 1 : total_number_of_images
-    afprintf(sprintf('[INFO] Loading image # %d / %d\t\t', i, total_number_of_images));
+    afprintf(sprintf('[INFO] Loading image # %d / %d...\t\t', i, total_number_of_images));
     single_image_file_name = all_image_file_names(i).name;
     single_image_file_name_with_path = fullfile(all_image_file_names(i).folder, all_image_file_names(i).name);
     single_training_image_label = getLabelForClassName(single_image_file_name);
     tmp_image = getProcessedImage(single_image_file_name_with_path, expected_image_size);
     patches = getPatchesFromImage(tmp_image);
-    fprintf('Extracting patches\t\t');
+    fprintf('Extracting patches...\t\t');
     assert(numel(patches) == expected_number_of_patches_per_image, 'incorrect number of patches for image');
     for j = 1 : numel(patches)
       tmp_data(:,:,:, patch_counter) = patches{j};
