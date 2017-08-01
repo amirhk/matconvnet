@@ -112,7 +112,7 @@ functionHandle = @tempScriptMeasureClassificationPerformance;
 % functionHandle('cifar-multi-class-subsampled', 'balanced-50', 'c-sep', 1);
 % functionHandle('cifar-multi-class-subsampled', 'balanced-50', 'cnn', 1);
 
-functionHandle('cifar-no-white-multi-class-subsampled', 'balanced-50', '1-knn', 1);
+% functionHandle('cifar-no-white-multi-class-subsampled', 'balanced-50', '1-knn', 1);
 % functionHandle('cifar-no-white-multi-class-subsampled', 'balanced-50', 'c-sep', 1);
 % functionHandle('cifar-no-white-multi-class-subsampled', 'balanced-50', 'cnn', 1);
 % functionHandle('cifar-no-white-multi-class-subsampled', 'balanced-500', '1-knn', 1);
@@ -147,6 +147,19 @@ functionHandle('cifar-no-white-multi-class-subsampled', 'balanced-50', '1-knn', 
 % functionHandle('svhn-multi-class-subsampled', 'balanced-50', 'cnn', 1);
 
 
+
+
+functionHandle('imagenet-tiny-two-class-school-bus-remote-control', 'balanced-500', '1-knn', 1);
+functionHandle('imagenet-tiny-two-class-school-bus-rocking-chair', 'balanced-500', '1-knn', 1);
+functionHandle('imagenet-tiny-two-class-school-bus-monarch-butterfly', 'balanced-500', '1-knn', 1);
+functionHandle('imagenet-tiny-two-class-school-bus-steel-arch-bridge', 'balanced-500', '1-knn', 1);
+functionHandle('imagenet-tiny-two-class-school-bus-german-shepherd', 'balanced-500', '1-knn', 1);
+functionHandle('imagenet-tiny-two-class-monarch-butterfly-lion', 'balanced-500', '1-knn', 1);
+functionHandle('imagenet-tiny-two-class-monarch-butterfly-steel-arch-bridge', 'balanced-500', '1-knn', 1);
+functionHandle('imagenet-tiny-two-class-lion-brown-bear', 'balanced-500', '1-knn', 1);
+functionHandle('imagenet-tiny-two-class-lion-german-shepherd', 'balanced-500', '1-knn', 1);
+functionHandle('imagenet-tiny-two-class-brown-bear-german-shepherd', 'balanced-500', '1-knn', 1);
+functionHandle('imagenet-tiny-two-class-remote-control-rocking-chair', 'balanced-500', '1-knn', 1);
 
 
 

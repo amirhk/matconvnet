@@ -278,71 +278,81 @@ function larp_network_arch_list = getLarpNetworkArchList()
     ... 'larpV3P3RL3-final-conv-16-kernels-first-relu-then-max-pool', ...
     ...
     ...
-    'custom-5-L-3-4-4-max-pool', ... % relu-
-    'custom-5-L-3-4-16-max-pool', ... % relu-
-    'custom-5-L-3-4-64-max-pool', ... % relu-
-    'custom-5-L-3-4-256-max-pool', ... % relu-
+    'larpV0P0RL0', ...
+    'custom-1-L-3-1-1-', ... % -relu-max-pool
+    'custom-1-L-5-1-1-', ... % -relu-max-pool
+    'custom-1-L-7-1-1-', ... % -relu-max-pool
+    ... ... ...
+    ... ... ...
+    ... ... ...
+    ... ... ...
+    ... ... ...
+    ... ... ...
+    ... 'custom-5-L-3-4-4-max-pool', ... % relu-
+    ... 'custom-5-L-3-4-16-max-pool', ... % relu-
+    ... 'custom-5-L-3-4-64-max-pool', ... % relu-
+    ... 'custom-5-L-3-4-256-max-pool', ... % relu-
     ... ...
-    'custom-5-L-5-4-4-max-pool', ... % relu-
-    'custom-5-L-5-4-16-max-pool', ... % relu-
-    'custom-5-L-5-4-64-max-pool', ... % relu-
-    'custom-5-L-5-4-256-max-pool', ... % relu-
+    ... 'custom-5-L-5-4-4-max-pool', ... % relu-
+    ... 'custom-5-L-5-4-16-max-pool', ... % relu-
+    ... 'custom-5-L-5-4-64-max-pool', ... % relu-
+    ... 'custom-5-L-5-4-256-max-pool', ... % relu-
     ... ...
-    'custom-5-L-7-4-4-max-pool', ... % relu-
-    'custom-5-L-7-4-16-max-pool', ... % relu-
-    'custom-5-L-7-4-64-max-pool', ... % relu-
-    'custom-5-L-7-4-256-max-pool', ... % relu-
+    ... 'custom-5-L-7-4-4-max-pool', ... % relu-
+    ... 'custom-5-L-7-4-16-max-pool', ... % relu-
+    ... 'custom-5-L-7-4-64-max-pool', ... % relu-
+    ... 'custom-5-L-7-4-256-max-pool', ... % relu-
     ... ... ...
     ... ... ...
     ... ... ...
-    'custom-5-L-3-16-4-max-pool', ... % relu-
-    'custom-5-L-3-16-16-max-pool', ... % relu-
-    'custom-5-L-3-16-64-max-pool', ... % relu-
-    'custom-5-L-3-16-256-max-pool', ... % relu-
+    ... 'custom-5-L-3-16-4-max-pool', ... % relu-
+    ... 'custom-5-L-3-16-16-max-pool', ... % relu-
+    ... 'custom-5-L-3-16-64-max-pool', ... % relu-
+    ... 'custom-5-L-3-16-256-max-pool', ... % relu-
     ... ...
-    'custom-5-L-5-16-4-max-pool', ... % relu-
-    'custom-5-L-5-16-16-max-pool', ... % relu-
-    'custom-5-L-5-16-64-max-pool', ... % relu-
-    'custom-5-L-5-16-256-max-pool', ... % relu-
+    ... 'custom-5-L-5-16-4-max-pool', ... % relu-
+    ... 'custom-5-L-5-16-16-max-pool', ... % relu-
+    ... 'custom-5-L-5-16-64-max-pool', ... % relu-
+    ... 'custom-5-L-5-16-256-max-pool', ... % relu-
     ... ...
-    'custom-5-L-7-16-4-max-pool', ... % relu-
-    'custom-5-L-7-16-16-max-pool', ... % relu-
-    'custom-5-L-7-16-64-max-pool', ... % relu-
-    'custom-5-L-7-16-256-max-pool', ... % relu-
+    ... 'custom-5-L-7-16-4-max-pool', ... % relu-
+    ... 'custom-5-L-7-16-16-max-pool', ... % relu-
+    ... 'custom-5-L-7-16-64-max-pool', ... % relu-
+    ... 'custom-5-L-7-16-256-max-pool', ... % relu-
     ... ... ...
     ... ... ...
     ... ... ...
-    'custom-5-L-3-64-4-max-pool', ... % relu-
-    'custom-5-L-3-64-16-max-pool', ... % relu-
-    'custom-5-L-3-64-64-max-pool', ... % relu-
-    'custom-5-L-3-64-256-max-pool', ... % relu-
+    ... 'custom-5-L-3-64-4-max-pool', ... % relu-
+    ... 'custom-5-L-3-64-16-max-pool', ... % relu-
+    ... 'custom-5-L-3-64-64-max-pool', ... % relu-
+    ... 'custom-5-L-3-64-256-max-pool', ... % relu-
     ... ...
-    'custom-5-L-5-64-4-max-pool', ... % relu-
-    'custom-5-L-5-64-16-max-pool', ... % relu-
-    'custom-5-L-5-64-64-max-pool', ... % relu-
-    'custom-5-L-5-64-256-max-pool', ... % relu-
+    ... 'custom-5-L-5-64-4-max-pool', ... % relu-
+    ... 'custom-5-L-5-64-16-max-pool', ... % relu-
+    ... 'custom-5-L-5-64-64-max-pool', ... % relu-
+    ... 'custom-5-L-5-64-256-max-pool', ... % relu-
     ... ...
-    'custom-5-L-7-64-4-max-pool', ... % relu-
-    'custom-5-L-7-64-16-max-pool', ... % relu-
-    'custom-5-L-7-64-64-max-pool', ... % relu-
-    'custom-5-L-7-64-256-max-pool', ... % relu-
+    ... 'custom-5-L-7-64-4-max-pool', ... % relu-
+    ... 'custom-5-L-7-64-16-max-pool', ... % relu-
+    ... 'custom-5-L-7-64-64-max-pool', ... % relu-
+    ... 'custom-5-L-7-64-256-max-pool', ... % relu-
     ... ... ...
     ... ... ...
     ... ... ...
-    'custom-5-L-3-256-4-max-pool', ... % relu-
-    'custom-5-L-3-256-16-max-pool', ... % relu-
-    'custom-5-L-3-256-64-max-pool', ... % relu-
-    'custom-5-L-3-256-256-max-pool', ... % relu-
+    ... 'custom-5-L-3-256-4-max-pool', ... % relu-
+    ... 'custom-5-L-3-256-16-max-pool', ... % relu-
+    ... 'custom-5-L-3-256-64-max-pool', ... % relu-
+    ... 'custom-5-L-3-256-256-max-pool', ... % relu-
     ... ...
-    'custom-5-L-5-256-4-max-pool', ... % relu-
-    'custom-5-L-5-256-16-max-pool', ... % relu-
-    'custom-5-L-5-256-64-max-pool', ... % relu-
-    'custom-5-L-5-256-256-max-pool', ... % relu-
+    ... 'custom-5-L-5-256-4-max-pool', ... % relu-
+    ... 'custom-5-L-5-256-16-max-pool', ... % relu-
+    ... 'custom-5-L-5-256-64-max-pool', ... % relu-
+    ... 'custom-5-L-5-256-256-max-pool', ... % relu-
     ... ...
-    'custom-5-L-7-256-4-max-pool', ... % relu-
-    'custom-5-L-7-256-16-max-pool', ... % relu-
-    'custom-5-L-7-256-64-max-pool', ... % relu-
-    'custom-5-L-7-256-256-max-pool', ... % relu-
+    ... 'custom-5-L-7-256-4-max-pool', ... % relu-
+    ... 'custom-5-L-7-256-16-max-pool', ... % relu-
+    ... 'custom-5-L-7-256-64-max-pool', ... % relu-
+    ... 'custom-5-L-7-256-256-max-pool', ... % relu-
     ... ...
     ... ...
     ... ...
