@@ -174,7 +174,6 @@ functionHandle('imagenet-tiny-two-class-remote-control-rocking-chair', 'balanced
 
 
 
-
 % functionHandle('saved-multi-class-gaussian-2D-mean-1-var-0-train-balance-500-test-balance-500', 'balanced-38', 1);
 % functionHandle('saved-multi-class-gaussian-2D-mean-1-var-1-train-balance-500-test-balance-500', 'balanced-38', 1);
 % functionHandle('saved-multi-class-gaussian-2D-mean-1-var-10-train-balance-500-test-balance-500', 'balanced-38', 1);

@@ -206,6 +206,7 @@ function all_experiments_single_run = runAllExperimentsOnce(experiment_dir, data
     experiment_options = {};
     % experiment_options.imdb = experiments{i}.imdb;
     experiment_options.imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
+    % keyboard
 
     experiment_options.dataset = dataset;
     experiment_options.posneg_balance = posneg_balance;
@@ -278,19 +279,34 @@ function larp_network_arch_list = getLarpNetworkArchList()
     ... 'larpV3P3RL3-final-conv-16-kernels-first-relu-then-max-pool', ...
     ...
     ...
-    'larpV0P0RL0', ...
-    'custom-1-L-3-1-1-', ... % -relu-max-pool
-    'custom-1-L-5-1-1-', ... % -relu-max-pool
-    'custom-1-L-7-1-1-', ... % -relu-max-pool
-    'custom-1-L-3-1-2-', ... % -relu-max-pool
-    'custom-1-L-5-1-2-', ... % -relu-max-pool
-    'custom-1-L-7-1-2-', ... % -relu-max-pool
-    'custom-1-L-3-1-3-', ... % -relu-max-pool
-    'custom-1-L-5-1-3-', ... % -relu-max-pool
-    'custom-1-L-7-1-3-', ... % -relu-max-pool
-    'custom-1-L-3-1-4-', ... % -relu-max-pool
-    'custom-1-L-5-1-4-', ... % -relu-max-pool
-    'custom-1-L-7-1-4-', ... % -relu-max-pool
+    ... 'larpV0P0RL0', ...
+    ... 'custom-1-L-3-1-1-', ... % -relu-max-pool
+    ... 'custom-1-L-5-1-1-', ... % -relu-max-pool
+    ... 'custom-1-L-7-1-1-', ... % -relu-max-pool
+    ...
+    ... 'custom-1-L-3-1-2-', ... % -relu-max-pool
+    ... 'custom-1-L-5-1-2-', ... % -relu-max-pool
+    ... 'custom-1-L-7-1-2-', ... % -relu-max-pool
+    ...
+    ... 'custom-1-L-3-1-3-', ... % -relu-max-pool
+    ... 'custom-1-L-5-1-3-', ... % -relu-max-pool
+    ... 'custom-1-L-7-1-3-', ... % -relu-max-pool
+    ...
+    ... 'custom-1-L-3-1-4-', ... % -relu-max-pool
+    ... 'custom-1-L-5-1-4-', ... % -relu-max-pool
+    ... 'custom-1-L-7-1-4-', ... % -relu-max-pool
+    ...
+    'custom-1-L-3-1-8-', ... % -relu-max-pool
+    ... 'custom-1-L-5-1-8-', ... % -relu-max-pool
+    ... 'custom-1-L-7-1-8-', ... % -relu-max-pool
+    ...
+    'custom-1-L-3-1-16-', ... % -relu-max-pool
+    ... 'custom-1-L-5-1-16-', ... % -relu-max-pool
+    ... 'custom-1-L-7-1-16-', ... % -relu-max-pool
+    ...
+    'custom-1-L-3-1-32-', ... % -relu-max-pool
+    ... 'custom-1-L-5-1-32-', ... % -relu-max-pool
+    ... 'custom-1-L-7-1-32-', ... % -relu-max-pool
     ... ... ...
     ... ... ...
     ... ... ...
