@@ -206,7 +206,7 @@ function all_experiments_single_run = runAllExperimentsOnce(experiment_dir, data
     experiment_options = {};
     % experiment_options.imdb = experiments{i}.imdb;
     experiment_options.imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
-    % keyboard
+    keyboard
 
     experiment_options.dataset = dataset;
     experiment_options.posneg_balance = posneg_balance;
@@ -234,7 +234,7 @@ function all_experiments_single_run = runAllExperimentsOnce(experiment_dir, data
         performance = getSimpleTestAccuracyFromMLP(experiment_options);
       case 'cnn'
 
-        experiment_options.gpus = 2;
+        experiment_options.gpus = 3;
 
         % TODO: this has to somehow be detected automatically....
         % experiment_options.conv_network_arch = 'convV0P0RL0+fcV1-RF16CH64';
