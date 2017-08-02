@@ -196,7 +196,8 @@ function all_experiments_single_run = runAllExperimentsOnce(experiment_dir, data
   larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
 
   [~, tmp_experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, false, false);
-  original_imdb = tmp_experiments{1}.imdb;
+  % original_imdb = tmp_experiments{1}.imdb;
+  original_imdb = tmp_experiments{1}.imdb.imdb;
 
   for i = 1 : numel(larp_network_arch_list)
     larp_network_arch = larp_network_arch_list{i};
@@ -206,7 +207,8 @@ function all_experiments_single_run = runAllExperimentsOnce(experiment_dir, data
     experiment_options = {};
     % experiment_options.imdb = experiments{i}.imdb;
     experiment_options.imdb = getRandomlyProjectedImdb(original_imdb, dataset, larp_weight_init_type, larp_network_arch, -1);
-    keyboard
+    % keyboard
+
 
     experiment_options.dataset = dataset;
     experiment_options.posneg_balance = posneg_balance;
