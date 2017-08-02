@@ -149,22 +149,77 @@ functionHandle = @tempScriptMeasureClassificationPerformance;
 
 
 
-functionHandle('imagenet-tiny-two-class-school-bus-remote-control', 'balanced-500', '1-knn', 1);
-functionHandle('imagenet-tiny-two-class-school-bus-rocking-chair', 'balanced-500', '1-knn', 1);
-functionHandle('imagenet-tiny-two-class-school-bus-monarch-butterfly', 'balanced-500', '1-knn', 1);
-functionHandle('imagenet-tiny-two-class-school-bus-steel-arch-bridge', 'balanced-500', '1-knn', 1);
-functionHandle('imagenet-tiny-two-class-school-bus-german-shepherd', 'balanced-500', '1-knn', 1);
-functionHandle('imagenet-tiny-two-class-monarch-butterfly-lion', 'balanced-500', '1-knn', 1);
-functionHandle('imagenet-tiny-two-class-monarch-butterfly-steel-arch-bridge', 'balanced-500', '1-knn', 1);
-functionHandle('imagenet-tiny-two-class-lion-brown-bear', 'balanced-500', '1-knn', 1);
-functionHandle('imagenet-tiny-two-class-lion-german-shepherd', 'balanced-500', '1-knn', 1);
-functionHandle('imagenet-tiny-two-class-brown-bear-german-shepherd', 'balanced-500', '1-knn', 1);
-functionHandle('imagenet-tiny-two-class-remote-control-rocking-chair', 'balanced-500', '1-knn', 1);
+
+% -------------------------------------------------------------------------
+%                                                                opts.paths
+% -------------------------------------------------------------------------
+opts.paths.time_string = sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
+opts.paths.experiment_parent_dir = getValueFromFieldOrDefault( ...
+  {}, ... % no input_opts here! :)
+  'experiment_parent_dir', ...
+  fullfile(vl_rootnn, 'experiment_results'));
+opts.paths.experiment_dir = fullfile(opts.paths.experiment_parent_dir, sprintf( ...
+  'temps-script-%s', ...
+  opts.paths.time_string));
+if ~exist(opts.paths.experiment_dir)
+  mkdir(opts.paths.experiment_dir);
+end
+% opts.paths.options_file_path = fullfile(opts.paths.experiment_dir, '_options.txt');
+opts.paths.results_file_path = fullfile(opts.paths.experiment_dir, '_results.txt');
+
+all_results = {};
+
+% all_results{end+1} = functionHandle('mnist-784-two-class-0-1', 'balanced-500', '1-knn', 1);
+% all_results{end+1} = functionHandle('mnist-784-two-class-0-2', 'balanced-500', '1-knn', 1);
+% all_results{end+1} = functionHandle('mnist-784-two-class-0-3', 'balanced-500', '1-knn', 1);
+% all_results{end+1} = functionHandle('mnist-784-two-class-0-4', 'balanced-500', '1-knn', 1);
+% all_results{end+1} = functionHandle('mnist-784-two-class-5-0', 'balanced-500', '1-knn', 1);
+% all_results{end+1} = functionHandle('mnist-784-two-class-7-2', 'balanced-500', '1-knn', 1);
+% all_results{end+1} = functionHandle('mnist-784-two-class-8-2', 'balanced-500', '1-knn', 1);
+% all_results{end+1} = functionHandle('mnist-784-two-class-8-3', 'balanced-500', '1-knn', 1);
+% all_results{end+1} = functionHandle('mnist-784-two-class-4-9', 'balanced-500', '1-knn', 1);
+% all_results{end+1} = functionHandle('mnist-784-two-class-6-9', 'balanced-500', '1-knn', 1);
+
+tmp = functionHandle('imagenet-tiny-two-class-school-bus-remote-control', 'balanced-500', '1-knn', 1);
+all_results{end+1} = tmp;
+all_results{end+1} = tmp;
+all_results{end+1} = tmp;
+
+% all_results{end+1} = functionHandle('imagenet-tiny-two-class-school-bus-remote-control', 'balanced-500', '1-knn', 1);
+% all_results{end+1} = functionHandle('imagenet-tiny-two-class-school-bus-rocking-chair', 'balanced-500', '1-knn', 1);
+% all_results{end+1} = functionHandle('imagenet-tiny-two-class-school-bus-monarch-butterfly', 'balanced-500', '1-knn', 1);
+% all_results{end+1} = functionHandle('imagenet-tiny-two-class-school-bus-steel-arch-bridge', 'balanced-500', '1-knn', 1);
+% all_results{end+1} = functionHandle('imagenet-tiny-two-class-school-bus-german-shepherd', 'balanced-500', '1-knn', 1);
+% all_results{end+1} = functionHandle('imagenet-tiny-two-class-monarch-butterfly-lion', 'balanced-500', '1-knn', 1);
+% all_results{end+1} = functionHandle('imagenet-tiny-two-class-monarch-butterfly-steel-arch-bridge', 'balanced-500', '1-knn', 1);
+% all_results{end+1} = functionHandle('imagenet-tiny-two-class-lion-brown-bear', 'balanced-500', '1-knn', 1);
+% all_results{end+1} = functionHandle('imagenet-tiny-two-class-lion-german-shepherd', 'balanced-500', '1-knn', 1);
+% all_results{end+1} = functionHandle('imagenet-tiny-two-class-brown-bear-german-shepherd', 'balanced-500', '1-knn', 1);
+% all_results{end+1} = functionHandle('imagenet-tiny-two-class-remote-control-rocking-chair', 'balanced-500', '1-knn', 1);
+
+saveStruct2File(all_results, opts.paths.results_file_path, 0);
+
+
+
+
+% functionHandle('imagenet-tiny-two-class-school-bus-remote-control', 'balanced-500', '1-knn', 1);
+% functionHandle('imagenet-tiny-two-class-school-bus-rocking-chair', 'balanced-500', '1-knn', 1);
+% functionHandle('imagenet-tiny-two-class-school-bus-monarch-butterfly', 'balanced-500', '1-knn', 1);
+% functionHandle('imagenet-tiny-two-class-school-bus-steel-arch-bridge', 'balanced-500', '1-knn', 1);
+% functionHandle('imagenet-tiny-two-class-school-bus-german-shepherd', 'balanced-500', '1-knn', 1);
+% functionHandle('imagenet-tiny-two-class-monarch-butterfly-lion', 'balanced-500', '1-knn', 1);
+% functionHandle('imagenet-tiny-two-class-monarch-butterfly-steel-arch-bridge', 'balanced-500', '1-knn', 1);
+% functionHandle('imagenet-tiny-two-class-lion-brown-bear', 'balanced-500', '1-knn', 1);
+% functionHandle('imagenet-tiny-two-class-lion-german-shepherd', 'balanced-500', '1-knn', 1);
+% functionHandle('imagenet-tiny-two-class-brown-bear-german-shepherd', 'balanced-500', '1-knn', 1);
+% functionHandle('imagenet-tiny-two-class-remote-control-rocking-chair', 'balanced-500', '1-knn', 1);
+
+
 
 
 % functionHandle('pathology-multi-class-subsampled', 'balanced-50', 'cnn', 1);
 % functionHandle('pathology-multi-class-subsampled', 'balanced-500', 'cnn', 1);
-functionHandle('pathology', 'whatever', 'cnn', 1);
+% functionHandle('pathology', 'whatever', 'cnn', 1);
 
 
 

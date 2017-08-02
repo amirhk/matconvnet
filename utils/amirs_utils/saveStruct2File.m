@@ -29,11 +29,9 @@ function saveStruct2File(input_struct, filePath, recursion_depth)
   format shortG
   fileID = fopen(filePath, 'a');
   if strcmp(class(input_struct), 'cell')
-    tmp = {};
-    for i = 1:numel(input_struct)
-      tmp.(sprintf('index_%d', i)) = input_struct{i};
-    end
-    input_struct = tmp;
+    input_cell_array = input_struct;
+    sanitized_struct = convertCellArrayToStruct(input_cell_array);
+    input_struct = sanitized_struct;
   end
   fields = fieldnames(input_struct);
   for i = 1:numel(fields)
@@ -122,3 +120,39 @@ function saveStruct2File(input_struct, filePath, recursion_depth)
     end
   end
   fclose(fileID);
+
+
+
+% -------------------------------------------------------------------------
+function sanitized_struct = convertCellArrayToStruct(input_cell_array)
+% -------------------------------------------------------------------------
+  tmp = {};
+  for i = 1:numel(input_cell_array)
+    sub_tmp = {};
+    if strcmp(class(input_cell_array{i}), 'cell')
+      sub_tmp = convertCellArrayToStruct(input_cell_array{i});
+    else
+      sub_tmp = input_cell_array{i};
+    end
+    tmp.(sprintf('index_%d', i)) = sub_tmp;
+
+  end
+  sanitized_struct = tmp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -131,11 +131,3 @@ function weight_init_sequence = getLarpWeightInitSequence(larp_weight_init_type,
   % end
 
 
-
-
-
-% -------------------------------------------------------------------------
-function string_parameter = getStringParameterStartingAtIndex(input_string, start_index)
-% -------------------------------------------------------------------------
-  delimeter = '-';
-  string_parameter = input_string(start_index : start_index + strfind(input_string(start_index:end), delimeter) - 2);

@@ -51,46 +51,85 @@ function imdb = loadSavedTwoClassImdb(dataset, posneg_balance, fold_number, debu
     %       tmp = load(fullfile(path_to_imdbs, 'mnist-784', 'balanced', 'saved-two-class-mnist-pos9-neg4-balanced-5000-5000-train-5000-5000.mat'));
     %   end
 
-    case 'mnist-784-two-class-8-3'
-      switch posneg_balance
-        case 'balanced-10'
-          tmp = load(fullfile(path_to_imdbs, 'mnist-784', 'balanced', 'saved-two-class-mnist-pos0-neg1-balanced-10-10-train-10-10.mat'));
-        case 'balanced-50'
-          tmp = load(fullfile(path_to_imdbs, 'mnist-784', 'balanced', 'saved-two-class-mnist-pos0-neg1-balanced-50-50-train-50-50.mat'));
-        case 'balanced-100'
-          tmp = load(fullfile(path_to_imdbs, 'mnist-784', 'balanced', 'saved-two-class-mnist-pos0-neg1-balanced-100-100-train-100-100.mat'));
-        case 'balanced-250'
-          tmp = load(fullfile(path_to_imdbs, 'mnist-784', 'balanced', 'saved-two-class-mnist-pos0-neg1-balanced-250-250-train-250-250.mat'));
-        case 'balanced-500'
-          tmp = load(fullfile(path_to_imdbs, 'mnist-784', 'balanced', 'saved-two-class-mnist-pos0-neg1-balanced-500-500-train-500-500.mat'));
-        case 'balanced-1000'
-          tmp = load(fullfile(path_to_imdbs, 'mnist-784', 'balanced', 'saved-two-class-mnist-pos0-neg1-balanced-1000-1000-train-1000-1000.mat'));
-        case 'balanced-2500'
-          tmp = load(fullfile(path_to_imdbs, 'mnist-784', 'balanced', 'saved-two-class-mnist-pos0-neg1-balanced-2500-2500-train-2500-2500.mat'));
-      end
     case 'mnist-784-two-class-0-1'
-      switch posneg_balance
-        case 'balanced-10'
-          tmp = load(fullfile(path_to_imdbs, 'mnist-784', 'balanced', 'saved-two-class-mnist-pos8-neg3-balanced-10-10-train-10-10.mat'));
-        case 'balanced-50'
-          tmp = load(fullfile(path_to_imdbs, 'mnist-784', 'balanced', 'saved-two-class-mnist-pos8-neg3-balanced-50-50-train-50-50.mat'));
-        case 'balanced-100'
-          tmp = load(fullfile(path_to_imdbs, 'mnist-784', 'balanced', 'saved-two-class-mnist-pos8-neg3-balanced-100-100-train-100-100.mat'));
-        case 'balanced-250'
-          tmp = load(fullfile(path_to_imdbs, 'mnist-784', 'balanced', 'saved-two-class-mnist-pos8-neg3-balanced-250-250-train-250-250.mat'));
-        case 'balanced-500'
-          tmp = load(fullfile(path_to_imdbs, 'mnist-784', 'balanced', 'saved-two-class-mnist-pos8-neg3-balanced-500-500-train-500-500.mat'));
-        case 'balanced-1000'
-          tmp = load(fullfile(path_to_imdbs, 'mnist-784', 'balanced', 'saved-two-class-mnist-pos8-neg3-balanced-1000-1000-train-1000-1000.mat'));
-        case 'balanced-2500'
-          tmp = load(fullfile(path_to_imdbs, 'mnist-784', 'balanced', 'saved-two-class-mnist-pos8-neg3-balanced-2500-2500-train-2500-2500.mat'));
-      end
+      tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance);
+    case 'mnist-784-two-class-0-2'
+      tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance);
+    case 'mnist-784-two-class-0-3'
+      tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance);
+    case 'mnist-784-two-class-0-4'
+      tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance);
+    case 'mnist-784-two-class-5-0'
+      tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance);
+    case 'mnist-784-two-class-7-2'
+      tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance);
+    case 'mnist-784-two-class-8-2'
+      tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance);
+    case 'mnist-784-two-class-8-3'
+      tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance);
+    case 'mnist-784-two-class-4-9'
+      tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance);
+    case 'mnist-784-two-class-6-9'
+      tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance);
+
+    %   switch posneg_balance
+    %     case 'balanced-10'
+    %       tmp = load(fullfile(path_to_imdbs, 'mnist-784', 'balanced', 'saved-two-class-mnist-784-pos0-neg1-balanced-10-10-train-10-10.mat'));
+    %     case 'balanced-50'
+    %       tmp = load(fullfile(path_to_imdbs, 'mnist-784', 'balanced', 'saved-two-class-mnist-784-pos0-neg1-balanced-50-50-train-50-50.mat'));
+    %     case 'balanced-100'
+    %       tmp = load(fullfile(path_to_imdbs, 'mnist-784', 'balanced', 'saved-two-class-mnist-784-pos0-neg1-balanced-100-100-train-100-100.mat'));
+    %     case 'balanced-250'
+    %       tmp = load(fullfile(path_to_imdbs, 'mnist-784', 'balanced', 'saved-two-class-mnist-784-pos0-neg1-balanced-250-250-train-250-250.mat'));
+    %     case 'balanced-500'
+    %       tmp = load(fullfile(path_to_imdbs, 'mnist-784', 'balanced', 'saved-two-class-mnist-784-pos0-neg1-balanced-500-500-train-500-500.mat'));
+    %     case 'balanced-1000'
+    %       tmp = load(fullfile(path_to_imdbs, 'mnist-784', 'balanced', 'saved-two-class-mnist-784-pos0-neg1-balanced-1000-1000-train-1000-1000.mat'));
+    %     case 'balanced-2500'
+    %       tmp = load(fullfile(path_to_imdbs, 'mnist-784', 'balanced', 'saved-two-class-mnist-784-pos0-neg1-balanced-2500-2500-train-2500-2500.mat'));
+    %   end
+    % case 'mnist-784-two-class-0-1'
+    %   switch posneg_balance
+    %     case 'balanced-10'
+    %       tmp = load(fullfile(path_to_imdbs, 'mnist-784', 'balanced', 'saved-two-class-mnist-784-pos8-neg3-balanced-10-10-train-10-10.mat'));
+    %     case 'balanced-50'
+    %       tmp = load(fullfile(path_to_imdbs, 'mnist-784', 'balanced', 'saved-two-class-mnist-784-pos8-neg3-balanced-50-50-train-50-50.mat'));
+    %     case 'balanced-100'
+    %       tmp = load(fullfile(path_to_imdbs, 'mnist-784', 'balanced', 'saved-two-class-mnist-784-pos8-neg3-balanced-100-100-train-100-100.mat'));
+    %     case 'balanced-250'
+    %       tmp = load(fullfile(path_to_imdbs, 'mnist-784', 'balanced', 'saved-two-class-mnist-784-pos8-neg3-balanced-250-250-train-250-250.mat'));
+    %     case 'balanced-500'
+    %       tmp = load(fullfile(path_to_imdbs, 'mnist-784', 'balanced', 'saved-two-class-mnist-784-pos8-neg3-balanced-500-500-train-500-500.mat'));
+    %     case 'balanced-1000'
+    %       tmp = load(fullfile(path_to_imdbs, 'mnist-784', 'balanced', 'saved-two-class-mnist-784-pos8-neg3-balanced-1000-1000-train-1000-1000.mat'));
+    %     case 'balanced-2500'
+    %       tmp = load(fullfile(path_to_imdbs, 'mnist-784', 'balanced', 'saved-two-class-mnist-784-pos8-neg3-balanced-2500-2500-train-2500-2500.mat'));
+    %   end
 
     % case 'mnist-784-two-class-0-1'
     %   switch posneg_balance
     %     case 'balanced-5000'
     %       tmp = load(fullfile(path_to_imdbs, 'mnist-784', 'balanced', 'saved-two-class-mnist-pos1-neg2-balanced-5000-5000-train-5000-5000.mat'));
     %   end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -413,6 +452,15 @@ function imdb = loadSavedTwoClassImdb(dataset, posneg_balance, fold_number, debu
 
 
 
+% -------------------------------------------------------------------------
+function tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance)
+% -------------------------------------------------------------------------
+  dataset_class = dataset(1:strfind(dataset, '-two-class') - 1);
+  positive_class_number = str2num(getStringParameterStartingAtIndex(dataset, length(dataset_class) + 12)); % -two-class-
+  negative_class_number = str2num(getStringParameterStartingAtIndex(dataset, length(dataset_class) + 12 + length(num2str(positive_class_number)) + 1));
+  balance_number = posneg_balance(10:end);
 
+  file_name = sprintf('saved-two-class-%s-pos%d-neg%d-balanced-%s-%s-train-%s-%s.mat', dataset_class, positive_class_number, negative_class_number, balance_number, balance_number, balance_number, balance_number);
+  tmp = load(fullfile(path_to_imdbs, dataset_class, 'balanced', file_name));
 
 

@@ -126,7 +126,7 @@ function tmp_net = addBlockLayerElements(block_number, dataset, network_arch, la
       tmp_net.layers{end+1} = fh.reluLayer(block_number);
   end
   if should_add_max_pooling_per_block
-    if block_number == 1
+    if block_number == 1 || block_number == 2 || block_number == 3
     % if block_number == 2 || block_number == 3 || block_number == 5
       % tmp_net.layers{end+1} = fh.poolingLayerAlexNet(block_number);
       tmp_net.layers{end+1} = fh.poolingLayerLeNetMax(block_number);
@@ -139,17 +139,5 @@ function tmp_net = addBlockLayerElements(block_number, dataset, network_arch, la
     % tmp_net.layers{end+1} = fh.poolingLayerLeNetMax(block_number);
     % tmp_net.layers{end+1} = fh.poolingLayerLeNetAvg(block_number);
   end
-
-
-
-% -------------------------------------------------------------------------
-function string_parameter = getStringParameterStartingAtIndex(input_string, start_index)
-% -------------------------------------------------------------------------
-  delimeter = '-';
-  string_parameter = input_string(start_index : start_index + strfind(input_string(start_index:end), delimeter) - 2);
-
-
-
-
 
 
