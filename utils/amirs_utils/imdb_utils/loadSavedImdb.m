@@ -26,12 +26,11 @@ function imdb = loadSavedImdb(input_opts, debug_flag)
 % POSSIBILITY OF SUCH DAMAGE.
 
   dataset = getValueFromFieldOrDefault(input_opts, 'dataset', 'mnist');
-  network_arch = getValueFromFieldOrDefault(input_opts, 'network_arch', 'lenet'); % TODO: IMDB SHOULD NOT DEPEND ON NETWORK ARCH!
   posneg_balance = getValueFromFieldOrDefault(input_opts, 'posneg_balance', 'balanced-low');
   fold_number = getValueFromFieldOrDefault(input_opts, 'fold_number', 1); % currently only implemented for prostate data
 
   if isMultiClassImdb(dataset)
-    imdb = loadSavedMultiClassImdb(dataset, network_arch, debug_flag);
+    imdb = loadSavedMultiClassImdb(dataset, 'lenet', debug_flag);
   elseif isSubsampledMultiClassImdb(dataset)
     imdb = loadSavedSubsampledMultiClassImdb(dataset, posneg_balance, debug_flag);
   elseif isTwoClassImdb(dataset)

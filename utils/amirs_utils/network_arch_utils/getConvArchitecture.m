@@ -379,6 +379,37 @@ function net = getConvArchitecture(dataset, network_arch)
 
 
 
+    % ------------------------------------------------------------------------------------------------------------------------------------------------------------
+    case 'convV3P3RL3-RF32CH3+fcV1-RF4CH64-input64x64x3'
+      layer_number = numel(net.layers) + 1;
+      net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 3, 32, 1/100, 2, 'gaussian', 'gen');
+      net.layers{end+1} = fh.poolingLayerLeNetMax(layer_number);
+      net.layers{end+1} = fh.reluLayer(layer_number);
+
+      layer_number = numel(net.layers) + 1;
+      net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 32, 32, 5/100, 2, 'gaussian', 'gen');
+      net.layers{end+1} = fh.reluLayer(layer_number);
+      net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
+
+      layer_number = numel(net.layers) + 1;
+      net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 32, 64, 5/100, 2, 'gaussian', 'gen');
+      net.layers{end+1} = fh.reluLayer(layer_number);
+      net.layers{end+1} = fh.poolingLayerLeNetAvg(layer_number);
+
+      % FULLY CONNECTED
+      layer_number = numel(net.layers) + 1;
+      % NOTE LINE BELOW IS 8!!! BECAUSE OF INPUT
+      net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 8, 64, 64, 5/100, 0, 'gaussian', 'gen');
+      net.layers{end+1} = fh.reluLayer(layer_number);
+
+      layer_number = numel(net.layers) + 1;
+      number_of_output_nodes = getNumberOfOutputNodes(dataset);
+      net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 1, 64, number_of_output_nodes, 5/100, 0, 'gaussian', 'gen');
+
+      % LOSS LAYER
+      net.layers{end+1} = fh.softmaxlossLayer();
+      % net.layers{end+1} = fh.nnlossLayer();
+
 
 
 
