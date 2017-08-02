@@ -67,9 +67,9 @@ function imdb = constructPathologyImdb(input_opts)
 
   % keyboard
 
-  imdb.name = 'pathology-imdb'
-  afprintf(sprintf('[INFO] Saving imdb...\n'));
-  save(imdb.name, 'imdb', '-v7.3');
+  % imdb.name = 'pathology-imdb'
+  % afprintf(sprintf('[INFO] Saving imdb...\n'));
+  % save(imdb.name, 'imdb', '-v7.3');
 
   % keyboard
 
