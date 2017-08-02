@@ -91,21 +91,21 @@ function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccura
   elseif strcmp(opts.general.dataset, 'svhn') || strcmp(opts.general.dataset, 'svhn-multi-class-subsampled')
     learning_rate_divider_list = [1, 3, 10, 30] / 3;
   elseif strcmp(opts.general.dataset, 'pathology') || strcmp(opts.general.dataset, 'pathology-multi-class-subsampled')
-    learning_rate_divider_list = [1, 3, 10, 30];
+    learning_rate_divider_list = [1, 3, 10, 30] * 10;
   else
     throwException('[ERROR] unrecognized dataset.')
   end
 
-  % batch_size_list = [50, 100];
-  % weight_decay_list = [0.01, 0.001, 0.0001];
+  batch_size_list = [50, 100];
+  weight_decay_list = [0.01, 0.001, 0.0001];
 
 
 
 
-  learning_rate_divider_list = [1];
-  batch_size_list = [50];
-  weight_decay_list = [0.001];
-  base_learning_rate = [0.1*ones(1,20) 0.03*ones(1,20) 0.01*ones(1,20) 0.003*ones(1,20) 0.001*ones(1,20)];
+  % learning_rate_divider_list = [1];
+  % batch_size_list = [50];
+  % weight_decay_list = [0.001];
+  % base_learning_rate = [0.1*ones(1,20) 0.03*ones(1,20) 0.01*ones(1,20) 0.003*ones(1,20) 0.001*ones(1,20)];
 
 
 
