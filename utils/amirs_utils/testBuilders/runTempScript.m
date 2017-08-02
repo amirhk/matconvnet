@@ -163,7 +163,7 @@ functionHandle = @tempScriptMeasureClassificationPerformance;
 
 
 functionHandle('pathology-multi-class-subsampled', 'balanced-50', 'cnn', 1);
-functionHandle('pathology-multi-class-subsampled', 'balanced-1000', 'cnn', 1);
+functionHandle('pathology-multi-class-subsampled', 'balanced-500', 'cnn', 1);
 functionHandle('pathology', 'whatever', 'cnn', 1);
 
 
