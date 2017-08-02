@@ -59,12 +59,21 @@ function net = getCustomLarpArchitecture(dataset, network_arch, weight_init_sequ
 
   % we want the last block to have fewer kernels so the output dimension is small!
   % final_larp_layer_kernel_count = 64;
-  if block_number ~= 1
+  % keyboard
+  % if block_number ~= 1
+  %   block_number = block_number + 1;
+  %   assert(block_number == number_of_blocks);
+  % else
+  %   block_number = 1;
+  % end
+
+  if numel(block_number) == 0 % the network is single layer, and so the loop above never happened, hence block_number = []
+    block_number = 1;
+  else
     block_number = block_number + 1;
     assert(block_number == number_of_blocks);
-  else
-    block_number = 1;
   end
+
   current_layer_kernel_count = final_larp_layer_kernel_count;
   tmp = addBlockLayerElements( ...
     block_number, ...
@@ -117,16 +126,17 @@ function tmp_net = addBlockLayerElements(block_number, dataset, network_arch, la
       tmp_net.layers{end+1} = fh.reluLayer(block_number);
   end
   if should_add_max_pooling_per_block
+    if block_number == 1
     % if block_number == 2 || block_number == 3 || block_number == 5
-    %   tmp_net.layers{end+1} = fh.poolingLayerAlexNet(block_number);
-    %   % tmp_net.layers{end+1} = fh.poolingLayerLeNetMax(block_number);
-    %   % tmp_net.layers{end+1} = fh.poolingLayerLeNetAvg(block_number);
-    % else
-    %   % continue
-    %   % tmp_net.layers{end+1} = fh.poolingLayerLeNetMax(block_number);
-    %   % tmp_net.layers{end+1} = fh.poolingLayerLeNetAvg(block_number);
-    % end
-    tmp_net.layers{end+1} = fh.poolingLayerLeNetMax(block_number);
+      % tmp_net.layers{end+1} = fh.poolingLayerAlexNet(block_number);
+      tmp_net.layers{end+1} = fh.poolingLayerLeNetMax(block_number);
+      % tmp_net.layers{end+1} = fh.poolingLayerLeNetAvg(block_number);
+    else
+      % continue
+      % tmp_net.layers{end+1} = fh.poolingLayerLeNetMax(block_number);
+      % tmp_net.layers{end+1} = fh.poolingLayerLeNetAvg(block_number);
+    end
+    % tmp_net.layers{end+1} = fh.poolingLayerLeNetMax(block_number);
     % tmp_net.layers{end+1} = fh.poolingLayerLeNetAvg(block_number);
   end
 
