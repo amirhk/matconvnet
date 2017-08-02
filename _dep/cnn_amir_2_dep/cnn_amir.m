@@ -212,14 +212,14 @@ function fn = getBatch(opts)
 function [images, labels] = getSimpleNNBatch(imdb, batch)
 % -------------------------------------------------------------------------
   images = imdb.images.data(:,:,:,batch);
-  labels = imdb.images.labels(1,batch);
+  labels = imdb.images.labels(batch);
   if rand > 0.5, images=fliplr(images); end
 
 % -------------------------------------------------------------------------
 function inputs = getDagNNBatch(opts, imdb, batch)
 % -------------------------------------------------------------------------
   images = imdb.images.data(:,:,:,batch);
-  labels = imdb.images.labels(1,batch);
+  labels = imdb.images.labels(batch);
   if rand > 0.5, images=fliplr(images); end
   if opts.numGpus > 0
     images = gpuArray(images);
