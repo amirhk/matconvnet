@@ -40,7 +40,12 @@ function net = getCustomLarpArchitecture(dataset, network_arch, weight_init_sequ
   larp_layer_kernel_count = str2num(getStringParameterStartingAtIndex(network_arch, 12 + length(num2str(larp_layer_kernel_width)) + 1)); % what a hack, smh
   final_larp_layer_kernel_count = str2num(getStringParameterStartingAtIndex(network_arch, 12 + length(num2str(larp_layer_kernel_width)) + length(num2str(larp_layer_kernel_count)) + 2)); % what a hack, smh
 
-  previous_layer_feature_map_channel_count = 3; % input RGB
+  if strfind(dataset, 'mnist-784')
+    previous_layer_feature_map_channel_count = 1; % input BW
+  else
+    previous_layer_feature_map_channel_count = 3; % input RGB
+  end
+
   for block_number = 1 : number_of_blocks - 1 % -1 see below... the final block is assigned differentlty
 
     current_layer_kernel_count = larp_layer_kernel_count;
@@ -51,7 +56,8 @@ function net = getCustomLarpArchitecture(dataset, network_arch, weight_init_sequ
       larp_layer_kernel_width, ...
       previous_layer_feature_map_channel_count, ...
       current_layer_kernel_count, ...
-      weight_init_sequence);
+      weight_init_sequence, ...
+      number_of_blocks);
     net.layers = cat(2, net.layers, tmp.layers);
 
     previous_layer_feature_map_channel_count = larp_layer_kernel_count;
@@ -82,12 +88,13 @@ function net = getCustomLarpArchitecture(dataset, network_arch, weight_init_sequ
     larp_layer_kernel_width, ...
     previous_layer_feature_map_channel_count, ...
     current_layer_kernel_count, ...
-    weight_init_sequence);
+    weight_init_sequence, ...
+    number_of_blocks);
   net.layers = cat(2, net.layers, tmp.layers);
 
 
 % -------------------------------------------------------------------------
-function tmp_net = addBlockLayerElements(block_number, dataset, network_arch, larp_layer_kernel_width, previous_layer_feature_map_channel_count, current_layer_kernel_count, weight_init_sequence)
+function tmp_net = addBlockLayerElements(block_number, dataset, network_arch, larp_layer_kernel_width, previous_layer_feature_map_channel_count, current_layer_kernel_count, weight_init_sequence, number_of_blocks)
 % -------------------------------------------------------------------------
   should_add_relu_per_block = false;
   should_add_max_pooling_per_block = false;
@@ -126,7 +133,8 @@ function tmp_net = addBlockLayerElements(block_number, dataset, network_arch, la
       tmp_net.layers{end+1} = fh.reluLayer(block_number);
   end
   if should_add_max_pooling_per_block
-    if block_number == 1 || block_number == 2 || block_number == 3
+    if block_number ~= number_of_blocks
+    % if block_number == 1 || block_number == 2 || block_number == 3
     % if block_number == 2 || block_number == 3 || block_number == 5
       % tmp_net.layers{end+1} = fh.poolingLayerAlexNet(block_number);
       tmp_net.layers{end+1} = fh.poolingLayerLeNetMax(block_number);

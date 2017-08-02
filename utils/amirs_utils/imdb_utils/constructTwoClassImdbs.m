@@ -49,14 +49,15 @@ function constructTwoClassImdbs(dataset, positive_class_number, negative_class_n
     case 'stl-10'
       all_class_imdb = constructStl10Imdb(opts);
     case 'svhn'
+      opts.imdb.whiten_data = false;
       opts.imdb.contrast_normalization = true;
       all_class_imdb = constructSvhnImdb(opts);
   end
 
   keyboard
 
-  % positive_class_number = 1;
-  % negative_class_number = 2;
+  % positive_class_number = 2;
+  % negative_class_number = 1;
   % balance_count = 10; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
   % balance_count = 50; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
   % balance_count = 100; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
@@ -65,8 +66,8 @@ function constructTwoClassImdbs(dataset, positive_class_number, negative_class_n
   % balance_count = 1000; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
   % balance_count = 2500; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
 
-  % positive_class_number = 1;
-  % negative_class_number = 3;
+  % positive_class_number = 3;
+  % negative_class_number = 1;
   % balance_count = 10; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
   % balance_count = 50; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
   % balance_count = 100; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
@@ -75,8 +76,8 @@ function constructTwoClassImdbs(dataset, positive_class_number, negative_class_n
   % balance_count = 1000; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
   % balance_count = 2500; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
 
-  % positive_class_number = 1;
-  % negative_class_number = 4;
+  % positive_class_number = 4;
+  % negative_class_number = 1;
   % balance_count = 10; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
   % balance_count = 50; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
   % balance_count = 100; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
@@ -85,8 +86,8 @@ function constructTwoClassImdbs(dataset, positive_class_number, negative_class_n
   % balance_count = 1000; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
   % balance_count = 2500; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
 
-  % positive_class_number = 1;
-  % negative_class_number = 5;
+  % positive_class_number = 5;
+  % negative_class_number = 1;
   % balance_count = 10; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
   % balance_count = 50; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
   % balance_count = 100; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
@@ -135,8 +136,8 @@ function constructTwoClassImdbs(dataset, positive_class_number, negative_class_n
   % balance_count = 1000; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
   % balance_count = 2500; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
 
-  % positive_class_number = 5;
-  % negative_class_number = 10;
+  % positive_class_number = 10;
+  % negative_class_number = 5;
   % balance_count = 10; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
   % balance_count = 50; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
   % balance_count = 100; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
@@ -145,8 +146,8 @@ function constructTwoClassImdbs(dataset, positive_class_number, negative_class_n
   % balance_count = 1000; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
   % balance_count = 2500; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
 
-  % positive_class_number = 7;
-  % negative_class_number = 10;
+  % positive_class_number = 10;
+  % negative_class_number = 7;
   % balance_count = 10; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
   % balance_count = 50; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
   % balance_count = 100; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
@@ -218,7 +219,7 @@ function createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_
   imdb = fh_imdb_utils.subsampleImdb(imdb, 'train', 'positive', balance_count);
   imdb = fh_imdb_utils.subsampleImdb(imdb, 'train', 'negative', balance_count);
   imdb = fh_imdb_utils.balanceImdb(imdb, 'test', 'downsample'); % all test sets should be balanced so acc = avg(sens, spec)
-  fh_imdb_utils.saveImdb(imdb, dataset, posneg_balance, positive_class_number - 1, negative_class_number - 1)
+  fh_imdb_utils.saveImdb(imdb, dataset, posneg_balance, positive_class_number, negative_class_number)
   afprintf(sprintf('done!\n\n'));
 
 

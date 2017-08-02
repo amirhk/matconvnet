@@ -72,6 +72,30 @@ function imdb = loadSavedTwoClassImdb(dataset, posneg_balance, fold_number, debu
     case 'mnist-784-two-class-6-9'
       tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance);
 
+
+
+
+    case 'svhn-two-class-1-0'
+      tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance);
+    case 'svhn-two-class-2-0'
+      tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance);
+    case 'svhn-two-class-3-0'
+      tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance);
+    case 'svhn-two-class-4-0'
+      tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance);
+    case 'svhn-two-class-5-0'
+      tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance);
+    case 'svhn-two-class-7-2'
+      tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance);
+    case 'svhn-two-class-8-2'
+      tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance);
+    case 'svhn-two-class-8-3'
+      tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance);
+    case 'svhn-two-class-9-4'
+      tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance);
+    case 'svhn-two-class-9-6'
+      tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance);
+
     %   switch posneg_balance
     %     case 'balanced-10'
     %       tmp = load(fullfile(path_to_imdbs, 'mnist-784', 'balanced', 'saved-two-class-mnist-784-pos0-neg1-balanced-10-10-train-10-10.mat'));
