@@ -234,7 +234,7 @@ function all_experiments_single_run = runAllExperimentsOnce(experiment_dir, data
         performance = getSimpleTestAccuracyFromMLP(experiment_options);
       case 'cnn'
 
-        experiment_options.gpus = 3;
+        experiment_options.gpus = 1;
 
         % TODO: this has to somehow be detected automatically....
         % experiment_options.conv_network_arch = 'convV0P0RL0+fcV1-RF16CH64';
