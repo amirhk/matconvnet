@@ -1,5 +1,6 @@
 
 function runTempScript()
+load('H:\Amir\MATCON~3\EXPERI~1\TEAF3C~1\SIMPLE~1\cnn-2-Aug-2017-10-25-17-cifar-convV3P3RL3-RF32CH3+fcV1-RF4CH64-input64x64x3-batch-size-50-weight-decay-0.0010-GPU-3-bpd-13\net-epoch-100.mat')
   net = load('/Volumes/Amir/matconvnet/experiment_results/test-classification-perf-2-Aug-2017-10-23-48-rp-tests-cnn-pathology-whatever/simple-CNN-test-accuracy-2-Aug-2017-10-25-16-pathology-whatever-on-convV3P3RL3-RF32CH3+fcV1-RF4CH64-input64x64x3-GPU-3/cnn-2-Aug-2017-10-25-17-cifar-convV3P3RL3-RF32CH3+fcV1-RF4CH64-input64x64x3-batch-size-50-weight-decay-0.0010-GPU-3-bpd-13/net-epoch-100.mat');
   net = net.net;
 
