@@ -36,7 +36,7 @@ function all_experiments_multi_run = tempScriptMeasureClassificationPerformance(
   % classification_method = 'mlp-64-10';
   % classification_method = 'mlp-500-100';
   % classification_method = 'mlp-500-1000-100';
-  number_of_trials = 3;
+  number_of_trials = 1;
   all_experiments_multi_run = {};
 
   % -------------------------------------------------------------------------
