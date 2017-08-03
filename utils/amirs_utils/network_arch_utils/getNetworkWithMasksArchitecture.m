@@ -319,21 +319,3 @@ function net = getNetworkWithMasksArchitecture(dataset, network_arch, weight_ini
 
   end
 
-function number_of_output_nodes = getNumberOfOutputNodes(dataset)
-  if isTwoClassImdb(dataset)
-    number_of_output_nodes = 2;
-  elseif strcmp(dataset, 'coil-100')
-    number_of_output_nodes = 100;
-  else
-    number_of_output_nodes = 10;
-  end
-
-
-
-
-
-
-
-
-
-
