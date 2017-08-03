@@ -9,7 +9,7 @@ function runTempScript()
   % tmp_opts.posneg_balance = 'balanced-50';
   tmp_opts.dataset = 'pathology';
   tmp_opts.posneg_balance = 'whatever';
-  imdb = loadSavedImdb(tmp_opts, true);
+  imdb = loadSavedImdb(tmp_opts, false);
 
   keyboard
 
