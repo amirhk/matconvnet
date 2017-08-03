@@ -26,6 +26,7 @@ function fh = projectionUtils()
 % POSSIBILITY OF SUCH DAMAGE.
 
   fh.getAngleSeparatedImdb = @getAngleSeparatedImdb;
+  fh.getPCAProjectedImdb = @getPCAProjectedImdb;
   fh.getDenslyProjectedImdb = @getDenslyProjectedImdb;
   fh.getDenslyDownProjectedImdb = @getDenslyDownProjectedImdb;
   fh.getDenslyProjectedAndNormalizedImdb = @getDenslyProjectedAndNormalizedImdb;
@@ -128,6 +129,27 @@ function [images, labels] = getSimpleNNBatch(imdb, batch)
 
 
 
+
+
+
+
+
+% -------------------------------------------------------------------------
+function imdb = getPCAProjectedImdb(imdb, projected_dim)
+% -------------------------------------------------------------------------
+  vectorized_original_imdb = getVectorizedImdb(imdb);
+
+  assert(projected_dim <= size(vectorized_original_imdb.images.data, 2));
+
+  number_of_samples = size(vectorized_original_imdb.images.data, 1);
+  [coeff, score, latent, tsquared, explained, mu] = pca(vectorized_original_imdb.images.data);
+  % approximation = score(:,1:projected_dim) * coeff(:,1:projected_dim)' + repmat(mu, number_of_samples, 1);
+  approximation = vectorized_original_imdb.images.data * coeff(:,1:projected_dim) + repmat(mu(1:projected_dim), number_of_samples, 1);
+
+  vectorized_projected_imdb = vectorized_original_imdb;
+  vectorized_projected_imdb.images.data = approximation;
+
+  imdb = get4DImdb(vectorized_projected_imdb, sqrt(projected_dim), sqrt(projected_dim), 1, number_of_samples);
 
 
 
