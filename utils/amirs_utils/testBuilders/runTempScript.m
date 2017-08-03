@@ -1,3 +1,64 @@
+
+function runTempScript()
+  net = load('/Volumes/Amir/matconvnet/experiment_results/test-classification-perf-2-Aug-2017-10-23-48-rp-tests-cnn-pathology-whatever/simple-CNN-test-accuracy-2-Aug-2017-10-25-16-pathology-whatever-on-convV3P3RL3-RF32CH3+fcV1-RF4CH64-input64x64x3-GPU-3/cnn-2-Aug-2017-10-25-17-cifar-convV3P3RL3-RF32CH3+fcV1-RF4CH64-input64x64x3-batch-size-50-weight-decay-0.0010-GPU-3-bpd-13/net-epoch-100.mat');
+  net = net.net;
+
+  tmp_opts.dataset = 'pathology-multi-class-subsampled';
+  tmp_opts.posneg_balance = 'balanced-50';
+  imdb = loadSavedImdb(tmp_opts, true);
+
+  keyboard
+
+  [top_predictions, ~] = getPredictionsFromModelOnImdb(net, 'cnn', imdb, 3, false);
+
+  keyboard
+
+end
+
+
+
+% -------------------------------------------------------------------------
+function fn = getBatch()
+% -------------------------------------------------------------------------
+  fn = @(x,y) getSimpleNNBatch(x,y);
+end
+
+% -------------------------------------------------------------------------
+function [images, labels] = getSimpleNNBatch(imdb, batch)
+% -------------------------------------------------------------------------
+  images = imdb.images.data(:,:,:,batch);
+  labels = imdb.images.labels(batch);
+  % if rand > 0.5, images=fliplr(images); end
+end
+
+% -------------------------------------------------------------------------
+function all_predictions = getAllPredictionsFromTopPredictions(top_predictions, imdb)
+% -------------------------------------------------------------------------
+  % NOT repmat... find the index of the top predicted class
+  % for each sample (in each column) and set that to 1.
+  number_of_samples = size(imdb.images.data, 4);
+  number_of_classes = numel(unique(imdb.images.labels));
+  all_predictions = zeros(number_of_classes, number_of_samples);
+  for i = 1:number_of_samples
+    top_class_prediction = top_predictions(i);
+    all_predictions(top_class_prediction, i) = 1;
+  end
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 % tempScriptReproDasgupta('2_gaussians', 'measure-c-separation');
 % tempScriptReproDasgupta('2_gaussians', 'measure-1-knn-perf');
 % tempScriptReproDasgupta('2_gaussians', 'measure-eccentricity');
@@ -97,7 +158,7 @@
 % functionHandle = @tem pScriptRunTsne;
 % functionHandle = @tmpScriptCalculateDistances;
 % functionHandle = @tmpScriptCalculateDistances2;
-functionHandle = @tempScriptMeasureClassificationPerformance;
+% functionHandle = @tempScriptMeasureClassificationPerformance;
 % functionHandle = @tempScriptMeasureCSeparation;
 % functionHandle = @tempScriptMeasureAverageClassEccentricity;
 % functionHandle = @tempScriptPlot2DEuclideanDistances;
@@ -150,87 +211,161 @@ functionHandle = @tempScriptMeasureClassificationPerformance;
 
 
 
-% -------------------------------------------------------------------------
-%                                                                opts.paths
-% -------------------------------------------------------------------------
-opts.paths.time_string = sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
-opts.paths.experiment_parent_dir = getValueFromFieldOrDefault( ...
-  {}, ... % no input_opts here! :)
-  'experiment_parent_dir', ...
-  fullfile(vl_rootnn, 'experiment_results'));
-opts.paths.experiment_dir = fullfile(opts.paths.experiment_parent_dir, sprintf( ...
-  'temp-script-%s', ...
-  opts.paths.time_string));
-if ~exist(opts.paths.experiment_dir)
-  mkdir(opts.paths.experiment_dir);
-end
-% opts.paths.options_file_path = fullfile(opts.paths.experiment_dir, '_options.txt');
-opts.paths.results_file_path = fullfile(opts.paths.experiment_dir, '_results.txt');
+% % -------------------------------------------------------------------------
+% %                                                                opts.paths
+% % -------------------------------------------------------------------------
+% opts.paths.time_string = sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
+% opts.paths.experiment_parent_dir = getValueFromFieldOrDefault( ...
+%   {}, ... % no input_opts here! :)
+%   'experiment_parent_dir', ...
+%   fullfile(vl_rootnn, 'experiment_results'));
+% opts.paths.experiment_dir = fullfile(opts.paths.experiment_parent_dir, sprintf( ...
+%   'temp-script-%s', ...
+%   opts.paths.time_string));
+% if ~exist(opts.paths.experiment_dir)
+%   mkdir(opts.paths.experiment_dir);
+% end
+% % opts.paths.options_file_path = fullfile(opts.paths.experiment_dir, '_options.txt');
+% opts.paths.results_file_path = fullfile(opts.paths.experiment_dir, '_results.txt');
 
-all_results = {};
+% all_results = {};
+
+% % dataset_list = { ...
+% %   'mnist-784-two-class-0-1', ...
+% %   'mnist-784-two-class-0-2', ...
+% %   'mnist-784-two-class-0-3', ...
+% %   'mnist-784-two-class-0-4', ...
+% %   'mnist-784-two-class-5-0', ...
+% %   'mnist-784-two-class-7-2', ...
+% %   'mnist-784-two-class-8-2', ...
+% %   'mnist-784-two-class-8-3', ...
+% %   'mnist-784-two-class-4-9', ...
+% %   'mnist-784-two-class-6-9', ...
+% % };
+
+% % dataset_list = { ...
+% %   'svhn-two-class-1-0', ...
+% %   'svhn-two-class-2-0', ...
+% %   'svhn-two-class-3-0', ...
+% %   'svhn-two-class-4-0', ...
+% %   'svhn-two-class-5-0', ...
+% %   'svhn-two-class-7-2', ...
+% %   'svhn-two-class-8-2', ...
+% %   'svhn-two-class-8-3', ...
+% %   'svhn-two-class-9-4', ...
+% %   'svhn-two-class-9-6', ...
+% % };
 
 % dataset_list = { ...
-%   'mnist-784-two-class-0-1', ...
-%   'mnist-784-two-class-0-2', ...
-%   'mnist-784-two-class-0-3', ...
-%   'mnist-784-two-class-0-4', ...
-%   'mnist-784-two-class-5-0', ...
-%   'mnist-784-two-class-7-2', ...
-%   'mnist-784-two-class-8-2', ...
-%   'mnist-784-two-class-8-3', ...
-%   'mnist-784-two-class-4-9', ...
-%   'mnist-784-two-class-6-9', ...
+%   'imagenet-tiny-two-class-school-bus-remote-control', ...
+%   'imagenet-tiny-two-class-school-bus-rocking-chair', ...
+%   'imagenet-tiny-two-class-school-bus-monarch-butterfly', ...
+%   'imagenet-tiny-two-class-school-bus-steel-arch-bridge', ...
+%   'imagenet-tiny-two-class-school-bus-german-shepherd', ...
+%   'imagenet-tiny-two-class-monarch-butterfly-lion', ...
+%   'imagenet-tiny-two-class-monarch-butterfly-steel-arch-bridge', ...
+%   'imagenet-tiny-two-class-lion-brown-bear', ...
+%   'imagenet-tiny-two-class-lion-german-shepherd', ...
+%   'imagenet-tiny-two-class-brown-bear-german-shepherd', ...
+%   'imagenet-tiny-two-class-remote-control-rocking-chair', ...
 % };
 
-% dataset_list = { ...
-%   'svhn-two-class-1-0', ...
-%   'svhn-two-class-2-0', ...
-%   'svhn-two-class-3-0', ...
-%   'svhn-two-class-4-0', ...
-%   'svhn-two-class-5-0', ...
-%   'svhn-two-class-7-2', ...
-%   'svhn-two-class-8-2', ...
-%   'svhn-two-class-8-3', ...
-%   'svhn-two-class-9-4', ...
-%   'svhn-two-class-9-6', ...
-% };
+% dataset_counter = 1;
+% for dataset_name = dataset_list
+%   dataset_name = char(dataset_name);
+%   afprintf(sprintf('[INFO] Testing dataset #%d / %d: %s... \n', dataset_counter, numel(dataset_list), dataset_name));
 
-dataset_list = { ...
-  'imagenet-tiny-two-class-school-bus-remote-control', ...
-  'imagenet-tiny-two-class-school-bus-rocking-chair', ...
-  'imagenet-tiny-two-class-school-bus-monarch-butterfly', ...
-  'imagenet-tiny-two-class-school-bus-steel-arch-bridge', ...
-  'imagenet-tiny-two-class-school-bus-german-shepherd', ...
-  'imagenet-tiny-two-class-monarch-butterfly-lion', ...
-  'imagenet-tiny-two-class-monarch-butterfly-steel-arch-bridge', ...
-  'imagenet-tiny-two-class-lion-brown-bear', ...
-  'imagenet-tiny-two-class-lion-german-shepherd', ...
-  'imagenet-tiny-two-class-brown-bear-german-shepherd', ...
-  'imagenet-tiny-two-class-remote-control-rocking-chair', ...
-};
+%   all_results{end+1} = functionHandle(dataset_name, 'balanced-500', '1-knn', 1);
 
-dataset_counter = 1;
-for dataset_name = dataset_list
-  dataset_name = char(dataset_name);
-  afprintf(sprintf('[INFO] Testing dataset #%d / %d: %s... \n', dataset_counter, numel(dataset_list), dataset_name));
+%   if exist(opts.paths.results_file_path)
+%     delete(opts.paths.results_file_path);
+%   end
+%   saveStruct2File(all_results, opts.paths.results_file_path, 0);
 
-  all_results{end+1} = functionHandle(dataset_name, 'balanced-500', '1-knn', 1);
-
-  if exist(opts.paths.results_file_path)
-    delete(opts.paths.results_file_path);
-  end
-  saveStruct2File(all_results, opts.paths.results_file_path, 0);
-
-  afprintf(sprintf('[INFO] done!\n'));
-  dataset_counter = dataset_counter + 1;
-end
+%   afprintf(sprintf('[INFO] done!\n'));
+%   dataset_counter = dataset_counter + 1;
+% end
 
 
 
 
-% functionHandle('pathology-multi-class-subsampled', 'balanced-50', 'cnn', 1);
-% functionHandle('pathology-multi-class-subsampled', 'balanced-500', 'cnn', 1);
-% functionHandle('pathology', 'whatever', 'cnn', 1);
+% % functionHandle('pathology-multi-class-subsampled', 'balanced-50', 'cnn', 1);
+% % functionHandle('pathology-multi-class-subsampled', 'balanced-500', 'cnn', 1);
+% % functionHandle('pathology', 'whatever', 'cnn', 1);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
