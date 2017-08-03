@@ -411,6 +411,65 @@ function net = getConvArchitecture(dataset, network_arch)
       % net.layers{end+1} = fh.nnlossLayer();
 
 
+    % ------------------------------------------------------------------------------------------------------------------------------------------------------------
+    case 'convV5P3RL5-input64x64x3' % AlexNet
+      layer_number = numel(net.layers) + 1;
+      net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 3, 96, 5/1000, 2, 'gaussian', 'gen');
+      net.layers{end+1} = fh.reluLayer(layer_number);
+
+      layer_number = numel(net.layers) + 1;
+      net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 96, 256, 5/1000, 2, 'gaussian', 'gen');
+      net.layers{end+1} = fh.reluLayer(layer_number);
+      net.layers{end+1} = fh.poolingLayerAlexNet(layer_number);
+
+      layer_number = numel(net.layers) + 1;
+      net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 3, 256, 384, 5/1000, 1, 'gaussian', 'gen');
+      net.layers{end+1} = fh.reluLayer(layer_number);
+      net.layers{end+1} = fh.poolingLayerAlexNet(layer_number);
+
+      layer_number = numel(net.layers) + 1;
+      net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 3, 384, 384, 5/1000, 1, 'gaussian', 'gen');
+      net.layers{end+1} = fh.reluLayer(layer_number);
+
+      layer_number = numel(net.layers) + 1;
+      net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 3, 384, 256, 5/1000, 1, 'gaussian', 'gen');
+      net.layers{end+1} = fh.reluLayer(layer_number);
+      net.layers{end+1} = fh.poolingLayerAlexNet(layer_number);
+
+      % FULLY CONNECTED
+      layer_number = numel(net.layers) + 1;
+      % NOTE LINE BELOW IS 8!!! BECAUSE OF INPUT
+      net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 8, 64, 64, 5/100, 0, 'gaussian', 'gen');
+      net.layers{end+1} = fh.reluLayer(layer_number);
+
+      layer_number = numel(net.layers) + 1;
+      number_of_output_nodes = getNumberOfOutputNodes(dataset);
+      net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 1, 64, number_of_output_nodes, 5/100, 0, 'gaussian', 'gen');
+
+      % LOSS LAYER
+      net.layers{end+1} = fh.softmaxlossLayer();
+      % net.layers{end+1} = fh.nnlossLayer();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -444,7 +503,7 @@ function net = getConvArchitecture(dataset, network_arch)
       net.layers{end+1} = fh.softmaxlossLayer();
       % net.layers{end+1} = fh.nnlossLayer();
 
-    % ------------------------------------------------------------------------------------------------------------------------------------------------------------
+    % ---1---------------------------------------------------------------------------------------------------------------------------------------------------------
     case 'convV3P3RL3-RF32CH3+fcV1-RF4CH64'
       layer_number = numel(net.layers) + 1;
       net.layers{end+1} = fh.convLayer(dataset, network_arch, layer_number, 5, 3, 32, 1/100, 2, 'gaussian', 'gen');
@@ -475,15 +534,4 @@ function net = getConvArchitecture(dataset, network_arch)
       % net.layers{end+1} = fh.nnlossLayer();
 
   end
-
-function number_of_output_nodes = getNumberOfOutputNodes(dataset)
-  if isTwoClassImdb(dataset) || isSyntheticImdb(dataset)
-    number_of_output_nodes = 2;
-  elseif strcmp(dataset, 'coil-100')
-    number_of_output_nodes = 100;
-  else
-    number_of_output_nodes = 10;
-  end
-
-
 

@@ -262,7 +262,8 @@ function all_experiments_single_run = runAllExperimentsOnce(experiment_dir, data
         % experiment_options.conv_network_arch = 'convV3P0RL3-RF32CH3+fcV1-RF32CH64';
         % experiment_options.conv_network_arch = 'convV5P0RL5-RF32CH3+fcV1-RF32CH64';
 
-        experiment_options.conv_network_arch = 'convV3P3RL3-RF32CH3+fcV1-RF4CH64-input64x64x3';
+        % experiment_options.conv_network_arch = 'convV3P3RL3-RF32CH3+fcV1-RF4CH64-input64x64x3';
+        experiment_options.conv_network_arch = 'convV5P3RL5-input64x64x3';
 
         [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccuracyFromCnn(experiment_options);
         performance = best_test_accuracy_mean;

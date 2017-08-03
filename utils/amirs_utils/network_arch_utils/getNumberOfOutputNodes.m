@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function full_backprop_depth = getFullBackPropDepthForConvArchitecture(conv_architecture)
+function number_of_output_nodes = getNumberOfOutputNodes(dataset)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -24,43 +24,15 @@ function full_backprop_depth = getFullBackPropDepthForConvArchitecture(conv_arch
 % CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
-
-  switch conv_architecture
-
-    case 'convV0P0RL0+fcV1-RF32CH3'
-      full_backprop_depth = 4;
-    case 'convV0P0RL0+fcV1-RF32CH64'
-      full_backprop_depth = 4;
-    case 'convV0P0RL0+fcV1-RF16CH64'
-      full_backprop_depth = 4;
-    case 'convV0P0RL0+fcV1-RF4CH64'
-      full_backprop_depth = 4;
-
-    case 'convV1P0RL0-RF32CH3+fcV1-RF32CH64'
-      full_backprop_depth = 5;
-    case 'convV1P0RL1-RF32CH3+fcV1-RF32CH64'
-      full_backprop_depth = 6;
-    case 'convV1P1RL1-RF32CH3+fcV1-RF16CH64'
-      full_backprop_depth = 7;
-    case 'convV3P0RL0-RF32CH3+fcV1-RF32CH64'
-      full_backprop_depth = 7;
-    case 'convV3P0RL3-RF32CH3+fcV1-RF32CH64'
-      full_backprop_depth = 10;
-    case 'convV3P1RL3-RF32CH3+fcV1-RF16CH64'
-      full_backprop_depth = 11;
-    case 'convV3P3RL0-RF32CH3+fcV1-RF4CH64'
-      full_backprop_depth = 10;
-    case 'convV3P3RL3-RF32CH3+fcV1-RF4CH64'
-      full_backprop_depth = 13;
-
-    case 'convV5P1RL5-RF32CH3+fcV1-RF16CH64'
-      full_backprop_depth = 15;
-
-    case 'convV3P3RL3-RF32CH3+fcV1-RF4CH64-input64x64x3'
-      full_backprop_depth = 13;
-
-    case 'convV5P3RL5-input64x64x3'
-      full_backprop_depth = 17;
-
-
+  if isTwoClassImdb(dataset) || isSyntheticImdb(dataset)
+    number_of_output_nodes = 2;
+  elseif strcmp(dataset, 'imagenet-tiny')
+    number_of_output_nodes = 200;
+  elseif strcmp(dataset, 'coil-100')
+    number_of_output_nodes = 100;
+  else
+    number_of_output_nodes = 10;
   end
+
+
+
