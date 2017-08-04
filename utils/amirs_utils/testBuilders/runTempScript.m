@@ -1,23 +1,31 @@
+function runTempScript()
 
-% function runTempScript()
+  % net = load('/Volumes/Amir/matconvnet/experiment_results/test-classification-perf-2-Aug-2017-10-23-48-rp-tests-cnn-pathology-whatever/simple-CNN-test-accuracy-2-Aug-2017-10-25-16-pathology-whatever-on-convV3P3RL3-RF32CH3+fcV1-RF4CH64-input64x64x3-GPU-3/cnn-2-Aug-2017-10-25-17-cifar-convV3P3RL3-RF32CH3+fcV1-RF4CH64-input64x64x3-batch-size-50-weight-decay-0.0010-GPU-3-bpd-13/net-epoch-100.mat');
+  % net = load('H:\Amir\MATCON~3\EXPERI~1\TEAF3C~1\SIMPLE~1\cnn-2-Aug-2017-10-25-17-cifar-convV3P3RL3-RF32CH3+fcV1-RF4CH64-input64x64x3-batch-size-50-weight-decay-0.0010-GPU-3-bpd-13\net-epoch-100.mat')
+  net = load('H:\Amir\MATCON~3\EXPERI~1\TE3A35~1\SIMPLE~1\cnn-3-Aug-2017-22-03-24-cifar-convV5P3RL5-input64x64x3-batch-size-50-weight-decay-0.0010-GPU-3-bpd-17\net-epoch-36.mat')
+  net = net.net;
 
-%   % net = load('/Volumes/Amir/matconvnet/experiment_results/test-classification-perf-2-Aug-2017-10-23-48-rp-tests-cnn-pathology-whatever/simple-CNN-test-accuracy-2-Aug-2017-10-25-16-pathology-whatever-on-convV3P3RL3-RF32CH3+fcV1-RF4CH64-input64x64x3-GPU-3/cnn-2-Aug-2017-10-25-17-cifar-convV3P3RL3-RF32CH3+fcV1-RF4CH64-input64x64x3-batch-size-50-weight-decay-0.0010-GPU-3-bpd-13/net-epoch-100.mat');
-%   net = load('H:\Amir\MATCON~3\EXPERI~1\TEAF3C~1\SIMPLE~1\cnn-2-Aug-2017-10-25-17-cifar-convV3P3RL3-RF32CH3+fcV1-RF4CH64-input64x64x3-batch-size-50-weight-decay-0.0010-GPU-3-bpd-13\net-epoch-100.mat')
-%   net = net.net;
+  % tmp_opts.dataset = 'pathology-multi-class-subsampled';
+  % tmp_opts.posneg_balance = 'balanced-50';
+  tmp_opts.dataset = 'pathology';
+  tmp_opts.posneg_balance = 'whatever';
+  imdb = loadSavedImdb(tmp_opts, false);
 
-%   % tmp_opts.dataset = 'pathology-multi-class-subsampled';
-%   % tmp_opts.posneg_balance = 'balanced-50';
-%   tmp_opts.dataset = 'pathology';
-%   tmp_opts.posneg_balance = 'whatever';
-%   imdb = loadSavedImdb(tmp_opts, false);
+  keyboard
 
-%   keyboard
+  [top_predictions, ~] = getPredictionsFromModelOnImdb(net, 'cnn', imdb, 3, false);
 
-%   [top_predictions, ~] = getPredictionsFromModelOnImdb(net, 'cnn', imdb, 3, false);
+  keyboard
 
-%   keyboard
+  tmp_imdb = imdb;
+  tmp_imdb.images.data = [];
+  % save('trained_lenet.mat', 'tmp_imdb', 'top_predictions');
+  save('partially_trained_alexnet.mat', 'tmp_imdb', 'top_predictions');
+  % save('trained_alexnet.mat', 'tmp_imdb', 'top_predictions');
 
-% end
+  keyboard
+
+end
 
 
 
