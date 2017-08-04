@@ -46,6 +46,8 @@ function constructTwoClassImdbs(dataset, positive_class_number, negative_class_n
       opts.imdb.contrast_normalization = true;
       opts.imdb.whiten_data = false;
       all_class_imdb = constructCifarImdb(opts);
+    case 'coil-100'
+      all_class_imdb = constructCoil100Imdb(opts);
     case 'stl-10'
       all_class_imdb = constructStl10Imdb(opts);
     case 'svhn'
@@ -55,6 +57,15 @@ function constructTwoClassImdbs(dataset, positive_class_number, negative_class_n
   end
 
   keyboard
+
+  % for k = 1 : 25
+  %   tmp = randsample(1:100, 2);
+  %   positive_class_number = tmp(1);
+  %   negative_class_number = tmp(2);
+  %   balance_count = 36; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
+  % end
+
+  % keyboard
 
   % positive_class_number = 2;
   % negative_class_number = 1;

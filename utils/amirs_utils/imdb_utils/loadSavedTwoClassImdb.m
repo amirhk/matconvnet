@@ -96,6 +96,59 @@ function imdb = loadSavedTwoClassImdb(dataset, posneg_balance, fold_number, debu
     case 'svhn-two-class-9-6'
       tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance);
 
+
+
+    case 'coil-100-two-class-14-66'
+      tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance);
+    case 'coil-100-two-class-19-84'
+      tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance);
+    case 'coil-100-two-class-27-26'
+      tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance);
+    case 'coil-100-two-class-29-20'
+      tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance);
+    case 'coil-100-two-class-32-16'
+      tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance);
+    case 'coil-100-two-class-35-31'
+      tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance);
+    case 'coil-100-two-class-35-40'
+      tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance);
+    case 'coil-100-two-class-38-71'
+      tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance);
+    case 'coil-100-two-class-44-34'
+      tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance);
+    case 'coil-100-two-class-47-33'
+      tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance);
+    case 'coil-100-two-class-47-43'
+      tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance);
+    case 'coil-100-two-class-51-47'
+      tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance);
+    case 'coil-100-two-class-52-1'
+      tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance);
+    case 'coil-100-two-class-55-51'
+      tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance);
+    case 'coil-100-two-class-58-57'
+      tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance);
+    case 'coil-100-two-class-66-56'
+      tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance);
+    case 'coil-100-two-class-72-22'
+      tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance);
+    case 'coil-100-two-class-77-34'
+      tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance);
+    case 'coil-100-two-class-79-27'
+      tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance);
+    case 'coil-100-two-class-82-80'
+      tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance);
+    case 'coil-100-two-class-89-22'
+      tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance);
+    case 'coil-100-two-class-89-79'
+      tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance);
+    case 'coil-100-two-class-93-5'
+      tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance);
+    case 'coil-100-two-class-98-35'
+      tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance);
+    case 'coil-100-two-class-100-52'
+      tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance);
+
     %   switch posneg_balance
     %     case 'balanced-10'
     %       tmp = load(fullfile(path_to_imdbs, 'mnist-784', 'balanced', 'saved-two-class-mnist-784-pos0-neg1-balanced-10-10-train-10-10.mat'));
