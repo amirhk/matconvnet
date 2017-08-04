@@ -243,20 +243,6 @@ function imdb = loadSavedTwoClassImdb(dataset, posneg_balance, fold_number, debu
           tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos8-neg34-balanced-500-500-train-500-500.mat'));
       end
 
-    case 'imagenet-tiny-two-class-school-bus-monarch-butterfly'
-      switch posneg_balance
-        case 'balanced-10'
-          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos8-neg36-balanced-10-10-train-10-10.mat'));
-        case 'balanced-50'
-          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos8-neg36-balanced-50-50-train-50-50.mat'));
-        case 'balanced-100'
-          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos8-neg36-balanced-100-100-train-100-100.mat'));
-        case 'balanced-250'
-          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos8-neg36-balanced-250-250-train-250-250.mat'));
-        case 'balanced-500'
-          tmp = load(fullfile(path_to_imdbs, 'imagenet-tiny', 'balanced', 'saved-two-class-imagenet-tiny-pos8-neg36-balanced-500-500-train-500-500.mat'));
-      end
-
     case 'imagenet-tiny-two-class-school-bus-steel-arch-bridge'
       switch posneg_balance
         case 'balanced-10'

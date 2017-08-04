@@ -93,7 +93,8 @@ function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccura
   elseif strcmp(opts.general.dataset, 'pathology') || strcmp(opts.general.dataset, 'pathology-multi-class-subsampled')
     learning_rate_divider_list = [1, 3, 10, 30];
     % learning_rate_divider_list = [3, 10, 30];
-    learning_rate_divider_list = [0.3, 1, 3, 10, 30];
+    % learning_rate_divider_list = [0.3, 1, 3, 10, 30];
+    learning_rate_divider_list = [0.03, 0.1];
   else
     throwException('[ERROR] unrecognized dataset.')
   end
