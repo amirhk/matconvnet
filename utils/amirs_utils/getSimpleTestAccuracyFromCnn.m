@@ -34,7 +34,7 @@ function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccura
   opts.general.dataset = getValueFromFieldOrDefault(input_opts, 'dataset', 'cifar');
   opts.general.posneg_balance = getValueFromFieldOrDefault(input_opts, 'posneg_balance', 'balanced-50');
   opts.general.conv_network_arch = getValueFromFieldOrDefault(input_opts, 'conv_network_arch', 'convV0P0RL0+fcV1-RF16CH64');
-  opts.train.gpus = ifNotMacSetGpu(getValueFromFieldOrDefault(input_opts, 'gpus', 1));
+  opts.train.gpus = ifNotMacSetGpu(getValueFromFieldOrDefault(input_opts, 'gpus', 2));
 
   % -------------------------------------------------------------------------
   %                                                                opts.paths
@@ -77,7 +77,7 @@ function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccura
 
   training_options.gpus = ifNotMacSetGpu(opts.train.gpus);
   training_options.return_performance_summary = getValueFromFieldOrDefault(input_opts, 'return_performance_summary', true);;
-  training_options.debug_flag = getValueFromFieldOrDefault(input_opts, 'debug_flag', false);;
+  training_options.debug_flag = getValueFromFieldOrDefault(input_opts, 'debug_flag', false);
 
   % base_learning_rate = [0.1*ones(1,25) 0.03*ones(1,25) 0.01*ones(1,50)];
   base_learning_rate = [0.1*ones(1,15) 0.03*ones(1,15) 0.01*ones(1,15)];
@@ -96,16 +96,16 @@ function [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccura
     throwException('[ERROR] unrecognized dataset.')
   end
 
-  % batch_size_list = [50, 100];
-  % weight_decay_list = [0.01, 0.001, 0.0001];
+  batch_size_list = [50, 100];
+  weight_decay_list = [0.01, 0.001, 0.0001];
 
 
 
 
-  learning_rate_divider_list = [1];
-  batch_size_list = [50];
-  weight_decay_list = [0.001];
-  base_learning_rate = [0.1*ones(1,20) 0.03*ones(1,20) 0.01*ones(1,20) 0.003*ones(1,20) 0.001*ones(1,20)];
+  % learning_rate_divider_list = [1];
+  % batch_size_list = [50];
+  % weight_decay_list = [0.001];
+  % base_learning_rate = [0.1*ones(1,20) 0.03*ones(1,20) 0.01*ones(1,20) 0.003*ones(1,20) 0.001*ones(1,20)];
 
 
 
