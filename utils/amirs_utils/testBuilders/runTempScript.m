@@ -170,7 +170,7 @@ end
 % functionHandle = @tem pScriptRunTsne;
 % functionHandle = @tmpScriptCalculateDistances;
 % functionHandle = @tmpScriptCalculateDistances2;
-functionHandle = @tempScriptMeasureClassificationPerformance;
+% functionHandle = @tempScriptMeasureClassificationPerformance;
 % functionHandle = @tempScriptMeasureCSeparation;
 % functionHandle = @tempScriptMeasureAverageClassEccentricity;
 % functionHandle = @tempScriptPlot2DEuclideanDistances;
@@ -303,7 +303,7 @@ functionHandle = @tempScriptMeasureClassificationPerformance;
 
 % functionHandle('pathology-multi-class-subsampled', 'balanced-50', 'cnn', 1);
 % % functionHandle('pathology-multi-class-subsampled', 'balanced-500', 'cnn', 1);
-functionHandle('pathology', 'whatever', 'cnn', 1);
+% functionHandle('pathology', 'whatever', 'cnn', 1);
 
 
 
