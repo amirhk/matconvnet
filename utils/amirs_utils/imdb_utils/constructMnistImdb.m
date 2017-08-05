@@ -67,9 +67,11 @@ function imdb = constructMnistImdb(opts)
   set = [ones(1,numel(y1)) 3*ones(1,numel(y2))];
   if strcmp(opts.general.network_arch, 'mnistnet')
     data = single(reshape(cat(3, x1, x2),28,28,1,[]));
+    name = 'mnist-784';
   elseif strcmp(opts.general.network_arch, 'lenet')
     % MNIST is single channel of size 28x28.. for LeNet, repmat channel 3 and pad
     data = single(padarray(repmat(reshape(cat(3, x1, x2),28,28,1,[]), [1,1,3,1]), [2,2]));
+    name = 'mnist';
   else
     disp('wtf!!')
   end
@@ -82,4 +84,6 @@ function imdb = constructMnistImdb(opts)
   imdb.images.set = set;
   imdb.meta.sets = {'train', 'val', 'test'};
   imdb.meta.classes = arrayfun(@(x)sprintf('%d',x),0:9,'uniformoutput',false);
+  imdb.name = name;
   afprintf(sprintf('done!\n\n'));
+  keyboard
