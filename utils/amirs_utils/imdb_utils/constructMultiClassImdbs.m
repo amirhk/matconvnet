@@ -48,6 +48,8 @@ function constructMultiClassImdbs(dataset)
       opts.imdb.contrast_normalization = true;
       opts.imdb.whiten_data = false;
       all_class_imdb = constructCifarImdb(opts);
+    case 'coil-100'
+      all_class_imdb = constructCoil100Imdb(opts);
     case 'stl-10'
       all_class_imdb = constructStl10Imdb(opts);
     case 'svhn'
