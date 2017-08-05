@@ -151,14 +151,14 @@ function imdb = getPCAProjectedImdb(imdb, projected_dim)
   number_of_test_samples = size(vectorized_original_test_imdb.images.data, 1);
   [coeff, score, latent, tsquared, explained, mu] = pca(vectorized_original_train_imdb.images.data);
   % approximation = score(:,1:projected_dim) * coeff(:,1:projected_dim)' + repmat(mu, number_of_samples, 1);
-  train_approximation = vectorized_original_train_imdb.images.data * coeff(:, 1 : projected_dim) + repmat(mu(1:projected_dim), number_of_train_samples, 1);
-  test_approximation = vectorized_original_test_imdb.images.data * coeff(:, 1 : projected_dim) + repmat(mu(1:projected_dim), number_of_test_samples, 1);
+  data_train_approximation = vectorized_original_train_imdb.images.data * coeff(:, 1 : projected_dim) + repmat(mu(1:projected_dim), number_of_train_samples, 1);
+  data_test_approximation = vectorized_original_test_imdb.images.data * coeff(:, 1 : projected_dim) + repmat(mu(1:projected_dim), number_of_test_samples, 1);
 
   vectorized_projected_train_imdb = vectorized_original_train_imdb;
   vectorized_projected_test_imdb = vectorized_original_test_imdb;
 
-  vectorized_projected_train_imdb.images.data = train_approximation;
-  vectorized_projected_test_imdb.images.data = test_approximation;
+  vectorized_projected_train_imdb.images.data = data_train_approximation;
+  vectorized_projected_test_imdb.images.data = data_test_approximation;
 
   train_imdb = get4DImdb(vectorized_projected_train_imdb, sqrt(projected_dim), sqrt(projected_dim), 1, number_of_train_samples);
   test_imdb = get4DImdb(vectorized_projected_test_imdb, sqrt(projected_dim), sqrt(projected_dim), 1, number_of_test_samples);
