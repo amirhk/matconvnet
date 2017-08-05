@@ -24,14 +24,16 @@ function imdb = mergeImdbs(train_imdb, test_imdb)
 % CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
-  assert(prod(size(train_imdb.images.data)) == prod(size(test_imdb.images.data)));
+  assert( ...
+    size(train_imdb.images.data, 1) * size(train_imdb.images.data, 2) * size(train_imdb.images.data, 3) == ...
+    size(test_imdb.images.data, 1) * size(test_imdb.images.data, 2) * size(test_imdb.images.data, 3) );
 
   data_train = train_imdb.images.data;
   data_test = test_imdb.images.data;
-  labels_train = train_imdb.images.labels;
-  labels_test = test_imdb.images.labels;
-  set_train = train_imdb.images.set;
-  set_test = test_imdb.images.set;
+  labels_train = reshape(train_imdb.images.labels, [], 1);
+  labels_test = reshape(test_imdb.images.labels, [], 1);
+  set_train = reshape(train_imdb.images.set, [], 1);
+  set_test = reshape(test_imdb.images.set, [], 1);
 
   afprintf(sprintf('[INFO] Concatinating training data and testing data...\n'));
   data = single(cat(4, data_train, data_test));
@@ -48,8 +50,9 @@ function imdb = mergeImdbs(train_imdb, test_imdb)
   imdb.images.data = data(:,:,:,ix);
   imdb.images.labels = labels(ix);
   imdb.images.set = set(ix);
-  imdb.images.file_names = file_names(ix);
-  if strcmp(train_imdb.name, test_imdb.name)
-    imdb.name = test_imdb.name;
+  if isfield(train_imdb, 'name') && isfield(test_imdb, 'name')
+    if strcmp(train_imdb.name, test_imdb.name)
+      imdb.name = test_imdb.name;
+    end
   end
   afprintf(sprintf('[INFO] done!\n'));
