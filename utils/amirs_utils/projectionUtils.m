@@ -180,12 +180,12 @@ function imdb = getEnsembleDenselyDownProjectedImdb(imdb, number_of_projection_l
   final_merged_imdb = imdb;
   final_merged_imdb.images.data = zeros(size(tmp_imdbs{1}.images.data, 1), size(tmp_imdbs{1}.images.data, 2), number_in_ensemble, size(tmp_imdbs{1}.images.data, 4));
   for j = 1 : size(imdb.images.data, 4)
-    tmp_image = [];
+    % tmp_image = zeros(size(tmp_imdbs{1}.images.data, 1), size(tmp_imdbs{1}.images.data, 2), number_in_ensemble);
     for i = 1 : number_in_ensemble
       assert(size(tmp_imdbs{i}.images.data(:,:,:,j), 3) == 1); % the dense RP creates a 2D image from a 2D or 3D image
-      tmp_image = cat(3, tmp_image, tmp_imdbs{i}.images.data(:,:,:,j));
+      final_merged_imdb.images.data(:,:,i,j) = tmp_imdbs{i}.images.data(:,:,:,j);
     end
-    final_merged_imdb.images.data(:,:,:,j) = tmp_image;
+    % final_merged_imdb.images.data(:,:,:,j) = tmp_image;
   end
 
   imdb = final_merged_imdb;
