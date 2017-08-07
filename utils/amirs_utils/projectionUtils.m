@@ -178,7 +178,7 @@ function imdb = getEnsembleDenselyDownProjectedImdb(imdb, number_of_projection_l
   end
 
   final_merged_imdb = imdb;
-  final_merged_imdb.images.data = [];
+  final_merged_imdb.images.data = zeros(size(tmp_imdbs{1}.images.data, 1), size(tmp_imdbs{1}.images.data, 2), number_in_ensemble, size(tmp_imdbs{1}.images.data, 4));
   for j = 1 : size(imdb.images.data, 4)
     tmp_image = [];
     for i = 1 : number_in_ensemble
