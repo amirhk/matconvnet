@@ -337,7 +337,7 @@ for dataset_name = dataset_list
   dataset_name = char(dataset_name);
   afprintf(sprintf('[INFO] Testing dataset #%d / %d: %s... \n', dataset_counter, numel(dataset_list), dataset_name));
 
-  all_results{end+1} = functionHandle(dataset_name, posneg_balance, '1-knn', 1);
+  all_results{end+1} = functionHandle(dataset_name, posneg_balance, '1-knn', 1, opts.paths.experiment_dir);
 
   if exist(opts.paths.results_file_path)
     delete(opts.paths.results_file_path);

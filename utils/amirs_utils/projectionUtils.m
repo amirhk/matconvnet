@@ -243,8 +243,14 @@ function imdb = getDenselyDownProjectedImdb(imdb, number_of_projection_layers, p
             for k = 1 : pooling_stride : projected_dim
               pooled_sample(end+1) = max(right_padded_input_sample(k : k + pooling_width - 1));
             end
-            tmp_imdb.images.data(:,:,:,end+1) = pooled_sample;
+            % keyboard
+            if j == 1
+              tmp_imdb.images.data(:,:,:,end) = pooled_sample;
+            else
+              tmp_imdb.images.data(:,:,:,end+1) = pooled_sample;
+            end
           end
+          assert(prod(size(imdb.images.data)) == 4 * prod(size(tmp_imdb.images.data)));
           imdb = tmp_imdb;
         case 'pooling-max-3x3-stride-2-pad-0101'
           % great, we can apply vl_nnpool on top of a 4D data...
