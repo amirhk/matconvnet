@@ -195,37 +195,6 @@ function imdb = getEnsembleDenselyDownProjectedImdb(imdb, number_of_projection_l
 % -------------------------------------------------------------------------
 function imdb = getDenselyDownProjectedImdb(imdb, number_of_projection_layers, projection_layer_type, number_of_non_linear_layers, non_linear_layer_type, projected_dim)
 % -------------------------------------------------------------------------
-
-  %       IMPORTANT: REVERT TO ME BECAUSE CODE BELOW HAS WIERD ASSUMPTIONS
-  % assert(number_of_projection_layers == 1);
-  % assert(number_of_projection_layers <= 1);
-  % assert(number_of_non_linear_layers <= number_of_projection_layers);
-
-  % vectorized_imdb = getVectorizedImdb(imdb);
-  % original_dim = size(vectorized_imdb.images.data, 2);
-  % % projected_dim = original_dim;
-  % non_linear_layer_count = 0;
-  % for i = 1 : number_of_projection_layers
-  %   random_projection_matrix = randn(projected_dim, original_dim);
-  %   imdb = projectImdbUsingMatrix(imdb, random_projection_matrix);
-  %   if non_linear_layer_count < number_of_non_linear_layers
-  %     switch non_linear_layer_type
-  %       case 'relu'
-  %         imdb.images.data(imdb.images.data < 0) = 0;
-  %       case 'sigmoid'
-  %         imdb.images.data = logsig(imdb.images.data);
-  %       case 'tanh'
-  %         imdb.images.data = tanh(imdb.images.data);
-  %     end
-  %     non_linear_layer_count = non_linear_layer_count + 1;
-  %   end
-  % end
-
-
-
-
-  % assert(number_of_projection_layers == 1);
-  % assert(number_of_projection_layers <= 1);
   assert(number_of_non_linear_layers <= number_of_projection_layers);
 
   vectorized_imdb = getVectorizedImdb(imdb);
@@ -257,17 +226,22 @@ function imdb = getDenselyDownProjectedImdb(imdb, number_of_projection_layers, p
         case 'relu'
           imdb.images.data(imdb.images.data < 0) = 0;
         case 'pooling-max-drop-3/4'
+          pooling_width = 9;
+          pooling_stride = 4;
+          assert(pooling_width >= pooling_stride);
+
           tmp_imdb = imdb;
           tmp_imdb.images.data = [];
           for j = 1 : size(imdb.images.data, 4)
             input_sample = imdb.images.data(:,:,:,j);
             pooled_sample = [];
-            assert(mod(projected_dim, 4) == 0);
             assert(size(input_sample, 1) == projected_dim);
             assert(size(input_sample, 2) == 1);
             assert(size(input_sample, 3) == 1);
-            for k = 1 : 4 : projected_dim
-              pooled_sample(end+1) = max(input_sample(k : k + 4 - 1));
+            assert(mod(projected_dim, pooling_stride) == 0);
+            right_padded_input_sample = cat(2, reshape(input_sample, 1, []), zeros(1, pooling_width - pooling_stride));
+            for k = 1 : pooling_stride : projected_dim
+              pooled_sample(end+1) = max(right_padded_input_sample(k : k + pooling_width - 1));
             end
             tmp_imdb.images.data(:,:,:,end+1) = pooled_sample;
           end
@@ -382,8 +356,6 @@ function imdb = projectImdbUsingMatrix(imdb, projection_matrix)
 
   imdb = get4DImdb(vectorized_projected_imdb, projected_dim, 1, 1, number_of_samples);
   % imdb = get4DImdb(vectorized_projected_imdb, sqrt(projected_dim), sqrt(projected_dim), 1, number_of_samples);
-
-
 
   % N = projected_dim;
   % x = 1:N;
