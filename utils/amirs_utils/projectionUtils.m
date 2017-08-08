@@ -265,6 +265,9 @@ function imdb = getDenselyDownProjectedImdb(imdb, number_of_projection_layers, p
             assert(size(input_sample, 1) == projected_dim);
             assert(size(input_sample, 2) == 1);
             assert(size(input_sample, 3) == 1);
+            if mod(projected_dim, pooling_stride) ~= 0
+              keyboard
+            end
             assert(mod(projected_dim, pooling_stride) == 0);
             right_padded_input_sample = cat(2, reshape(input_sample, 1, []), zeros(1, pooling_width - pooling_stride));
             for k = 1 : pooling_stride : projected_dim
