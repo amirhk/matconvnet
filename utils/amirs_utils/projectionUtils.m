@@ -256,6 +256,22 @@ function imdb = getDenselyDownProjectedImdb(imdb, number_of_projection_layers, p
       switch non_linear_layer_type
         case 'relu'
           imdb.images.data(imdb.images.data < 0) = 0;
+        case 'pooling-max-drop-3/4'
+          tmp_imdb = imdb;
+          tmp_imdb.images.data = [];
+          for j = 1 : size(imdb.images.data, 4)
+            input_sample = imdb.images.data(:,:,:,j);
+            pooled_sample = [];
+            assert(mod(projected_dim, 4) == 0);
+            assert(size(input_sample, 1) == projected_dim);
+            assert(size(input_sample, 2) == 1);
+            assert(size(input_sample, 3) == 1);
+            for k = 1 : 4 : projected_dim
+              pooled_sample(end+1) = max(input_sample(k : k + 4 - 1));
+            end
+            tmp_imdb.images.data(:,:,:,end+1) = pooled_sample;
+          end
+          imdb = tmp_imdb;
         case 'pooling-max-3x3-stride-2-pad-0101'
           % great, we can apply vl_nnpool on top of a 4D data...
           imdb.images.data = vl_nnpool(single(imdb.images.data), [3, 3], 'Stride', 2, 'Pad', [0 1 0 1], 'method', 'max');
@@ -364,19 +380,19 @@ function imdb = projectImdbUsingMatrix(imdb, projection_matrix)
   vectorized_projected_imdb = vectorized_original_imdb;
   vectorized_projected_imdb.images.data = all_data_projected_vectorized;
 
-  % imdb = get4DImdb(vectorized_projected_imdb, projected_dim, 1, 1, number_of_samples);
+  imdb = get4DImdb(vectorized_projected_imdb, projected_dim, 1, 1, number_of_samples);
   % imdb = get4DImdb(vectorized_projected_imdb, sqrt(projected_dim), sqrt(projected_dim), 1, number_of_samples);
 
 
 
-  N = projected_dim;
-  x = 1:N;
-  divisors = x(~(rem(N, x)));
-  dim_1 = divisors(floor(length(divisors) / 2) + 1);
-  dim_2 = N / dim_1;
-  assert(mod(N, dim_1) == 0);
-  assert(mod(N, dim_2) == 0);
-  imdb = get4DImdb(vectorized_projected_imdb, dim_1, dim_2, 1, number_of_samples);
+  % N = projected_dim;
+  % x = 1:N;
+  % divisors = x(~(rem(N, x)));
+  % dim_1 = divisors(floor(length(divisors) / 2) + 1);
+  % dim_2 = N / dim_1;
+  % assert(mod(N, dim_1) == 0);
+  % assert(mod(N, dim_2) == 0);
+  % imdb = get4DImdb(vectorized_projected_imdb, dim_1, dim_2, 1, number_of_samples);
 
 
 

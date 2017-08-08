@@ -219,7 +219,8 @@ function all_experiments_single_run = runAllExperimentsOnce(experiment_dir, data
       projected_dim = str2num(getStringParameterStartingAtIndex(projection_string, 22));
       number_in_ensemble = str2num(getStringParameterStartingAtIndex(projection_string, 22 + length(num2str(projected_dim)) + 10));
       if strfind(projection_string, 'max-pool')
-        experiment_options.imdb = fh_projection_utils.getEnsembleDenselyDownProjectedImdb(original_imdb, 1, 'dense_gaussian', 1, 'pooling-max-3x3-stride-2-pad-0101', projected_dim, number_in_ensemble);
+        % experiment_options.imdb = fh_projection_utils.getEnsembleDenselyDownProjectedImdb(original_imdb, 1, 'dense_gaussian', 1, 'pooling-max-3x3-stride-2-pad-0101', projected_dim, number_in_ensemble);
+        experiment_options.imdb = fh_projection_utils.getEnsembleDenselyDownProjectedImdb(original_imdb, 1, 'dense_gaussian', 1, 'pooling-max-drop-3/4', projected_dim, number_in_ensemble);
       else
         experiment_options.imdb = fh_projection_utils.getEnsembleDenselyDownProjectedImdb(original_imdb, 1, 'dense_gaussian', 0, 'whatever', projected_dim, number_in_ensemble);
       end
