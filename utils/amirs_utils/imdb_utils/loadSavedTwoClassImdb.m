@@ -503,6 +503,8 @@ function imdb = loadSavedTwoClassImdb(dataset, posneg_balance, fold_number, debu
       tmp = loadSavedProstateImdb(dataset, posneg_balance, fold_number)
     case 'prostate-v3-104-patients'
       tmp = loadSavedProstateImdb(dataset, posneg_balance, fold_number)
+    case 'uci-gisette'
+      tmp = load(fullfile(path_to_imdbs, 'uci-gisette', 'uci-gisette.mat'));
     case 'uci-ion'
       tmp = load(fullfile(path_to_imdbs, 'uci-ion', 'uci-ion.mat'));
     case 'uci-spam'

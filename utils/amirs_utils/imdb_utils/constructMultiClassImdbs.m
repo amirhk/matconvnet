@@ -60,6 +60,8 @@ function constructMultiClassImdbs(dataset)
       opts.imdb.contrast_normalization = true;
       opts.imdb.whiten_data = true;
       all_class_imdb = constructSvhnImdb(opts);
+    case 'uci-gisette'
+      all_class_imdb = constructUCIGisetteImdb(opts);
     case 'uci-ion'
       all_class_imdb = constructUCIIonImdb(opts);
     case 'uci-spam'
@@ -191,7 +193,7 @@ function constructMultiClassImdbs(dataset)
   createImdbWithBalance(dataset, all_class_imdb, 250, 'default');
   createImdbWithBalance(dataset, all_class_imdb, 500, 'default');
   createImdbWithBalance(dataset, all_class_imdb, 1000, 'default');
-  createImdbWithBalance(dataset, all_class_imdb, 2500, 'default');
+  % createImdbWithBalance(dataset, all_class_imdb, 2500, 'default');
 
   % createImdbWithBalance(dataset, all_class_imdb, 500, 500);
   % createImdbWithBalance(dataset, all_class_imdb, 5000, 5000);
