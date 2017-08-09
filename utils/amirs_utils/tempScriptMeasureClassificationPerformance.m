@@ -238,8 +238,8 @@ function all_experiments_single_run = runAllExperimentsOnce(experiment_dir, data
         % experiment_options.imdb = fh_projection_utils.getEnsembleDenselyDownProjectedImdb(original_imdb, 1, 'dense_gaussian', 1, 'pooling-max-vector-width-16-stride-16', projected_dim, number_in_ensemble);
         % experiment_options.imdb = fh_projection_utils.getEnsembleDenselyDownProjectedImdb(original_imdb, 1, 'dense_gaussian', 1, 'pooling-max-vector-width-25-stride-25', projected_dim, number_in_ensemble);
       elseif strfind(projection_string, 'vector-min-pool')
-        % experiment_options.imdb = fh_projection_utils.getEnsembleDenselyDownProjectedImdb(original_imdb, 1, 'dense_gaussian', 1, 'pooling-min-vector-width-4-stride-4', projected_dim, number_in_ensemble);
-        experiment_options.imdb = fh_projection_utils.getEnsembleDenselyDownProjectedImdb(original_imdb, 1, 'dense_gaussian', 1, 'pooling-min-vector-width-16-stride-16', projected_dim, number_in_ensemble);
+        experiment_options.imdb = fh_projection_utils.getEnsembleDenselyDownProjectedImdb(original_imdb, 1, 'dense_gaussian', 1, 'pooling-min-vector-width-4-stride-4', projected_dim, number_in_ensemble);
+        % experiment_options.imdb = fh_projection_utils.getEnsembleDenselyDownProjectedImdb(original_imdb, 1, 'dense_gaussian', 1, 'pooling-min-vector-width-16-stride-16', projected_dim, number_in_ensemble);
       elseif strfind(projection_string, 'vector-avg-pool')
         experiment_options.imdb = fh_projection_utils.getEnsembleDenselyDownProjectedImdb(original_imdb, 1, 'dense_gaussian', 1, 'pooling-avg-vector-width-4-stride-4', projected_dim, number_in_ensemble);
       elseif strfind(projection_string, 'vl-nn-max-pool')
@@ -658,17 +658,29 @@ function projection_string_list = getProjectionList()
     ... 'custom-4-L-3-64-512-max-pool', ... % 2048
     ... 'custom-4-L-3-64-1024-max-pool', ... % 4096
     ...
-    'custom-4-L-3-256-1-max-pool', ... % 4
-    'custom-4-L-3-256-2-max-pool', ... % 8
-    'custom-4-L-3-256-4-max-pool', ... % 16
-    'custom-4-L-3-256-8-max-pool', ... % 32
-    'custom-4-L-3-256-16-max-pool', ... % 64
-    'custom-4-L-3-256-32-max-pool', ... % 128
-    'custom-4-L-3-256-64-max-pool', ... % 256
-    'custom-4-L-3-256-128-max-pool', ... % 512
-    'custom-4-L-3-256-256-max-pool', ... % 1024
-    'custom-4-L-3-256-512-max-pool', ... % 2048
-    'custom-4-L-3-256-1024-max-pool', ... % 4096
+    ... 'custom-4-L-3-256-1-max-pool', ... % 4
+    ... 'custom-4-L-3-256-2-max-pool', ... % 8
+    ... 'custom-4-L-3-256-4-max-pool', ... % 16
+    ... 'custom-4-L-3-256-8-max-pool', ... % 32
+    ... 'custom-4-L-3-256-16-max-pool', ... % 64
+    ... 'custom-4-L-3-256-32-max-pool', ... % 128
+    ... 'custom-4-L-3-256-64-max-pool', ... % 256
+    ... 'custom-4-L-3-256-128-max-pool', ... % 512
+    ... 'custom-4-L-3-256-256-max-pool', ... % 1024
+    ... 'custom-4-L-3-256-512-max-pool', ... % 2048
+    ... 'custom-4-L-3-256-1024-max-pool', ... % 4096
+    ...
+    'custom-4-L-3-1024-1-max-pool', ... % 4
+    'custom-4-L-3-1024-2-max-pool', ... % 8
+    'custom-4-L-3-1024-4-max-pool', ... % 16
+    'custom-4-L-3-1024-8-max-pool', ... % 32
+    'custom-4-L-3-1024-16-max-pool', ... % 64
+    'custom-4-L-3-1024-32-max-pool', ... % 128
+    'custom-4-L-3-1024-64-max-pool', ... % 256
+    'custom-4-L-3-1024-128-max-pool', ... % 512
+    'custom-4-L-3-1024-256-max-pool', ... % 1024
+    'custom-4-L-3-1024-512-max-pool', ... % 2048
+    'custom-4-L-3-1024-1024-max-pool', ... % 4096
     ...
     ... 'custom-5-L-3-16-1-max-pool', ... % 1
     ... 'custom-5-L-3-16-2-max-pool', ... % 2
