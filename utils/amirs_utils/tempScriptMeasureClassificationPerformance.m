@@ -240,7 +240,7 @@ function all_experiments_single_run = runAllExperimentsOnce(experiment_dir, data
       if strfind(projection_string, 'vector-max-pool')
         % experiment_options.imdb = fh_projection_utils.getEnsembleDenselyDownProjectedImdb(original_imdb, 1, 'dense_gaussian', 1, 'pooling-max-vector-width-9-stride-1', projected_dim, number_in_ensemble);
         % experiment_options.imdb = fh_projection_utils.getEnsembleDenselyDownProjectedImdb(original_imdb, 1, 'dense_gaussian', 1, 'pooling-max-vector-width-9-stride-4', projected_dim, number_in_ensemble);
-        % experiment_options.imdb = fh_projection_utils.getEnsembleDenselyDownProjectedImdb(original_imdb, 1, 'dense_gaussian', 1, 'pooling-max-vector-width-4-stride-4', projected_dim, number_in_ensemble);
+        experiment_options.imdb = fh_projection_utils.getEnsembleDenselyDownProjectedImdb(original_imdb, 1, 'dense_gaussian', 1, 'pooling-max-vector-width-4-stride-4', projected_dim, number_in_ensemble);
         % experiment_options.imdb = fh_projection_utils.getEnsembleDenselyDownProjectedImdb(original_imdb, 1, 'dense_gaussian', 1, 'pooling-max-vector-width-16-stride-16', projected_dim, number_in_ensemble);
         % experiment_options.imdb = fh_projection_utils.getEnsembleDenselyDownProjectedImdb(original_imdb, 1, 'dense_gaussian', 1, 'pooling-max-vector-width-25-stride-25', projected_dim, number_in_ensemble);
       elseif strfind(projection_string, 'vector-min-pool')
@@ -259,8 +259,6 @@ function all_experiments_single_run = runAllExperimentsOnce(experiment_dir, data
     else
       throwException('[ERROR] projection_string unrecognized.');
     end
-
-
 
     experiment_options.dataset = dataset;
     experiment_options.posneg_balance = posneg_balance;
