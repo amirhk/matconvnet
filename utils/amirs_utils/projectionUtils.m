@@ -150,10 +150,40 @@ function imdb = getPCAProjectedImdb(imdb, projected_dim)
 
   number_of_train_samples = size(vectorized_original_train_imdb.images.data, 1);
   number_of_test_samples = size(vectorized_original_test_imdb.images.data, 1);
-  [coeff, score, latent, tsquared, explained, mu] = pca(vectorized_original_train_imdb.images.data);
-  % approximation = score(:,1:projected_dim) * coeff(:,1:projected_dim)' + repmat(mu, number_of_samples, 1);
-  data_train_approximation = vectorized_original_train_imdb.images.data * coeff(:, 1 : projected_dim) + repmat(mu(1:projected_dim), number_of_train_samples, 1);
-  data_test_approximation = vectorized_original_test_imdb.images.data * coeff(:, 1 : projected_dim) + repmat(mu(1:projected_dim), number_of_test_samples, 1);
+
+
+
+
+
+
+  % [coeff, score, latent, tsquared, explained, mu] = pca(vectorized_original_train_imdb.images.data);
+
+  % % approximationRank1 = score(:,1) * coeff(:,1)' + repmat(mu, 100, 1);
+  % data_train_approximation = score(:,1:projected_dim) * coeff(:,1:projected_dim)' + repmat(mu, number_of_train_samples, 1);
+  % data_test_approximation = score(:,1:projected_dim) * coeff(:,1:projected_dim)' + repmat(mu, number_of_test_samples, 1);
+
+  % keyboard
+
+  % data_train_approximation = vectorized_original_train_imdb.images.data * coeff(:, 1 : projected_dim) + repmat(mu(1:projected_dim), number_of_train_samples, 1);
+  % data_test_approximation = vectorized_original_test_imdb.images.data * coeff(:, 1 : projected_dim) + repmat(mu(1:projected_dim), number_of_test_samples, 1);
+
+
+
+  X = vectorized_original_train_imdb.images.data;
+  X = bsxfun(@minus, X, mean(X,1));           %# zero-center
+  C = (X'*X)./(size(X,1)-1);                  %'# cov(X)
+
+  [V D] = eig(C);
+  [D order] = sort(diag(D), 'descend');       %# sort cols high to low
+  V = V(:,order);
+
+  % newX = X*V(:,1:end);
+
+  data_train_approximation = vectorized_original_train_imdb.images.data * V(:,1:projected_dim);
+  data_test_approximation = vectorized_original_test_imdb.images.data * V(:,1:projected_dim);
+
+
+
 
   vectorized_projected_train_imdb = vectorized_original_train_imdb;
   vectorized_projected_test_imdb = vectorized_original_test_imdb;
