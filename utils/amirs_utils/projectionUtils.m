@@ -161,8 +161,8 @@ function imdb = getPCAProjectedImdb(imdb, projected_dim)
   vectorized_projected_train_imdb.images.data = data_train_approximation;
   vectorized_projected_test_imdb.images.data = data_test_approximation;
 
-  train_imdb = get4DImdb(vectorized_projected_train_imdb, sqrt(projected_dim), sqrt(projected_dim), 1, number_of_train_samples);
-  test_imdb = get4DImdb(vectorized_projected_test_imdb, sqrt(projected_dim), sqrt(projected_dim), 1, number_of_test_samples);
+  train_imdb = get4DImdb(vectorized_projected_train_imdb, projected_dim, 1, 1, number_of_train_samples);
+  test_imdb = get4DImdb(vectorized_projected_test_imdb, projected_dim, 1, 1, number_of_test_samples);
 
   imdb = mergeImdbs(train_imdb, test_imdb);
 
