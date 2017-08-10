@@ -117,75 +117,6 @@ function all_experiments_multi_run = tempScriptMeasureClassificationPerformance(
 
 
 
-
-
-% % -------------------------------------------------------------------------
-% function all_experiments_single_run = runAllExperimentsOnce(experiment_dir, dataset, posneg_balance, classification_method)
-% % -------------------------------------------------------------------------
-%   afprintf(sprintf('[INFO] Setting up experiment imdbs...\n'));
-%   [~, experiments] = setupExperimentsUsingProjectedImbds(dataset, posneg_balance, false, true);
-%   afprintf(sprintf('done!\n'));
-%   for i = 1 : numel(experiments)
-%     experiment_options = {};
-%     experiment_options.imdb = experiments{i}.imdb;
-%     experiment_options.dataset = dataset;
-%     experiment_options.posneg_balance = posneg_balance;
-%     experiment_options.experiment_parent_dir = experiment_dir;
-%     experiment_options.debug_flag = false;
-%     switch classification_method
-%       case '1-knn'
-%         experiment_options.number_of_nearest_neighbors = 1;
-%         performance = getSimpleTestAccuracyFromKnn(experiment_options);
-%       case '3-knn'
-%         experiment_options.number_of_nearest_neighbors = 3;
-%         performance = getSimpleTestAccuracyFromKnn(experiment_options);
-%       case 'c-sep'
-%         performance = getAverageClassCSeparation(experiment_options.imdb);
-%       case 'libsvm'
-%         performance = getSimpleTestAccuracyFromLibSvm(experiment_options);
-%       case 'mlp-64-10'
-%         experiment_options.number_of_hidden_nodes = [64, 10];
-%         performance = getSimpleTestAccuracyFromMLP(experiment_options);
-%       case 'mlp-500-100'
-%         experiment_options.number_of_hidden_nodes = [500, 100];
-%         performance = getSimpleTestAccuracyFromMLP(experiment_options);
-%       case 'mlp-500-1000-100'
-%         experiment_options.number_of_hidden_nodes = [500, 1000, 100];
-%         performance = getSimpleTestAccuracyFromMLP(experiment_options);
-%       case 'cnn'
-
-%         experiment_options.gpus = 3;
-
-%         % TODO: this has to somehow be detected automatically....
-%         % experiment_options.conv_network_arch = 'convV0P0RL0+fcV1-RF16CH64';
-%         % experiment_options.conv_network_arch = 'convV0P0RL0+fcV1-RF32CH64';
-
-%         % experiment_options.conv_network_arch = 'convV1P1RL1-RF32CH3+fcV1-RF16CH64';
-%         % experiment_options.conv_network_arch = 'convV3P1RL3-RF32CH3+fcV1-RF16CH64';
-%         % experiment_options.conv_network_arch = 'convV5P1RL5-RF32CH3+fcV1-RF16CH64';
-
-%         % experiment_options.conv_network_arch = 'convV1P0RL1-RF32CH3+fcV1-RF32CH64';
-%         % experiment_options.conv_network_arch = 'convV3P0RL3-RF32CH3+fcV1-RF32CH64';
-%         % experiment_options.conv_network_arch = 'convV5P0RL5-RF32CH3+fcV1-RF32CH64';
-
-%         [best_test_accuracy_mean, best_test_accuracy_std] = getSimpleTestAccuracyFromCnn(experiment_options);
-%         performance = best_test_accuracy_mean;
-%     end
-%     experiments{i}.performance = performance;
-%   end
-
-%   all_experiments_single_run = experiments;
-
-
-
-
-
-
-
-
-
-
-
 % -------------------------------------------------------------------------
 function all_experiments_single_run = runAllExperimentsOnce(experiment_dir, dataset, posneg_balance, classification_method)
 % -------------------------------------------------------------------------
@@ -629,11 +560,11 @@ function projection_string_list = getProjectionList()
     ...
     ...
     ... % ANYTHING-3072 (add pooling to every layer)
-    'custom-1-L-3-99-1-max-pool', ... % 256
-    'custom-1-L-3-99-2-max-pool', ... % 512
-    'custom-1-L-3-99-4-max-pool', ... % 1024
-    'custom-1-L-3-99-8-max-pool', ... % 2048
-    'custom-1-L-3-99-16-max-pool', ... % 4096
+    ... 'custom-1-L-3-99-1-max-pool', ... % 256
+    ... 'custom-1-L-3-99-2-max-pool', ... % 512
+    ... 'custom-1-L-3-99-4-max-pool', ... % 1024
+    ... 'custom-1-L-3-99-8-max-pool', ... % 2048
+    ... 'custom-1-L-3-99-16-max-pool', ... % 4096
     ...
     ... 'custom-2-L-3-16-1-max-pool', ... % 64
     ... 'custom-2-L-3-16-2-max-pool', ... % 128
@@ -643,13 +574,13 @@ function projection_string_list = getProjectionList()
     ... 'custom-2-L-3-16-32-max-pool', ... % 2048
     ... 'custom-2-L-3-16-64-max-pool', ... % 4096
     ...
-    'custom-2-L-3-64-1-max-pool', ... % 64
-    'custom-2-L-3-64-2-max-pool', ... % 128
-    'custom-2-L-3-64-4-max-pool', ... % 256
-    'custom-2-L-3-64-8-max-pool', ... % 512
-    'custom-2-L-3-64-16-max-pool', ... % 1024
-    'custom-2-L-3-64-32-max-pool', ... % 2048
-    'custom-2-L-3-64-64-max-pool', ... % 4096
+    ... 'custom-2-L-3-64-1-max-pool', ... % 64
+    ... 'custom-2-L-3-64-2-max-pool', ... % 128
+    ... 'custom-2-L-3-64-4-max-pool', ... % 256
+    ... 'custom-2-L-3-64-8-max-pool', ... % 512
+    ... 'custom-2-L-3-64-16-max-pool', ... % 1024
+    ... 'custom-2-L-3-64-32-max-pool', ... % 2048
+    ... 'custom-2-L-3-64-64-max-pool', ... % 4096
     ...
     ... 'custom-3-L-3-16-1-max-pool', ... % 16
     ... 'custom-3-L-3-16-2-max-pool', ... % 32
@@ -661,15 +592,15 @@ function projection_string_list = getProjectionList()
     ... 'custom-3-L-3-16-128-max-pool', ... % 2048
     ... 'custom-3-L-3-16-256-max-pool', ... % 4096
     ...
-    'custom-3-L-3-256-1-max-pool', ... % 16
-    'custom-3-L-3-256-2-max-pool', ... % 32
-    'custom-3-L-3-256-4-max-pool', ... % 64
-    'custom-3-L-3-256-8-max-pool', ... % 128
-    'custom-3-L-3-256-16-max-pool', ... % 256
-    'custom-3-L-3-256-32-max-pool', ... % 512
-    'custom-3-L-3-256-64-max-pool', ... % 1024
-    'custom-3-L-3-256-128-max-pool', ... % 2048
-    'custom-3-L-3-256-256-max-pool', ... % 4096
+    ... 'custom-3-L-3-256-1-max-pool', ... % 16
+    ... 'custom-3-L-3-256-2-max-pool', ... % 32
+    ... 'custom-3-L-3-256-4-max-pool', ... % 64
+    ... 'custom-3-L-3-256-8-max-pool', ... % 128
+    ... 'custom-3-L-3-256-16-max-pool', ... % 256
+    ... 'custom-3-L-3-256-32-max-pool', ... % 512
+    ... 'custom-3-L-3-256-64-max-pool', ... % 1024
+    ... 'custom-3-L-3-256-128-max-pool', ... % 2048
+    ... 'custom-3-L-3-256-256-max-pool', ... % 4096
     ...
     ... 'custom-4-L-3-16-1-max-pool', ... % 4
     ... 'custom-4-L-3-16-2-max-pool', ... % 8
@@ -707,17 +638,17 @@ function projection_string_list = getProjectionList()
     ... 'custom-4-L-3-256-512-max-pool', ... % 2048
     ... 'custom-4-L-3-256-1024-max-pool', ... % 4096
     ...
-    'custom-4-L-3-1024-1-max-pool', ... % 4
-    'custom-4-L-3-1024-2-max-pool', ... % 8
-    'custom-4-L-3-1024-4-max-pool', ... % 16
-    'custom-4-L-3-1024-8-max-pool', ... % 32
-    'custom-4-L-3-1024-16-max-pool', ... % 64
-    'custom-4-L-3-1024-32-max-pool', ... % 128
-    'custom-4-L-3-1024-64-max-pool', ... % 256
-    'custom-4-L-3-1024-128-max-pool', ... % 512
-    'custom-4-L-3-1024-256-max-pool', ... % 1024
-    'custom-4-L-3-1024-512-max-pool', ... % 2048
-    'custom-4-L-3-1024-1024-max-pool', ... % 4096
+    ... 'custom-4-L-3-1024-1-max-pool', ... % 4
+    ... 'custom-4-L-3-1024-2-max-pool', ... % 8
+    ... 'custom-4-L-3-1024-4-max-pool', ... % 16
+    ... 'custom-4-L-3-1024-8-max-pool', ... % 32
+    ... 'custom-4-L-3-1024-16-max-pool', ... % 64
+    ... 'custom-4-L-3-1024-32-max-pool', ... % 128
+    ... 'custom-4-L-3-1024-64-max-pool', ... % 256
+    ... 'custom-4-L-3-1024-128-max-pool', ... % 512
+    ... 'custom-4-L-3-1024-256-max-pool', ... % 1024
+    ... 'custom-4-L-3-1024-512-max-pool', ... % 2048
+    ... 'custom-4-L-3-1024-1024-max-pool', ... % 4096
     ...
     ... 'custom-5-L-3-16-1-max-pool', ... % 1
     ... 'custom-5-L-3-16-2-max-pool', ... % 2

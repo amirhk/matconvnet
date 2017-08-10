@@ -267,224 +267,21 @@ function imdb = getDenselyDownProjectedImdb(imdb, number_of_projection_layers, p
         case 'relu'
           imdb.images.data(imdb.images.data < 0) = 0;
         case 'pooling-max-vector-width-9-stride-1'
-          pooling_width = 9;
-          pooling_stride = 1;
-          assert(pooling_width >= pooling_stride);
-
-          tmp_imdb = imdb;
-          tmp_imdb.images.data = [];
-          for j = 1 : size(imdb.images.data, 4)
-            input_sample = imdb.images.data(:,:,:,j);
-            pooled_sample = [];
-            assert(size(input_sample, 1) == projected_dim);
-            assert(size(input_sample, 2) == 1);
-            assert(size(input_sample, 3) == 1);
-            assert(mod(projected_dim, pooling_stride) == 0);
-            right_padded_input_sample = cat(2, reshape(input_sample, 1, []), zeros(1, pooling_width - pooling_stride));
-            for k = 1 : pooling_stride : projected_dim
-              pooled_sample(end+1) = max(right_padded_input_sample(k : k + pooling_width - 1));
-            end
-            % keyboard
-            if j == 1
-              tmp_imdb.images.data(:,:,:,end) = pooled_sample;
-            else
-              tmp_imdb.images.data(:,:,:,end+1) = pooled_sample;
-            end
-          end
-          assert(prod(size(imdb.images.data)) == 1 * prod(size(tmp_imdb.images.data)));
-          imdb = tmp_imdb;
-        case 'pooling-avg-vector-width-4-stride-4'
-          pooling_width = 4;
-          pooling_stride = 4;
-          assert(pooling_width >= pooling_stride);
-
-          tmp_imdb = imdb;
-          tmp_imdb.images.data = [];
-          for j = 1 : size(imdb.images.data, 4)
-            input_sample = imdb.images.data(:,:,:,j);
-            pooled_sample = [];
-            assert(size(input_sample, 1) == projected_dim);
-            assert(size(input_sample, 2) == 1);
-            assert(size(input_sample, 3) == 1);
-            assert(mod(projected_dim, pooling_stride) == 0);
-            right_padded_input_sample = cat(2, reshape(input_sample, 1, []), zeros(1, pooling_width - pooling_stride));
-            for k = 1 : pooling_stride : projected_dim
-              pooled_sample(end+1) = mean(right_padded_input_sample(k : k + pooling_width - 1));
-            end
-            % keyboard
-            if j == 1
-              tmp_imdb.images.data(:,:,:,end) = pooled_sample;
-            else
-              tmp_imdb.images.data(:,:,:,end+1) = pooled_sample;
-            end
-          end
-          assert(prod(size(imdb.images.data)) == 4 * prod(size(tmp_imdb.images.data)));
-          imdb = tmp_imdb;
-        case 'pooling-min-vector-width-4-stride-4'
-          pooling_width = 4;
-          pooling_stride = 4;
-          assert(pooling_width >= pooling_stride);
-
-          tmp_imdb = imdb;
-          tmp_imdb.images.data = [];
-          for j = 1 : size(imdb.images.data, 4)
-            input_sample = imdb.images.data(:,:,:,j);
-            pooled_sample = [];
-            assert(size(input_sample, 1) == projected_dim);
-            assert(size(input_sample, 2) == 1);
-            assert(size(input_sample, 3) == 1);
-            assert(mod(projected_dim, pooling_stride) == 0);
-            right_padded_input_sample = cat(2, reshape(input_sample, 1, []), zeros(1, pooling_width - pooling_stride));
-            for k = 1 : pooling_stride : projected_dim
-              pooled_sample(end+1) = min(right_padded_input_sample(k : k + pooling_width - 1));
-            end
-            % keyboard
-            if j == 1
-              tmp_imdb.images.data(:,:,:,end) = pooled_sample;
-            else
-              tmp_imdb.images.data(:,:,:,end+1) = pooled_sample;
-            end
-          end
-          assert(prod(size(imdb.images.data)) == 4 * prod(size(tmp_imdb.images.data)));
-          imdb = tmp_imdb;
-        case 'pooling-min-vector-width-16-stride-16'
-          pooling_width = 16;
-          pooling_stride = 16;
-          assert(pooling_width >= pooling_stride);
-
-          tmp_imdb = imdb;
-          tmp_imdb.images.data = [];
-          for j = 1 : size(imdb.images.data, 4)
-            input_sample = imdb.images.data(:,:,:,j);
-            pooled_sample = [];
-            assert(size(input_sample, 1) == projected_dim);
-            assert(size(input_sample, 2) == 1);
-            assert(size(input_sample, 3) == 1);
-            assert(mod(projected_dim, pooling_stride) == 0);
-            right_padded_input_sample = cat(2, reshape(input_sample, 1, []), zeros(1, pooling_width - pooling_stride));
-            for k = 1 : pooling_stride : projected_dim
-              pooled_sample(end+1) = min(right_padded_input_sample(k : k + pooling_width - 1));
-            end
-            % keyboard
-            if j == 1
-              tmp_imdb.images.data(:,:,:,end) = pooled_sample;
-            else
-              tmp_imdb.images.data(:,:,:,end+1) = pooled_sample;
-            end
-          end
-          assert(prod(size(imdb.images.data)) == 16 * prod(size(tmp_imdb.images.data)));
-          imdb = tmp_imdb;
-        case 'pooling-max-vector-width-4-stride-4'
-          pooling_width = 4;
-          pooling_stride = 4;
-          assert(pooling_width >= pooling_stride);
-
-          tmp_imdb = imdb;
-          tmp_imdb.images.data = [];
-          for j = 1 : size(imdb.images.data, 4)
-            input_sample = imdb.images.data(:,:,:,j);
-            pooled_sample = [];
-            assert(size(input_sample, 1) == projected_dim);
-            assert(size(input_sample, 2) == 1);
-            assert(size(input_sample, 3) == 1);
-            assert(mod(projected_dim, pooling_stride) == 0);
-            right_padded_input_sample = cat(2, reshape(input_sample, 1, []), zeros(1, pooling_width - pooling_stride));
-            for k = 1 : pooling_stride : projected_dim
-              pooled_sample(end+1) = max(right_padded_input_sample(k : k + pooling_width - 1));
-            end
-            % keyboard
-            if j == 1
-              tmp_imdb.images.data(:,:,:,end) = pooled_sample;
-            else
-              tmp_imdb.images.data(:,:,:,end+1) = pooled_sample;
-            end
-          end
-          assert(prod(size(imdb.images.data)) == 4 * prod(size(tmp_imdb.images.data)));
-          imdb = tmp_imdb;
-        case 'pooling-max-vector-width-16-stride-16'
-          pooling_width = 16;
-          pooling_stride = 16;
-          assert(pooling_width >= pooling_stride);
-
-          tmp_imdb = imdb;
-          tmp_imdb.images.data = [];
-          for j = 1 : size(imdb.images.data, 4)
-            input_sample = imdb.images.data(:,:,:,j);
-            pooled_sample = [];
-            assert(size(input_sample, 1) == projected_dim);
-            assert(size(input_sample, 2) == 1);
-            assert(size(input_sample, 3) == 1);
-            assert(mod(projected_dim, pooling_stride) == 0);
-            right_padded_input_sample = cat(2, reshape(input_sample, 1, []), zeros(1, pooling_width - pooling_stride));
-            for k = 1 : pooling_stride : projected_dim
-              pooled_sample(end+1) = max(right_padded_input_sample(k : k + pooling_width - 1));
-            end
-            % keyboard
-            if j == 1
-              tmp_imdb.images.data(:,:,:,end) = pooled_sample;
-            else
-              tmp_imdb.images.data(:,:,:,end+1) = pooled_sample;
-            end
-          end
-          assert(prod(size(imdb.images.data)) == 16 * prod(size(tmp_imdb.images.data)));
-          imdb = tmp_imdb;
-        case 'pooling-max-vector-width-25-stride-25'
-          pooling_width = 25;
-          pooling_stride = 25;
-          assert(pooling_width >= pooling_stride);
-
-          tmp_imdb = imdb;
-          tmp_imdb.images.data = [];
-          for j = 1 : size(imdb.images.data, 4)
-            input_sample = imdb.images.data(:,:,:,j);
-            pooled_sample = [];
-            assert(size(input_sample, 1) == projected_dim);
-            assert(size(input_sample, 2) == 1);
-            assert(size(input_sample, 3) == 1);
-            assert(mod(projected_dim, pooling_stride) == 0);
-            right_padded_input_sample = cat(2, reshape(input_sample, 1, []), zeros(1, pooling_width - pooling_stride));
-            for k = 1 : pooling_stride : projected_dim
-              pooled_sample(end+1) = max(right_padded_input_sample(k : k + pooling_width - 1));
-            end
-            % keyboard
-            if j == 1
-              tmp_imdb.images.data(:,:,:,end) = pooled_sample;
-            else
-              tmp_imdb.images.data(:,:,:,end+1) = pooled_sample;
-            end
-          end
-          assert(prod(size(imdb.images.data)) == 25 * prod(size(tmp_imdb.images.data)));
-          imdb = tmp_imdb;
+          imdb = getImdbAfterPerformingVectorizedPooling(imdb, projected_dim, 9, 1, @max);
         case 'pooling-max-vector-width-9-stride-4'
-          pooling_width = 9;
-          pooling_stride = 4;
-          assert(pooling_width >= pooling_stride);
-
-          tmp_imdb = imdb;
-          tmp_imdb.images.data = [];
-          for j = 1 : size(imdb.images.data, 4)
-            input_sample = imdb.images.data(:,:,:,j);
-            pooled_sample = [];
-            assert(size(input_sample, 1) == projected_dim);
-            assert(size(input_sample, 2) == 1);
-            assert(size(input_sample, 3) == 1);
-            if mod(projected_dim, pooling_stride) ~= 0
-              keyboard
-            end
-            assert(mod(projected_dim, pooling_stride) == 0);
-            right_padded_input_sample = cat(2, reshape(input_sample, 1, []), zeros(1, pooling_width - pooling_stride));
-            for k = 1 : pooling_stride : projected_dim
-              pooled_sample(end+1) = max(right_padded_input_sample(k : k + pooling_width - 1));
-            end
-            % keyboard
-            if j == 1
-              tmp_imdb.images.data(:,:,:,end) = pooled_sample;
-            else
-              tmp_imdb.images.data(:,:,:,end+1) = pooled_sample;
-            end
-          end
-          assert(prod(size(imdb.images.data)) == 4 * prod(size(tmp_imdb.images.data)));
-          imdb = tmp_imdb;
+          imdb = getImdbAfterPerformingVectorizedPooling(imdb, projected_dim, 9, 4, @max);
+        case 'pooling-avg-vector-width-4-stride-4'
+          imdb = getImdbAfterPerformingVectorizedPooling(imdb, projected_dim, 4, 4, @mean);
+        case 'pooling-min-vector-width-4-stride-4'
+          imdb = getImdbAfterPerformingVectorizedPooling(imdb, projected_dim, 4, 4, @min);
+        case 'pooling-max-vector-width-4-stride-4'
+          imdb = getImdbAfterPerformingVectorizedPooling(imdb, projected_dim, 4, 4, @max);
+        case 'pooling-min-vector-width-16-stride-16'
+          imdb = getImdbAfterPerformingVectorizedPooling(imdb, projected_dim, 16, 16, @min);
+        case 'pooling-max-vector-width-16-stride-16'
+          imdb = getImdbAfterPerformingVectorizedPooling(imdb, projected_dim, 16, 16, @max);
+        case 'pooling-max-vector-width-25-stride-25'
+          imdb = getImdbAfterPerformingVectorizedPooling(imdb, projected_dim, 25, 25, @max);
         case 'pooling-max-3x3-stride-2-pad-0101'
           % great, we can apply vl_nnpool on top of a 4D data...
           imdb.images.data = vl_nnpool(single(imdb.images.data), [3, 3], 'Stride', 2, 'Pad', [0 1 0 1], 'method', 'max');
@@ -570,6 +367,47 @@ function imdb = getDenselyDownProjectedImdb(imdb, number_of_projection_layers, p
 %       relu_count = relu_count + 1;
 %     end
 %   end
+
+
+% -------------------------------------------------------------------------
+function imdb = getImdbAfterPerformingVectorizedPooling(imdb, projected_dim, pooling_width, pooling_stride, fh_operation)
+% -------------------------------------------------------------------------
+  % pooling_width = 9;
+  % pooling_stride = 1;
+  assert(pooling_width >= pooling_stride);
+
+  % tmp_random_min_max_order = sign(randn(1, 100000));
+
+  tmp_imdb = imdb;
+  tmp_imdb.images.data = [];
+  for j = 1 : size(imdb.images.data, 4)
+    input_sample = imdb.images.data(:,:,:,j);
+    pooled_sample = [];
+    assert(size(input_sample, 1) == projected_dim);
+    assert(size(input_sample, 2) == 1);
+    assert(size(input_sample, 3) == 1);
+    assert(mod(projected_dim, pooling_stride) == 0);
+    right_padded_input_sample = cat(2, reshape(input_sample, 1, []), zeros(1, pooling_width - pooling_stride));
+    for k = 1 : pooling_stride : projected_dim
+      pooled_sample(end+1) = fh_operation(right_padded_input_sample(k : k + pooling_width - 1));
+      % if tmp_random_min_max_order(k) == 1
+      %   pooled_sample(end+1) = max(right_padded_input_sample(k : k + pooling_width - 1));
+      % elseif tmp_random_min_max_order(k) == -1
+      %   pooled_sample(end+1) = min(right_padded_input_sample(k : k + pooling_width - 1));
+      % else
+      %   throwException('[ERROR] values should only be +1 / -1.');
+      % end
+    end
+    % keyboard
+    if j == 1
+      tmp_imdb.images.data(:,:,:,end) = pooled_sample;
+    else
+      tmp_imdb.images.data(:,:,:,end+1) = pooled_sample;
+    end
+  end
+  assert(prod(size(imdb.images.data)) == pooling_stride * prod(size(tmp_imdb.images.data)));
+  imdb = tmp_imdb;
+
 
 
 % -------------------------------------------------------------------------
