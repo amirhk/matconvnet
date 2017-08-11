@@ -28,6 +28,8 @@ function constructTwoClassImdbs(dataset, positive_class_number, negative_class_n
   afprintf(sprintf('[INFO] Constructing two-class `%s` imdbs...\n', dataset));
   opts.imdb.data_dir = fullfile(getDevPath(), 'data', 'source', dataset);
   switch dataset
+    case 'norb-96x96x1'
+      all_class_imdb = constructNorbImdb(opts);
     case 'imagenet-tiny'
       all_class_imdb = constructImageNetTinyImdb(opts);
     case 'mnist'
@@ -56,8 +58,20 @@ function constructTwoClassImdbs(dataset, positive_class_number, negative_class_n
       all_class_imdb = constructSvhnImdb(opts);
   end
 
+
+
+
+  % NORB
+  for k = 1 : 10
+    tmp = randsample(1:5, 2);
+    positive_class_number = tmp(1);
+    negative_class_number = tmp(2);
+    balance_count = 500; createImdbWithBalance(balance_count, dataset, all_class_imdb, positive_class_number, negative_class_number);
+  end
+
   keyboard
 
+  % COIL-100
   % for k = 1 : 25
   %   tmp = randsample(1:100, 2);
   %   positive_class_number = tmp(1);

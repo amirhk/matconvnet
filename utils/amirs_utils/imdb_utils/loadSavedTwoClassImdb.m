@@ -51,6 +51,27 @@ function imdb = loadSavedTwoClassImdb(dataset, posneg_balance, fold_number, debu
     %       tmp = load(fullfile(path_to_imdbs, 'mnist-784', 'balanced', 'saved-two-class-mnist-pos9-neg4-balanced-5000-5000-train-5000-5000.mat'));
     %   end
 
+
+
+
+
+
+    case 'norb-96x96x1-two-class-1-4'
+      tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance);
+    case 'norb-96x96x1-two-class-2-3'
+      tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance);
+    case 'norb-96x96x1-two-class-2-4'
+      tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance);
+    case 'norb-96x96x1-two-class-4-5'
+      tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance);
+    case 'norb-96x96x1-two-class-5-3'
+      tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance);
+
+
+
+
+
+
     case 'mnist-784-two-class-0-1'
       tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance);
     case 'mnist-784-two-class-0-2'
@@ -512,6 +533,7 @@ function imdb = loadSavedTwoClassImdb(dataset, posneg_balance, fold_number, debu
     otherwise
       fprintf('TODO: implement!');
   end
+
   imdb = tmp.imdb;
   if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
 
@@ -527,5 +549,6 @@ function tmp = loadSpecialImdb(path_to_imdbs, dataset, posneg_balance)
 
   file_name = sprintf('saved-two-class-%s-pos%d-neg%d-balanced-%s-%s-train-%s-%s.mat', dataset_class, positive_class_number, negative_class_number, balance_number, balance_number, balance_number, balance_number);
   tmp = load(fullfile(path_to_imdbs, dataset_class, 'balanced', file_name));
+
 
 
