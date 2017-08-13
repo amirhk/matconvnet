@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function output = isSubsampledMultiClassImdb(dataset)
+function padded_imdb = padImdbUsingPadding(imdb, padding)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -25,16 +25,14 @@ function output = isSubsampledMultiClassImdb(dataset)
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
 
-  output = false;
-  if strcmp(dataset, 'mnist-multi-class-subsampled') || ...
-    strcmp(dataset, 'mnist-784-multi-class-subsampled') || ...
-    strcmp(dataset, 'svhn-multi-class-subsampled') || ...
-    strcmp(dataset, 'svhn-no-contrast-multi-class-subsampled') || ...
-    strcmp(dataset, 'svhn-yes-white-multi-class-subsampled') || ...
-    strcmp(dataset, 'imagenet-tiny-multi-class-subsampled') || ...
-    strcmp(dataset, 'cifar-multi-class-subsampled') || ...
-    strcmp(dataset, 'cifar-no-white-multi-class-subsampled') || ...
-    strcmp(dataset, 'stl-10-multi-class-subsampled') || ...
-    strcmp(dataset, 'pathology-multi-class-subsampled')
-    output = true;
+  tmp_image = imdb.images.data(:,:,:,1);
+  assert(size(tmp_image, 3) == 1, 'only dealing with single channel images here...');
+  tmp_padded_image = padImageUsingPadding(tmp_image, padding);
+
+  number_of_samples = size(imdb.images.data, 4);
+
+  padded_imdb = imdb;
+  padded_imdb.images.data = zeros(size(tmp_padded_image, 1), size(tmp_padded_image, 2), 1, number_of_samples);
+  for i = 1 : number_of_samples
+    padded_imdb.images.data(:,:,:,i) = padImageUsingPadding(imdb.images.data(:,:,:,i), padding);
   end

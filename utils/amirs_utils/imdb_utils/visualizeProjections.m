@@ -1,6 +1,7 @@
 % -------------------------------------------------------------------------
-function visualizeProjections(number_of_classes, data_dim);
+function [test_accuracy_original, test_accuracy_single_rp, test_accuracy_multi_rp, test_accuracy_multi_optimal_rp] = visualizeProjections(number_of_classes, data_dim, c_sep)
 % -------------------------------------------------------------------------
+
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
 
@@ -27,8 +28,9 @@ function visualizeProjections(number_of_classes, data_dim);
 
   % number_of_classes = 3;
   % data_dim = 2;
+  % c_sep = 0.1;
 
-  imdb = constructSyntheticGaussianImdbNEW(number_of_classes, 1000, data_dim, 2, 1, true);
+  imdb = constructSyntheticGaussianImdbNEW(number_of_classes, 1000, data_dim, c_sep, 1, true);
   vectorized_imdb = getVectorizedImdb(imdb);
   number_of_samples = size(imdb.images.data, 4);
 

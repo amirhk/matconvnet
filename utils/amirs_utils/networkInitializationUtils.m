@@ -33,7 +33,7 @@ function fh = networkInitializationUtils()
   fh.avrLayer = @avrLayer;
   fh.tanhLayer = @tanhLayer;
   fh.flattenLayer = @flattenLayer;
-  fh.poolingLayer = @poolingLayer;
+  fh.poolingLayer2by2 = @poolingLayer2by2;
   fh.poolingLayerAlexNet = @poolingLayerAlexNet;
   fh.poolingLayerLeNetAvg = @poolingLayerLeNetAvg;
   fh.poolingLayerLeNetMax = @poolingLayerLeNetMax;
@@ -820,7 +820,7 @@ function structuredLayer = flattenLayer(layer_number)
     'name', sprintf('flatten%d', layer_number));
 
 % --------------------------------------------------------------------
-function structuredLayer = poolingLayer(layer_number)
+function structuredLayer = poolingLayer2by2(layer_number)
 % --------------------------------------------------------------------
   structuredLayer = struct( ...
     'type', 'pool', ...

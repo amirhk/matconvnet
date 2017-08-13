@@ -68,4 +68,11 @@ function imdb = constructSvhnImdb(opts)
   imdb.images.labels = labels;
   imdb.images.set = set;
   imdb.meta.sets = {'train', 'val', 'test'};
+  imdb.name = 'norb';
+
   afprintf(sprintf('done!\n\n'));
+  % fh = imdbMultiClassUtils;
+  % fh.getImdbInfo(imdb, 1);
+  % save(sprintf('%s.mat', imdb.name), 'imdb');
+  % afprintf(sprintf('done!\n\n'));
+

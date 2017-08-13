@@ -56,6 +56,10 @@ function constructMultiClassImdbs(dataset)
       opts.imdb.contrast_normalization = true;
       opts.imdb.whiten_data = false;
       all_class_imdb = constructSvhnImdb(opts);
+    case 'svhn-no-contrast'
+      opts.imdb.contrast_normalization = false;
+      opts.imdb.whiten_data = false;
+      all_class_imdb = constructSvhnImdb(opts);
     case 'svhn-yes-white'
       opts.imdb.contrast_normalization = true;
       opts.imdb.whiten_data = true;
@@ -181,6 +185,8 @@ function constructMultiClassImdbs(dataset)
 
     case 'spirals-2D'
       all_class_imdb = constructSyntheticSpiralsImdb(2000);
+    otherwise
+      throwException('[ERROR] dataset not recognized.')
   end
   keyboard
 

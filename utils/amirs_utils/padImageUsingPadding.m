@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function output = isSubsampledMultiClassImdb(dataset)
+function padded_image = padImageUsingPadding(I, padding)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -25,16 +25,31 @@ function output = isSubsampledMultiClassImdb(dataset)
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
 
-  output = false;
-  if strcmp(dataset, 'mnist-multi-class-subsampled') || ...
-    strcmp(dataset, 'mnist-784-multi-class-subsampled') || ...
-    strcmp(dataset, 'svhn-multi-class-subsampled') || ...
-    strcmp(dataset, 'svhn-no-contrast-multi-class-subsampled') || ...
-    strcmp(dataset, 'svhn-yes-white-multi-class-subsampled') || ...
-    strcmp(dataset, 'imagenet-tiny-multi-class-subsampled') || ...
-    strcmp(dataset, 'cifar-multi-class-subsampled') || ...
-    strcmp(dataset, 'cifar-no-white-multi-class-subsampled') || ...
-    strcmp(dataset, 'stl-10-multi-class-subsampled') || ...
-    strcmp(dataset, 'pathology-multi-class-subsampled')
-    output = true;
-  end
+  padded_image = I;
+  padded_image = padarray(padded_image, [padding(1), 0], 'pre');
+  padded_image = padarray(padded_image, [padding(2), 0], 'post');
+  padded_image = padarray(padded_image, [0, padding(3)], 'pre');
+  padded_image = padarray(padded_image, [0, padding(4)], 'post');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
