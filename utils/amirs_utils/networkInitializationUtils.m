@@ -250,7 +250,6 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
           % layerWeights{1} = tmp_kernels;
           % layerWeights{1} = tmp_kernels / sqrt(n);
           % tmp_kernels = getGaussianKernelsWithIdentityCovariance(k, m, n, 1, 1);
-          % keyboard
           % layerWeights{1} = init_multiplier * tmp_kernels;
           layerWeights{1} = init_multiplier * randn(k, k, m, n, 'single');
           % layerWeights{1} = randn(k, k, m, n, 'single');

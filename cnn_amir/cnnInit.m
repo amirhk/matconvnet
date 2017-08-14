@@ -37,8 +37,6 @@ function network_opts = cnnInit(input_opts)
   %                                                         Set learning rate
   % -------------------------------------------------------------------------
 
-  s = rng;
-  rng(0);
   fh = networkInitializationUtils;
   net.layers = {};
   if strcmp(learning_rate, 'default_keyword')
@@ -60,9 +58,4 @@ function network_opts = cnnInit(input_opts)
       throwException('[ERROR] architecture type can only be `larp` or `conv`.')
   end
 
-  % -------------------------------------------------------------------------
-  %    VERY IMPORTANT: reset this afterwards so other modules are true random
-  % -------------------------------------------------------------------------
-
-  rng(s);
   network_opts.net = net;
