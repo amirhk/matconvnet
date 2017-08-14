@@ -281,8 +281,10 @@ function projection_string_list = getProjectionList()
     ... % studying succession.....
     'larpV0P0RL0', ... % 784
     ...
-    'densely-project-indep-row-into-196-ensemble-1', ... % 784
-    'densely-project-rotated-row-into-196-ensemble-1', ... % 784
+    'densely-project-indep-row-into-196-ensemble-1', ... % 196
+    'densely-project-rotated-row-into-196-ensemble-1', ... % 196
+    'densely-project-indep-row-into-784-ensemble-1', ... % 784
+    'densely-project-rotated-row-into-784-ensemble-1', ... % 784
     'sparsely-project-indep-row-into-196-ensemble-1', ... % 784
     'sparsely-project-rotated-row-into-196-ensemble-1', ... % 784
     ...
