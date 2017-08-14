@@ -52,7 +52,7 @@ function projected_imdb = projectImdbThroughNetwork(imdb, net, forward_pass_dept
 
   % get net
   if forward_pass_depth == -1
-    forward_pass_depth = numel(net.layers); % +1 necessary?.... guess not!
+    forward_pass_depth = numel(net.layers);
   end
 
   % get resulting matrix from forward pass for all samples
@@ -69,8 +69,7 @@ function projected_imdb = projectImdbThroughNetwork(imdb, net, forward_pass_dept
   set = single(cat(2, 1 * ones(1, size(labels_train, 2)), 3 * ones(1, size(labels_test, 2))));
 
   % shuffle
-  % ix = randperm(size(data, 4));
-  ix = 1:size(data, 4); %  TODO: this should be randomized!?!?!?!?!?!??!
+  ix = randperm(size(data, 4));
   data = data(:,:,:,ix);
   labels = labels(ix);
   set = set(ix);
@@ -99,7 +98,7 @@ function net = getProjectionNetworkObject(dataset, larp_network_arch, larp_weigh
 % -------------------------------------------------------------------------
 function projected_samples = getProjectedImdbSamplesOnNet(imdb, net, depth)
 % -------------------------------------------------------------------------
-  assert(numel(find(imdb.images.set == 1)) == 0); % cnn_train only projects test data. sad, i know.
+  assert(numel(find(imdb.images.set == 1)) == 0); % cnnTrain only projects test data. sad, i know.
   [net, info] = cnnTrain(net, imdb, getBatch(), ...
     'gpus', ifNotMacSetGpu(1), ...
     'forward_pass_only_mode', true, ...
@@ -125,7 +124,7 @@ function [images, labels] = getSimpleNNBatch(imdb, batch)
 % -------------------------------------------------------------------------
   images = imdb.images.data(:,:,:,batch);
   labels = imdb.images.labels(batch);
-  if rand > 0.5, images=fliplr(images); end
+  % if rand > 0.5, images=fliplr(images); end
 
 
 

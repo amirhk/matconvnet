@@ -36,7 +36,7 @@ function all_experiments_multi_run = tempScriptMeasureClassificationPerformance(
   % classification_method = 'mlp-64-10';
   % classification_method = 'mlp-500-100';
   % classification_method = 'mlp-500-1000-100';
-  number_of_trials = 10;
+  number_of_trials = 30;
   all_experiments_multi_run = {};
 
   % -------------------------------------------------------------------------
@@ -147,10 +147,6 @@ function all_experiments_single_run = runAllExperimentsOnce(experiment_dir, data
   %   original_imdb.images.data(:,:,:,i) = shuffled_sample;
   % end
 
-
-  % keyboard
-  % original_imdb = tmp_experiments{1}.imdb.imdb;
-
   for i = 1 : numel(projection_string_list)
     projection_string = projection_string_list{i};
     afprintf(sprintf('[INFO] Testing experiment #%d / %d (projection_string: %s) ...', i, numel(projection_string_list), projection_string));
@@ -176,6 +172,9 @@ function all_experiments_single_run = runAllExperimentsOnce(experiment_dir, data
     else
       throwException('[ERROR] projection_string unrecognized.');
     end
+
+    % a = experiment_options.imdb
+    % keyboard
 
     experiment_options.dataset = dataset;
     experiment_options.posneg_balance = posneg_balance;
@@ -293,33 +292,33 @@ function projection_string_list = getProjectionList()
     ...
     ...
     ...
-    'larpV0P0RL0', ...
-    ...
-    'densely-project-indep-row-into-196-ensemble-1', ... % 196
-    'densely-project-rotated-row-into-196-ensemble-1', ... % 196
-    'sparsely-project-indep-row-into-196-ensemble-1', ... % 196
-    'sparsely-project-rotated-row-into-196-ensemble-1', ... % 196
-    ...
-    'densely-project-indep-row-into-784-ensemble-1-vector-max-pool', ... % 196
-    'densely-project-rotated-row-into-784-ensemble-1-vector-max-pool', ... % 196
-    'sparsely-project-indep-row-into-784-ensemble-1-vector-max-pool', ... % 196
-    'sparsely-project-rotated-row-into-784-ensemble-1-vector-max-pool', ... % 196
-    ...
-    'densely-project-indep-row-into-784-ensemble-1-vl-nn-max-pool', ... % 196
-    'densely-project-rotated-row-into-784-ensemble-1-vl-nn-max-pool', ... % 196
-    'sparsely-project-indep-row-into-784-ensemble-1-vl-nn-max-pool', ... % 196
-    'sparsely-project-rotated-row-into-784-ensemble-1-vl-nn-max-pool', ... % 196
-    ...
-    'custom-1-L-63-99-1-max-pool', ... % 196
-    'custom-1-L-3-99-1-max-pool', ... % 196
-    ...
-    ...
-    ...
+    ... ... 'larpV0P0RL0', ...
+    ... ... ...
+    ... ... 'densely-project-indep-row-into-196-ensemble-1', ... % 196
+    ... ... 'densely-project-rotated-row-into-196-ensemble-1', ... % 196
+    ... ... 'sparsely-project-indep-row-into-196-ensemble-1', ... % 196
     ... ... 'sparsely-project-rotated-row-into-196-ensemble-1', ... % 196
-    ... ... 'sparsely-project-rotated-row-into-784-ensemble-1-vl-nn-max-pool', ... % 196
+    ... ... ...
+    ... ... 'densely-project-indep-row-into-784-ensemble-1-vector-max-pool', ... % 196
+    ... ... 'densely-project-rotated-row-into-784-ensemble-1-vector-max-pool', ... % 196
+    ... ... 'sparsely-project-indep-row-into-784-ensemble-1-vector-max-pool', ... % 196
     ... ... 'sparsely-project-rotated-row-into-784-ensemble-1-vector-max-pool', ... % 196
-    ... ... 'custom-1-L-3-99-1', ... % 196
+    ... ... ...
+    ... ... 'densely-project-indep-row-into-784-ensemble-1-vl-nn-max-pool', ... % 196
+    ... ... 'densely-project-rotated-row-into-784-ensemble-1-vl-nn-max-pool', ... % 196
+    ... ... 'sparsely-project-indep-row-into-784-ensemble-1-vl-nn-max-pool', ... % 196
+    ... ... 'sparsely-project-rotated-row-into-784-ensemble-1-vl-nn-max-pool', ... % 196
+    ... ... ...
+    ... ... 'custom-1-L-63-99-1-max-pool', ... % 196
     ... ... 'custom-1-L-3-99-1-max-pool', ... % 196
+    ...
+    ...
+    ...
+    ... ... ... 'sparsely-project-rotated-row-into-196-ensemble-1', ... % 196
+    ... ... ... 'sparsely-project-rotated-row-into-784-ensemble-1-vl-nn-max-pool', ... % 196
+    ... ... ... 'sparsely-project-rotated-row-into-784-ensemble-1-vector-max-pool', ... % 196
+    ... ... ... 'custom-1-L-3-99-1', ... % 196
+    ... ... ... 'custom-1-L-3-99-1-max-pool', ... % 196
     ...
     ...
     ...
@@ -621,11 +620,16 @@ function projection_string_list = getProjectionList()
     ...
     ...
     ... % ANYTHING-3072 (add pooling to every layer)
-    ... 'custom-1-L-3-99-1-max-pool', ... % 256
-    ... 'custom-1-L-3-99-2-max-pool', ... % 512
-    ... 'custom-1-L-3-99-4-max-pool', ... % 1024
-    ... 'custom-1-L-3-99-8-max-pool', ... % 2048
-    ... 'custom-1-L-3-99-16-max-pool', ... % 4096
+    'custom-1-L-3-99-1-max-pool', ... % 256
+    'custom-1-L-3-99-2-max-pool', ... % 512
+    'custom-1-L-3-99-4-max-pool', ... % 1024
+    'custom-1-L-3-99-8-max-pool', ... % 2048
+    'custom-1-L-3-99-16-max-pool', ... % 4096
+    ...
+    ...
+    ...
+    ...
+    ...
     ...
     ... 'custom-2-L-3-16-1-max-pool', ... % 64
     ... 'custom-2-L-3-16-2-max-pool', ... % 128
@@ -635,13 +639,18 @@ function projection_string_list = getProjectionList()
     ... 'custom-2-L-3-16-32-max-pool', ... % 2048
     ... 'custom-2-L-3-16-64-max-pool', ... % 4096
     ...
-    ... 'custom-2-L-3-64-1-max-pool', ... % 64
-    ... 'custom-2-L-3-64-2-max-pool', ... % 128
-    ... 'custom-2-L-3-64-4-max-pool', ... % 256
-    ... 'custom-2-L-3-64-8-max-pool', ... % 512
-    ... 'custom-2-L-3-64-16-max-pool', ... % 1024
-    ... 'custom-2-L-3-64-32-max-pool', ... % 2048
-    ... 'custom-2-L-3-64-64-max-pool', ... % 4096
+    'custom-2-L-3-64-1-max-pool', ... % 64
+    'custom-2-L-3-64-2-max-pool', ... % 128
+    'custom-2-L-3-64-4-max-pool', ... % 256
+    'custom-2-L-3-64-8-max-pool', ... % 512
+    'custom-2-L-3-64-16-max-pool', ... % 1024
+    'custom-2-L-3-64-32-max-pool', ... % 2048
+    'custom-2-L-3-64-64-max-pool', ... % 4096
+    ...
+    ...
+    ...
+    ...
+    ...
     ...
     ... 'custom-3-L-3-16-1-max-pool', ... % 16
     ... 'custom-3-L-3-16-2-max-pool', ... % 32
@@ -653,15 +662,30 @@ function projection_string_list = getProjectionList()
     ... 'custom-3-L-3-16-128-max-pool', ... % 2048
     ... 'custom-3-L-3-16-256-max-pool', ... % 4096
     ...
-    ... 'custom-3-L-3-256-1-max-pool', ... % 16
-    ... 'custom-3-L-3-256-2-max-pool', ... % 32
-    ... 'custom-3-L-3-256-4-max-pool', ... % 64
-    ... 'custom-3-L-3-256-8-max-pool', ... % 128
-    ... 'custom-3-L-3-256-16-max-pool', ... % 256
-    ... 'custom-3-L-3-256-32-max-pool', ... % 512
-    ... 'custom-3-L-3-256-64-max-pool', ... % 1024
-    ... 'custom-3-L-3-256-128-max-pool', ... % 2048
-    ... 'custom-3-L-3-256-256-max-pool', ... % 4096
+    ... 'custom-3-L-3-64-1-max-pool', ... % 16
+    ... 'custom-3-L-3-64-2-max-pool', ... % 32
+    ... 'custom-3-L-3-64-4-max-pool', ... % 64
+    ... 'custom-3-L-3-64-8-max-pool', ... % 128
+    ... 'custom-3-L-3-64-16-max-pool', ... % 256
+    ... 'custom-3-L-3-64-32-max-pool', ... % 512
+    ... 'custom-3-L-3-64-64-max-pool', ... % 1024
+    ... 'custom-3-L-3-64-128-max-pool', ... % 2048
+    ... 'custom-3-L-3-64-256-max-pool', ... % 4096
+    ...
+    'custom-3-L-3-256-1-max-pool', ... % 16
+    'custom-3-L-3-256-2-max-pool', ... % 32
+    'custom-3-L-3-256-4-max-pool', ... % 64
+    'custom-3-L-3-256-8-max-pool', ... % 128
+    'custom-3-L-3-256-16-max-pool', ... % 256
+    'custom-3-L-3-256-32-max-pool', ... % 512
+    'custom-3-L-3-256-64-max-pool', ... % 1024
+    'custom-3-L-3-256-128-max-pool', ... % 2048
+    'custom-3-L-3-256-256-max-pool', ... % 4096
+    ...
+    ...
+    ...
+    ...
+    ...
     ...
     ... 'custom-4-L-3-16-1-max-pool', ... % 4
     ... 'custom-4-L-3-16-2-max-pool', ... % 8
@@ -699,17 +723,22 @@ function projection_string_list = getProjectionList()
     ... 'custom-4-L-3-256-512-max-pool', ... % 2048
     ... 'custom-4-L-3-256-1024-max-pool', ... % 4096
     ...
-    ... 'custom-4-L-3-1024-1-max-pool', ... % 4
-    ... 'custom-4-L-3-1024-2-max-pool', ... % 8
-    ... 'custom-4-L-3-1024-4-max-pool', ... % 16
-    ... 'custom-4-L-3-1024-8-max-pool', ... % 32
-    ... 'custom-4-L-3-1024-16-max-pool', ... % 64
-    ... 'custom-4-L-3-1024-32-max-pool', ... % 128
-    ... 'custom-4-L-3-1024-64-max-pool', ... % 256
-    ... 'custom-4-L-3-1024-128-max-pool', ... % 512
-    ... 'custom-4-L-3-1024-256-max-pool', ... % 1024
-    ... 'custom-4-L-3-1024-512-max-pool', ... % 2048
-    ... 'custom-4-L-3-1024-1024-max-pool', ... % 4096
+    'custom-4-L-3-1024-1-max-pool', ... % 4
+    'custom-4-L-3-1024-2-max-pool', ... % 8
+    'custom-4-L-3-1024-4-max-pool', ... % 16
+    'custom-4-L-3-1024-8-max-pool', ... % 32
+    'custom-4-L-3-1024-16-max-pool', ... % 64
+    'custom-4-L-3-1024-32-max-pool', ... % 128
+    'custom-4-L-3-1024-64-max-pool', ... % 256
+    'custom-4-L-3-1024-128-max-pool', ... % 512
+    'custom-4-L-3-1024-256-max-pool', ... % 1024
+    'custom-4-L-3-1024-512-max-pool', ... % 2048
+    'custom-4-L-3-1024-1024-max-pool', ... % 4096
+    ...
+    ...
+    ...
+    ...
+    ...
     ...
     ... 'custom-5-L-3-16-1-max-pool', ... % 1
     ... 'custom-5-L-3-16-2-max-pool', ... % 2
