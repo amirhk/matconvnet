@@ -676,7 +676,7 @@ function M = getCovarianceMeasureForSet(imdb, input_set, input_set_name)
     M = 0;
     afprintf(sprintf('[INFO] processing sample pairs # '));
     for k = 1:length(input_set)
-      if mod(k, 250) == 0
+      if mod(k, 10000) == 0
         for j = 0:log10(k - 1) + (3 + numel(num2str(length(input_set))))
           fprintf('\b'); % delete previous counter display
         end
