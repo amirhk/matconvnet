@@ -172,6 +172,8 @@ function imdb = getPCAProjectedImdb(imdb, projected_dim)
   [D order] = sort(diag(D), 'descend');       %# sort cols high to low
   V = V(:,order);
 
+  % TODO: IMPORTANT: should add mean back after projection... not needed for 1-NN, but for accuracy!
+
   % newX = X*V(:,1:end);
 
   data_train_approximation = vectorized_original_train_imdb.images.data * V(:,1:projected_dim);
@@ -300,7 +302,6 @@ function imdb = getDenselyDownProjectedImdb(imdb, number_of_projection_layers, p
 
     % result below is 4D imdb
     imdb = projectImdbUsingMatrix(imdb, random_projection_matrix);
-
 
     if non_linear_layer_count < number_of_non_linear_layers
       switch non_linear_layer_type
@@ -654,12 +655,18 @@ function enumerations = getEnumerationsOfTwoDissimilarVectors(a, b)
 function M = getCovarianceMeasureForSet(imdb, input_set, input_set_name)
   % input_set_name = {'S', 'D'}
 % -------------------------------------------------------------------------
+
+  if ~isfield(imdb, 'name')
+    % imdb.name = 'mnist-784-two-class-5-0';
+    imdb.name = 'mnist-784-multi-class-subsampled-balanced-250';
+  end
   load_from_saved_measure_file_if_present = true;
   saved_measure_file =  fullfile( ...
     getDevPath(), ...
     'data', ...
     'similarity_dissimilarity_sets', ...
     sprintf('%s_measure_for_%s.mat', input_set_name, imdb.name));
+
   if exist(saved_measure_file) == 2 && load_from_saved_measure_file_if_present
     afprintf(sprintf('[INFO] loading saved %s measure...\n', input_set_name));
     tmp = load(saved_measure_file);
@@ -669,10 +676,12 @@ function M = getCovarianceMeasureForSet(imdb, input_set, input_set_name)
     M = 0;
     afprintf(sprintf('[INFO] processing sample pairs # '));
     for k = 1:length(input_set)
-      for j = 0:log10(k - 1) + (3 + numel(num2str(length(input_set))))
-        fprintf('\b'); % delete previous counter display
+      if mod(k, 250) == 0
+        for j = 0:log10(k - 1) + (3 + numel(num2str(length(input_set))))
+          fprintf('\b'); % delete previous counter display
+        end
+        fprintf('%d / %d', k, length(input_set));
       end
-      fprintf('%d / %d', k, length(input_set));
       pair_of_samples_indices = input_set(k);
       sample_i = getVectorizedSampleAtIndex(imdb, pair_of_samples_indices{1}(1));
       sample_j = getVectorizedSampleAtIndex(imdb, pair_of_samples_indices{1}(2));
