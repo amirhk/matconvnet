@@ -197,16 +197,6 @@ function imdb = getPCAProjectedImdb(imdb, projected_dim)
 % -------------------------------------------------------------------------
 function imdb = getEnsembleDenselyDownProjectedImdb(imdb, number_of_projection_layers, projection_layer_type, number_of_non_linear_layers, non_linear_layer_type, projected_dim, number_in_ensemble)
 % -------------------------------------------------------------------------
-  % tmp_imdb = imdb;
-  % tmp_imdb.images.data = zeros(projected_dim, 1, 1, size(imdb.images.data, 4));
-  % for i = 1 : size(imdb.images.data, 4)
-  %   sample = imdb.images.data(:,:,:,i);
-  %   tmp_sample = abs(sample);
-  %   sum_of_absolute_values = sum(tmp_sample(:));
-  %   tmp_imdb.images.data(:,:,:,1) = repmat(sum_of_absolute_values, projected_dim, 1);
-  % end
-  % imdb = tmp_imdb;
-
   tmp_imdbs = {};
   for i = 1 : number_in_ensemble
     tmp_imdbs{end+1} = getDenselyDownProjectedImdb(imdb, number_of_projection_layers, projection_layer_type, number_of_non_linear_layers, non_linear_layer_type, projected_dim);
@@ -243,62 +233,68 @@ function imdb = getDenselyDownProjectedImdb(imdb, number_of_projection_layers, p
       tmp_dim = projected_dim; % this is original_dim if there's only 1 layer, or an evolving dim as we project further and further
     end
 
-    switch projection_layer_type
-      case 'dense_gaussian_indep_row'
-        tmp_std = 1;
-        random_projection_matrix = tmp_std .* randn(projected_dim, tmp_dim) / sqrt(projected_dim);
-      case 'dense_gaussian_rotated_row'
-        tmp_std = 1;
-        random_projection_matrix = zeros(projected_dim, tmp_dim);
-        random_projection_vector = tmp_std .* randn(projected_dim, 1) / sqrt(projected_dim);
-        for i = 1 : tmp_dim
-          random_projection_matrix(:, i) = circshift(random_projection_vector, i - 1);
-        end
-        % random_projection_matrix = repmat(random_projection_matrix, 1, tmp_dim);
-      case 'sparse_gaussian_indep_row'
-        assert(size(imdb.images.data, 1) == size(imdb.images.data, 2));
-        dim_image = size(imdb.images.data, 1);
-        dim_kernel = 3;
-        padding = (dim_kernel - 1) / 2;
-        random_projection_mask = createToeplitzMask(dim_image, dim_kernel, false);
-        padded_imdb = padImdbUsingPadding(imdb, [padding, padding, padding, padding]);
-        dim_padded_image = size(padded_imdb.images.data, 1);
-        assert(isequal(size(random_projection_mask), [dim_image^2, dim_padded_image^2]), 'something went wrong with the dimensions.');
 
+
+
+    if strfind(projection_layer_type, 'dense-gaussian-indep-row')
+      tmp_std = 1;
+      random_projection_matrix = tmp_std .* randn(projected_dim, tmp_dim);
+      % random_projection_matrix = tmp_std .* randn(projected_dim, tmp_dim) / sqrt(projected_dim);
+      % random_projection_matrix = randn(projected_dim, tmp_dim) / 1000000 + 1;
+      % random_projection_matrix = randn(projected_dim, tmp_dim) / 10000;
+      % random_projection_matrix = randn(projected_dim, tmp_dim) / 100;
+      % random_projection_matrix = ones(projected_dim, tmp_dim);
+
+
+    elseif strfind(projection_layer_type, 'dense-gaussian-rotated-row')
+      tmp_std = 1;
+      random_projection_matrix = zeros(projected_dim, tmp_dim);
+      random_projection_vector = tmp_std .* randn(projected_dim, 1);
+      % random_projection_vector = tmp_std .* randn(projected_dim, 1) / sqrt(projected_dim);
+      % random_projection_vector = randn(projected_dim, 1) / 1000000 + 1;
+      % random_projection_vector = randn(projected_dim, 1) / 10000;
+      % random_projection_vector = randn(projected_dim, 1) / 100;
+      % random_projection_vector = ones(projected_dim, 1);
+      for i = 1 : tmp_dim
+        random_projection_matrix(:, i) = circshift(random_projection_vector, i - 1);
+      end
+
+
+    elseif strfind(projection_layer_type, 'sparse-gaussian')
+      dim_kernel = str2num(getStringParameterStartingAtIndex(projection_layer_type, 17));
+      [random_projection_mask, padded_imdb] = getRandomProjectionMaskForImdb(imdb, dim_kernel);
+
+      if strfind(projection_layer_type, 'indep-row')
         for i = 1 : size(random_projection_mask, 1) % in each row, populate a new vector of random values in the mask
-          tmp_coefficients = randn(dim_kernel^2, 1);
+          tmp_coefficients = getCoefficientsForMask(dim_kernel);
           mask_on_indices_in_row = find(random_projection_mask(i,:) == 1);
           random_projection_mask(i,mask_on_indices_in_row) = tmp_coefficients;
         end
-
-        random_projection_matrix = random_projection_mask;
-        imdb = padded_imdb;
-      case 'sparse_gaussian_rotated_row'
-        assert(size(imdb.images.data, 1) == size(imdb.images.data, 2));
-        dim_image = size(imdb.images.data, 1);
-        dim_kernel = 3;
-        padding = (dim_kernel - 1) / 2;
-        random_projection_mask = createToeplitzMask(dim_image, dim_kernel, false);
-        padded_imdb = padImdbUsingPadding(imdb, [padding, padding, padding, padding]);
-        dim_padded_image = size(padded_imdb.images.data, 1);
-        assert(isequal(size(random_projection_mask), [dim_image^2, dim_padded_image^2]), 'something went wrong with the dimensions.');
-
-        tmp_coefficients = randn(dim_kernel^2, 1);
-        for i = 1 : size(random_projection_mask, 1) % in each row, populate the same vector of random values in the mask
+      elseif strfind(projection_layer_type, 'rotated-row')
+        tmp_coefficients = getCoefficientsForMask(dim_kernel);
+        for i = 1 : size(random_projection_mask, 1) % in each row, populate a new vector of random values in the mask
           mask_on_indices_in_row = find(random_projection_mask(i,:) == 1);
           random_projection_mask(i,mask_on_indices_in_row) = tmp_coefficients;
         end
+      else
+        throwException('[ERROR] sparse projection_layer_type unrecognized.');
+      end
 
-        random_projection_matrix = random_projection_mask;
-        imdb = padded_imdb;
-      case 'dense_log_normal'
-        lognormal_mean = -0.702;
-        lognormal_var = 0.9355;
-        mu = log( (lognormal_mean ^ 2) / sqrt(lognormal_var + lognormal_mean ^ 2));
-        sigma = sqrt( log( lognormal_var / (lognormal_mean ^ 2) + 1));
-        vectorized_generated_samples = lognrnd(mu, sigma, 1, (original_dim)^2);
-        random_projection_matrix = reshape(generated_samples, projected_dim, tmp_dim);
+      random_projection_matrix = random_projection_mask;
+      imdb = padded_imdb;
+
+
+    elseif strfind(projection_layer_type, 'dense-log-normal')
+      lognormal_mean = -0.702;
+      lognormal_var = 0.9355;
+      mu = log( (lognormal_mean ^ 2) / sqrt(lognormal_var + lognormal_mean ^ 2));
+      sigma = sqrt( log( lognormal_var / (lognormal_mean ^ 2) + 1));
+      vectorized_generated_samples = lognrnd(mu, sigma, 1, (original_dim)^2);
+      random_projection_matrix = reshape(generated_samples, projected_dim, tmp_dim);
+    else
+      throwException('[ERROR] projection_layer_type unrecognized.');
     end
+
 
     % result below is 4D imdb
     imdb = projectImdbUsingMatrix(imdb, random_projection_matrix);
@@ -343,6 +339,30 @@ function imdb = getDenselyDownProjectedImdb(imdb, number_of_projection_layers, p
       non_linear_layer_count = non_linear_layer_count + 1;
     end
   end
+
+
+% -------------------------------------------------------------------------
+function [random_projection_mask, padded_imdb] = getRandomProjectionMaskForImdb(imdb, dim_kernel)
+% -------------------------------------------------------------------------
+  assert(size(imdb.images.data, 1) == size(imdb.images.data, 2));
+  dim_image = size(imdb.images.data, 1);
+  padding = (dim_kernel - 1) / 2;
+  random_projection_mask = createToeplitzMask(dim_image, dim_kernel, false);
+  padded_imdb = padImdbUsingPadding(imdb, [padding, padding, padding, padding]);
+  dim_padded_image = size(padded_imdb.images.data, 1);
+  assert(isequal(size(random_projection_mask), [dim_image^2, dim_padded_image^2]), 'something went wrong with the dimensions.');
+
+
+% -------------------------------------------------------------------------
+function tmp_coefficients = getCoefficientsForMask(dim_kernel)
+% -------------------------------------------------------------------------
+  tmp_coefficients = randn(dim_kernel^2, 1);
+  % tmp_coefficients = tmp_coefficients / 1000000 + 1;
+  % tmp_coefficients = tmp_coefficients / 10000;
+  % tmp_coefficients = tmp_coefficients / 100;
+
+  % tmp_coefficients = ones(dim_kernel^2, 1);
+  % tmp_coefficients = zeros(dim_kernel^2, 1);
 
 
 % -------------------------------------------------------------------------
