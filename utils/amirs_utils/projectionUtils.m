@@ -229,6 +229,8 @@ function imdb = getDenselyDownProjectedImdb(imdb, number_of_projection_layers, p
       tmp_dim = original_dim; % this is original_dim if there's only 1 layer, or an evolving dim as we project further and further
     else
       tmp_dim = projected_dim; % this is original_dim if there's only 1 layer, or an evolving dim as we project further and further
+      % TODO remove me:
+      tmp_dim = 2048;
     end
 
     % % SCHEME 2: 100 -> 100 -> 100 -> 25
