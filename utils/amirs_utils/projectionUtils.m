@@ -192,8 +192,6 @@ function imdb = getPCAProjectedImdb(imdb, projected_dim)
   imdb = mergeImdbs(train_imdb, test_imdb);
 
 
-
-
 % -------------------------------------------------------------------------
 function imdb = getEnsembleDenselyDownProjectedImdb(imdb, number_of_projection_layers, projection_layer_type, number_of_non_linear_layers, non_linear_layer_type, projected_dim, number_in_ensemble)
 % -------------------------------------------------------------------------
@@ -216,7 +214,6 @@ function imdb = getEnsembleDenselyDownProjectedImdb(imdb, number_of_projection_l
   imdb = final_merged_imdb;
 
 
-
 % -------------------------------------------------------------------------
 function imdb = getDenselyDownProjectedImdb(imdb, number_of_projection_layers, projection_layer_type, number_of_non_linear_layers, non_linear_layer_type, projected_dim)
 % -------------------------------------------------------------------------
@@ -227,11 +224,21 @@ function imdb = getDenselyDownProjectedImdb(imdb, number_of_projection_layers, p
   % projected_dim = original_dim;
   non_linear_layer_count = 0;
   for i = 1 : number_of_projection_layers
+    % SCHEME 1: 100 -> 25 -> 25 -> 25
     if i == 1
       tmp_dim = original_dim; % this is original_dim if there's only 1 layer, or an evolving dim as we project further and further
     else
       tmp_dim = projected_dim; % this is original_dim if there's only 1 layer, or an evolving dim as we project further and further
     end
+
+    % % SCHEME 2: 100 -> 100 -> 100 -> 25
+    % if i ~= number_of_projection_layers
+    %   tmp_dim = original_dim; % this is original_dim if there's only 1 layer, or an evolving dim as we project further and further
+    % else
+    %   tmp_dim = projected_dim; % this is original_dim if there's only 1 layer, or an evolving dim as we project further and further
+    % end
+
+
 
 
 
@@ -244,6 +251,8 @@ function imdb = getDenselyDownProjectedImdb(imdb, number_of_projection_layers, p
       % random_projection_matrix = randn(projected_dim, tmp_dim) / 10000;
       % random_projection_matrix = randn(projected_dim, tmp_dim) / 100;
       % random_projection_matrix = ones(projected_dim, tmp_dim);
+
+      size(random_projection_matrix)
 
 
     elseif strfind(projection_layer_type, 'dense-gaussian-rotated-row')
@@ -294,7 +303,6 @@ function imdb = getDenselyDownProjectedImdb(imdb, number_of_projection_layers, p
     else
       throwException('[ERROR] projection_layer_type unrecognized.');
     end
-
 
     % result below is 4D imdb
     imdb = projectImdbUsingMatrix(imdb, random_projection_matrix);
@@ -422,7 +430,6 @@ function imdb = getImdbAfterPerformingVectorizedPooling(imdb, projected_dim, poo
   imdb = tmp_imdb;
 
 
-
 % -------------------------------------------------------------------------
 function imdb = projectImdbUsingMatrix(imdb, projection_matrix)
 % -------------------------------------------------------------------------
@@ -454,6 +461,7 @@ function imdb = projectImdbUsingMatrix(imdb, projection_matrix)
   % assert(mod(N, dim_1) == 0);
   % assert(mod(N, dim_2) == 0);
   % imdb = get4DImdb(vectorized_projected_imdb, dim_1, dim_2, 1, number_of_samples);
+
 
 
 % % -------------------------------------------------------------------------

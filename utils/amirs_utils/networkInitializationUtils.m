@@ -254,7 +254,8 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
           % layerWeights{1} = init_multiplier * randn(k, k, m, n, 'single');
           % layerWeights{1} = ones(k, k, m, n, 'single');
           % layerWeights{1} = randn(k, k, m, n, 'single') / 10000;
-          layerWeights{1} = randn(k, k, m, n, 'single') / 100;
+          % layerWeights{1} = randn(k, k, m, n, 'single') / 100;
+          layerWeights{1} = randn(k, k, m, n, 'single');
           layerWeights{2} = zeros(1, n, 'single');
         case 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-10'
           tmp_kernels = getGaussianKernelsWithIdentityCovariance(k, m, n, 1, 10);
@@ -519,7 +520,7 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
 % ------------------------------------------------------------------------------------------
 
         case 'gaussian-CentreSurroundCovariance-randomDivide-100-MuDivide-1-SigmaDivide-1'
-          tmp_kernels = getGaussianKernelsWithCentreSurroundCovariance(k, m, n, 1, 1, 100);
+          tmp_kernels = getGaussianKernelsWithCentreSurroundCovariance(k, m, n, 1, 1, 30);
           layerWeights{1} = init_multiplier * tmp_kernels;
           layerWeights{2} = zeros(1, n, 'single');
         case 'gaussian-CentreSurroundCovariance-randomDivide-100-MuDivide-1-SigmaDivide-10'

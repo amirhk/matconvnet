@@ -672,7 +672,7 @@ function subplotBeefGiryesRatioDistance(experiments, within_between, distance_ty
       color_palette{mod(i - 1,numel(color_palette)) + 1}, ...
       'facealpha', ...
       0.4);
-  end
+  endno
   ylim(y_limits);
   hold off
   legend(legend_entries);
@@ -684,7 +684,7 @@ function plotBeefAlexRatioDistance(experiments, distance_type)
   color_palette = {'c', 'r', 'g', 'b', 'k'};
   legend_entries = {};
   for i = 1 : numel(experiments)
-    legend_entries{i} = sprintf('%s - fd = %.4f', experiments{i}.title, experiments{i}.fisher_discriminant_ratio);
+    legend_entries{i} = sprintf('%s - fd = %.4f', experiments{i}.title, experiments{i}.fisher_discriminant_ratio);no
     % legend_entries{i} = experiments{i}.title;
   end
 
