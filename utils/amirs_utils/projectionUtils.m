@@ -406,7 +406,7 @@ function imdb = getImdbAfterPerformingVectorizedPooling(imdb, projected_dim, poo
   for j = 1 : size(imdb.images.data, 4)
     input_sample = imdb.images.data(:,:,:,j);
     pooled_sample = [];
-    assert(size(input_sample, 1) == projected_dim);
+    assert(size(input_sample, 1) == projected_dim); % TODO: you can't go from 784 -> 64, because the code I've written for sparse topelitz does convolutions that retain image size!
     assert(size(input_sample, 2) == 1);
     assert(size(input_sample, 3) == 1);
     assert(mod(projected_dim, pooling_stride) == 0);
