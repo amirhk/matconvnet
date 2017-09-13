@@ -38,6 +38,8 @@ function constructMultiClassImdbs(dataset)
     case 'mnist-784'
       opts.general.network_arch = 'mnistnet';
       all_class_imdb = constructMnistImdb(opts);
+    case 'mnist-fashion'
+      all_class_imdb = constructMnistFashionImdb(opts);
     case 'cifar'
       opts.imdb.imdb_portion = 1.0;
       opts.imdb.contrast_normalization = true;

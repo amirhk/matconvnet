@@ -86,4 +86,4 @@ function imdb = constructMnistImdb(opts)
   imdb.meta.classes = arrayfun(@(x)sprintf('%d',x),0:9,'uniformoutput',false);
   imdb.name = name;
   afprintf(sprintf('done!\n\n'));
-  keyboard
+  % keyboard

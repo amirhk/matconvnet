@@ -254,7 +254,7 @@ function imdb = getDenselyDownProjectedImdb(imdb, number_of_projection_layers, p
       % random_projection_matrix = randn(projected_dim, tmp_dim) / 100;
       % random_projection_matrix = ones(projected_dim, tmp_dim);
 
-      size(random_projection_matrix)
+      % size(random_projection_matrix);
 
 
     elseif strfind(projection_layer_type, 'dense-gaussian-rotated-row')
