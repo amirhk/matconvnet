@@ -27,7 +27,7 @@ function plotEuclideanAndAngularDistancesAfterProjection()
 
 
   numbers_of_samples = 1000;
-  sample_dim = 25;
+  sample_dim = 10;
 
   original_samples = randn(numbers_of_samples, sample_dim);
 
@@ -39,7 +39,8 @@ function plotEuclideanAndAngularDistancesAfterProjection()
   %                                 SPLIT SAMPLE PAIRS BASED ON ANGULAR THRESHOLD
   % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-  threshold = acosd(1/pi);
+  % threshold = acosd(1/pi);   % max of 2
+  threshold = acosd(4/(pi+3)); % max of 4
 
   sample_pairs_with_original_angle_less_than_threshold = {};
   sample_pairs_with_original_angle_more_than_threshold = {};
@@ -189,6 +190,69 @@ function plotEuclideanAndAngularDistancesAfterProjection()
 
 
 
+
+
+
+
+
+
+  % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  %                                                                 MAX 4 PROJECT
+  % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
+  max_count = 4;
+  nonlinear_max_4_rp_samples = original_samples * randn(sample_dim, max_count * sample_dim) / sqrt(sample_dim);
+  % nonlinear_max_4_rp_samples(nonlinear_max_4_rp_samples < 0) = 0;
+  tmp_nonlinear_max_4_rp_samples = zeros(size(original_samples, 1), size(original_samples, 2));
+  for j = 1 : size(tmp_nonlinear_max_4_rp_samples, 1)
+    for i = 1 : size(tmp_nonlinear_max_4_rp_samples, 2)
+      % nonlinear_max_4_rp_samples(j, (i-1)*max_count+1:(i-1)*max_count+1+max_count-1)
+      % keyboard
+      tmp_nonlinear_max_4_rp_samples(j,i) = max(nonlinear_max_4_rp_samples(j, (i-1)*max_count+1:(i-1)*max_count+1+max_count-1));
+    end
+  end
+
+  nonlinear_max_4_rp_pdist_angular_squareform = squareform(acosd(1 - pdist(nonlinear_max_4_rp_samples, 'cosine')));
+  nonlinear_max_4_rp_pdist_euclidean_squareform = squareform(pdist(nonlinear_max_4_rp_samples, 'euclidean'));
+
+
+
+  % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  %                                 GET PROJECTED ANGULAR AND EUCLIDEAN DISTANCES
+  % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+
+  [nonlinear_max_4_rp_angular_distances, nonlinear_max_4_rp_euclidean_distances] = tmpFunction( ...
+    nonlinear_max_4_rp_pdist_angular_squareform, ...
+    nonlinear_max_4_rp_pdist_euclidean_squareform, ...
+    sample_pairs_with_original_angle_less_than_threshold, ...
+    sample_pairs_with_original_angle_more_than_threshold);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   %                                                                 MAX 8 PROJECT
   % -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
@@ -305,41 +369,47 @@ function plotEuclideanAndAngularDistancesAfterProjection()
   figure,
 
 
-  subplot(6,2,1)
+  subplot(5,2,1)
   subplotBeef(original_angular_distances, linspace(0, 180, 100), sample_dim, 'Original Angular Distances');
 
-  subplot(6,2,2)
+  subplot(5,2,2)
   subplotBeef(original_euclidean_distances, linspace(0, ceil(10*sqrt(sample_dim)), 100), sample_dim, 'Original Euclidean Distances');
 
-  subplot(6,2,3)
+  subplot(5,2,3)
   subplotBeef(linear_rp_angular_distances, linspace(0, 180, 100), sample_dim, 'Linear RP Angular Distances');
 
-  subplot(6,2,4)
+  subplot(5,2,4)
   subplotBeef(linear_rp_euclidean_distances, linspace(0, ceil(10*sqrt(sample_dim)), 100), sample_dim, 'Linear RP Euclidean Distances');
 
-  subplot(6,2,5)
+  subplot(5,2,5)
   subplotBeef(nonlinear_rectified_rp_angular_distances, linspace(0, 180, 100), sample_dim, 'Nonlinear Rectified RP Angular Distances');
 
-  subplot(6,2,6)
+  subplot(5,2,6)
   subplotBeef(nonlinear_rectified_rp_euclidean_distances, linspace(0, ceil(10*sqrt(sample_dim)), 100), sample_dim, 'Nonlinear Rectified RP Euclidean Distances');
 
-  subplot(6,2,7)
+  subplot(5,2,7)
   subplotBeef(nonlinear_max_2_rp_angular_distances, linspace(0, 180, 100), sample_dim, 'Nonlinear Max 2 RP Angular Distances');
 
-  subplot(6,2,8)
+  subplot(5,2,8)
   subplotBeef(nonlinear_max_2_rp_euclidean_distances, linspace(0, ceil(10*sqrt(sample_dim)), 100), sample_dim, 'Nonlinear Max 2 RP Euclidean Distances');
 
-  subplot(6,2,9)
-  subplotBeef(nonlinear_max_8_rp_angular_distances, linspace(0, 180, 100), sample_dim, 'Nonlinear Max 8 RP Angular Distances');
+  subplot(5,2,9)
+  subplotBeef(nonlinear_max_4_rp_angular_distances, linspace(0, 180, 100), sample_dim, 'Nonlinear Max 4 RP Angular Distances');
 
-  subplot(6,2,10)
-  subplotBeef(nonlinear_max_8_rp_euclidean_distances, linspace(0, ceil(10*sqrt(sample_dim)), 100), sample_dim, 'Nonlinear Max 8 RP Euclidean Distances');
+  subplot(5,2,10)
+  subplotBeef(nonlinear_max_4_rp_euclidean_distances, linspace(0, ceil(10*sqrt(sample_dim)), 100), sample_dim, 'Nonlinear Max 4 RP Euclidean Distances');
 
-  subplot(6,2,11)
-  subplotBeef(nonlinear_max_32_rp_angular_distances, linspace(0, 180, 100), sample_dim, 'Nonlinear Max 32 RP Angular Distances');
+  % subplot(5,2,11)
+  % subplotBeef(nonlinear_max_8_rp_angular_distances, linspace(0, 180, 100), sample_dim, 'Nonlinear Max 8 RP Angular Distances');
 
-  subplot(6,2,12)
-  subplotBeef(nonlinear_max_32_rp_euclidean_distances, linspace(0, ceil(10*sqrt(sample_dim)), 100), sample_dim, 'Nonlinear Max 32 RP Euclidean Distances');
+  % subplot(5,2,12)
+  % subplotBeef(nonlinear_max_8_rp_euclidean_distances, linspace(0, ceil(10*sqrt(sample_dim)), 100), sample_dim, 'Nonlinear Max 8 RP Euclidean Distances');
+
+  % subplot(5,2,13)
+  % subplotBeef(nonlinear_max_32_rp_angular_distances, linspace(0, 180, 100), sample_dim, 'Nonlinear Max 32 RP Angular Distances');
+
+  % subplot(5,2,14)
+  % subplotBeef(nonlinear_max_32_rp_euclidean_distances, linspace(0, ceil(10*sqrt(sample_dim)), 100), sample_dim, 'Nonlinear Max 32 RP Euclidean Distances');
 
 
 

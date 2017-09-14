@@ -578,57 +578,61 @@ function projection_string_list = getProjectionList()
     ...
     ... % MNIST-FASHION-BALANCED-250
     ...
-    'larpV0P0RL0', ...                                                                               % proj dim: 784                                                                                                {--.--}{--.--}
-    ...
-    'pca-project-into-64', ...                                                                      % proj dim: 784                                                                                                {--.--}{--.--}
-    'pca-project-into-128', ...                                                                      % proj dim: 784                                                                                                {--.--}{--.--}
-    'pca-project-into-256', ...                                                                      % proj dim: 784                                                                                                {--.--}{--.--}
-    'pca-project-into-512', ...                                                                      % proj dim: 784                                                                                                {--.--}{--.--}
-    'pca-project-into-784', ...                                                                      % proj dim: 784                                                                                                {--.--}{--.--}
-    ...
-    'densely-project-indep-row-into-64-ensemble-1', ...                                             % proj dim: 784                                                                                                {--.--}{--.--}
-    'densely-project-indep-row-into-128-ensemble-1', ...                                             % proj dim: 784                                                                                                {--.--}{--.--}
-    'densely-project-indep-row-into-256-ensemble-1', ...                                             % proj dim: 784                                                                                                {--.--}{--.--}
-    'densely-project-indep-row-into-512-ensemble-1', ...                                             % proj dim: 784                                                                                                {--.--}{--.--}
-    'densely-project-indep-row-into-784-ensemble-1', ...                                             % proj dim: 784                                                                                                {--.--}{--.--}
-    'densely-project-rotated-row-into-64-ensemble-1', ...                                           % proj dim: 784                                                                                                {--.--}{--.--}
-    'densely-project-rotated-row-into-128-ensemble-1', ...                                           % proj dim: 784                                                                                                {--.--}{--.--}
-    'densely-project-rotated-row-into-256-ensemble-1', ...                                           % proj dim: 784                                                                                                {--.--}{--.--}
-    'densely-project-rotated-row-into-512-ensemble-1', ...                                           % proj dim: 784                                                                                                {--.--}{--.--}
-    'densely-project-rotated-row-into-784-ensemble-1', ...                                           % proj dim: 784                                                                                                {--.--}{--.--}
-    ...
-    'densely-project-indep-row-into-64-ensemble-1-relu', ...                                        % proj dim: 784                                                                                                {--.--}{--.--}
-    'densely-project-indep-row-into-128-ensemble-1-relu', ...                                        % proj dim: 784                                                                                                {--.--}{--.--}
-    'densely-project-indep-row-into-256-ensemble-1-relu', ...                                        % proj dim: 784                                                                                                {--.--}{--.--}
-    'densely-project-indep-row-into-512-ensemble-1-relu', ...                                        % proj dim: 784                                                                                                {--.--}{--.--}
-    'densely-project-indep-row-into-784-ensemble-1-relu', ...                                        % proj dim: 784                                                                                                {--.--}{--.--}
-    'densely-project-rotated-row-into-64-ensemble-1-relu', ...                                      % proj dim: 784                                                                                                {--.--}{--.--}
-    'densely-project-rotated-row-into-128-ensemble-1-relu', ...                                      % proj dim: 784                                                                                                {--.--}{--.--}
-    'densely-project-rotated-row-into-256-ensemble-1-relu', ...                                      % proj dim: 784                                                                                                {--.--}{--.--}
-    'densely-project-rotated-row-into-512-ensemble-1-relu', ...                                      % proj dim: 784                                                                                                {--.--}{--.--}
-    'densely-project-rotated-row-into-784-ensemble-1-relu', ...                                      % proj dim: 784                                                                                                {--.--}{--.--}
-    ...
-    'densely-project-indep-row-into-64-ensemble-4-vector-max-pool', ...                             % proj dim: 784                                                                                                {--.--}{--.--}
-    'densely-project-indep-row-into-128-ensemble-4-vector-max-pool', ...                             % proj dim: 784                                                                                                {--.--}{--.--}
-    'densely-project-indep-row-into-256-ensemble-4-vector-max-pool', ...                             % proj dim: 784                                                                                                {--.--}{--.--}
-    'densely-project-indep-row-into-512-ensemble-4-vector-max-pool', ...                             % proj dim: 784                                                                                                {--.--}{--.--}
-    'densely-project-indep-row-into-784-ensemble-4-vector-max-pool', ...                             % proj dim: 784                                                                                                {--.--}{--.--}
-    'densely-project-rotated-row-into-64-ensemble-4-vector-max-pool', ...                           % proj dim: 784                                                                                                {--.--}{--.--} >>>
-    'densely-project-rotated-row-into-128-ensemble-4-vector-max-pool', ...                           % proj dim: 784                                                                                                {--.--}{--.--} >>>
-    'densely-project-rotated-row-into-256-ensemble-4-vector-max-pool', ...                           % proj dim: 784                                                                                                {--.--}{--.--} >>>
-    'densely-project-rotated-row-into-512-ensemble-4-vector-max-pool', ...                           % proj dim: 784                                                                                                {--.--}{--.--} >>>
-    'densely-project-rotated-row-into-784-ensemble-4-vector-max-pool', ...                           % proj dim: 784                                                                                                {--.--}{--.--} >>>
-    ...
-    ... 'sparsely-project-3-indep-row-into-64-ensemble-4-vector-max-pool', ...                             % proj dim: 784                                                                                                {--.--}{--.--}
-    ... 'sparsely-project-3-indep-row-into-128-ensemble-4-vector-max-pool', ...                             % proj dim: 784                                                                                                {--.--}{--.--}
-    ... 'sparsely-project-3-indep-row-into-256-ensemble-4-vector-max-pool', ...                             % proj dim: 784                                                                                                {--.--}{--.--}
-    ... 'sparsely-project-3-indep-row-into-512-ensemble-4-vector-max-pool', ...                             % proj dim: 784                                                                                                {--.--}{--.--}
-    'sparsely-project-3-indep-row-into-784-ensemble-4-vector-max-pool', ...                             % proj dim: 784                                                                                                {--.--}{--.--}
-    ... 'sparsely-project-3-rotated-row-into-64-ensemble-4-vector-max-pool', ...                           % proj dim: 784                                                                                                {--.--}{--.--} >>>
-    ... 'sparsely-project-3-rotated-row-into-128-ensemble-4-vector-max-pool', ...                           % proj dim: 784                                                                                                {--.--}{--.--} >>>
-    ... 'sparsely-project-3-rotated-row-into-256-ensemble-4-vector-max-pool', ...                           % proj dim: 784                                                                                                {--.--}{--.--} >>>
-    ... 'sparsely-project-3-rotated-row-into-512-ensemble-4-vector-max-pool', ...                           % proj dim: 784                                                                                                {--.--}{--.--} >>>
-    'sparsely-project-3-rotated-row-into-784-ensemble-4-vector-max-pool', ...                           % proj dim: 784                                                                                                {--.--}{--.--} >>>
+    ... 'larpV0P0RL0', ...                                                                               % proj dim: 784                                                                                                {--.--}{--.--}
+    ... ...
+    ... 'pca-project-into-64', ...                                                                      % proj dim: 784                                                                                                {--.--}{--.--}
+    ... 'pca-project-into-128', ...                                                                      % proj dim: 784                                                                                                {--.--}{--.--}
+    ... 'pca-project-into-256', ...                                                                      % proj dim: 784                                                                                                {--.--}{--.--}
+    ... 'pca-project-into-512', ...                                                                      % proj dim: 784                                                                                                {--.--}{--.--}
+    ... 'pca-project-into-784', ...                                                                      % proj dim: 784                                                                                                {--.--}{--.--}
+    ... ...
+    ... 'densely-project-indep-row-into-64-ensemble-1', ...                                             % proj dim: 784                                                                                                {--.--}{--.--}
+    ... 'densely-project-indep-row-into-128-ensemble-1', ...                                             % proj dim: 784                                                                                                {--.--}{--.--}
+    ... 'densely-project-indep-row-into-256-ensemble-1', ...                                             % proj dim: 784                                                                                                {--.--}{--.--}
+    ... 'densely-project-indep-row-into-512-ensemble-1', ...                                             % proj dim: 784                                                                                                {--.--}{--.--}
+    ... 'densely-project-indep-row-into-784-ensemble-1', ...                                             % proj dim: 784                                                                                                {--.--}{--.--}
+    ... 'densely-project-rotated-row-into-64-ensemble-1', ...                                           % proj dim: 784                                                                                                {--.--}{--.--}
+    ... 'densely-project-rotated-row-into-128-ensemble-1', ...                                           % proj dim: 784                                                                                                {--.--}{--.--}
+    ... 'densely-project-rotated-row-into-256-ensemble-1', ...                                           % proj dim: 784                                                                                                {--.--}{--.--}
+    ... 'densely-project-rotated-row-into-512-ensemble-1', ...                                           % proj dim: 784                                                                                                {--.--}{--.--}
+    ... 'densely-project-rotated-row-into-784-ensemble-1', ...                                           % proj dim: 784                                                                                                {--.--}{--.--}
+    ... ...
+    ... 'densely-project-indep-row-into-64-ensemble-1-relu', ...                                        % proj dim: 784                                                                                                {--.--}{--.--}
+    ... 'densely-project-indep-row-into-128-ensemble-1-relu', ...                                        % proj dim: 784                                                                                                {--.--}{--.--}
+    ... 'densely-project-indep-row-into-256-ensemble-1-relu', ...                                        % proj dim: 784                                                                                                {--.--}{--.--}
+    ... 'densely-project-indep-row-into-512-ensemble-1-relu', ...                                        % proj dim: 784                                                                                                {--.--}{--.--}
+    ... 'densely-project-indep-row-into-784-ensemble-1-relu', ...                                        % proj dim: 784                                                                                                {--.--}{--.--}
+    ... 'densely-project-rotated-row-into-64-ensemble-1-relu', ...                                      % proj dim: 784                                                                                                {--.--}{--.--}
+    ... 'densely-project-rotated-row-into-128-ensemble-1-relu', ...                                      % proj dim: 784                                                                                                {--.--}{--.--}
+    ... 'densely-project-rotated-row-into-256-ensemble-1-relu', ...                                      % proj dim: 784                                                                                                {--.--}{--.--}
+    ... 'densely-project-rotated-row-into-512-ensemble-1-relu', ...                                      % proj dim: 784                                                                                                {--.--}{--.--}
+    ... 'densely-project-rotated-row-into-784-ensemble-1-relu', ...                                      % proj dim: 784                                                                                                {--.--}{--.--}
+    ... ...
+    ... 'densely-project-indep-row-into-64-ensemble-4-vector-max-pool', ...                             % proj dim: 784                                                                                                {--.--}{--.--}
+    ... 'densely-project-indep-row-into-128-ensemble-4-vector-max-pool', ...                             % proj dim: 784                                                                                                {--.--}{--.--}
+    ... 'densely-project-indep-row-into-256-ensemble-4-vector-max-pool', ...                             % proj dim: 784                                                                                                {--.--}{--.--}
+    ... 'densely-project-indep-row-into-512-ensemble-4-vector-max-pool', ...                             % proj dim: 784                                                                                                {--.--}{--.--}
+    ... 'densely-project-indep-row-into-784-ensemble-4-vector-max-pool', ...                             % proj dim: 784                                                                                                {--.--}{--.--}
+    ... 'densely-project-rotated-row-into-64-ensemble-4-vector-max-pool', ...                           % proj dim: 784                                                                                                {--.--}{--.--} >>>
+    ... 'densely-project-rotated-row-into-128-ensemble-4-vector-max-pool', ...                           % proj dim: 784                                                                                                {--.--}{--.--} >>>
+    ... 'densely-project-rotated-row-into-256-ensemble-4-vector-max-pool', ...                           % proj dim: 784                                                                                                {--.--}{--.--} >>>
+    ... 'densely-project-rotated-row-into-512-ensemble-4-vector-max-pool', ...                           % proj dim: 784                                                                                                {--.--}{--.--} >>>
+    ... 'densely-project-rotated-row-into-784-ensemble-4-vector-max-pool', ...                           % proj dim: 784                                                                                                {--.--}{--.--} >>>
+    ... ...
+    ... ... 'sparsely-project-3-indep-row-into-64-ensemble-4-vector-max-pool', ...                             % proj dim: 784                                                                                                {--.--}{--.--}
+    ... ... 'sparsely-project-3-indep-row-into-128-ensemble-4-vector-max-pool', ...                             % proj dim: 784                                                                                                {--.--}{--.--}
+    ... ... 'sparsely-project-3-indep-row-into-256-ensemble-4-vector-max-pool', ...                             % proj dim: 784                                                                                                {--.--}{--.--}
+    ... ... 'sparsely-project-3-indep-row-into-512-ensemble-4-vector-max-pool', ...                             % proj dim: 784                                                                                                {--.--}{--.--}
+    'sparsely-project-3-indep-row-into-784-ensemble-1-vector-max-pool', ...                             % proj dim: 784                                                                                                {--.--}{--.--}
+    'sparsely-project-3-indep-row-into-784-ensemble-2-vector-max-pool', ...                             % proj dim: 784                                                                                                {--.--}{--.--}
+    ... 'sparsely-project-3-indep-row-into-784-ensemble-4-vector-max-pool', ...                             % proj dim: 784                                                                                                {--.--}{--.--}
+    ... ... 'sparsely-project-3-rotated-row-into-64-ensemble-4-vector-max-pool', ...                           % proj dim: 784                                                                                                {--.--}{--.--} >>>
+    ... ... 'sparsely-project-3-rotated-row-into-128-ensemble-4-vector-max-pool', ...                           % proj dim: 784                                                                                                {--.--}{--.--} >>>
+    ... ... 'sparsely-project-3-rotated-row-into-256-ensemble-4-vector-max-pool', ...                           % proj dim: 784                                                                                                {--.--}{--.--} >>>
+    ... ... 'sparsely-project-3-rotated-row-into-512-ensemble-4-vector-max-pool', ...                           % proj dim: 784                                                                                                {--.--}{--.--} >>>
+    'sparsely-project-3-rotated-row-into-784-ensemble-1-vector-max-pool', ...                           % proj dim: 784                                                                                                {--.--}{--.--} >>>
+    'sparsely-project-3-rotated-row-into-784-ensemble-2-vector-max-pool', ...                           % proj dim: 784                                                                                                {--.--}{--.--} >>>
+    ... 'sparsely-project-3-rotated-row-into-784-ensemble-4-vector-max-pool', ...                           % proj dim: 784                                                                                                {--.--}{--.--} >>>
     ... ...
     ... ... 'densely-project-indep-row-into-784-ensemble-4-vl-nn-max-pool', ...                              % proj dim: 784                                                                                                {--.--}{--.--}
     ... ... 'densely-project-rotated-row-into-784-ensemble-4-vl-nn-max-pool', ...                            % proj dim: 784                                                                                                {--.--}{--.--} >>>
@@ -922,22 +926,22 @@ function projection_string_list = getProjectionList()
     ...
     ...
     ...
-    'custom-1-L-3-99-1-max-pool', ... % 196
-    'custom-1-L-3-99-2-max-pool', ... % 392
-    'custom-1-L-3-99-4-max-pool', ... % 784
+    ... 'custom-1-L-3-99-1-max-pool', ... % 196
+    ... 'custom-1-L-3-99-2-max-pool', ... % 392
+    ... 'custom-1-L-3-99-4-max-pool', ... % 784
     ...
     ...
-    'custom-2-L-3-16-1-max-pool', ... % 49
-    'custom-2-L-3-16-2-max-pool', ... % 98
-    'custom-2-L-3-16-4-max-pool', ... % 196
-    'custom-2-L-3-16-8-max-pool', ... % 392
-    'custom-2-L-3-16-16-max-pool', ... % 784
+    ... 'custom-2-L-3-16-1-max-pool', ... % 49
+    ... 'custom-2-L-3-16-2-max-pool', ... % 98
+    ... 'custom-2-L-3-16-4-max-pool', ... % 196
+    ... 'custom-2-L-3-16-8-max-pool', ... % 392
+    ... 'custom-2-L-3-16-16-max-pool', ... % 784
     ...
-    'custom-2-L-3-64-1-max-pool', ... % 49
-    'custom-2-L-3-64-2-max-pool', ... % 98
-    'custom-2-L-3-64-4-max-pool', ... % 196
-    'custom-2-L-3-64-8-max-pool', ... % 392
-    'custom-2-L-3-64-16-max-pool', ... % 784
+    ... 'custom-2-L-3-64-1-max-pool', ... % 49
+    ... 'custom-2-L-3-64-2-max-pool', ... % 98
+    ... 'custom-2-L-3-64-4-max-pool', ... % 196
+    ... 'custom-2-L-3-64-8-max-pool', ... % 392
+    ... 'custom-2-L-3-64-16-max-pool', ... % 784
     ...
     ...
     ...
