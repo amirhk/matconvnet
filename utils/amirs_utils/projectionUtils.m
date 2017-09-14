@@ -223,9 +223,9 @@ function imdb = getDenselyDownProjectedImdb(imdb, number_of_projection_layers, p
   original_dim = size(vectorized_imdb.images.data, 2);
   % projected_dim = original_dim;
   non_linear_layer_count = 0;
-  for i = 1 : number_of_projection_layers
+  for layer_count = 1 : number_of_projection_layers
     % SCHEME 1: 100 -> 25 -> 25 -> 25
-    if i == 1
+    if layer_count == 1
       tmp_dim = original_dim; % this is original_dim if there's only 1 layer, or an evolving dim as we project further and further
     else
       tmp_dim = projected_dim; % this is original_dim if there's only 1 layer, or an evolving dim as we project further and further
@@ -234,7 +234,7 @@ function imdb = getDenselyDownProjectedImdb(imdb, number_of_projection_layers, p
     end
 
     % % SCHEME 2: 100 -> 100 -> 100 -> 25
-    % if i ~= number_of_projection_layers
+    % if layer_count ~= number_of_projection_layers
     %   tmp_dim = original_dim; % this is original_dim if there's only 1 layer, or an evolving dim as we project further and further
     % else
     %   tmp_dim = projected_dim; % this is original_dim if there's only 1 layer, or an evolving dim as we project further and further
@@ -275,20 +275,24 @@ function imdb = getDenselyDownProjectedImdb(imdb, number_of_projection_layers, p
       dim_kernel = str2num(getStringParameterStartingAtIndex(projection_layer_type, 17));
       [random_projection_mask, padded_imdb] = getRandomProjectionMaskForImdb(imdb, dim_kernel);
 
-      if strfind(projection_layer_type, 'indep-row')
-        for i = 1 : size(random_projection_mask, 1) % in each row, populate a new vector of random values in the mask
+      assert(size(random_projection_mask, 3) == size(padded_imdb.images.data, 3));
+
+      for channel_counter = 1:size(random_projection_mask, 3)
+        if strfind(projection_layer_type, 'indep-row')
+          for i = 1 : size(random_projection_mask, 1) % in each row, populate a new vector of random values in the mask
+            tmp_coefficients = getCoefficientsForMask(dim_kernel);
+            mask_on_indices_in_row = find(random_projection_mask(i,:,channel_counter) == 1);
+            random_projection_mask(i,mask_on_indices_in_row,channel_counter) = tmp_coefficients;
+          end
+        elseif strfind(projection_layer_type, 'rotated-row')
           tmp_coefficients = getCoefficientsForMask(dim_kernel);
-          mask_on_indices_in_row = find(random_projection_mask(i,:) == 1);
-          random_projection_mask(i,mask_on_indices_in_row) = tmp_coefficients;
+          for i = 1 : size(random_projection_mask, 1) % in each row, populate a new vector of random values in the mask
+            mask_on_indices_in_row = find(random_projection_mask(i,:,channel_counter) == 1);
+            random_projection_mask(i,mask_on_indices_in_row,channel_counter) = tmp_coefficients;
+          end
+        else
+          throwException('[ERROR] sparse projection_layer_type unrecognized.');
         end
-      elseif strfind(projection_layer_type, 'rotated-row')
-        tmp_coefficients = getCoefficientsForMask(dim_kernel);
-        for i = 1 : size(random_projection_mask, 1) % in each row, populate a new vector of random values in the mask
-          mask_on_indices_in_row = find(random_projection_mask(i,:) == 1);
-          random_projection_mask(i,mask_on_indices_in_row) = tmp_coefficients;
-        end
-      else
-        throwException('[ERROR] sparse projection_layer_type unrecognized.');
       end
 
       random_projection_matrix = random_projection_mask;
@@ -358,9 +362,12 @@ function [random_projection_mask, padded_imdb] = getRandomProjectionMaskForImdb(
   dim_image = size(imdb.images.data, 1);
   padding = (dim_kernel - 1) / 2;
   random_projection_mask = createToeplitzMask(dim_image, dim_kernel, false);
+  random_projection_mask = repmat(random_projection_mask, [1,1,size(imdb.images.data, 3)]);
+  size(random_projection_mask)
   padded_imdb = padImdbUsingPadding(imdb, [padding, padding, padding, padding]);
+  assert(size(padded_imdb.images.data, 1) == size(padded_imdb.images.data, 2));
   dim_padded_image = size(padded_imdb.images.data, 1);
-  assert(isequal(size(random_projection_mask), [dim_image^2, dim_padded_image^2]), 'something went wrong with the dimensions.');
+  assert(isequal(size(random_projection_mask), [dim_image^2, dim_padded_image^2, size(padded_imdb.images.data, 3)]), 'something went wrong with the dimensions.');
 
 
 % -------------------------------------------------------------------------
@@ -435,128 +442,51 @@ function imdb = getImdbAfterPerformingVectorizedPooling(imdb, projected_dim, poo
 % -------------------------------------------------------------------------
 function imdb = projectImdbUsingMatrix(imdb, projection_matrix)
 % -------------------------------------------------------------------------
-  vectorized_original_imdb = getVectorizedImdb(imdb);
+  sample_image = imdb.images.data(:,:,:,1);
+  number_of_projection_matrix_channels = size(projection_matrix, 3);
+  assert(prod(size(sample_image)) == size(projection_matrix, 2) * number_of_projection_matrix_channels);
 
-  % original_dim = size(vectorized_original_imdb.images.data, 2);
-  projected_dim = size(projection_matrix, 1);
-  number_of_samples = size(vectorized_original_imdb.images.data, 1);
+  % IMPORTANT: projection matrix is either
+  %    single channel: each sample                 of the imdb should be vectorized, and projected using the single channel of projection_matrix
+  %    multi- channel: each channel of each sample of the imdb should be vectorized, and projected using each channel of projection_matrix
 
-  all_data_original_vectorized = vectorized_original_imdb.images.data;
-  all_data_projected_vectorized = (projection_matrix * all_data_original_vectorized')';
-  % sub_dim = 3072;
-  % sub_dim = 1000;
-  % sub_dim = 100;
-  % sub_dim = 10;
-  % all_data_projected_vectorized = all_data_original_vectorized(:,1:sub_dim) * projection_matrix(:,1:sub_dim)';
+  if number_of_projection_matrix_channels == 1
+    vectorized_original_imdb = getVectorizedImdb(imdb);
 
-  vectorized_projected_imdb = vectorized_original_imdb;
-  vectorized_projected_imdb.images.data = all_data_projected_vectorized;
+    projected_dim = size(projection_matrix, 1);
+    number_of_samples = size(vectorized_original_imdb.images.data, 1);
+
+    all_data_original_vectorized = vectorized_original_imdb.images.data;
+    all_data_projected_vectorized = (projection_matrix * all_data_original_vectorized')';
+    vectorized_projected_imdb = vectorized_original_imdb;
+    vectorized_projected_imdb.images.data = all_data_projected_vectorized;
+  else
+    for channel_counter = 1 : number_of_projection_matrix_channels
+      per_channel_original_imdb = imdb;
+      per_channel_original_imdb.images.data = per_channel_original_imdb.images.data(:,:,channel_counter,:);
+
+      vectorized_per_channel_original_imdb = getVectorizedImdb(per_channel_original_imdb);
+
+      per_channel_projected_dim = size(projection_matrix, 1);
+      number_of_samples = size(vectorized_per_channel_original_imdb.images.data, 1);
+
+      all_data_per_channel_original_vectorized = vectorized_per_channel_original_imdb.images.data;
+      all_data_per_channel_projected_vectorized = (projection_matrix(:,:,channel_counter) * all_data_per_channel_original_vectorized')';
+      vectorized_per_channel_projected_data = all_data_per_channel_projected_vectorized;
+
+      if channel_counter == 1
+        vectorized_per_channel_projected_imdb = vectorized_per_channel_original_imdb; % to copy over labels and set
+        vectorized_all_channel_projected_imdb.images.data = zeros( ...
+          size(vectorized_per_channel_projected_data, 1), ...
+          size(vectorized_per_channel_projected_data, 2) * number_of_projection_matrix_channels);
+      end
+      vectorized_all_channel_projected_imdb.images.data(:,1 + (channel_counter - 1) * 1024 : channel_counter * 1024) = vectorized_per_channel_projected_data;
+    end
+    vectorized_projected_imdb = vectorized_all_channel_projected_imdb;
+  end
 
   imdb = get4DImdb(vectorized_projected_imdb, projected_dim, 1, 1, number_of_samples);
   % imdb = get4DImdb(vectorized_projected_imdb, sqrt(projected_dim), sqrt(projected_dim), 1, number_of_samples);
-
-  % N = projected_dim;
-  % x = 1:N;
-  % divisors = x(~(rem(N, x)));
-  % dim_1 = divisors(floor(length(divisors) / 2) + 1);
-  % dim_2 = N / dim_1;
-  % assert(mod(N, dim_1) == 0);
-  % assert(mod(N, dim_2) == 0);
-  % imdb = get4DImdb(vectorized_projected_imdb, dim_1, dim_2, 1, number_of_samples);
-
-
-
-% % -------------------------------------------------------------------------
-% function imdb = getDenselyProjectedImdb(imdb, number_of_projection_layers, number_of_relu_layers)
-% % -------------------------------------------------------------------------
-%   assert(number_of_relu_layers <= number_of_projection_layers);
-%   vectorized_imdb = getVectorizedImdb(imdb);
-%   original_dim = size(vectorized_imdb.images.data, 2);
-%   projected_dim = original_dim;
-%   relu_count = 0;
-%   for i = 1 : number_of_projection_layers
-%     % random_projection_matrix = randn(projected_dim, original_dim) * 1/100;
-%     random_projection_matrix = randn(projected_dim, original_dim);
-%     % random_projection_matrix = randn(projected_dim, original_dim) / sqrt(original_dim);
-%     % random_projection_matrix = randn(projected_dim, original_dim) / sqrt(sqrt(original_dim));
-%     % random_projection_matrix = randn(projected_dim, original_dim) / sqrt(original_dim) * sqrt(2);
-%     % random_projection_matrix = (round(rand(projected_dim, original_dim)) - 0.5) * 2 / sqrt(original_dim); % Bernoulli
-%     imdb = projectImdbUsingMatrix(imdb, random_projection_matrix);
-%     if relu_count < number_of_relu_layers
-%       % apply relu
-%       imdb.images.data(imdb.images.data < 0) = 0;
-%       relu_count = relu_count + 1;
-%     end
-%   end
-%   % random_projection_matrix = randn(projected_dim, original_dim) * 1/100;
-%   % imdb = projectImdbUsingMatrix(imdb, random_projection_matrix);
-
-% % -------------------------------------------------------------------------
-% function imdb = getDenselyProjectedAndNormalizedImdb(imdb, number_of_projection_layers, number_of_relu_layers)
-% % -------------------------------------------------------------------------
-%   assert(number_of_relu_layers <= number_of_projection_layers);
-%   vectorized_imdb = getVectorizedImdb(imdb);
-%   original_dim = size(vectorized_imdb.images.data, 2);
-%   projected_dim = original_dim;
-%   relu_count = 0;
-%   for i = 1 : number_of_projection_layers
-%     random_projection_matrix = randn(projected_dim, original_dim);
-%     [Q, R] = qr(random_projection_matrix);
-%     random_projection_matrix = normr(Q);
-%     imdb = projectImdbUsingMatrix(imdb, random_projection_matrix);
-%     if relu_count < number_of_relu_layers
-%       % apply relu
-%       imdb.images.data(imdb.images.data < 0) = 0;
-%       relu_count = relu_count + 1;
-%     end
-%   end
-
-% % -------------------------------------------------------------------------
-% function imdb = getDenselyLogNormalProjectedImdb(imdb, number_of_projection_layers, number_of_relu_layers)
-% % -------------------------------------------------------------------------
-%   assert(number_of_relu_layers <= number_of_projection_layers);
-%   vectorized_imdb = getVectorizedImdb(imdb);
-%   original_dim = size(vectorized_imdb.images.data, 2);
-%   projected_dim = original_dim;
-%   relu_count = 0;
-%   for i = 1 : number_of_projection_layers
-%     lognormal_mean = -0.702;
-%     lognormal_var = 0.9355;
-%     mu = log( (lognormal_mean ^ 2) / sqrt(lognormal_var + lognormal_mean ^ 2));
-%     sigma = sqrt( log( lognormal_var / (lognormal_mean ^ 2) + 1));
-%     generated_samples = lognrnd(mu, sigma, 1, (original_dim)^2);
-%     random_projection_matrix = reshape(generated_samples, projected_dim, original_dim);
-%     imdb = projectImdbUsingMatrix(imdb, random_projection_matrix);
-%     if relu_count < number_of_relu_layers
-%       % apply relu
-%       imdb.images.data(imdb.images.data < 0) = 0;
-%       relu_count = relu_count + 1;
-%     end
-%   end
-
-
-% % -------------------------------------------------------------------------
-% function imdb = getSparselyProjectedImdb(imdb, number_of_projection_layers, number_of_relu_layers)
-% % -------------------------------------------------------------------------
-%   % TODO....
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

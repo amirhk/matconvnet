@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function padded_image = padImageUsingPadding(I, padding)
+function padded_multi_channel_image = padImageUsingPadding(I, padding)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -25,6 +25,19 @@ function padded_image = padImageUsingPadding(I, padding)
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
 
+  number_of_channels = size(I, 3);
+  tmp_padded_single_channel = padSingleChannelImageUsingPadding(I(:,:,1), padding);
+
+  padded_multi_channel_image = zeros(size(tmp_padded_single_channel, 1), size(tmp_padded_single_channel, 2), number_of_channels);
+
+  for i = 1 : number_of_channels
+    padded_multi_channel_image(:,:,i) = padSingleChannelImageUsingPadding(I(:,:,i), padding);
+  end
+
+
+% -------------------------------------------------------------------------
+function padded_image = padSingleChannelImageUsingPadding(I, padding)
+% -------------------------------------------------------------------------
   padded_image = I;
   padded_image = padarray(padded_image, [padding(1), 0], 'pre');
   padded_image = padarray(padded_image, [padding(2), 0], 'post');

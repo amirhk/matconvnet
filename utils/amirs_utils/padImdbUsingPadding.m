@@ -26,13 +26,13 @@ function padded_imdb = padImdbUsingPadding(imdb, padding)
 % POSSIBILITY OF SUCH DAMAGE.
 
   tmp_image = imdb.images.data(:,:,:,1);
-  assert(size(tmp_image, 3) == 1, 'only dealing with single channel images here...');
+  % assert(size(tmp_image, 3) == 1, 'only dealing with single channel images here...');
   tmp_padded_image = padImageUsingPadding(tmp_image, padding);
 
   number_of_samples = size(imdb.images.data, 4);
 
   padded_imdb = imdb;
-  padded_imdb.images.data = zeros(size(tmp_padded_image, 1), size(tmp_padded_image, 2), 1, number_of_samples);
+  padded_imdb.images.data = zeros(size(tmp_padded_image, 1), size(tmp_padded_image, 2), size(tmp_padded_image, 3), number_of_samples);
   for i = 1 : number_of_samples
     padded_imdb.images.data(:,:,:,i) = padImageUsingPadding(imdb.images.data(:,:,:,i), padding);
   end
