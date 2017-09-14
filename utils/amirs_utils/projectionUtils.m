@@ -408,33 +408,49 @@ function imdb = getImdbAfterPerformingVectorizedPooling(imdb, projected_dim, poo
 
   % tmp_random_min_max_order = sign(randn(1, 100000));
 
+  number_of_channels = size(imdb.images.data, 3);
+  number_of_samples = size(imdb.images.data, 4);
+
   tmp_imdb = imdb;
+  % tmp_imdb.images.data = zeros(projected_dim, 1, number_of_channels, number_of_samples);
   tmp_imdb.images.data = [];
-  for j = 1 : size(imdb.images.data, 4)
-    input_sample = imdb.images.data(:,:,:,j);
-    pooled_sample = [];
-    assert(size(input_sample, 1) == projected_dim); % TODO: you can't go from 784 -> 64, because the code I've written for sparse topelitz does convolutions that retain image size!
-    assert(size(input_sample, 2) == 1);
-    assert(size(input_sample, 3) == 1);
-    assert(mod(projected_dim, pooling_stride) == 0);
-    right_padded_input_sample = cat(2, reshape(input_sample, 1, []), zeros(1, pooling_width - pooling_stride));
-    for k = 1 : pooling_stride : projected_dim
-      pooled_sample(end+1) = fh_operation(right_padded_input_sample(k : k + pooling_width - 1));
-      % if tmp_random_min_max_order(k) == 1
-      %   pooled_sample(end+1) = max(right_padded_input_sample(k : k + pooling_width - 1));
-      % elseif tmp_random_min_max_order(k) == -1
-      %   pooled_sample(end+1) = min(right_padded_input_sample(k : k + pooling_width - 1));
+  for j = 1 : number_of_samples
+    for k = 1 : number_of_channels
+      input_sample = imdb.images.data(:,:,k,j);
+      pooled_sample = [];
+      assert(size(input_sample, 1) == projected_dim); % TODO: you can't go from 784 -> 64, because the code I've written for sparse topelitz does convolutions that retain image size!
+      assert(size(input_sample, 2) == 1);
+      assert(size(input_sample, 3) == 1);
+      assert(mod(projected_dim, pooling_stride) == 0);
+      right_padded_input_sample = cat(2, reshape(input_sample, 1, []), zeros(1, pooling_width - pooling_stride));
+      for ll = 1 : pooling_stride : projected_dim
+        pooled_sample(end+1) = fh_operation(right_padded_input_sample(ll : ll + pooling_width - 1));
+        % if tmp_random_min_max_order(k) == 1
+        %   pooled_sample(end+1) = max(right_padded_input_sample(k : k + pooling_width - 1));
+        % elseif tmp_random_min_max_order(k) == -1
+        %   pooled_sample(end+1) = min(right_padded_input_sample(k : k + pooling_width - 1));
+        % else
+        %   throwException('[ERROR] values should only be +1 / -1.');
+        % end
+      end
+      % keyboard
+      % tmp_imdb.images.data(:,1,k,j) = pooled_sample;
+      if k == 1 && j == 1 % starting off
+        tmp_imdb.images.data(:,:,k,end) = pooled_sample;
+      elseif k == 1 % when going onto a new sample
+        tmp_imdb.images.data(:,:,k,end+1) = pooled_sample;
+      else % when adding additional channels of a sample
+        tmp_imdb.images.data(:,:,k,end) = pooled_sample;
+      end
+      % if k == 1 && j == 1
+      %   tmp_imdb.images.data(:,:,k,end) = pooled_sample;
       % else
-      %   throwException('[ERROR] values should only be +1 / -1.');
+      %   tmp_imdb.images.data(:,:,:,end+1) = pooled_sample;
       % end
     end
-    % keyboard
-    if j == 1
-      tmp_imdb.images.data(:,:,:,end) = pooled_sample;
-    else
-      tmp_imdb.images.data(:,:,:,end+1) = pooled_sample;
-    end
   end
+  size(imdb.images.data)
+  size(tmp_imdb.images.data)
   assert(prod(size(imdb.images.data)) == pooling_stride * prod(size(tmp_imdb.images.data)));
   imdb = tmp_imdb;
 
@@ -460,6 +476,9 @@ function imdb = projectImdbUsingMatrix(imdb, projection_matrix)
     all_data_projected_vectorized = (projection_matrix * all_data_original_vectorized')';
     vectorized_projected_imdb = vectorized_original_imdb;
     vectorized_projected_imdb.images.data = all_data_projected_vectorized;
+
+    imdb = get4DImdb(vectorized_projected_imdb, projected_dim, 1, 1, number_of_samples);
+    % imdb = get4DImdb(vectorized_projected_imdb, sqrt(projected_dim), sqrt(projected_dim), 1, number_of_samples);
   else
     for channel_counter = 1 : number_of_projection_matrix_channels
       per_channel_original_imdb = imdb;
@@ -483,10 +502,12 @@ function imdb = projectImdbUsingMatrix(imdb, projection_matrix)
       vectorized_all_channel_projected_imdb.images.data(:,1 + (channel_counter - 1) * 1024 : channel_counter * 1024) = vectorized_per_channel_projected_data;
     end
     vectorized_projected_imdb = vectorized_all_channel_projected_imdb;
+
+    imdb = get4DImdb(vectorized_projected_imdb, per_channel_projected_dim, 1, number_of_projection_matrix_channels, number_of_samples);
+    % imdb = get4DImdb(vectorized_projected_imdb, sqrt(projected_dim), sqrt(projected_dim), 1, number_of_samples);
   end
 
-  imdb = get4DImdb(vectorized_projected_imdb, projected_dim, 1, 1, number_of_samples);
-  % imdb = get4DImdb(vectorized_projected_imdb, sqrt(projected_dim), sqrt(projected_dim), 1, number_of_samples);
+
 
 
 
