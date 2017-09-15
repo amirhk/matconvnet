@@ -367,7 +367,7 @@ function [random_projection_mask, padded_imdb] = getRandomProjectionMaskForImdb(
   padded_imdb = padImdbUsingPadding(imdb, [padding, padding, padding, padding]);
   assert(size(padded_imdb.images.data, 1) == size(padded_imdb.images.data, 2));
   dim_padded_image = size(padded_imdb.images.data, 1);
-  assert(isequal(size(random_projection_mask), [dim_image^2, dim_padded_image^2, size(padded_imdb.images.data, 3)]), 'something went wrong with the dimensions.');
+  assert(isequal([size(random_projection_mask, 1), size(random_projection_mask, 2), size(random_projection_mask, 3)], [dim_image^2, dim_padded_image^2, size(padded_imdb.images.data, 3)]), 'something went wrong with the dimensions.');
 
 
 % -------------------------------------------------------------------------
