@@ -157,7 +157,6 @@ function imdb = getPCAProjectedImdb(imdb, projected_dim)
   % data_train_approximation = score(:,1:projected_dim) * coeff(:,1:projected_dim)' + repmat(mu, number_of_train_samples, 1);
   % data_test_approximation = score(:,1:projected_dim) * coeff(:,1:projected_dim)' + repmat(mu, number_of_test_samples, 1);
 
-  % keyboard
 
   % data_train_approximation = vectorized_original_train_imdb.images.data * coeff(:, 1 : projected_dim) + repmat(mu(1:projected_dim), number_of_train_samples, 1);
   % data_test_approximation = vectorized_original_test_imdb.images.data * coeff(:, 1 : projected_dim) + repmat(mu(1:projected_dim), number_of_test_samples, 1);
@@ -354,6 +353,9 @@ function imdb = getDenselyDownProjectedImdb(imdb, number_of_projection_layers, p
     end
   end
 
+  imdb = getVectorizedImdb(imdb);
+  imdb = get4DImdb(imdb, size(imdb.images.data, 2), 1, 1, size(imdb.images.data, 1));
+
 
 % -------------------------------------------------------------------------
 function [random_projection_mask, padded_imdb] = getRandomProjectionMaskForImdb(imdb, dim_kernel)
@@ -363,7 +365,6 @@ function [random_projection_mask, padded_imdb] = getRandomProjectionMaskForImdb(
   padding = (dim_kernel - 1) / 2;
   random_projection_mask = createToeplitzMask(dim_image, dim_kernel, false);
   random_projection_mask = repmat(random_projection_mask, [1,1,size(imdb.images.data, 3)]);
-  size(random_projection_mask)
   padded_imdb = padImdbUsingPadding(imdb, [padding, padding, padding, padding]);
   assert(size(padded_imdb.images.data, 1) == size(padded_imdb.images.data, 2));
   dim_padded_image = size(padded_imdb.images.data, 1);
@@ -433,7 +434,6 @@ function imdb = getImdbAfterPerformingVectorizedPooling(imdb, projected_dim, poo
         %   throwException('[ERROR] values should only be +1 / -1.');
         % end
       end
-      % keyboard
       % tmp_imdb.images.data(:,1,k,j) = pooled_sample;
       if k == 1 && j == 1 % starting off
         tmp_imdb.images.data(:,:,k,end) = pooled_sample;
@@ -449,8 +449,6 @@ function imdb = getImdbAfterPerformingVectorizedPooling(imdb, projected_dim, poo
       % end
     end
   end
-  size(imdb.images.data)
-  size(tmp_imdb.images.data)
   assert(prod(size(imdb.images.data)) == pooling_stride * prod(size(tmp_imdb.images.data)));
   imdb = tmp_imdb;
 
