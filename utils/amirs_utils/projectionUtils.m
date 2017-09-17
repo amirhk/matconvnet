@@ -244,34 +244,27 @@ function imdb = getDenselyDownProjectedImdb(imdb, number_of_projection_layers, p
 
 
 
-    if strfind(projection_layer_type, 'dense-gaussian-indep-row')
-      tmp_std = 1;
-      random_projection_matrix = tmp_std .* randn(projected_dim, tmp_dim);
-      % random_projection_matrix = tmp_std .* randn(projected_dim, tmp_dim) / sqrt(projected_dim);
-      % random_projection_matrix = randn(projected_dim, tmp_dim) / 1000000 + 1;
-      % random_projection_matrix = randn(projected_dim, tmp_dim) / 10000;
-      % random_projection_matrix = randn(projected_dim, tmp_dim) / 100;
-      % random_projection_matrix = ones(projected_dim, tmp_dim);
-
-      % size(random_projection_matrix);
-
-
-    elseif strfind(projection_layer_type, 'dense-gaussian-rotated-row')
-      tmp_std = 1;
-      random_projection_matrix = zeros(projected_dim, tmp_dim);
-      random_projection_vector = tmp_std .* randn(projected_dim, 1);
-      % random_projection_vector = tmp_std .* randn(projected_dim, 1) / sqrt(projected_dim);
-      % random_projection_vector = randn(projected_dim, 1) / 1000000 + 1;
-      % random_projection_vector = randn(projected_dim, 1) / 10000;
-      % random_projection_vector = randn(projected_dim, 1) / 100;
-      % random_projection_vector = ones(projected_dim, 1);
-      for i = 1 : tmp_dim
-        random_projection_matrix(:, i) = circshift(random_projection_vector, i - 1);
+    if strfind(projection_layer_type, 'dense-structure')
+      if strfind(projection_layer_type, 'gaussian-distr')
+        fhRandomMatrixGenerator = @randn;
+      elseif strfind(projection_layer_type, 'sparse-distr')
+        fhRandomMatrixGenerator = @createSparseRandomMatrix;
       end
 
+      if strfind(projection_layer_type, 'indep-row')
+        tmp_std = 1;
+        random_projection_matrix = tmp_std .* fhRandomMatrixGenerator(projected_dim, tmp_dim);
+      elseif strfind(projection_layer_type, 'rotated-row')
+        tmp_std = 1;
+        random_projection_matrix = zeros(projected_dim, tmp_dim);
+        random_projection_vector = tmp_std .* fhRandomMatrixGenerator(projected_dim, 1);
+        for i = 1 : tmp_dim
+          random_projection_matrix(:, i) = circshift(random_projection_vector, i - 1);
+        end
+      end
 
-    elseif strfind(projection_layer_type, 'sparse-gaussian')
-      dim_kernel = str2num(getStringParameterStartingAtIndex(projection_layer_type, 17));
+    elseif strfind(projection_layer_type, 'sparse-structure-gaussian-distr')
+      dim_kernel = str2num(getStringParameterStartingAtIndex(projection_layer_type, 33));
       [random_projection_mask, padded_imdb] = getRandomProjectionMaskForImdb(imdb, dim_kernel);
 
       assert(size(random_projection_mask, 3) == size(padded_imdb.images.data, 3));
