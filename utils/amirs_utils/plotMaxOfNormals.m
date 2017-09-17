@@ -1,4 +1,5 @@
 max_m_normals = @(m,x) m * normpdf(x) .* normcdf(x).^(m-1);
+
 x = -5:0.01:5;
 y_max_1 = max_m_normals(1, x);
 y_max_2 = max_m_normals(2, x);
@@ -35,6 +36,8 @@ legend({ ...
 
 % mean(x .* y_max_2)
 % mean((x .* y_max_2).^2)
+
+export_fig 'plot_max_m_normals' -eps
 
 
 fprintf('[INFO] MAX of 1 - \t  Emperical mean: %.5f, Theoretical mean: %.5f \n', sum(y_max_1 .* x), 0);

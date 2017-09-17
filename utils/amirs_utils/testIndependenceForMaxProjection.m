@@ -27,24 +27,29 @@ for kk = 1 : repeat_count
     r_3 = randn(d,1);
     r_4 = randn(d,1);
 
-    % a(ii) = max([r_1'*x]); % dependent: 10^4
+    % expect dependent: 10^4
+    % a(ii) = max([r_1'*x]);
     % b(ii) = max([r_1'*x]);
 
-    % a(ii) = max([r_1'*x]); % independent: 10^-2
+    % expect independent: 10^-2
+    % a(ii) = max([r_1'*x]);
     % b(ii) = max([r_2'*y]);
 
-    % a(ii) = max([r_1'*x]); % dependent: 10^2
+    % expect dependent: 10^2
+    % a(ii) = max([r_1'*x]);
     % b(ii) = max([r_1'*y]);
 
-    % a(ii) = max([r_1'*x, r_2'*x]); % ~50
+    % expect less dependent than above: ~50
+    % a(ii) = max([r_1'*x, r_2'*x]);
     % b(ii) = max([r_1'*y, r_2'*y]);
 
+  % expect less dependent than above: ~1
     a(ii) = max([r_1'*x, r_2'*x, r_3'*x, r_4'*x]); % ~1
     b(ii) = max([r_1'*y, r_2'*y, r_3'*y, r_4'*y]);
   end
 
-  e=ones(number_of_samples,1);
-  H=eye(number_of_samples)-(1/number_of_samples)*e*e';
+  e = ones(number_of_samples, 1);
+  H = eye(number_of_samples) - (1 / number_of_samples) * e * e';
 
   hsic_test_results(kk) = trace(a'*a*H*b'*b*H)/(number_of_samples^2);
   % [t_test_results(kk), t_test_p_values(kk)] = ttest2(a, b);
