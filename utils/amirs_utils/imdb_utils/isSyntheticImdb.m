@@ -54,6 +54,10 @@ function output = isSyntheticImdb(dataset)
     output = true;
   end
 
+  if strfind(dataset, 'shapes')
+    output = true;
+  end
+
 
 
 

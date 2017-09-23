@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function sparse_random_matrix = createSparseRandomMatrix(dim_y, dim_x)
+function b = isSquare(x)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -25,19 +25,4 @@ function sparse_random_matrix = createSparseRandomMatrix(dim_y, dim_x)
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
 
-  % sparsity = 1;
-  % sparsity = 10;
-  sparsity = 100;
-  % sparsity = 1000;
-  % sparsity = 10000;
-  % sparsity = 100000;
-
-  tmp = rand(dim_y, dim_x);
-  tmp(intersect(find(tmp <  1 / (2 * sparsity)),     find(tmp >= 0))) = -1;
-  tmp(intersect(find(tmp <  1 - 1 / (2 * sparsity)), find(tmp >= 1 / (2 * sparsity)))) = 0;
-  tmp(intersect(find(tmp <= 1),                      find(tmp >= 1 - 1 / (2 * sparsity)))) = +1;
-  tmp = tmp * sqrt(sparsity);
-
-  sparse_random_matrix = tmp;
-  % sparse_random_matrix = zeros(dim_y, dim_x);
-  % figure, imshow(sparse_random_matrix)
+  b = (floor(sqrt(x))^2 == x);
