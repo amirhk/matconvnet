@@ -40,7 +40,7 @@ function net = getCustomLarpArchitecture(dataset, network_arch, weight_init_sequ
   larp_layer_kernel_count = str2num(getStringParameterStartingAtIndex(network_arch, 12 + length(num2str(larp_layer_kernel_width)) + 1)); % what a hack, smh
   final_larp_layer_kernel_count = str2num(getStringParameterStartingAtIndex(network_arch, 12 + length(num2str(larp_layer_kernel_width)) + length(num2str(larp_layer_kernel_count)) + 2)); % what a hack, smh
 
-  if numel(strfind(dataset, 'mnist-784')) > 0 || numel(strfind(dataset, 'mnist-fashion')) > 0
+  if numel(strfind(dataset, 'mnist')) > 0 || numel(strfind(dataset, 'shapes')) > 0
     previous_layer_feature_map_channel_count = 1; % input BW
   else
     previous_layer_feature_map_channel_count = 3; % input RGB
@@ -147,7 +147,8 @@ function tmp_net = addBlockLayerElements(block_number, dataset, network_arch, la
     % tmp_net.layers{end+1} = fh.poolingLayerLeNetMax(block_number);
     % tmp_net.layers{end+1} = fh.poolingLayerLeNetAvg(block_number);
 
-    tmp_net.layers{end+1} = fh.poolingLayer2by2(block_number);
+    tmp_net.layers{end+1} = fh.poolingLayerLeNetMax(block_number);
+    % tmp_net.layers{end+1} = fh.poolingLayer2by2(block_number);
   end
 
 

@@ -300,7 +300,7 @@ function imdb = getDenselyDownProjectedImdb(imdb, number_of_projection_layers, p
 
         imdb = padded_imdb;
 
-        % if projecting into lower dims (because sizes of toeplitz matrices are fixed)
+        % if enforcing a lower projected dim (because sizes of toeplitz matrices are fixed)
         % new_projected_dim = 1024;
         % random_subset_of_projection_lines = sort(randsample(projected_dim, new_projected_dim, false));
         % random_projection_matrix = random_projection_matrix(random_subset_of_projection_lines, :, :);
