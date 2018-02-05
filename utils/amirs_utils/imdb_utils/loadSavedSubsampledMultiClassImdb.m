@@ -37,7 +37,8 @@ function imdb = loadSavedSubsampledMultiClassImdb(dataset, posneg_balance, debug
   if strcmp(dataset_class, 'pathology')
     file_name = sprintf('saved-multi-class-%s-train-balance-%s-test-balance-1000.mat', dataset_class, balance_number);
   else
-    file_name = sprintf('saved-multi-class-%s-train-balance-%s-test-balance-default.mat', dataset_class, balance_number);
+    % file_name = sprintf('saved-multi-class-%s-train-balance-%s-test-balance-default.mat', dataset_class, balance_number);
+    file_name = sprintf('saved-multi-class-%s-train-balance-25-test-balance-25.mat', dataset_class, balance_number);
   end
   tmp = load(fullfile(path_to_imdbs, dataset_class, file_name));
 
