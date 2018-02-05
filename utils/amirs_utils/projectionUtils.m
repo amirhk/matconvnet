@@ -27,6 +27,7 @@ function fh = projectionUtils()
 
   fh.getAngleSeparatedImdb = @getAngleSeparatedImdb;
   fh.getPCAProjectedImdb = @getPCAProjectedImdb;
+  fh.getIsoMapProjectedImdb = @getIsoMapProjectedImdb;
   fh.getDenselyProjectedImdb = @getDenselyProjectedImdb;
   fh.getDenselyDownProjectedImdb = @getDenselyDownProjectedImdb;
   fh.getEnsembleDenselyDownProjectedImdb = @getEnsembleDenselyDownProjectedImdb;
@@ -189,6 +190,26 @@ function imdb = getPCAProjectedImdb(imdb, projected_dim)
   test_imdb = get4DImdb(vectorized_projected_test_imdb, projected_dim, 1, 1, number_of_test_samples);
 
   imdb = mergeImdbs(train_imdb, test_imdb);
+
+
+
+
+% -------------------------------------------------------------------------
+function imdb = getIsoMapProjectedImdb(imdb, projected_dim)
+% -------------------------------------------------------------------------
+
+  original_imdb = imdb;
+  vectorized_original_imdb = getVectorizedImdb(original_imdb);
+
+  vectorized_projected_imdb = vectorized_original_imdb;
+  vectorized_projected_imdb.images.data = isomap(vectorized_original_imdb.images.data');
+
+  number_of_samples = size(vectorized_original_imdb.images.data, 1);
+  imdb = get4DImdb(vectorized_projected_imdb, projected_dim, 1, 1, number_of_samples);
+
+
+
+
 
 
 % -------------------------------------------------------------------------
@@ -379,7 +400,6 @@ function imdb = getDenselyDownProjectedImdb(imdb, number_of_projection_layers, p
 
   imdb = getVectorizedImdb(imdb);
   imdb = get4DImdb(imdb, size(imdb.images.data, 2), 1, 1, size(imdb.images.data, 1));
-
 
 
 % -------------------------------------------------------------------------
