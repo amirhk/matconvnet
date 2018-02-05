@@ -50,7 +50,7 @@ function runBottleneckTests(dataset, network_arch, gpus)
   % -------------------------------------------------------------------------
   %                                                                opts.paths
   % -------------------------------------------------------------------------
-  opts.paths.time_string = sprintf('%s', datestr(datetime('now', 'Format', 'd-MMM-y-HH-mm-ss')));
+  opts.paths.time_string = sprintf('%s', char(datetime('now', 'Format', 'd-MMM-y-HH-mm-ss')));
   opts.paths.experiment_parent_dir = getValueFromFieldOrDefault( ...
     {}, ... % TODO: this should be input_opts
     'experiment_parent_dir', ...

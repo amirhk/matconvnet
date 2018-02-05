@@ -234,7 +234,7 @@ functionHandle = @tempScriptMeasureClassificationPerformance;
 % -------------------------------------------------------------------------
 %                                                                opts.paths
 % -------------------------------------------------------------------------
-opts.paths.time_string = sprintf('%s', datestr(datetime('now', 'Format', 'd-MMM-y-HH-mm-ss')));
+opts.paths.time_string = sprintf('%s', char(datetime('now', 'Format', 'd-MMM-y-HH-mm-ss')));
 opts.paths.experiment_parent_dir = getValueFromFieldOrDefault( ...
   {}, ... % no input_opts here! :)
   'experiment_parent_dir', ...
@@ -242,6 +242,7 @@ opts.paths.experiment_parent_dir = getValueFromFieldOrDefault( ...
 opts.paths.experiment_dir = fullfile(opts.paths.experiment_parent_dir, sprintf( ...
   'temp-script-%s', ...
   opts.paths.time_string));
+opts.paths.experiment_dir
 if ~exist(opts.paths.experiment_dir)
   mkdir(opts.paths.experiment_dir);
 end
