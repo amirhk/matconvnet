@@ -26,8 +26,13 @@ function sparse_random_matrix = createSparseRandomMatrix(dim_y, dim_x)
 % POSSIBILITY OF SUCH DAMAGE.
 
   % sparsity = 1;
+  % sparsity = 3;
+  sparsity = 30;
+
+
+
   % sparsity = 10;
-  sparsity = 100;
+  % sparsity = 100;
   % sparsity = 1000;
   % sparsity = 10000;
   % sparsity = 100000;
