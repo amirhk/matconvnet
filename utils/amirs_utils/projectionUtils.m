@@ -202,7 +202,7 @@ function imdb = getIsoMapProjectedImdb(imdb, projected_dim)
   vectorized_original_imdb = getVectorizedImdb(original_imdb);
 
   vectorized_projected_imdb = vectorized_original_imdb;
-  vectorized_projected_imdb.images.data = isomap(vectorized_original_imdb.images.data');
+  vectorized_projected_imdb.images.data = isomap(vectorized_original_imdb.images.data', projected_dim);
 
   number_of_samples = size(vectorized_original_imdb.images.data, 1);
   imdb = get4DImdb(vectorized_projected_imdb, projected_dim, 1, 1, number_of_samples);
