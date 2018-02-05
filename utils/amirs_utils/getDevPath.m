@@ -27,7 +27,7 @@ function datapath = getDevPath()
 
   if ispc
     % datapath = 'H:\Amir';
-    datapath = 'C:\Users\a6karimi\Documnets\dev';
+    datapath = 'C:\Users\a6karimi\Documents\dev';
   else
     datapath = '/Users/a6karimi/dev';
   end
