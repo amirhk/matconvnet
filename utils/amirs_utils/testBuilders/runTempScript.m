@@ -3,7 +3,7 @@ tmp_opts.posneg_balance = 'balanced-50';
 imdb = loadSavedImdb(tmp_opts, false);
 imdb = getVectorizedImdb(imdb);
 X = imdb.images.data';
-X = X(:,1:3);
+X = X(:,1:100);
 isomap(X)
 
 % % function runTempScript()
