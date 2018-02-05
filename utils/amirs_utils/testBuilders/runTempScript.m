@@ -234,7 +234,7 @@ functionHandle = @tempScriptMeasureClassificationPerformance;
 % -------------------------------------------------------------------------
 %                                                                opts.paths
 % -------------------------------------------------------------------------
-opts.paths.time_string = sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
+opts.paths.time_string = sprintf('%s', datestr(datetime('now', 'Format', 'd-MMM-y-HH-mm-ss')));
 opts.paths.experiment_parent_dir = getValueFromFieldOrDefault( ...
   {}, ... % no input_opts here! :)
   'experiment_parent_dir', ...

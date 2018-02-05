@@ -51,7 +51,7 @@ function runLarpTests(experiment_parent_dir, dataset, posneg_balance, network_ar
   % -------------------------------------------------------------------------
   %                                                                opts.paths
   % -------------------------------------------------------------------------
-  opts.paths.time_string = sprintf('%s',datetime('now', 'Format', 'd-MMM-y-HH-mm-ss'));
+  opts.paths.time_string = sprintf('%s', datestr(datetime('now', 'Format', 'd-MMM-y-HH-mm-ss')));
   opts.paths.experiment_parent_dir = experiment_parent_dir;
   opts.paths.experiment_dir = fullfile(opts.paths.experiment_parent_dir, sprintf( ...
     'test-larp-tests-%s-%s-%s-GPU-%d', ...
