@@ -1,8 +1,9 @@
 tmp_opts.dataset = 'usps-multi-class-subsampled';
 tmp_opts.posneg_balance = 'balanced-50';
 imdb = loadSavedImdb(tmp_opts, false);
-imdb = getVectorizedImdb(imdb)
+imdb = getVectorizedImdb(imdb);
 X = imdb.images.data';
+X = X(1:10,:);
 isomap(X)
 
 % % function runTempScript()
