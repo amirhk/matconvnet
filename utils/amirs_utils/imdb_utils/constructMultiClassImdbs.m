@@ -30,6 +30,8 @@ function constructMultiClassImdbs(dataset)
   switch dataset
     case 'pathology'
       all_class_imdb = constructPathologyImdb(opts);
+    case 'usps'
+      all_class_imdb = constructUSPSImdb(opts);
     case 'imagenet-tiny'
       all_class_imdb = constructImageNetTinyImdb(opts);
     case 'mnist'
@@ -190,7 +192,7 @@ function constructMultiClassImdbs(dataset)
     otherwise
       throwException('[ERROR] dataset not recognized.')
   end
-  keyboard
+  % keyboard
 
   % OLD: logspace(1 + log10(3.76), 3 + log10(5), 6): [38, 100, 266, 1880, 5000]
   % NEW:                                             [10, 50, 100, 250, 500, 1000, 2500]
@@ -200,7 +202,7 @@ function constructMultiClassImdbs(dataset)
   createImdbWithBalance(dataset, all_class_imdb, 100, 'default');
   createImdbWithBalance(dataset, all_class_imdb, 250, 'default');
   createImdbWithBalance(dataset, all_class_imdb, 500, 'default');
-  createImdbWithBalance(dataset, all_class_imdb, 1000, 'default');
+  % createImdbWithBalance(dataset, all_class_imdb, 1000, 'default');
   % createImdbWithBalance(dataset, all_class_imdb, 2500, 'default');
 
   % createImdbWithBalance(dataset, all_class_imdb, 500, 500);
