@@ -26,7 +26,8 @@ function datapath = getDevPath()
 % POSSIBILITY OF SUCH DAMAGE.
 
   if ispc
-    datapath = 'H:\Amir';
+    % datapath = 'H:\Amir';
+    datapath = 'C:\Users\a6karimi\Documnets\dev';
   else
     datapath = '/Users/a6karimi/dev';
   end
