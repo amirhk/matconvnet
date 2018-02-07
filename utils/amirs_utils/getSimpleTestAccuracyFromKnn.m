@@ -25,8 +25,6 @@ function test_accuracy = getSimpleTestAccuracyFromKnn(input_opts)
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
 
-  fprintf('\tKNN running on dimensions = %d...', prod(size(input_opts.imdb.images.data(:,:,:,1))));
-
   training_options.imdb = input_opts.imdb;
   training_options.dataset = getValueFromFieldOrDefault(input_opts, 'dataset', 'mnist');
   training_options.number_of_nearest_neighbors = getValueFromFieldOrDefault(input_opts, 'number_of_nearest_neighbors', 1);
@@ -36,6 +34,11 @@ function test_accuracy = getSimpleTestAccuracyFromKnn(input_opts)
     input_opts, ...
     'experiment_parent_dir', ...
     fullfile(vl_rootnn, 'experiment_results'));
+
+  afprintf(sprintf( ...
+    '\t%d-KNN running on dimensions = %d...', ...
+    training_options.number_of_nearest_neighbors, ...
+    prod(size(input_opts.imdb.images.data(:,:,:,1)))));
 
   [~, performance_summary] = testKnn(training_options);
   test_accuracy = performance_summary.testing.test.accuracy;

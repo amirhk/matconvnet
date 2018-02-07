@@ -156,12 +156,24 @@ function all_experiments_single_run = runAllExperimentsOnce(experiment_dir, data
     experiment_options = {};
     if strfind(projection_string, 'larpV0P0RL0')
       experiment_options.imdb = original_imdb;
-    elseif strfind(projection_string, 'pca')
+    elseif strfind(projection_string, 'pca-project-into')
       projected_dim = str2num(getStringParameterStartingAtIndex(projection_string, 18));
       experiment_options.imdb = fh_projection_utils.getPCAProjectedImdb(original_imdb, projected_dim);
-    elseif strfind(projection_string, 'isomap')
+    elseif strfind(projection_string, 'isomap-project-into')
       projected_dim = str2num(getStringParameterStartingAtIndex(projection_string, 21));
       experiment_options.imdb = fh_projection_utils.getIsoMapProjectedImdb(original_imdb, projected_dim);
+    elseif numel(strfind(projection_string, 'rp-into')) > 0 && numel(strfind(projection_string, 'pca-into'))
+      rp_projected_dim_index = getStringParameterStartingAtIndex(projection_string, strfind(projection_string, 'rp-into-') + 8);
+      pca_projected_dim_index = getStringParameterStartingAtIndex(projection_string, strfind(projection_string, 'pca-into-') + 9);
+      non_linearities = projection_string(strfind(projection_string, 'ensemble-'):end);
+
+      rp_projected_dim = str2num(rp_projected_dim_index);
+      pca_projected_dim = str2num(pca_projected_dim_index);
+
+      tmp_rp_string = sprintf('dense-structure-dense-distr-indep-row-project-into-%d-%s', rp_projected_dim, non_linearities);
+      tmp_imdb = getProjectedImdbSpecialFunction(original_imdb, tmp_rp_string, 'dense-structure-gaussian-distr-indep-row');
+      tmp_imdb = fh_projection_utils.getPCAProjectedImdb(tmp_imdb, pca_projected_dim);
+      experiment_options.imdb = tmp_imdb;
     elseif strfind(projection_string, 'custom')
       larp_weight_init_type = 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
       experiment_options.imdb = getProjectedImdbUsingMatConvNet(original_imdb, dataset, larp_weight_init_type, projection_string, -1);
@@ -281,12 +293,16 @@ function projected_imdb = getProjectedImdbUsingMatConvNet(original_imdb, dataset
   projection_net = fh_projection_utils.getProjectionNetworkObject(dataset, larp_network_arch, larp_weight_init_sequence);
   projected_imdb = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, projection_depth);
 
+  % TODO: temp code, remove!
+  pca_projected_dim = 4;
+  projected_imdb = fh_projection_utils.getPCAProjectedImdb(projected_imdb, pca_projected_dim);
 
-  % if enforcing a lower projected dim (because sizes of toeplitz matrices are fixed)
-  new_projected_dim = 64;
-  projected_imdb = getVectorizedImdb(projected_imdb);
-  projected_imdb.images.data = projected_imdb.images.data(:,randsample(size(projected_imdb.images.data,2), new_projected_dim));
-  projected_imdb = get4DImdb(projected_imdb, size(projected_imdb.images.data, 2), 1, 1, size(projected_imdb.images.data, 1));
+
+  % % if enforcing a lower projected dim (because sizes of toeplitz matrices are fixed)
+  % new_projected_dim = 64;
+  % projected_imdb = getVectorizedImdb(projected_imdb);
+  % projected_imdb.images.data = projected_imdb.images.data(:,randsample(size(projected_imdb.images.data,2), new_projected_dim));
+  % projected_imdb = get4DImdb(projected_imdb, size(projected_imdb.images.data, 2), 1, 1, size(projected_imdb.images.data, 1));
 
 
 % -------------------------------------------------------------------------
@@ -552,17 +568,17 @@ function projection_string_list = getProjectionList()
     ...
     ... % SANDBOX
     ...
-    ... 'dense-structure-dense-distr-indep-row-project-into-64-ensemble-1', ...
-    'isomap-project-into-4', ...
-    'isomap-project-into-16', ...
-    'isomap-project-into-64', ...
-    ... 'custom-1-L-3-16-4-max-pool', ...
-    ... 'custom-2-L-3-16-4-max-pool', ...
-    ... 'custom-3-L-3-16-4-max-pool', ...
-    ... 'custom-1-L-11-16-4-max-pool', ...
-    ... 'custom-2-L-11-16-4-max-pool', ...
-    ... 'custom-3-L-11-16-4-max-pool', ...
+    'custom-2-L-3-256-1-max-pool', ... % 49
+    'custom-2-L-3-256-2-max-pool', ... % 98
+    'custom-2-L-3-256-4-max-pool', ... % 196
+    'custom-2-L-3-256-8-max-pool', ... % 392
+    'custom-2-L-3-256-16-max-pool', ... % 784
     ...
+    'custom-3-L-3-256-1-max-pool', ... % 9
+    'custom-3-L-3-256-2-max-pool', ... % 18
+    'custom-3-L-3-256-4-max-pool', ... % 36
+    'custom-3-L-3-256-8-max-pool', ... % 72
+    'custom-3-L-3-256-16-max-pool', ... % 144
     ...
     ...
     ...

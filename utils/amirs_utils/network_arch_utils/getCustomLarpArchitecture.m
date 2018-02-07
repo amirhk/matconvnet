@@ -29,11 +29,15 @@ function net = getCustomLarpArchitecture(dataset, network_arch, weight_init_sequ
 
   assert(logical(strfind(network_arch, 'custom-')), 'this file is only to be used to construct `custom` larp architectures');
 
-  % example: network_arch = 'custom-5-L-3-256-relu-max-pool'
-  %          5 blocks layers, each containing:
-  %            larp w/ 3 x 3 x input x 256        % can vary these further later, atm every block has the same larp architecture... can create fattening and narrowing archs later
-  %            relu non-lin                       % can vary these further later, type, ...         also, note that there is 1 of these per EVERY larp layer
-  %            max-pooling (poolingLayerLeNetMax) % can vary these further later, type, stride, ... also, note that there is 1 of these per EVERY larp layer
+  % example: network_arch = 'custom-5-L-3-256-17-relu-max-pool'
+  %          5 blocks layers:
+  %              first 5 - 1 layers:
+  %                  larp w/ 3 x 3 x input x 256        % can vary these further later, atm every block has the same larp architecture... can create fattening and narrowing archs later
+  %              last layer:
+  %                  larp w/ 3 x 3 x input x 17         % can vary these further later, atm every block has the same larp architecture... can create fattening and narrowing archs later
+  %              all layers:
+  %                  relu non-lin                       % can vary these further later, type, ...         also, note that there is 1 of these per EVERY larp layer
+  %                  max-pooling (poolingLayerLeNetMax) % can vary these further later, type, stride, ... also, note that there is 1 of these per EVERY larp layer
 
   number_of_blocks = str2num(getStringParameterStartingAtIndex(network_arch, 8));
   larp_layer_kernel_width = str2num(getStringParameterStartingAtIndex(network_arch, 12)); assert(mod(larp_layer_kernel_width, 2) == 1);

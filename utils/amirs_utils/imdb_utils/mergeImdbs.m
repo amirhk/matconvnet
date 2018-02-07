@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function imdb = mergeImdbs(train_imdb, test_imdb)
+function imdb = mergeImdbs(train_imdb, test_imdb, debug_flag)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -35,17 +35,17 @@ function imdb = mergeImdbs(train_imdb, test_imdb)
   set_train = reshape(train_imdb.images.set, [], 1);
   set_test = reshape(test_imdb.images.set, [], 1);
 
-  afprintf(sprintf('[INFO] Concatinating training data and testing data...\n'));
+  if debug_flag; afprintf(sprintf('[INFO] Concatinating training data and testing data...\n')); end;
   data = single(cat(4, data_train, data_test));
   labels = single(cat(1, labels_train, labels_test));
   set = single(cat(1, set_train, set_test));
-  afprintf(sprintf('[INFO] done!\n'));
+  if debug_flag; afprintf(sprintf('[INFO] done!\n')); end;
 
   assert(length(labels) == length(set));
   total_number_of_samples = length(labels);
 
   % shuffle
-  afprintf(sprintf('[INFO] Shuffling samples...\n'));
+  if debug_flag; afprintf(sprintf('[INFO] Shuffling samples...\n')); end;
   ix = randperm(total_number_of_samples);
   imdb.images.data = data(:,:,:,ix);
   imdb.images.labels = labels(ix);
@@ -55,4 +55,4 @@ function imdb = mergeImdbs(train_imdb, test_imdb)
       imdb.name = test_imdb.name;
     end
   end
-  afprintf(sprintf('[INFO] done!\n'));
+  if debug_flag; afprintf(sprintf('[INFO] done!\n')); end;

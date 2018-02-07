@@ -189,7 +189,7 @@ function imdb = getPCAProjectedImdb(imdb, projected_dim)
   train_imdb = get4DImdb(vectorized_projected_train_imdb, projected_dim, 1, 1, number_of_train_samples);
   test_imdb = get4DImdb(vectorized_projected_test_imdb, projected_dim, 1, 1, number_of_test_samples);
 
-  imdb = mergeImdbs(train_imdb, test_imdb);
+  imdb = mergeImdbs(train_imdb, test_imdb, false);
 
 
 
