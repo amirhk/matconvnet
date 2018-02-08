@@ -153,6 +153,29 @@ function tmp_net = addBlockLayerElements(block_number, dataset, network_arch, la
 
     tmp_net.layers{end+1} = fh.poolingLayerLeNetMax(block_number);
     % tmp_net.layers{end+1} = fh.poolingLayer2by2(block_number);
+
+    % method = 'max';
+    % pool = [9,9];
+    % stride = 8;
+    % pad = [0 1 0 1];
+
+    % method = 'max';
+    % pool = [5,5];
+    % stride = 4;
+    % pad = [0 1 0 1];
+
+    % method = 'max';
+    % pool = [9,9];
+    % stride = 2;
+    % pad = [0 4 0 4];
+
+    % method = 'max';
+    % pool = [5,5];
+    % stride = 2;
+    % pad = [2 2 2 2];
+
+    % tmp_net.layers{end+1} = fh.poolingLayerSpecial(block_number, method, pool, stride, pad);
+
   end
 
 

@@ -27,6 +27,7 @@ function fh = projectionUtils()
 
   fh.getAngleSeparatedImdb = @getAngleSeparatedImdb;
   fh.getPCAProjectedImdb = @getPCAProjectedImdb;
+  fh.getLLEProjectedImdb = @getLLEProjectedImdb;
   fh.getIsoMapProjectedImdb = @getIsoMapProjectedImdb;
   fh.getDenselyProjectedImdb = @getDenselyProjectedImdb;
   fh.getDenselyDownProjectedImdb = @getDenselyDownProjectedImdb;
@@ -165,11 +166,11 @@ function imdb = getPCAProjectedImdb(imdb, projected_dim)
 
 
   X = vectorized_original_train_imdb.images.data;
-  X = bsxfun(@minus, X, mean(X,1));           %# zero-center
-  C = (X'*X)./(size(X,1)-1);                  %'# cov(X)
+  X = bsxfun(@minus, X, mean(X,1));           % zero-center
+  C = (X'*X)./(size(X,1)-1);                  %' cov(X)
 
   [V D] = eig(C);
-  [D order] = sort(diag(D), 'descend');       %# sort cols high to low
+  [D order] = sort(diag(D), 'descend');       % sort cols high to low
   V = V(:,order);
 
   % TODO: IMPORTANT: should add mean back after projection... not needed for 1-NN, but for accuracy!
@@ -202,7 +203,22 @@ function imdb = getIsoMapProjectedImdb(imdb, projected_dim)
   vectorized_original_imdb = getVectorizedImdb(original_imdb);
 
   vectorized_projected_imdb = vectorized_original_imdb;
-  vectorized_projected_imdb.images.data = isomap(vectorized_original_imdb.images.data', projected_dim);
+  vectorized_projected_imdb.images.data = isomap(vectorized_original_imdb.images.data', projected_dim)';
+
+  number_of_samples = size(vectorized_original_imdb.images.data, 1);
+  imdb = get4DImdb(vectorized_projected_imdb, projected_dim, 1, 1, number_of_samples);
+
+
+
+% -------------------------------------------------------------------------
+function imdb = getLLEProjectedImdb(imdb, projected_dim)
+% -------------------------------------------------------------------------
+
+  original_imdb = imdb;
+  vectorized_original_imdb = getVectorizedImdb(original_imdb);
+
+  vectorized_projected_imdb = vectorized_original_imdb;
+  vectorized_projected_imdb.images.data = lle(vectorized_original_imdb.images.data', 10, projected_dim, false)';
 
   number_of_samples = size(vectorized_original_imdb.images.data, 1);
   imdb = get4DImdb(vectorized_projected_imdb, projected_dim, 1, 1, number_of_samples);

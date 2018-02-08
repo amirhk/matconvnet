@@ -68,7 +68,7 @@ else
     m = d;
 end
 if m>0 && m<d
-    %%% perform dimensionnality reduction 
+    %%% perform dimensionnality reduction
     [P,tmp,v,Psi] = pca(X,m);
     X = X - repmat(Psi,[1,size(X,2)]);
     X = P' * X;

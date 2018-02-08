@@ -11,14 +11,16 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [Y] = lle(X,K,d)
+function [Y] = lle(X,K,d, debug_flag)
+
+warning('off','all')
 
 [D,N] = size(X);
-fprintf(1,'- LLE running on %d points in %d dimensions\n',N,D);
+if debug_flag; fprintf(1,'- LLE running on %d points in %d dimensions\n',N,D); end;
 
 
-% STEP1: COMPUTE PAIRWISE DISTANCES & FIND NEIGHBORS 
-fprintf(1,'- Finding %d nearest neighbours.\n',K);
+% STEP1: COMPUTE PAIRWISE DISTANCES & FIND NEIGHBORS
+if debug_flag; fprintf(1,'- Finding %d nearest neighbours.\n',K); end;
 
 if 0
     X2 = sum(X.^2,1);
@@ -34,10 +36,10 @@ end
 
 
 % STEP2: SOLVE FOR RECONSTRUCTION WEIGHTS
-fprintf(1,'- Solving for reconstruction weights.\n');
+if debug_flag; fprintf(1,'- Solving for reconstruction weights.\n'); end;
 
-if(K>D) 
-  fprintf(1,'   [note: K>D; regularization will be used]\n'); 
+if(K>D)
+  if debug_flag; fprintf(1,'   [note: K>D; regularization will be used]\n'); end;
   tol=1e-3; % regularlizer in case constrained fits are ill conditioned
 else
   tol=0;
@@ -56,10 +58,10 @@ end;
 
 
 % STEP 3: COMPUTE EMBEDDING FROM EIGENVECTS OF COST MATRIX M=(I-W)'(I-W)
-fprintf(1,'- Computing embedding.\n');
+if debug_flag; fprintf(1,'- Computing embedding.\n'); end;
 
 % M=eye(N,N); % use a sparse matrix with storage for 4KN nonzero elements
-M = sparse(1:N,1:N,ones(1,N),N,N,4*K*N); 
+M = sparse(1:N,1:N,ones(1,N),N,N,4*K*N);
 for ii=1:N
    w = W(:,ii);
    jj = neighborhood(:,ii);
@@ -69,17 +71,17 @@ for ii=1:N
 end;
 
 % CALCULATION OF EMBEDDING
-options.disp = 0; options.isreal = 1; options.issym = 1; 
+options.disp = 0; options.isreal = 1; options.issym = 1;
 
 if 0
-[Y,eigenvals] = eigs_r12(M,d+1,0,options);
-Y = Y(:,2:d+1)'*sqrt(N); % bottom evect is [1,1,1,1...] with eval 0
+  [Y,eigenvals] = eigs_r12(M,d+1,0,options);
+  Y = Y(:,2:d+1)'*sqrt(N); % bottom evect is [1,1,1,1...] with eval 0
 else
-[Y,eigenvals] = eigs(M,d+1,'SM',options);
-Y = Y(:,1:d)'*sqrt(N); % bottom evect is [1,1,1,1...] with eval 0
+  [Y,eigenvals] = eigs(M,d+1,'SM',options);
+  Y = Y(:,1:d)'*sqrt(N); % bottom evect is [1,1,1,1...] with eval 0
 end
 
-fprintf(1,'- Done.\n');
+if debug_flag; fprintf(1,'- Done.\n'); end;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
