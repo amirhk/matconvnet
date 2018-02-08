@@ -298,9 +298,9 @@ function projected_imdb = getProjectedImdbUsingMatConvNet(original_imdb, dataset
   % projected_imdb.images
   % keyboard
 
-  % % TODO: temp code, remove!
-  % pca_projected_dim = 4;
-  % projected_imdb = fh_projection_utils.getPCAProjectedImdb(projected_imdb, pca_projected_dim);
+  % TODO: temp code, remove!
+  pca_projected_dim = 4;
+  projected_imdb = fh_projection_utils.getPCAProjectedImdb(projected_imdb, pca_projected_dim);
 
 
   % % if enforcing a lower projected dim (because sizes of toeplitz matrices are fixed)
