@@ -296,7 +296,7 @@ function projected_imdb = getProjectedImdbUsingMatConvNet(original_imdb, dataset
   projection_net = fh_projection_utils.getProjectionNetworkObject(dataset, larp_network_arch, larp_weight_init_sequence);
   projected_imdb = fh_projection_utils.projectImdbThroughNetwork(original_imdb, projection_net, projection_depth);
   projected_imdb.images
-  keyboard
+  % keyboard
 
   % TODO: temp code, remove!
   pca_projected_dim = 4;
