@@ -87,3 +87,34 @@ function imdb = constructMnistImdb(opts)
   imdb.name = name;
   afprintf(sprintf('done!\n\n'));
   % keyboard
+
+
+
+
+
+
+
+
+
+
+
+% imdb = setupExperimentsUsingProjectedImbds('mnist-784-multi-class-subsampled', 'balanced-250', false, true);
+
+% padded_imdb = imdb;
+% resized_imdb = imdb;
+
+% padded_imdb.images.data = padarray(imdb.images.data, [14,14]); % ultimately 56 x 56
+% resized_imdb.images.data = imresize(imdb.images.data, [56,56], 'bilinear');
+
+% imdb = padded_imdb;
+% save('mnist-784-padded-multi-class-subsampled', 'imdb');
+
+% imdb = resized_imdb;
+% save('mnist-784-resized-multi-class-subsampled', 'imdb');
+
+% figure,
+% subplot(1,2,1)
+% imshow(padded_imdb.images.data(:,:,:,1))
+% subplot(1,2,2)
+% imshow(resized_imdb.images.data(:,:,:,1))
+
