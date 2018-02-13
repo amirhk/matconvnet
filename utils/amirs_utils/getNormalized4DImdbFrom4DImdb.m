@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function test_accuracy = getSimpleTestAccuracyFromKnn(input_opts)
+function imdb = getNormalized4DImdbFrom4DImdb(imdb)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -25,21 +25,18 @@ function test_accuracy = getSimpleTestAccuracyFromKnn(input_opts)
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
 
-  training_options.imdb = input_opts.imdb;
-  training_options.dataset = getValueFromFieldOrDefault(input_opts, 'dataset', 'mnist');
-  training_options.number_of_nearest_neighbors = getValueFromFieldOrDefault(input_opts, 'number_of_nearest_neighbors', 1);
-  training_options.return_performance_summary = getValueFromFieldOrDefault(input_opts, 'return_performance_summary', true);
-  training_options.debug_flag = getValueFromFieldOrDefault(input_opts, 'debug_flag', false);
-  training_options.experiment_parent_dir = getValueFromFieldOrDefault( ...
-    input_opts, ...
-    'experiment_parent_dir', ...
-    fullfile(vl_rootnn, 'experiment_results'));
 
-  afprintf(sprintf( ...
-    '\t%d-KNN running in %d-D...', ...
-    training_options.number_of_nearest_neighbors, ...
-    prod(size(input_opts.imdb.images.data(:,:,:,1)))));
+  vectorized_imdb = getVectorizedImdb(imdb);
+  vectorized_imdb.images.data = normalizeBetweenPMOne(vectorized_imdb.images.data')';
+  s_1 = size(imdb.images.data, 1);
+  s_2 = size(imdb.images.data, 2);
+  s_3 = size(imdb.images.data, 3);
+  s_4 = size(imdb.images.data, 4);
+  imdb = get4DImdb(vectorized_imdb, s_1, s_2, s_3, s_4);
 
-  [~, performance_summary] = testKnn(training_options);
-  test_accuracy = performance_summary.testing.test.accuracy;
-  fprintf('\t test accuracy = %.4f', test_accuracy);
+
+% --------------------------------------------------------------------
+function data = normalizeBetweenPMOne(data)
+% --------------------------------------------------------------------
+  % data is d x n (d: dim, n: number of samples)
+  data = ( (data - min(data)) ./ (max(data) - min(data)) ) * 2 - 1;

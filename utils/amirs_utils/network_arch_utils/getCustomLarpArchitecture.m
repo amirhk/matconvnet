@@ -102,11 +102,15 @@ function tmp_net = addBlockLayerElements(block_number, dataset, network_arch, la
 % -------------------------------------------------------------------------
   should_add_relu_per_block = false;
   should_add_max_pooling_per_block = false;
+  should_add_sigmoid_per_block = false;
   if strfind(network_arch, 'relu')
     should_add_relu_per_block = true;
   end
   if strfind(network_arch, 'max-pool')
     should_add_max_pooling_per_block = true;
+  end
+  if strfind(network_arch, 'sigmoid')
+    should_add_sigmoid_per_block = true;
   end
 
   tmp_net.layers = {};
@@ -135,6 +139,9 @@ function tmp_net = addBlockLayerElements(block_number, dataset, network_arch, la
 
   if should_add_relu_per_block
       tmp_net.layers{end+1} = fh.reluLayer(block_number);
+  end
+  if should_add_sigmoid_per_block
+      tmp_net.layers{end+1} = fh.sigmoidLayer(block_number);
   end
   if should_add_max_pooling_per_block
     if block_number ~= number_of_blocks

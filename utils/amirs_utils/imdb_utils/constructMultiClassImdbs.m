@@ -199,10 +199,10 @@ function constructMultiClassImdbs(dataset)
   % -------------------------------------------------------------------------
   % createImdbWithBalance(dataset, all_class_imdb, 25, 25);
   createImdbWithBalance(dataset, all_class_imdb, 10, 'default');
-  createImdbWithBalance(dataset, all_class_imdb, 50, 'default');
-  createImdbWithBalance(dataset, all_class_imdb, 100, 'default');
-  createImdbWithBalance(dataset, all_class_imdb, 250, 'default');
-  createImdbWithBalance(dataset, all_class_imdb, 500, 'default');
+  % createImdbWithBalance(dataset, all_class_imdb, 50, 'default');
+  % createImdbWithBalance(dataset, all_class_imdb, 100, 'default');
+  % createImdbWithBalance(dataset, all_class_imdb, 250, 'default');
+  % createImdbWithBalance(dataset, all_class_imdb, 500, 'default');
   % createImdbWithBalance(dataset, all_class_imdb, 1000, 'default');
   % createImdbWithBalance(dataset, all_class_imdb, 2500, 'default');
 

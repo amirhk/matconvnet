@@ -405,6 +405,8 @@ function imdb = getDenselyDownProjectedImdb(imdb, number_of_projection_layers, p
           imdb.images.data(imdb.images.data < 0) = 0;
         case 'sigmoid'
           imdb.images.data = logsig(imdb.images.data);
+          keyboard
+          % imdb.images.data = 1 ./ (1 + exp(-imdb.images.data));
         case 'tanh'
           imdb.images.data = tanh(imdb.images.data);
         otherwise

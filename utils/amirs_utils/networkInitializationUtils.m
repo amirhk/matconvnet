@@ -32,6 +32,7 @@ function fh = networkInitializationUtils()
   fh.reluLayer = @reluLayer;
   fh.avrLayer = @avrLayer;
   fh.tanhLayer = @tanhLayer;
+  fh.sigmoidLayer = @sigmoidLayer;
   fh.flattenLayer = @flattenLayer;
   fh.poolingLayer2by2 = @poolingLayer2by2;
   fh.poolingLayerAlexNet = @poolingLayerAlexNet;
@@ -62,6 +63,9 @@ function structuredLayer = convLayer(dataset, network_arch, layer_number, k, m, 
 
         case 'identity'
           layerWeights{1} = ones(k, k, m, n, 'single');
+          layerWeights{2} = zeros(1, n, 'single');
+        case 'random-between-pm-one'
+          layerWeights{1} = rand(k, k, m, n, 'single') * 2 - 1;
           layerWeights{2} = zeros(1, n, 'single');
         case 'gaussian'
           layerWeights{1} = init_multiplier * randn(k, k, m, n, 'single');
@@ -792,7 +796,7 @@ function structuredLayer = constructConvLayer(network_arch, layer_number, weight
     'name', sprintf('conv%s-%s-%s', layer_number, weight_init_type, weight_init_source), ...
     'weights', {weights}, ...
     'learning_rate', lr, ...
-    'stride', 8, ...
+    'stride', 4, ...
     'pad', pad);
 
 % --------------------------------------------------------------------
@@ -801,6 +805,13 @@ function structuredLayer = reluLayer(layer_number)
   structuredLayer = struct( ...
     'type', 'relu', ...
     'name', sprintf('relu%d', layer_number));
+
+% --------------------------------------------------------------------
+function structuredLayer = sigmoidLayer(layer_number)
+% --------------------------------------------------------------------
+  structuredLayer = struct( ...
+    'type', 'sigmoid', ...
+    'name', sprintf('sigmoid%d', layer_number));
 
 % --------------------------------------------------------------------
 function structuredLayer = avrLayer(layer_number)

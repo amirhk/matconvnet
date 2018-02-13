@@ -39,8 +39,6 @@ function imdb = constructMnistFashionImdb(opts)
   labels_train = data_and_labels_train(:, 1);
   labels_test = data_and_labels_test(:, 1);
 
-  keyboard
-
   vectorized_data = cat(1, data_train, data_test);
   labels = cat(1, labels_train, labels_test);
   set = cat(1, 1 * ones(length(labels_train), 1), 3 * ones(length(labels_test), 1));
@@ -59,4 +57,4 @@ function imdb = constructMnistFashionImdb(opts)
   afprintf(sprintf('done!\n\n'));
   fh = imdbMultiClassUtils;
   fh.getImdbInfo(imdb, 1);
-  save(sprintf('%s.mat', imdb.name), 'imdb');
+  % save(sprintf('%s.mat', imdb.name), 'imdb');

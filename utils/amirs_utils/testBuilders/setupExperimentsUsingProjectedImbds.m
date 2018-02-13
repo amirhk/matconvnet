@@ -41,7 +41,20 @@ function [original_imdb, experiments] = setupExperimentsUsingProjectedImbds(data
   if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
 
 
+  % % TODO: remove code!!
+  % ones_sixes_nines = bsxfun(@or, bsxfun(@or, original_imdb.images.labels == 2, original_imdb.images.labels == 7), original_imdb.images.labels == 10);
 
+  % tmp_imdb = original_imdb;
+  % tmp_imdb.images.data = tmp_imdb.images.data(:,:,:,ones_sixes_nines);
+  % tmp_imdb.images.labels = tmp_imdb.images.labels(ones_sixes_nines);
+  % tmp_imdb.images.set = tmp_imdb.images.set(ones_sixes_nines);
+
+  % % fh_imdb_utils = imdbMultiClassUtils;
+  % % fh_imdb_utils.getImdbInfo(original_imdb, 1);
+  % % fh_imdb_utils.getImdbInfo(tmp_imdb, 1);
+
+  % original_imdb = tmp_imdb;
+  % % END REMOVE
 
   experiments{end+1}.imdb = original_imdb;
   experiments{end}.title = sprintf('%s - %s - Original IMDB', dataset, posneg_balance);
