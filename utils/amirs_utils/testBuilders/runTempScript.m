@@ -257,8 +257,8 @@ all_results = {};
 %   ... 'mnist-784-two-class-5-0', ...
 % };
 
-posneg_balance = 'balanced-10';
-% posneg_balance = 'balanced-250';
+% posneg_balance = 'balanced-10';
+posneg_balance = 'balanced-250';
 % posneg_balance = 'balanced-1000';
 dataset_list = { ...
   ... 'usps-multi-class-subsampled', ...

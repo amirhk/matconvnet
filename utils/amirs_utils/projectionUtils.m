@@ -27,6 +27,7 @@ function fh = projectionUtils()
 
   fh.getAngleSeparatedImdb = @getAngleSeparatedImdb;
   fh.getPCAProjectedImdb = @getPCAProjectedImdb;
+  fh.getSPCAProjectedImdb = @getSPCAProjectedImdb;
   fh.getLLEProjectedImdb = @getLLEProjectedImdb;
   fh.getIsoMapProjectedImdb = @getIsoMapProjectedImdb;
   fh.getDenselyProjectedImdb = @getDenselyProjectedImdb;
@@ -192,6 +193,13 @@ function imdb = getPCAProjectedImdb(imdb, projected_dim)
 
   imdb = mergeImdbs(train_imdb, test_imdb, false);
 
+
+
+
+% -------------------------------------------------------------------------
+function projected_imdb = getSPCAProjectedImdb(imdb, projected_dim)
+% -------------------------------------------------------------------------
+  projected_imdb = getSPCAEmbedding(imdb, projected_dim);
 
 
 

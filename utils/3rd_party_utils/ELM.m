@@ -1,5 +1,5 @@
 % function [training_time, testing_time, training_accuracy, testing_accuracy] = elm(training_data_file, testing_data_file, elm_type, number_of_hidden_neurons, activation_function)
-function [training_time, testing_time, training_accuracy, testing_accuracy] = elm(elm_type, activation_function, random_projection_type)
+function [training_time, testing_time, training_accuracy, testing_accuracy, final_layer_projected_imdb] = elm(elm_type, activation_function, random_projection_type, dim_multiplier)
 
 % Usage: elm(training_data_file, testing_data_file, elm_type, number_of_hidden_neurons, activation_function)
 % OR:    [training_time, testing_time, training_accuracy, testing_accuracy] = elm(training_data_file, testing_data_file, elm_type, number_of_hidden_neurons, activation_function)
@@ -50,13 +50,15 @@ function [training_time, testing_time, training_accuracy, testing_accuracy] = el
   %                                                              Project the imdb
   % -----------------------------------------------------------------------------
 
-  % data_train = P;
-  % data_test = TV.P;
+  % dim_multiplier = 1;
   if strcmp(random_projection_type, 'simple')
-    number_of_hidden_neurons = 196*1;
+    % number_of_hidden_neurons = 49 * dim_multiplier;
+    number_of_hidden_neurons = 100 * dim_multiplier;
+    % number_of_hidden_neurons = 16 * dim_multiplier;
+    % number_of_hidden_neurons = 4 * dim_multiplier;
     projected_vectorized_imdb = projectThroughSimpleRandomLayer(normalized_imdb, number_of_hidden_neurons, activation_function);
   elseif strcmp(random_projection_type, 'conv')
-    number_of_hidden_kernels = 4*1;
+    number_of_hidden_kernels = 1 * dim_multiplier;
     projected_vectorized_imdb = projectThroughConvolutionalRandomLayer(normalized_imdb, number_of_hidden_kernels, activation_function);
   end
 
@@ -146,17 +148,14 @@ function [training_time, testing_time, training_accuracy, testing_accuracy] = el
   % Guang-Bin Huang, Hongming Zhou, Xiaojian Ding, and Rui Zhang, "Extreme Learning Machine for Regression and Multi-Class Classification," submitted to IEEE Transactions on Pattern Analysis and Machine Intelligence, October 2010.
 
   end_time_train = cputime;
-  training_time = end_time_train-start_time_train;        %   Calculate CPU time (seconds) spent for training ELM
+  training_time = end_time_train - start_time_train;      %   Calculate CPU time (seconds) spent for training ELM
 
 
   % -----------------------------------------------------------------------------
   %                                               Calculate the training accuracy
   % -----------------------------------------------------------------------------
 
-  Y=(h_train' * output_weight)';                                %   Y: the actual output of the training data
-  if elm_type == REGRESSION
-      training_accuracy = sqrt(mse(T - Y));               %   Calculate training accuracy (RMSE) for regression case
-  end
+  Y = (h_train' * output_weight)';                        %   Y: the actual output of the training data
   clear h_train;
 
 
@@ -165,42 +164,76 @@ function [training_time, testing_time, training_accuracy, testing_accuracy] = el
   % -----------------------------------------------------------------------------
 
   start_time_test = cputime;
-
   TY = (h_test' * output_weight)';                        %   TY: the actual output of the testing data
   end_time_test = cputime;
-  testing_time = end_time_test-start_time_test;           %   Calculate CPU time (seconds) spent by ELM predicting the whole testing data
+  testing_time = end_time_test - start_time_test;         %   Calculate CPU time (seconds) spent by ELM predicting the whole testing data
+
+
+
+
+  % -----------------------------------------------------------------------------
+  %                              Calculate training & testing regression accuracy
+  % -----------------------------------------------------------------------------
 
   if elm_type == REGRESSION
+      training_accuracy = sqrt(mse(T - Y));               %   Calculate training accuracy (RMSE) for regression case
       testing_accuracy = sqrt(mse(TV.T - TY));            %   Calculate testing accuracy (RMSE) for regression case
   end
-
-  if elm_type == CLASSIFIER
 
 
   % -----------------------------------------------------------------------------
   %                          Calculate training & testing classification accuracy
   % -----------------------------------------------------------------------------
-      MissClassificationRate_Training = 0;
-      MissClassificationRate_Testing = 0;
+
+  if elm_type == CLASSIFIER
+      miss_classification_rate_training = 0;
+      miss_classification_rate_testing = 0;
 
       for i = 1 : size(T, 2)
           [x, label_index_expected] = max(T(:,i));
           [x, label_index_actual] = max(Y(:,i));
           if label_index_actual ~= label_index_expected
-              MissClassificationRate_Training = MissClassificationRate_Training + 1;
+              miss_classification_rate_training = miss_classification_rate_training + 1;
           end
       end
-      training_accuracy=1-MissClassificationRate_Training/size(T,2);
+      training_accuracy = 1 - miss_classification_rate_training / size(T, 2);
+
       for i = 1 : size(TV.T, 2)
           [x, label_index_expected] = max(TV.T(:,i));
           [x, label_index_actual] = max(TY(:,i));
           if label_index_actual ~= label_index_expected
-              MissClassificationRate_Testing = MissClassificationRate_Testing + 1;
+              miss_classification_rate_testing = miss_classification_rate_testing + 1;
           end
       end
-      testing_accuracy = 1 - MissClassificationRate_Testing / size(TV.T,2);
+      testing_accuracy = 1 - miss_classification_rate_testing / size(TV.T, 2);
   end
 
+  projected_data_train = Y';
+  projected_data_test = TY';
+  number_of_train_samples = size(projected_data_train, 1);
+  number_of_test_samples = size(projected_data_test, 1);
+
+  [~, projected_labels_train] = sort(T, 1, 'descend');
+  [~, projected_labels_test] = sort(TV.T, 1, 'descend');
+  projected_labels_train = projected_labels_train(1,:)'; % get the first row, which contains the highest value in each column
+  projected_labels_test = projected_labels_test(1,:)'; % get the first row, which contains the highest value in each column
+
+  projected_set_train = ones(number_of_train_samples, 1) * 1;
+  projected_set_test = ones(number_of_test_samples, 1) * 3;
+
+  projected_train_imdb.images.data = projected_data_train;
+  projected_train_imdb.images.labels = projected_labels_train;
+  projected_train_imdb.images.set = projected_set_train;
+
+  projected_test_imdb.images.data = projected_data_test;
+  projected_test_imdb.images.labels = projected_labels_test;
+  projected_test_imdb.images.set = projected_set_test;
+
+  projected_train_imdb = get4DImdb(projected_train_imdb, 10, 1, 1, number_of_train_samples);
+  projected_test_imdb = get4DImdb(projected_test_imdb, 10, 1, 1, number_of_test_samples);
+
+  % IMPORTANT: this is projected to the final layer... not the hidden layer
+  final_layer_projected_imdb = mergeImdbs(projected_train_imdb, projected_test_imdb, false);
 
 
 % --------------------------------------------------------------------
@@ -250,8 +283,13 @@ function H = helperSimpleRandomProjection(input_weight, bias_of_hidden_neurons, 
 function projected_vectorized_imdb = projectThroughConvolutionalRandomLayer(normalized_imdb, number_of_hidden_kernels, activation_function)
 % --------------------------------------------------------------------
 
-  % w/ stride 4, 1 kernel output is 49-D, 4 kernel output is 196-D, etc.
+  % For 1 layer,  w/ stride 4, N kernels result in ( 49 x N)-D output (layer 1: 28^2 -> 7^2)
+  % For 1 layer,  w/ stride 3, N kernels result in (100 x N)-D output (layer 1: 28^2 -> 10^2)
+  % For 2 layers, w/ stride 3, N kernels result in ( 16 x N)-D output (layer 1: 28^2 -> 10^2, layer 2: 10^2 -> 4^2)
+  % For 3 layers, w/ stride 3, N kernels result in (  4 x N)-D output (layer 1: 28^2 -> 10^2, layer 2: 10^2 -> 4^2, layer 3: 4^2 -> 2^2)
   projection_string = sprintf('custom-1-L-5-99-%d-%s', number_of_hidden_kernels, activation_function);
+  % projection_string = sprintf('custom-2-L-5-64-%d-%s', number_of_hidden_kernels, activation_function);
+  % projection_string = sprintf('custom-3-L-5-64-%d-%s', number_of_hidden_kernels, activation_function);
 
   larp_weight_init_type = 'random-between-pm-one'; % 'gaussian-IdentityCovariance-MuDivide-1-SigmaDivide-1';
   projected_imdb = getProjectedImdbUsingMatConvNet(normalized_imdb, 'mnist-fashion', larp_weight_init_type, projection_string, -1);
