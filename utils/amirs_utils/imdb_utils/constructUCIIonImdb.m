@@ -31,14 +31,14 @@ function imdb = constructUCIIonImdb(opts)
   labels_file = fullfile(opts.imdb.data_dir, 'ionosphere.labels');
 
   data_matrix = load(data_file);
-  labels = importdata('/Users/a6karimi/dev/data/source/uci-ion/ionosphere.labels');
+  labels = importdata(labels_file);
   labels = cell2mat(labels);
 
   sample_dim = size(data_matrix, 2);
   number_of_samples = size(data_matrix, 1);
   assert(number_of_samples == 351);
-  number_of_training_samples = 176;
-  number_of_testing_samples = 175;
+  number_of_training_samples = round(0.7 * number_of_samples);
+  number_of_testing_samples = number_of_samples - number_of_training_samples;
 
   data = load(data_file);
   labels = convertGoodBadLabelsToOneTwoLabels(labels);

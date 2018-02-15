@@ -1,5 +1,5 @@
 
-function k = kernel(ker,u,v,p1,p2)
+function k = kernel(ker, u, v, p1, p2)
 
 
 %SVKERNEL kernel for Support Vector Methods

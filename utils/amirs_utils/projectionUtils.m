@@ -28,6 +28,7 @@ function fh = projectionUtils()
   fh.getAngleSeparatedImdb = @getAngleSeparatedImdb;
   fh.getPCAProjectedImdb = @getPCAProjectedImdb;
   fh.getSPCAProjectedImdb = @getSPCAProjectedImdb;
+  fh.getKSPCAProjectedImdb = @getKSPCAProjectedImdb;
   fh.getLLEProjectedImdb = @getLLEProjectedImdb;
   fh.getIsoMapProjectedImdb = @getIsoMapProjectedImdb;
   fh.getDenselyProjectedImdb = @getDenselyProjectedImdb;
@@ -195,11 +196,125 @@ function imdb = getPCAProjectedImdb(imdb, projected_dim)
 
 
 
-
 % -------------------------------------------------------------------------
 function projected_imdb = getSPCAProjectedImdb(imdb, projected_dim)
 % -------------------------------------------------------------------------
-  projected_imdb = getSPCAEmbedding(imdb, projected_dim);
+  imdb = tmpNormalizeImdbData(imdb);
+  [train_imdb, test_imdb] = splitImdb(imdb);
+
+  vectorized_train_imdb = getVectorizedImdb(train_imdb);
+  vectorized_test_imdb = getVectorizedImdb(test_imdb);
+
+  data_train = vectorized_train_imdb.images.data';
+  data_test = vectorized_test_imdb.images.data';
+
+  labels_train = vectorized_train_imdb.images.labels;
+  labels_test = vectorized_test_imdb.images.labels;
+
+  param.k_type_y = 'delta_cls';
+  param.k_param_y = 1;
+  % param.k_type_x = 'rbf';
+  % param.k_param_x = 0.1;
+
+   % projection matrix calculated only on the training data
+  [projected_data_train, spca_projection_matrix] = SPCA(data_train, labels_train, projected_dim, param);
+  projected_data_test = spca_projection_matrix' * data_test;
+
+  projected_imdb = getProjectedImbdFromProjectedDataTrainAndTest(imdb, projected_dim, projected_data_train, projected_data_test, labels_train, labels_test);
+
+
+
+
+% -------------------------------------------------------------------------
+function projected_imdb = getKSPCAProjectedImdb(imdb, projected_dim)
+% -------------------------------------------------------------------------
+  imdb = tmpNormalizeImdbData(imdb);
+  [train_imdb, test_imdb] = splitImdb(imdb);
+
+  vectorized_train_imdb = getVectorizedImdb(train_imdb);
+  vectorized_test_imdb = getVectorizedImdb(test_imdb);
+
+  data_train = vectorized_train_imdb.images.data';
+  data_test = vectorized_test_imdb.images.data';
+
+  labels_train = vectorized_train_imdb.images.labels;
+  labels_test = vectorized_test_imdb.images.labels;
+
+  param.k_type_y = 'delta_cls';
+  param.k_param_y = 1;
+  param.k_type_x = 'rbf';
+  % param.k_param_x = 0.01;
+  % param.k_param_x = 0.1;
+  param.k_param_x = 1;
+  % param.k_param_x = 10;
+  % param.k_param_x = 100;
+
+   % projection matrix calculated only on the training data
+  [projected_data_train, spca_projection_matrix] = KSPCA(data_train, labels_train, projected_dim, param);
+
+  % Testing Data Kernel Computation
+  K_test = repmat(0, size(data_train, 2), size(data_test, 2));
+  for i = 1 : size(data_train, 2)
+      for j = 1 : size(data_test, 2)
+          K_test(i,j) = kernel(param.k_type_x, data_train(:,i), data_test(:,j), param.k_param_x, []);
+      end
+  end
+  projected_data_test = spca_projection_matrix' * K_test;
+
+  projected_imdb = getProjectedImbdFromProjectedDataTrainAndTest(imdb, projected_dim, projected_data_train, projected_data_test, labels_train, labels_test);
+
+
+% -------------------------------------------------------------------------
+function normalized_imdb = tmpNormalizeImdbData(imdb)
+% -------------------------------------------------------------------------
+  vectorized_imdb = getVectorizedImdb(imdb);
+  X = vectorized_imdb.images.data';
+  [p,n] = size(X);
+  % normalize
+  X = (X - repmat(min(X')', 1, n)) ./ (repmat(max(X')', 1, n) - repmat(min(X')', 1, n));
+  nan_ind = find(isnan(X)==1);
+  X(nan_ind) = 0;
+  imdb.images.data = X';
+  normalized_imdb = get4DImdb(imdb, size(X, 1), 1, 1, size(X, 2));
+
+
+
+% -------------------------------------------------------------------------
+function projected_imdb = getProjectedImbdFromProjectedDataTrainAndTest(imdb, projected_dim, projected_data_train, projected_data_test, labels_train, labels_test)
+% -------------------------------------------------------------------------
+  all_projected_data = [projected_data_train'; projected_data_test'];
+  all_projected_labels = [labels_train, labels_test];
+  all_projected_set = [1 * ones(1,size(projected_data_train, 2)), 3 * ones(1,size(projected_data_test, 2))];
+
+  projected_vectorized_imdb = imdb; % for meta information
+  projected_vectorized_imdb.images.data = all_projected_data;
+  projected_vectorized_imdb.images.labels = all_projected_labels;
+  projected_vectorized_imdb.images.set = all_projected_set;
+
+  number_of_samples = size(projected_vectorized_imdb.images.data, 1);
+  projected_imdb = get4DImdb(projected_vectorized_imdb, projected_dim, 1, 1, number_of_samples);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -226,6 +341,7 @@ function imdb = getLLEProjectedImdb(imdb, projected_dim)
   vectorized_original_imdb = getVectorizedImdb(original_imdb);
 
   vectorized_projected_imdb = vectorized_original_imdb;
+  % TODO: why is 10 hard-coded below?!?!?
   vectorized_projected_imdb.images.data = lle(vectorized_original_imdb.images.data', 10, projected_dim, false)';
 
   number_of_samples = size(vectorized_original_imdb.images.data, 1);

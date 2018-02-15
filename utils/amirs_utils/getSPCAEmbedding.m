@@ -25,8 +25,6 @@ function projected_imdb = getSPCAEmbedding(imdb, projected_dim)
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
 
-  projected_dim = 10;
-  imdb = setupExperimentsUsingProjectedImbds('mnist-fashion-multi-class-subsampled', 'balanced-250', false, false);
   [train_imdb, test_imdb] = splitImdb(imdb);
 
   vectorized_train_imdb = getVectorizedImdb(train_imdb);
@@ -60,8 +58,8 @@ function spca_projection_matrix = computeSPCAMatrix(imdb, projected_dim)
   X = double(imdb.images.data');
   Y = double(getOneHotLabels(imdb.images.labels));
 
-  % param.ktype_y = 'delta_cls';
-  % param.kparam_y = 1;
+  % param.k_type_y = 'delta_cls';
+  % param.k_param_y = 1;
   % [Ztr_SPCA U] = SPCA(X, Y, projected_dim, param);
   % spca_projection_matrix = U;
 
@@ -73,12 +71,15 @@ function spca_projection_matrix = computeSPCAMatrix(imdb, projected_dim)
   % Q(1:4,1:4)
   % keyboard
 
-%   [V,D] = eigs(double(Q), projected_dim);
-  is_v_real = 0;
-  while ~is_v_real
-    [V,D] = eigs(Q, projected_dim);
-    is_v_real = isreal(V);
-  end
+  % [V,D] = eigs(double(Q), projected_dim);
+  % projected_dim
+  % keyboard
+  [V,d] = eigendec(Q, projected_dim, 'LM');
+  % is_v_real = 0;
+  % while ~is_v_real
+  %   [V,D] = eigs(Q, projected_dim);
+  %   is_v_real = isreal(V)
+  % end
   % fprintf('\nsize Q: %d x %d, is V real: %d\n', size(Q,1), size(Q,2), isreal(V))
   % keyboard
   spca_projection_matrix = V';

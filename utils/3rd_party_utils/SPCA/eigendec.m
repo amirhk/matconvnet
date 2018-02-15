@@ -1,7 +1,7 @@
 function [V,d] = eigendec(A,k,how,err)
 
 %copyright Biggs, Ghodsi 2006
-error(nargchk(3,4,nargin));
+% error(nargchk(3,4,nargin));
 
 if ~exist('err','var')
     err = 0;
@@ -63,7 +63,7 @@ if strcmp(how(1), 'n')
     how = how(2:end);
 end
 
-if strcmp(how(1),'P')   
+if strcmp(how(1),'P')
     d = d( d > 0);
     how = how(2:end);
 elseif strcmp(how(1),'N')
