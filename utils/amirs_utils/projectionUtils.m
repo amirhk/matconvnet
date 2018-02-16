@@ -29,6 +29,7 @@ function fh = projectionUtils()
   fh.getPCAProjectedImdb = @getPCAProjectedImdb;
   fh.getSPCAProjectedImdb = @getSPCAProjectedImdb;
   fh.getKSPCAProjectedImdb = @getKSPCAProjectedImdb;
+  fh.getApproximateRBFProjectedImdb = @getApproximateRBFProjectedImdb;
   fh.getLLEProjectedImdb = @getLLEProjectedImdb;
   fh.getIsoMapProjectedImdb = @getIsoMapProjectedImdb;
   fh.getDenselyProjectedImdb = @getDenselyProjectedImdb;
@@ -197,6 +198,41 @@ function imdb = getPCAProjectedImdb(imdb, projected_dim)
 
 
 % -------------------------------------------------------------------------
+function projected_imdb = getApproximateRBFProjectedImdb(imdb)
+% -------------------------------------------------------------------------
+  initial_dim = prod(size(imdb.images.data)) / size(imdb.images.data, 4);
+  projected_dim = initial_dim;
+
+  vectorized_imdb = getVectorizedImdb(imdb);
+  vectorized_data = vectorized_imdb.images.data';
+
+  number_of_random_lines = initial_dim;
+  % number_of_random_lines = initial_dim * 10;
+  rbf_width = 0.1;
+  gamma = 1 / (2 * rbf_width ^ 2);
+
+  % random projection lines are in every row
+  random_projection_matrix = mvnrnd(zeros(initial_dim, 1), 2 * gamma * eye(initial_dim), number_of_random_lines);
+  random_offset_vector = rand(number_of_random_lines, 1) * 2 * pi;
+
+  % cos(w'x + b)
+  % data samples are in every column
+  % random_offset_vector is added to every column
+  % cos() is applied elementwise
+  vectorized_projected_data = cos(random_projection_matrix * vectorized_data + random_offset_vector);
+
+  projected_vectorized_imdb = imdb; % for meta information
+  projected_vectorized_imdb.images.data = vectorized_projected_data';
+
+  number_of_samples = size(projected_vectorized_imdb.images.data, 1);
+  projected_imdb = get4DImdb(projected_vectorized_imdb, projected_dim, 1, 1, number_of_samples);
+
+
+
+
+
+
+% -------------------------------------------------------------------------
 function projected_imdb = getSPCAProjectedImdb(imdb, projected_dim)
 % -------------------------------------------------------------------------
   imdb = tmpNormalizeImdbData(imdb);
@@ -213,12 +249,9 @@ function projected_imdb = getSPCAProjectedImdb(imdb, projected_dim)
 
   param.k_type_y = 'delta_cls';
   param.k_param_y = 1;
-  % param.k_type_x = 'rbf';
-  % param.k_param_x = 0.1;
 
    % projection matrix calculated only on the training data
-  [projected_data_train, spca_projection_matrix] = SPCA(data_train, labels_train, projected_dim, param);
-  projected_data_test = spca_projection_matrix' * data_test;
+  [projected_data_train, projected_data_test, spca_projection_matrix] = SPCA(data_train, labels_train, data_test, projected_dim, param);
 
   projected_imdb = getProjectedImbdFromProjectedDataTrainAndTest(imdb, projected_dim, projected_data_train, projected_data_test, labels_train, labels_test);
 
@@ -240,26 +273,20 @@ function projected_imdb = getKSPCAProjectedImdb(imdb, projected_dim)
   labels_train = vectorized_train_imdb.images.labels;
   labels_test = vectorized_test_imdb.images.labels;
 
+
+  % rbf_width = 0.01;
+  % rbf_width = 0.1;
+  rbf_width = 1;
+  % rbf_width = 10;
+  % rbf_width = 100;
+
   param.k_type_y = 'delta_cls';
   param.k_param_y = 1;
   param.k_type_x = 'rbf';
-  % param.k_param_x = 0.01;
-  % param.k_param_x = 0.1;
-  param.k_param_x = 1;
-  % param.k_param_x = 10;
-  % param.k_param_x = 100;
+  param.k_param_x = rbf_width;
 
    % projection matrix calculated only on the training data
-  [projected_data_train, spca_projection_matrix] = KSPCA(data_train, labels_train, projected_dim, param);
-
-  % Testing Data Kernel Computation
-  K_test = repmat(0, size(data_train, 2), size(data_test, 2));
-  for i = 1 : size(data_train, 2)
-      for j = 1 : size(data_test, 2)
-          K_test(i,j) = kernel(param.k_type_x, data_train(:,i), data_test(:,j), param.k_param_x, []);
-      end
-  end
-  projected_data_test = spca_projection_matrix' * K_test;
+  [projected_data_train, projected_data_test, spca_projection_matrix] = KSPCA(data_train, labels_train, data_test, projected_dim, param);
 
   projected_imdb = getProjectedImbdFromProjectedDataTrainAndTest(imdb, projected_dim, projected_data_train, projected_data_test, labels_train, labels_test);
 
