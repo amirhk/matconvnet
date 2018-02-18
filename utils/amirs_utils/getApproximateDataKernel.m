@@ -25,6 +25,8 @@ function [projected_data, approximate_kernel] = getApproximateRBFDataKernel(data
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
 
+
+  % http://www.argmin.net/2017/12/05/kitchen-sinks/
   % TODO: must use same basis for both data_train and data_test
 
   data_dim = size(data, 1);

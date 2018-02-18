@@ -28,11 +28,89 @@ L = repmat(0, n, n);
 
 % Making L full rank for classification
 if strcmp(param.k_type_y, 'delta_cls')
-     L = L + eye(n);
+     % L = L + eye(n);
      param.k_type_y = 'delta';
 end
 
-actual = 0;
+actual = 1;
+
+% for i = 1 : n
+%     for j = 1 : n
+%         L(i,j) = L(i,j) + kernel(param.k_type_y, labels_train(:,i), labels_train(:,j), param.k_param_y, []);
+%     end
+% end
+% L_actual = L;
+
+% number_of_basis = 10;
+% data_dim = 1; % IMPORTANT size(labels_train, 1);
+% number_of_labels = size(labels_train, 2);
+
+% rbf_variance = 10e-15 ; % extremely small variance because we are approximating delta kernel
+% gamma = 1 / (2 * rbf_variance ^ 2);
+% w = randn(number_of_basis, data_dim);
+% b = 2 * pi * rand(number_of_basis, 1);
+
+% projected_labels = cos(gamma * w * labels_train + b * ones(1, number_of_labels));
+% psi = sqrt(2 / number_of_basis) * projected_labels;
+% L_approx = psi' * psi;
+
+% figure,
+
+% subplot(3,2,1),
+% imshow(L_actual),
+% title('L actual'),
+% subplot(3,2,2),
+% imshow(L_approx),
+% title(sprintf('L approx w/ 10 bases; norm diff: %.3f', norm(L_actual - L_approx))),
+
+
+% number_of_basis = 100;
+% data_dim = 1; % IMPORTANT size(labels_train, 1);
+% number_of_labels = size(labels_train, 2);
+
+% rbf_variance = 10e-15 ; % extremely small variance because we are approximating delta kernel
+% gamma = 1 / (2 * rbf_variance ^ 2);
+% w = randn(number_of_basis, data_dim);
+% b = 2 * pi * rand(number_of_basis, 1);
+
+% projected_labels = cos(gamma * w * labels_train + b * ones(1, number_of_labels));
+% psi = sqrt(2 / number_of_basis) * projected_labels;
+% L_approx = psi' * psi;
+
+
+
+% subplot(3,2,3),
+% imshow(L_actual),
+% title('L actual'),
+% subplot(3,2,4),
+% imshow(L_approx),
+% title(sprintf('L approx w/ 100 bases; norm diff: %.3f', norm(L_actual - L_approx))),
+
+
+% number_of_basis = 1000;
+% data_dim = 1; % IMPORTANT size(labels_train, 1);
+% number_of_labels = size(labels_train, 2);
+
+% rbf_variance = 10e-15 ; % extremely small variance because we are approximating delta kernel
+% gamma = 1 / (2 * rbf_variance ^ 2);
+% w = randn(number_of_basis, data_dim);
+% b = 2 * pi * rand(number_of_basis, 1);
+
+% projected_labels = cos(gamma * w * labels_train + b * ones(1, number_of_labels));
+% psi = sqrt(2 / number_of_basis) * projected_labels;
+% L_approx = psi' * psi;
+
+
+% subplot(3,2,5),
+% imshow(L_actual),
+% title('L actual'),
+% subplot(3,2,6),
+% imshow(L_approx),
+% title(sprintf('L approx w/ 1000 bases; norm diff: %.3f', norm(L_actual - L_approx))),
+
+
+% keyboard
+
 
 if actual == 1
 
@@ -68,9 +146,8 @@ else
   % Approx Target (!) Kernel
   % -----------------------------------------------------------------------------
 
-  % number_of_basis = 1000;
   number_of_basis = projected_dim;
-  data_dim = 1; % IMPORTANT size(data, 1);
+  data_dim = 1; % IMPORTANT size(labels_train, 1);
   number_of_labels = size(labels_train, 2);
 
   rbf_variance = 10e-15 ; % extremely small variance because we are approximating delta kernel
@@ -81,7 +158,7 @@ else
   projected_labels = cos(gamma * w * labels_train + b * ones(1, number_of_labels));
   psi = sqrt(2 / number_of_basis) * projected_labels;
 
-  add_eye = 1;
+  add_eye = 0;
   if add_eye
     L_approx = psi' * psi + eye(number_of_labels); % DUMB SHIT WE HAVE TO DO...
 
@@ -92,11 +169,35 @@ else
     psi = psi_correct'; % SVD is [a * mpower(b,0.5)] * [mpower(b,0.5) * c'], which means the first part then requires a transpose.
   end
 
-  X = data_train;
+  % X = data_train;
+  % H = eye(n) - 1 / n * (ones(n,n));
+  % U_approx = X * H * psi';
+  % U = U_approx;
+  % % keyboard
+
+  % % L_approx = psi' * psi;
+  % % L = L_approx; %  + eye(n); % INTERESTINGLY, eye(n) is not really required here... because L_approx has a bunch of random values... and so it's not close to singular unlike (the above 'acutal' case)
+  % % tmp = data_train * H * L * H * data_train';
+  % % [U D] = eigendec(tmp, projected_dim, 'LM');
+
+  % X = data_train;
+  % H = eye(n) - 1 / n * (ones(n,n));
+  % U_approx = X * H * psi';
+  % U = U_approx;
+  % U_scaled = U;
+
+  L_approx = psi' * psi;
+  L = L_approx; %  + eye(n); % INTERESTINGLY, eye(n) is not really required here... because L_approx has a bunch of random values... and so it's not close to singular unlike (the above 'acutal' case)
   H = eye(n) - 1 / n * (ones(n,n));
-  U_approx = X * H * psi';
-  U = U_approx;
-  keyboard
+  tmp = data_train * H * L * H * data_train';
+  [U D] = eigendec(tmp, projected_dim, 'LM');
+  % U_unscaled = U;
+
+
+  % U_scaled(1:5,1:5)
+  % U_unscaled(1:5,1:5)
+
+  % keyboard
 
 end
 
