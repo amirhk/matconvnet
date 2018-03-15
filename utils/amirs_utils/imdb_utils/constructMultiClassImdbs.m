@@ -74,6 +74,10 @@ function constructMultiClassImdbs(dataset)
       all_class_imdb = constructUCIIonImdb(opts);
     case 'uci-spam'
       all_class_imdb = constructUCISpamImdb(opts);
+    case 'uci-balance'
+      all_class_imdb = constructUCIBalanceImdb(opts);
+      case 'uci-sonar'
+      all_class_imdb = constructUCISonarImdb(opts);
 
 
     case 'gaussian-2D-mean-1-var-0'

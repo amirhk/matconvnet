@@ -530,6 +530,8 @@ function imdb = loadSavedTwoClassImdb(dataset, posneg_balance, fold_number, debu
       tmp = load(fullfile(path_to_imdbs, 'uci-ion', 'uci-ion.mat'));
     case 'uci-spam'
       tmp = load(fullfile(path_to_imdbs, 'uci-spam', 'uci-spam.mat'));
+    case 'uci-sonar'
+      tmp = load(fullfile(path_to_imdbs, 'uci-sonar', 'uci-sonar.mat'));
     otherwise
       fprintf('TODO: implement!');
   end

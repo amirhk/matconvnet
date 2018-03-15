@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function output = isMultiClassImdb(dataset)
+function imdb = constructUCIBalanceImdb(opts)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -25,16 +25,33 @@ function output = isMultiClassImdb(dataset)
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
 
-  output = false;
-  if strcmp(dataset, 'mnist') || ...
-    strcmp(dataset, 'mnist-784') || ...
-    strcmp(dataset, 'mnist-fashion') || ...
-    strcmp(dataset, 'svhn') || ...
-    strcmp(dataset, 'cifar') || ...
-    strcmp(dataset, 'coil-100') || ...
-    strcmp(dataset, 'stl-10') || ...
-    strcmp(dataset, 'pathology') || ...
-    strcmp(dataset, 'uci-balance')
-    output = true;
-  end
+  afprintf(sprintf('[INFO] Constructing UCI balance imdb...\n'));
 
+  data_file = fullfile(opts.imdb.data_dir, 'balance.data');
+  data_matrix = load(data_file);
+
+  sample_dim = size(data_matrix, 2) - 1;
+  number_of_samples = size(data_matrix, 1);
+  assert(number_of_samples == 625);
+  number_of_training_samples = 325;
+  number_of_testing_samples = 300;
+
+  data = data_matrix(:,2:end);
+  labels = data_matrix(:,1);
+  set = cat(1, 1 * ones(number_of_training_samples, 1), 3 * ones(number_of_testing_samples, 1));
+
+  assert(length(labels) == length(set));
+
+  % shuffle
+  ix = randperm(number_of_samples);
+  imdb.images.data = single(data(ix,:));
+  imdb.images.labels = single(labels(ix)');
+  imdb.images.set = single(set'); % NOT set(ix).... that way you won't have any of your first class samples in the test set!
+  imdb.name = 'uci-balance';
+
+  % get the data into 4D format to be compatible with code built for all other imdbs.
+  imdb.images.data = reshape(imdb.images.data', sample_dim, 1, 1, []);
+  afprintf(sprintf('done!\n\n'));
+  fh = imdbMultiClassUtils;
+  fh.getImdbInfo(imdb, 1);
+  save(sprintf('%s.mat', imdb.name), 'imdb');

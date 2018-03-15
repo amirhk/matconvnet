@@ -26,7 +26,7 @@ function imdb = loadSavedMultiClassImdb(dataset, network_arch, debug_flag)
 % POSSIBILITY OF SUCH DAMAGE.
 
   if debug_flag, afprintf(sprintf('[INFO] Loading all-class imdb (dataset: %s, network_arch: %s)\n', dataset, network_arch)); end;
-  imdb = load(fullfile(getDevPath(), 'data', 'imdb', sprintf('%s-%s', dataset, network_arch), 'imdb.mat'));
+  imdb = load(fullfile(getDevPath(), 'data', 'multi_class_imdbs', sprintf('%s-%s', dataset, network_arch), 'imdb.mat'));
   if debug_flag, afprintf(sprintf('[INFO] done!\n')); end;
 
 

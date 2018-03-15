@@ -97,7 +97,7 @@ function [trained_model, performance_summary] = testMlp(input_opts)
   labels_train_matrix_form = full(ind2vec(double(labels_train)));
 
   if ispc
-    net = train(net, vectorized_data_train, labels_train_matrix_form, 'useGPU', 'no', 'showResources', 'yes');
+    net = train(net, vectorized_data_train, labels_train_matrix_form, 'useGPU', 'yes', 'showResources', 'yes');
   else
     net = train(net, vectorized_data_train, labels_train_matrix_form, 'useGPU', 'no', 'showResources', 'yes');
   end
