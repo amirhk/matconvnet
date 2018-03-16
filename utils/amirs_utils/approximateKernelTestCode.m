@@ -192,15 +192,19 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
   output.duration_spca_actual_eigen = toc(time_start);
 
 
-  % %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % % SPCA U_approx_eigen
-  % %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % tmp = X * H * L_approx * H * X';
-  % [U D V] = svd(tmp);
-  % U = U(:,1:projected_dim);
-  % projected_X = U' * X;
-  % projected_X_test = U' * X_test;
-  % output.accuracy_spca_approx_eigen = getTestAccuracyFrom1NN(projected_X, Y, projected_X_test, Y_test);
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % SPCA U_approx_eigen
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  time_start = tic;
+  [L_approx, psi, ignore_1] = getApproxKernel(Y, Y, label_rbf_variance, number_of_random_bases_for_labels);
+  tmp = X * H * L_approx * H * X';
+  [U D V] = svd(tmp);
+  U = U(:,1:projected_dim);
+  projected_X = U' * X;
+  projected_X_test = U' * X_test;
+  output.accuracy_spca_approx_eigen = getTestAccuracyFrom1NN(projected_X, Y, projected_X_test, Y_test);
+  output.duration_spca_approx_eigen = toc(time_start);
+
 
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % k-SPCA U_actual_eigen
@@ -224,12 +228,17 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
   % %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % % k-SPCA U_approx_eigen
   % %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % tmp = H * L_approx * H * K_train_approx';
-  % [U D V] = svd(tmp); % TODO: is it OK to use SVD? or should I use eigendec which is broken??
-  % U = U(:,1:projected_dim);
-  % projected_X = U' * K_train_approx;
-  % projected_X_test = U' * K_test_approx;
-  % output.accuracy_kspca_approx_eigen = getTestAccuracyFrom1NN(projected_X, Y, projected_X_test, Y_test);
+  time_start = tic;
+  [L_approx, psi, ignore_1] = getApproxKernel(Y, Y, label_rbf_variance, number_of_random_bases_for_labels);
+  [K_train_approx, ignore_2, ignore_3] = getApproxKernel(X, X, data_rbf_variance, number_of_random_bases_for_data);
+  [K_test_approx, ignore_4, ignore_5] = getApproxKernel(X, X_test, data_rbf_variance, number_of_random_bases_for_data);
+  tmp = H * L_approx * H * K_train_approx';
+  [U D V] = svd(tmp); % TODO: is it OK to use SVD? or should I use eigendec which is broken??
+  U = U(:,1:projected_dim);
+  projected_X = U' * K_train_approx;
+  projected_X_test = U' * K_test_approx;
+  output.accuracy_kspca_approx_eigen = getTestAccuracyFrom1NN(projected_X, Y, projected_X_test, Y_test);
+  output.duration_kspca_approx_eigen = toc(time_start);
 
   % %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % % U_approx_direct
