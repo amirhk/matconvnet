@@ -25,7 +25,7 @@ function imdb = constructUCIBalanceImdb(opts)
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
 
-  afprintf(sprintf('[INFO] Constructing UCI balance imdb...\n'));
+  % afprintf(sprintf('[INFO] Constructing UCI balance imdb...\n'));
 
   data_file = fullfile(opts.imdb.data_dir, 'balance.data');
   data_matrix = load(data_file);
@@ -33,8 +33,8 @@ function imdb = constructUCIBalanceImdb(opts)
   sample_dim = size(data_matrix, 2) - 1;
   number_of_samples = size(data_matrix, 1);
   assert(number_of_samples == 625);
-  number_of_training_samples = 325;
-  number_of_testing_samples = 300;
+  number_of_training_samples = round(0.7 * number_of_samples);
+  number_of_testing_samples = number_of_samples - number_of_training_samples;
 
   data = data_matrix(:,2:end);
   labels = data_matrix(:,1);
@@ -51,7 +51,7 @@ function imdb = constructUCIBalanceImdb(opts)
 
   % get the data into 4D format to be compatible with code built for all other imdbs.
   imdb.images.data = reshape(imdb.images.data', sample_dim, 1, 1, []);
-  afprintf(sprintf('done!\n\n'));
-  fh = imdbMultiClassUtils;
-  fh.getImdbInfo(imdb, 1);
-  save(sprintf('%s.mat', imdb.name), 'imdb');
+  % afprintf(sprintf('done!\n\n'));
+  % fh = imdbMultiClassUtils;
+  % fh.getImdbInfo(imdb, 1);
+  % save(sprintf('%s.mat', imdb.name), 'imdb');

@@ -33,8 +33,8 @@ function imdb = constructUCISpamImdb(opts)
   sample_dim = size(data_matrix, 2) - 1;
   number_of_samples = size(data_matrix, 1);
   assert(number_of_samples == 4601);
-  number_of_training_samples = 2301;
-  number_of_testing_samples = 2300;
+  number_of_training_samples = round(0.7 * number_of_samples);
+  number_of_testing_samples = number_of_samples - number_of_training_samples;
 
   data = data_matrix(:,1:end-1);
   labels = data_matrix(:,end) + 1; % +1 because uci-spam dataset has labels {0,1}, but my code likes {1,2,...}
@@ -51,7 +51,7 @@ function imdb = constructUCISpamImdb(opts)
 
   % get the data into 4D format to be compatible with code built for all other imdbs.
   imdb.images.data = reshape(imdb.images.data', sample_dim, 1, 1, []);
-  afprintf(sprintf('done!\n\n'));
-  fh = imdbMultiClassUtils;
-  fh.getImdbInfo(imdb, 1);
-  save(sprintf('%s.mat', imdb.name), 'imdb');
+  % afprintf(sprintf('done!\n\n'));
+  % fh = imdbMultiClassUtils;
+  % fh.getImdbInfo(imdb, 1);
+  % save(sprintf('%s.mat', imdb.name), 'imdb');

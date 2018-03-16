@@ -25,7 +25,7 @@ function imdb = constructUCIIonImdb(opts)
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
 
-  afprintf(sprintf('[INFO] Constructing UCI ion imdb...\n'));
+  % afprintf(sprintf('[INFO] Constructing UCI ion imdb...\n'));
 
   data_file = fullfile(opts.imdb.data_dir, 'ionosphere.data');
   labels_file = fullfile(opts.imdb.data_dir, 'ionosphere.labels');
@@ -55,10 +55,10 @@ function imdb = constructUCIIonImdb(opts)
 
   % get the data into 4D format to be compatible with code built for all other imdbs.
   imdb.images.data = reshape(imdb.images.data', sample_dim, 1, 1, []);
-  afprintf(sprintf('done!\n\n'));
-  fh = imdbMultiClassUtils;
-  fh.getImdbInfo(imdb, 1);
-  save(sprintf('%s.mat', imdb.name), 'imdb');
+  % afprintf(sprintf('done!\n\n'));
+  % fh = imdbMultiClassUtils;
+  % fh.getImdbInfo(imdb, 1);
+  % save(sprintf('%s.mat', imdb.name), 'imdb');
 
 
 % -------------------------------------------------------------------------

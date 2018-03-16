@@ -1,5 +1,5 @@
 % --------------------------------------------------------------------
-function constructMultiClassImdbs(dataset)
+function all_class_imdb = constructMultiClassImdbs(dataset)
 % --------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -25,7 +25,7 @@ function constructMultiClassImdbs(dataset)
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
 
-  afprintf(sprintf('[INFO] Constructing multi-class `%s` imdbs...\n', dataset));
+  % afprintf(sprintf('[INFO] Constructing multi-class `%s` imdbs...\n', dataset));
   opts.imdb.data_dir = fullfile(getDevPath(), 'data', 'source', dataset);
   switch dataset
     case 'pathology'
