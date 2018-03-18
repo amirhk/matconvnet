@@ -25,7 +25,7 @@ function imdb = constructUCISpamImdb(opts)
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
 
-  afprintf(sprintf('[INFO] Constructing UCI spam imdb...\n'));
+  if opts.debug_flag; afprintf(sprintf('[INFO] Constructing UCI spam imdb...\n')); end;
 
   data_file = fullfile(opts.imdb.data_dir, 'spambase.data');
   data_matrix = load(data_file);
@@ -51,7 +51,7 @@ function imdb = constructUCISpamImdb(opts)
 
   % get the data into 4D format to be compatible with code built for all other imdbs.
   imdb.images.data = reshape(imdb.images.data', sample_dim, 1, 1, []);
-  % afprintf(sprintf('done!\n\n'));
+  if opts.debug_flag; afprintf(sprintf('done!\n\n')); end;
   % fh = imdbMultiClassUtils;
   % fh.getImdbInfo(imdb, 1);
   % save(sprintf('%s.mat', imdb.name), 'imdb');

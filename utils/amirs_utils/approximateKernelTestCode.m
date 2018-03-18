@@ -43,10 +43,18 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
   % [imdb, tmp] = setupExperimentsUsingProjectedImbds('uci-spam', 'whatever', false, false); % TODO: create IMDB with 500 random samples... then test on that!??
   % [imdb, tmp] = setupExperimentsUsingProjectedImbds('uci-balance', 'whatever', false, false); imdb = imdb.imdb;
   % [imdb, tmp] = setupExperimentsUsingProjectedImbds('mnist-fashion-multi-class-subsampled', 'balanced-10', false, false);
+  % [imdb, tmp] = setupExperimentsUsingProjectedImbds('usps-multi-class-subsampled', 'whatever', false, false);
+
   % dataset = 'uci-ion';
   % dataset = 'uci-sonar';
   % dataset = 'uci-balance';
-  imdb = constructMultiClassImdbs(dataset);
+  imdb = constructMultiClassImdbs(dataset, false);
+  if strcmp(dataset, 'usps')
+    imdb = createImdbWithBalance(dataset, imdb, 25, 25, false, false);
+    % imdb = createImdbWithBalance(dataset, imdb, 100, 100, false, false);
+  elseif strcmp(dataset, 'uci-spam')
+    imdb = createImdbWithBalance(dataset, imdb, 1000, 250, false, false);
+  end
   vectorized_imdb = getVectorizedImdb(imdb);
   indices_train = imdb.images.set == 1;
   indices_test = imdb.images.set == 3;
@@ -62,7 +70,8 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
   X_test = (X_test - min_x_train) ./ (max_x_train - min_x_train);
   X(isnan(X)) = 0;
   X_test(isnan(X_test)) = 0;
-  % keyboard
+  % X = normc(X);
+  % X_test = normc(X_test);
 
 
 
@@ -80,20 +89,76 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
   number_of_random_bases_for_data = 1000;
   number_of_random_bases_for_labels = projected_dim;
 
+  if strcmp(dataset, 'usps')
+    data_rbf_variance = 10e+0;
+  elseif strcmp(dataset, 'uci-spam')
+    data_rbf_variance = 10e+0;
+  end
+
 
 
   % -----------------------------------------------------------------------------
-  % Get Actual and Approx Kernels
+  % Compare projections
   % -----------------------------------------------------------------------------
-  % L_actual = getActualKernel(Y, Y, label_rbf_variance);
-  % K_train_actual = getActualKernel(X, X, data_rbf_variance);
-  % K_test_actual = getActualKernel(X, X_test, data_rbf_variance);
 
-  % [L_approx, psi, ignore_1] = getApproxKernel(Y, Y, label_rbf_variance, number_of_random_bases_for_labels);
-  % [K_train_approx, ignore_2, ignore_3] = getApproxKernel(X, X, data_rbf_variance, number_of_random_bases_for_data);
-  % [K_test_approx, ignore_4, ignore_5] = getApproxKernel(X, X_test, data_rbf_variance, number_of_random_bases_for_data);
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % SPCA-eigen
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  time_start = tic;
+  L_actual = getActualKernel(Y, Y, label_rbf_variance);
+  tmp = X * H * L_actual * H * X';
+  [U D V] = svd(tmp);
+  U = U(:,1:projected_dim);
+  projected_X = U' * X;
+  projected_X_test = U' * X_test;
+  output.accuracy_spca_actual_eigen = getTestAccuracyFrom1NN(projected_X, Y, projected_X_test, Y_test);
+  output.duration_spca_actual_eigen = toc(time_start);
 
-  % keyboard
+
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % k-SPCA-eigen
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  time_start = tic;
+  L_actual = getActualKernel(Y, Y, label_rbf_variance);
+  K_train_actual = getActualKernel(X, X, data_rbf_variance);
+  K_test_actual = getActualKernel(X, X_test, data_rbf_variance);
+  tmp = H * L_actual * H * K_train_actual';
+  [U D V] = svd(tmp); % TODO: is it OK to use SVD? or should I use eigendec which is broken??
+  U = U(:,1:projected_dim);
+  projected_X = U' * K_train_actual;
+  projected_X_test = U' * K_test_actual;
+  output.accuracy_kspca_actual_eigen = getTestAccuracyFrom1NN(projected_X, Y, projected_X_test, Y_test);
+  output.duration_kspca_actual_eigen = toc(time_start);
+
+
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % SPCA-direct
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  time_start = tic;
+  [L_approx, psi, ignore_1] = getApproxKernel(Y, Y, label_rbf_variance, number_of_random_bases_for_labels);
+  U = X * H * psi';
+  % % U = X * H * L_actual';
+  projected_X = U' * X;
+  projected_X_test = U' * X_test;
+  output.accuracy_spca_approx_direct = getTestAccuracyFrom1NN(projected_X, Y, projected_X_test, Y_test);
+  output.duration_spca_approx_direct = toc(time_start);
+
+
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % k-SPCA-eigen
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  time_start = tic;
+  [L_approx, psi, ignore_1] = getApproxKernel(Y, Y, label_rbf_variance, number_of_random_bases_for_labels);
+  [K_train_approx, ignore_2, ignore_3] = getApproxKernel(X, X, data_rbf_variance, number_of_random_bases_for_data);
+  [K_test_approx, ignore_4, ignore_5] = getApproxKernel(X, X_test, data_rbf_variance, number_of_random_bases_for_data);
+  projected_X = psi * H * K_train_approx;
+  projected_X_test = psi * H * K_test_approx;
+  output.accuracy_kspca_approx_direct = getTestAccuracyFrom1NN(projected_X, Y, projected_X_test, Y_test);
+  output.duration_kspca_approx_direct = toc(time_start);
+
+
+
+
 
   % % -----------------------------------------------------------------------------
   % % Compare Hierarchies
@@ -102,7 +167,7 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
   % % number_of_mlp_nodes = 50;
   % tmpp = 2 * number_of_random_bases_for_labels;
 
-  % [L_approx, psi, ignore] = getApproxKernel(Y, Y, label_rbf_variance, number_of_random_bases_for_labels);
+  % [ignore, psi, ignore] = getApproxKernel(Y, Y, label_rbf_variance, number_of_random_bases_for_labels);
 
   % X_0 = X;
   % X_test_0 = X_test;
@@ -170,64 +235,29 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
 
 
 
-  % -----------------------------------------------------------------------------
-  % Compare projections
-  % -----------------------------------------------------------------------------
-
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % SPCA-eigen
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  time_start = tic;
-  L_actual = getActualKernel(Y, Y, label_rbf_variance);
-  tmp = X * H * L_actual * H * X';
-  [U D V] = svd(tmp);
-  U = U(:,1:projected_dim);
-  projected_X = U' * X;
-  projected_X_test = U' * X_test;
-  output.accuracy_spca_actual_eigen = getTestAccuracyFrom1NN(projected_X, Y, projected_X_test, Y_test);
-  output.duration_spca_actual_eigen = toc(time_start);
 
 
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % k-SPCA-eigen
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  time_start = tic;
-  L_actual = getActualKernel(Y, Y, label_rbf_variance);
-  K_train_actual = getActualKernel(X, X, data_rbf_variance);
-  K_test_actual = getActualKernel(X, X_test, data_rbf_variance);
-  tmp = H * L_actual * H * K_train_actual';
-  [U D V] = svd(tmp); % TODO: is it OK to use SVD? or should I use eigendec which is broken??
-  U = U(:,1:projected_dim);
-  projected_X = U' * K_train_actual;
-  projected_X_test = U' * K_test_actual;
-  output.accuracy_kspca_actual_eigen = getTestAccuracyFrom1NN(projected_X, Y, projected_X_test, Y_test);
-  output.duration_kspca_actual_eigen = toc(time_start);
 
 
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % SPCA-direct
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  time_start = tic;
-  [L_approx, psi, ignore_1] = getApproxKernel(Y, Y, label_rbf_variance, number_of_random_bases_for_labels);
-  U = X * H * psi';
-  % % U = X * H * L_actual';
-  projected_X = U' * X;
-  projected_X_test = U' * X_test;
-  output.accuracy_spca_approx_direct = getTestAccuracyFrom1NN(projected_X, Y, projected_X_test, Y_test);
-  output.duration_spca_approx_direct = toc(time_start);
 
 
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % k-SPCA-eigen
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  time_start = tic;
-  [L_approx, psi, ignore_1] = getApproxKernel(Y, Y, label_rbf_variance, number_of_random_bases_for_labels);
-  [K_train_approx, ignore_2, ignore_3] = getApproxKernel(X, X, data_rbf_variance, number_of_random_bases_for_data);
-  [K_test_approx, ignore_4, ignore_5] = getApproxKernel(X, X_test, data_rbf_variance, number_of_random_bases_for_data);
-  projected_X = psi * H * K_train_approx;
-  projected_X_test = psi * H * K_test_approx;
-  output.accuracy_kspca_approx_direct = getTestAccuracyFrom1NN(projected_X, Y, projected_X_test, Y_test);
-  output.duration_kspca_approx_direct = toc(time_start);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

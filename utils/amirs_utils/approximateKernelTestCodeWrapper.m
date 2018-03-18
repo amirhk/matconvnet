@@ -1,7 +1,24 @@
 
+
+
+
+
+
+% projected_dim_list = [1,5:5:25,50:25:100]; dataset = 'usps';
+% projected_dim_list = [1,5:5:25,50]; dataset = 'uci-spam';
+% projected_dim_list = [1,2:4:34]; dataset = 'uci-ion';
+% projected_dim_list = [1,5:10:55,60]; dataset = 'uci-sonar';
+projected_dim_list = 1:4;        dataset = 'uci-balance';
+num_trials = 10;
+
+
+
+
+
+
 % dummy run just to get fieldnames and initialize results arrays
 fprintf('Dummy iteration...\t');
-output = approximateKernelTestCode(false, 1, 'uci-ion');
+output = approximateKernelTestCode(false, 1, dataset);
 results_per_fieldname_multirun = {};
 results_per_fieldname_multidim = {};
 all_fieldnames = fieldnames(output);
@@ -11,17 +28,8 @@ for i = 1 : numel(all_fieldnames)
   results_per_fieldname_multidim.(fieldname).mean = [];
   results_per_fieldname_multidim.(fieldname).std = [];
 end
-fprintf('done.\n');
+fprintf('done.\n\n\n');
 
-
-
-
-
-projected_dim_list = [1,2:4:22]; dataset = 'uci-ion';
-% projected_dim_list = [1,2:4:34]; dataset = 'uci-ion';
-% projected_dim_list = [1,5:10:55,60]; dataset = 'uci-sonar';
-% projected_dim_list = 1:4;        dataset = 'uci-balance';
-num_trials = 10;
 
 for i = 1:numel(projected_dim_list)
   projected_dim = projected_dim_list(i);
@@ -51,12 +59,13 @@ end
 figure,
 
 subplot(1,2,1)
+grid on;
 hold on;
 legend_cell_array = {};
-ciplot(results_per_fieldname_multidim.accuracy_spca_actual_eigen.mean - results_per_fieldname_multidim.accuracy_spca_actual_eigen.std, results_per_fieldname_multidim.accuracy_spca_actual_eigen.mean + results_per_fieldname_multidim.accuracy_spca_actual_eigen.std, projected_dim_list, 'm'); legend_cell_array = [legend_cell_array, 'accuracy spca actual eigen (std)'];
-ciplot(results_per_fieldname_multidim.accuracy_kspca_actual_eigen.mean - results_per_fieldname_multidim.accuracy_kspca_actual_eigen.std, results_per_fieldname_multidim.accuracy_kspca_actual_eigen.mean + results_per_fieldname_multidim.accuracy_kspca_actual_eigen.std, projected_dim_list, 'r'); legend_cell_array = [legend_cell_array, 'accuracy kspca actual eigen (std)'];
-ciplot(results_per_fieldname_multidim.accuracy_spca_approx_direct.mean - results_per_fieldname_multidim.accuracy_spca_approx_direct.std, results_per_fieldname_multidim.accuracy_spca_approx_direct.mean + results_per_fieldname_multidim.accuracy_spca_approx_direct.std, projected_dim_list, 'g'); legend_cell_array = [legend_cell_array, 'accuracy spca approx direct (std)'];
-ciplot(results_per_fieldname_multidim.accuracy_kspca_approx_direct.mean - results_per_fieldname_multidim.accuracy_kspca_approx_direct.std, results_per_fieldname_multidim.accuracy_kspca_approx_direct.mean + results_per_fieldname_multidim.accuracy_kspca_approx_direct.std, projected_dim_list, 'b'); legend_cell_array = [legend_cell_array, 'accuracy kspca approx direct (std)'];
+% ciplot(results_per_fieldname_multidim.accuracy_spca_actual_eigen.mean - results_per_fieldname_multidim.accuracy_spca_actual_eigen.std, results_per_fieldname_multidim.accuracy_spca_actual_eigen.mean + results_per_fieldname_multidim.accuracy_spca_actual_eigen.std, projected_dim_list, 'm'); legend_cell_array = [legend_cell_array, 'accuracy spca actual eigen (std)'];
+% ciplot(results_per_fieldname_multidim.accuracy_kspca_actual_eigen.mean - results_per_fieldname_multidim.accuracy_kspca_actual_eigen.std, results_per_fieldname_multidim.accuracy_kspca_actual_eigen.mean + results_per_fieldname_multidim.accuracy_kspca_actual_eigen.std, projected_dim_list, 'r'); legend_cell_array = [legend_cell_array, 'accuracy kspca actual eigen (std)'];
+% ciplot(results_per_fieldname_multidim.accuracy_spca_approx_direct.mean - results_per_fieldname_multidim.accuracy_spca_approx_direct.std, results_per_fieldname_multidim.accuracy_spca_approx_direct.mean + results_per_fieldname_multidim.accuracy_spca_approx_direct.std, projected_dim_list, 'g'); legend_cell_array = [legend_cell_array, 'accuracy spca approx direct (std)'];
+% ciplot(results_per_fieldname_multidim.accuracy_kspca_approx_direct.mean - results_per_fieldname_multidim.accuracy_kspca_approx_direct.std, results_per_fieldname_multidim.accuracy_kspca_approx_direct.mean + results_per_fieldname_multidim.accuracy_kspca_approx_direct.std, projected_dim_list, 'b'); legend_cell_array = [legend_cell_array, 'accuracy kspca approx direct (std)'];
 plot(projected_dim_list, results_per_fieldname_multidim.accuracy_spca_actual_eigen.mean, '--mo', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'accuracy spca actual eigen (mean)'];
 plot(projected_dim_list, results_per_fieldname_multidim.accuracy_kspca_actual_eigen.mean, '-r^', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'accuracy kspca actual eigen (mean)'];
 plot(projected_dim_list, results_per_fieldname_multidim.accuracy_spca_approx_direct.mean, '--go', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'accuracy spca approx direct (mean)'];
@@ -70,6 +79,7 @@ legend(legend_cell_array, 'Location','southeast');
 
 
 subplot(1,2,2)
+grid on;
 hold on;
 legend_cell_array = {};
 ciplot(results_per_fieldname_multidim.duration_spca_actual_eigen.mean - results_per_fieldname_multidim.duration_spca_actual_eigen.std, results_per_fieldname_multidim.duration_spca_actual_eigen.mean + results_per_fieldname_multidim.duration_spca_actual_eigen.std, projected_dim_list, 'm'); legend_cell_array = [legend_cell_array, 'duration spca actual eigen (std)'];

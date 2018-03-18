@@ -1,5 +1,5 @@
 % --------------------------------------------------------------------
-function imdb = constructUSPSImdb(opts)
+function imdb = createImdbWithBalance(dataset, imdb, train_balance_count, test_balance_count, should_save, debug_flag)
 % --------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -25,41 +25,38 @@ function imdb = constructUSPSImdb(opts)
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
 
-  if opts.debug_flag; afprintf(sprintf('[INFO] Constructing USPS Fashion imdb...\n')); end;
 
-  original_data = load(fullfile(opts.imdb.data_dir, 'usps_all.mat'));
-  original_data = original_data.data;
 
-  data = zeros(16, 16, 1, 11000);
+  fh_imdb_utils = imdbMultiClassUtils;
+  % posneg_balance = sprintf('balanced-%d-%d', balance_count, balance_count);
+  % afprintf(sprintf('[INFO] Constructing `%s`...\n', posneg_balance));
+  if debug_flag; printConsoleOutputSeparator(); end;
 
-  filled_counter = 0;
-  for j = 1 : size(original_data, 2)
-    tmp = original_data(:,j,:);
-    tmp = reshape(tmp, [16, 16, 1, 10]);
-    data(:,:,:, filled_counter + 1 : filled_counter + 10) = tmp;
-    filled_counter = filled_counter + 10;
+  if debug_flag; afprintf(sprintf('[INFO] INITIAL IMDB INFO...\n')); end;
+  if debug_flag; fh_imdb_utils.getImdbInfo(imdb, 1); end;
+  imdb = fh_imdb_utils.balanceAllClassesInImdb(imdb, 'train', train_balance_count, debug_flag);
+  imdb = fh_imdb_utils.balanceAllClassesInImdb(imdb, 'test', test_balance_count, debug_flag);
+  if debug_flag; afprintf(sprintf('[INFO] FINAL IMDB INFO...\n')); end;
+  if debug_flag; fh_imdb_utils.getImdbInfo(imdb, 1); end;
+  if should_save
+    % Save
+    fh_imdb_utils.saveImdb(dataset, imdb, train_balance_count, test_balance_count);
   end
+  if debug_flag; afprintf(sprintf('done!\n\n')); end;
 
-  total_number_of_samples = size(data, 4);
 
-  assert(total_number_of_samples == 11000);
-  number_of_training_samples = round(0.7 * total_number_of_samples);
-  number_of_testing_samples = total_number_of_samples - number_of_training_samples;
 
-  data = data;
-  labels = repmat([1:9 0] + 1, [1,1100]);
-  set = cat(1, 1 * ones(number_of_training_samples, 1), 3 * ones(number_of_testing_samples, 1));
 
-  assert(length(labels) == length(set));
 
-  % shuffle
-  ix = randperm(total_number_of_samples);
-  imdb.images.data = data(:, :, :, ix);
-  imdb.images.labels = labels(ix);
-  imdb.images.set = set; % NOT set(ix).... that way you won't have any of your first class samples in the test set!
-  imdb.name = 'usps';
 
-  if opts.debug_flag; afprintf(sprintf('done!\n\n')); end;
-  fh = imdbMultiClassUtils;
-  if opts.debug_flag; fh.getImdbInfo(imdb, 1); end
-  % save(sprintf('%s.mat', imdb.name), 'imdb');
+
+
+
+
+
+
+
+
+
+
+

@@ -74,30 +74,30 @@ function [ ...
   end
 
 % -------------------------------------------------------------------------
-function imdb = balanceAllClassesInImdb(imdb, set_name, balance_count)
+function imdb = balanceAllClassesInImdb(imdb, set_name, balance_count, debug_flag)
   % set_name = {'train', 'test'}
   % balance_count = {38, 100, 277, 707, 1880, 5000}
 % -------------------------------------------------------------------------
   if isa(balance_count, 'char')
-    afprintf(sprintf('[INFO] Balancing all `%sing` classes of imdb to #%s samples...\n', set_name, balance_count));
+    if debug_flag; afprintf(sprintf('[INFO] Balancing all `%sing` classes of imdb to #%s samples...\n', set_name, balance_count)); end
   else
-    afprintf(sprintf('[INFO] Balancing all `%sing` classes of imdb to #%d samples...\n', set_name, balance_count));
+    if debug_flag; afprintf(sprintf('[INFO] Balancing all `%sing` classes of imdb to #%d samples...\n', set_name, balance_count)); end
   end
   unique_classes_count = numel(unique(imdb.images.labels));
   % Balance train sets as desired
   for class_number = 1:unique_classes_count
-    imdb = subsampleImdb(imdb, set_name, class_number, balance_count);
+    imdb = subsampleImdb(imdb, set_name, class_number, balance_count, debug_flag);
   end
-  afprintf(sprintf('[INFO] Done.\n'));
+  if debug_flag; afprintf(sprintf('[INFO] Done.\n')); end;
 
 
 % -------------------------------------------------------------------------
-function imdb = subsampleImdb(imdb, set_name, class_number, subsample_count)
+function imdb = subsampleImdb(imdb, set_name, class_number, subsample_count, debug_flag)
   % set_name = {'train', 'test'}
   % class_number = {1, 2, 3, ...}
   % subsample_count = {38, 100, 277, 707, 1880, 5000}
 % -------------------------------------------------------------------------
-  afprintf(sprintf('[INFO] Subsampling imdb (`%sing` samples from class #%d)...\n', set_name, class_number));
+  if debug_flag; afprintf(sprintf('[INFO] Subsampling imdb (`%sing` samples from class #%d)...\n', set_name, class_number)); end;
   [ ...
     data_train_per_class, ...
     ~, ... % data_train_count_per_class, ...
@@ -128,7 +128,7 @@ function imdb = subsampleImdb(imdb, set_name, class_number, subsample_count)
       data_test_per_class{class_number} = subsampled_data;
   end
   imdb = constructImdbHelper(data_train_per_class, data_test_per_class);
-  afprintf(sprintf('[INFO] Done.\n'));
+  if debug_flag; afprintf(sprintf('[INFO] Done.\n')); end;
 
 
 % -------------------------------------------------------------------------
