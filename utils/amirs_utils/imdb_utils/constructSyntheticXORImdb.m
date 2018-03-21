@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function imdb = constructSyntheticCirclesImdb(total_number_of_samples, sample_dim, sample_mean, sample_variance_multiplier)
+function imdb = constructSyntheticXORImdb(number_of_samples_per_group, sample_dim)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -25,32 +25,31 @@ function imdb = constructSyntheticCirclesImdb(total_number_of_samples, sample_di
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
 
-  afprintf(sprintf('[INFO] Constructing synthetic circles imdb...\n'));
+  % afprintf(sprintf('[INFO] Constructing synthetic XOR imdb...\n'));
 
-  covariance_matrix = eye(sample_dim);
-  all_samples = mvnrnd(zeros(sample_dim, 1), sample_variance_multiplier * covariance_matrix, total_number_of_samples);
+  group_1_samples = mvnrnd(5*[+1,+1], eye(2), number_of_samples_per_group);
+  group_2_samples = mvnrnd(5*[+1,-1], eye(2), number_of_samples_per_group);
+  group_3_samples = mvnrnd(5*[-1,+1], eye(2), number_of_samples_per_group);
+  group_4_samples = mvnrnd(5*[-1,-1], eye(2), number_of_samples_per_group);
 
-  radius = sample_variance_multiplier;
-  data_m = [];
-  data_p = [];
-  for i = 1 : size(all_samples, 1)
-    sample = all_samples(i, :);
-    if norm(sample) < radius * sqrt(sample_dim)
-      data_m(end+1,:) = sample;
-    else
-      data_p(end+1,:) = sample;
-    end
-  end
+  % add random noise to each sample to make a d-dimensional sample (so add d-2 random features)
+  group_1_samples = [group_1_samples, randn(number_of_samples_per_group, sample_dim - 2)];
+  group_2_samples = [group_2_samples, randn(number_of_samples_per_group, sample_dim - 2)];
+  group_3_samples = [group_3_samples, randn(number_of_samples_per_group, sample_dim - 2)];
+  group_4_samples = [group_4_samples, randn(number_of_samples_per_group, sample_dim - 2)];
 
-  number_of_m_samples = size(data_m, 1);
-  number_of_p_samples = size(data_p, 1);
-  assert(number_of_m_samples + number_of_p_samples == total_number_of_samples);
+  data_class_1 = cat(1, group_1_samples, group_4_samples);
+  data_class_2 = cat(1, group_2_samples, group_3_samples);
 
+  number_of_samples_class_1 = size(data_class_1, 1);
+  number_of_samples_class_2 = size(data_class_2, 1);
+  total_number_of_samples = number_of_samples_class_1 + number_of_samples_class_2;
   number_of_training_samples = round(0.7 * total_number_of_samples);
   number_of_testing_samples = total_number_of_samples - number_of_training_samples;
 
-  data = cat(1, data_m, data_p);
-  labels = cat(1, 1 * ones(number_of_m_samples, 1), 2 * ones(number_of_p_samples, 1));
+
+  data = cat(1, data_class_1, data_class_2);
+  labels = cat(1, 1 * ones(number_of_samples_class_1, 1), 2 * ones(number_of_samples_class_2, 1));
   set = cat(1, 1 * ones(number_of_training_samples, 1), 3 * ones(number_of_testing_samples, 1));
 
   assert(length(labels) == length(set));
@@ -58,14 +57,14 @@ function imdb = constructSyntheticCirclesImdb(total_number_of_samples, sample_di
   % shuffle
   ix = randperm(total_number_of_samples);
   imdb.images.data = data(ix,:);
-  imdb.images.labels = labels(ix);
-  imdb.images.set = set; % NOT set(ix).... that way you won't have any of your first class samples in the test set!
-  imdb.name = sprintf('circles-%dD-%d-train-%d-test-%.1f-var', sample_dim, number_of_training_samples, number_of_testing_samples, sample_variance_multiplier);
+  imdb.images.labels = labels(ix)';
+  imdb.images.set = set'; % NOT set(ix).... that way you won't have any of your first class samples in the test set!
+  % imdb.name = sprintf('circles-%dD-%d-train-%d-test-%.1f-var', sample_dim, number_of_training_samples, number_of_testing_samples, sample_variance_multiplier);
 
   % get the data into 4D format to be compatible with code built for all other imdbs.
   imdb = get4DImdb(imdb, sample_dim, 1, 1, total_number_of_samples);
-  afprintf(sprintf('done!\n\n'));
-  fh = imdbMultiClassUtils;
+  % afprintf(sprintf('done!\n\n'));
+  % fh = imdbMultiClassUtils;
   % fh.getImdbInfo(imdb, 1);
   % save(sprintf('%s.mat', imdb.name), 'imdb');
 
