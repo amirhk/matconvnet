@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function imdb = constructSyntheticXORImdb(number_of_samples_per_group, sample_dim)
+function imdb = constructSyntheticRingsImdb(number_of_samples_per_group, sample_dim)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -25,23 +25,28 @@ function imdb = constructSyntheticXORImdb(number_of_samples_per_group, sample_di
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
 
-  % afprintf(sprintf('[INFO] Constructing synthetic XOR imdb...\n'));
+  afprintf(sprintf('[INFO] Constructing synthetic circles imdb...\n'));
 
-  % rng(0);
+  planar_sample_dim = 2;
+  sample_variance_multiplier = 1;
+  covariance_matrix = eye(planar_sample_dim);
+  all_samples = mvnrnd(zeros(planar_sample_dim, 1), sample_variance_multiplier * covariance_matrix, number_of_samples_per_group * 2);
 
-  group_1_samples = mvnrnd(5*[+1,+1], eye(2), number_of_samples_per_group);
-  group_2_samples = mvnrnd(5*[+1,-1], eye(2), number_of_samples_per_group);
-  group_3_samples = mvnrnd(5*[-1,+1], eye(2), number_of_samples_per_group);
-  group_4_samples = mvnrnd(5*[-1,-1], eye(2), number_of_samples_per_group);
+  radius = sample_variance_multiplier;
+  data_class_1 = [];
+  data_class_2 = [];
+  for i = 1 : size(all_samples, 1)
+    sample = all_samples(i, :);
+    if norm(sample) < radius * sqrt(planar_sample_dim)
+      data_class_1(end+1,:) = sample;
+    else
+      data_class_2(end+1,:) = sample;
+    end
+  end
 
   % add random noise to each sample to make a d-dimensional sample (so add d-2 random features)
-  group_1_samples = [group_1_samples, randn(number_of_samples_per_group, sample_dim - 2)];
-  group_2_samples = [group_2_samples, randn(number_of_samples_per_group, sample_dim - 2)];
-  group_3_samples = [group_3_samples, randn(number_of_samples_per_group, sample_dim - 2)];
-  group_4_samples = [group_4_samples, randn(number_of_samples_per_group, sample_dim - 2)];
-
-  data_class_1 = cat(1, group_1_samples, group_4_samples);
-  data_class_2 = cat(1, group_2_samples, group_3_samples);
+  data_class_1 = [data_class_1, randn(size(data_class_1,1), sample_dim - 2)];
+  data_class_2 = [data_class_2, randn(size(data_class_2,1), sample_dim - 2)];
 
   number_of_samples_class_1 = size(data_class_1, 1);
   number_of_samples_class_2 = size(data_class_2, 1);
@@ -60,13 +65,12 @@ function imdb = constructSyntheticXORImdb(number_of_samples_per_group, sample_di
   imdb.images.data = data(ix,:);
   imdb.images.labels = labels(ix)';
   imdb.images.set = set'; % NOT set(ix).... that way you won't have any of your first class samples in the test set!
-  imdb.name = sprintf('xor-%dD-%d-train-%d-test', sample_dim, number_of_training_samples, number_of_testing_samples);
+  imdb.name = sprintf('rings-%dD-%d-train-%d-test', sample_dim, number_of_training_samples, number_of_testing_samples);
 
   % get the data into 4D format to be compatible with code built for all other imdbs.
   imdb = get4DImdb(imdb, sample_dim, 1, 1, total_number_of_samples);
   % afprintf(sprintf('done!\n\n'));
-  % fh = imdbMultiClassUtils;
-  % fh.getImdbInfo(imdb, 1);
+  fh = imdbMultiClassUtils;
+  fh.getImdbInfo(imdb, 1);
   save(sprintf('%s.mat', imdb.name), 'imdb');
 
-  % rng('default');

@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function imdb = constructSyntheticSpiralsImdb(total_number_of_samples)
+function imdb = constructSyntheticSpiralsImdb(total_number_of_samples, sample_dim)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -27,34 +27,22 @@ function imdb = constructSyntheticSpiralsImdb(total_number_of_samples)
 
   afprintf(sprintf('[INFO] Constructing synthetic circles imdb...\n'));
 
-  % covariance_matrix = eye(sample_dim);
-  % all_samples = mvnrnd(zeros(sample_dim, 1), sample_variance_multiplier * covariance_matrix, total_number_of_samples);
-
-  % radius = sample_variance_multiplier;
-  % data_m = [];
-  % data_p = [];
-  % for i = 1 : size(all_samples, 1)
-  %   sample = all_samples(i, :);
-  %   if norm(sample) < radius * sqrt(sample_dim)
-  %     data_m(end+1,:) = sample;
-  %   else
-  %     data_p(end+1,:) = sample;
-  %   end
-  % end
-
   data = twospirals(total_number_of_samples);
-  data_m = data(find(data(:, 3) == 0), 1:2);
-  data_p = data(find(data(:, 3) == 1), 1:2);
+  data_class_1 = data(find(data(:, 3) == 0), 1:2);
+  data_class_2 = data(find(data(:, 3) == 1), 1:2);
 
-  number_of_m_samples = size(data_m, 1);
-  number_of_p_samples = size(data_p, 1);
-  assert(number_of_m_samples + number_of_p_samples == total_number_of_samples);
+  % add random noise to each sample to make a d-dimensional sample (so add d-2 random features)
+  data_class_1 = [data_class_1, randn(size(data_class_1,1), sample_dim - 2)];
+  data_class_2 = [data_class_2, randn(size(data_class_2,1), sample_dim - 2)];
 
-  number_of_training_samples = .5 * total_number_of_samples;
-  number_of_testing_samples = .5 * total_number_of_samples;
+  number_of_samples_class_1 = size(data_class_1, 1);
+  number_of_samples_class_2 = size(data_class_2, 1);
+  total_number_of_samples = number_of_samples_class_1 + number_of_samples_class_2;
+  number_of_training_samples = round(0.7 * total_number_of_samples);
+  number_of_testing_samples = total_number_of_samples - number_of_training_samples;
 
-  data = cat(1, data_m, data_p);
-  labels = cat(1, 1 * ones(number_of_m_samples, 1), 2 * ones(number_of_p_samples, 1));
+  data = cat(1, data_class_1, data_class_2);
+  labels = cat(1, 1 * ones(number_of_samples_class_1, 1), 2 * ones(number_of_samples_class_2, 1));
   set = cat(1, 1 * ones(number_of_training_samples, 1), 3 * ones(number_of_testing_samples, 1));
 
   assert(length(labels) == length(set));
@@ -62,16 +50,14 @@ function imdb = constructSyntheticSpiralsImdb(total_number_of_samples)
   % shuffle
   ix = randperm(total_number_of_samples);
   imdb.images.data = data(ix,:);
-  imdb.images.labels = labels(ix);
-  imdb.images.set = set; % NOT set(ix).... that way you won't have any of your first class samples in the test set!
-  % imdb.name = sprintf('circles-%dD-%d-train-%d-test-%.1f-var', sample_dim, number_of_training_samples, number_of_testing_samples, sample_variance_multiplier);
-  sample_dim = 2;
-  imdb.name = sprintf('spirals-%dD', sample_dim);
+  imdb.images.labels = labels(ix)';
+  imdb.images.set = set'; % NOT set(ix).... that way you won't have any of your first class samples in the test set!
+  imdb.name = sprintf('spirals-%dD-%d-train-%d-test', sample_dim, number_of_training_samples, number_of_testing_samples);
 
   % get the data into 4D format to be compatible with code built for all other imdbs.
   imdb = get4DImdb(imdb, sample_dim, 1, 1, total_number_of_samples);
-  afprintf(sprintf('done!\n\n'));
+  % afprintf(sprintf('done!\n\n'));
   fh = imdbMultiClassUtils;
   fh.getImdbInfo(imdb, 1);
-  % save(sprintf('%s.mat', imdb.name), 'imdb');
+  save(sprintf('%s.mat', imdb.name), 'imdb');
 

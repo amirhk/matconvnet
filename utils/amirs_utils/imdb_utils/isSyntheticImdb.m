@@ -54,6 +54,18 @@ function output = isSyntheticImdb(dataset)
     output = true;
   end
 
+  if strfind(dataset, 'xor-')
+    output = true;
+  end
+
+  if strfind(dataset, 'rings-')
+    output = true;
+  end
+
+  if strfind(dataset, 'spirals-')
+    output = true;
+  end
+
   if strfind(dataset, 'shapes')
     output = true;
   end
