@@ -17,11 +17,10 @@
 % % projected_dim_list = [1,2:8:34]; dataset = 'uci-ion';
 % % projected_dim_list = [1,5:25:55,60]; dataset = 'uci-sonar';
 % % projected_dim_list = 1:4;        dataset = 'uci-balance';
-% projected_dim_list = [1,2:4:10];        dataset = 'xor-10D-350-train-150-test';
-% projected_dim_list = [1,2:4:10];        dataset = 'rings-10D-350-train-150-test';
+% % projected_dim_list = [1,2:4:10];        dataset = 'xor-10D-350-train-150-test';
+% % projected_dim_list = [1,2:4:10];        dataset = 'rings-10D-350-train-150-test';
 % projected_dim_list = [1,2:4:10];        dataset = 'spirals-10D-350-train-150-test';
-% projected_dim_list = [2];        dataset = 'xor-10D-350-train-150-test';
-num_trials = 10;
+% num_trials = 10;
 
 
 
@@ -167,10 +166,11 @@ num_trials = 10;
 
 
 
-num_trials = 40;
-% dataset = 'xor-10D-350-train-150-test';
+num_trials = 4;
+projected_dim = 4;
+dataset = 'xor-10D-350-train-150-test';
 % dataset = 'rings-10D-350-train-150-test';
-dataset = 'spirals-10D-350-train-150-test';
+% dataset = 'spirals-10D-350-train-150-test';
 % dataset = 'usps';
 % dataset = 'uci-sonar';
 % dataset = 'uci-spam';
@@ -190,7 +190,7 @@ fprintf('done.\n\n\n');
 
 for i = 1 : num_trials
   fprintf('Iteration #%02d/%02d...\t', i, num_trials);
-  output = approximateKernelTestCode(false, -1, dataset);
+  output = approximateKernelTestCode(false, projected_dim, dataset);
   for i = 1 : numel(all_fieldnames)
     fieldname = all_fieldnames{i};
     results_per_fieldname_multirun.(fieldname)(end+1) = output.(fieldname);
@@ -199,28 +199,68 @@ for i = 1 : num_trials
 end
 
 
-proposed_method.mean = [mean(results_per_fieldname_multirun.test_accuracy_proposed_0), mean(results_per_fieldname_multirun.test_accuracy_proposed_1), mean(results_per_fieldname_multirun.test_accuracy_proposed_2), mean(results_per_fieldname_multirun.test_accuracy_proposed_3), mean(results_per_fieldname_multirun.test_accuracy_proposed_4)];
-proposed_method.std = [std(results_per_fieldname_multirun.test_accuracy_proposed_0), std(results_per_fieldname_multirun.test_accuracy_proposed_1), std(results_per_fieldname_multirun.test_accuracy_proposed_2), std(results_per_fieldname_multirun.test_accuracy_proposed_3), std(results_per_fieldname_multirun.test_accuracy_proposed_4)];
-random_p_method.mean = [mean(results_per_fieldname_multirun.test_accuracy_rp_0), mean(results_per_fieldname_multirun.test_accuracy_rp_1), mean(results_per_fieldname_multirun.test_accuracy_rp_2), mean(results_per_fieldname_multirun.test_accuracy_rp_3), mean(results_per_fieldname_multirun.test_accuracy_rp_4)];
-random_p_method.std = [std(results_per_fieldname_multirun.test_accuracy_rp_0), std(results_per_fieldname_multirun.test_accuracy_rp_1), std(results_per_fieldname_multirun.test_accuracy_rp_2), std(results_per_fieldname_multirun.test_accuracy_rp_3), std(results_per_fieldname_multirun.test_accuracy_rp_4)];
-num_layers_list = 1 : numel(proposed_method.mean);
+proposed_method.accuracy.mean = [mean(results_per_fieldname_multirun.accuracy_proposed_0), mean(results_per_fieldname_multirun.accuracy_proposed_1), mean(results_per_fieldname_multirun.accuracy_proposed_2), mean(results_per_fieldname_multirun.accuracy_proposed_3), mean(results_per_fieldname_multirun.accuracy_proposed_4)];
+proposed_method.accuracy.std = [std(results_per_fieldname_multirun.accuracy_proposed_0), std(results_per_fieldname_multirun.accuracy_proposed_1), std(results_per_fieldname_multirun.accuracy_proposed_2), std(results_per_fieldname_multirun.accuracy_proposed_3), std(results_per_fieldname_multirun.accuracy_proposed_4)];
+proposed_method.duration.mean = [mean(results_per_fieldname_multirun.duration_proposed_0), mean(results_per_fieldname_multirun.duration_proposed_1), mean(results_per_fieldname_multirun.duration_proposed_2), mean(results_per_fieldname_multirun.duration_proposed_3), mean(results_per_fieldname_multirun.duration_proposed_4)];
+proposed_method.duration.std = [std(results_per_fieldname_multirun.duration_proposed_0), std(results_per_fieldname_multirun.duration_proposed_1), std(results_per_fieldname_multirun.duration_proposed_2), std(results_per_fieldname_multirun.duration_proposed_3), std(results_per_fieldname_multirun.duration_proposed_4)];
+
+backprop_method.accuracy.mean = [mean(results_per_fieldname_multirun.accuracy_backprop_0), mean(results_per_fieldname_multirun.accuracy_backprop_1), mean(results_per_fieldname_multirun.accuracy_backprop_2), mean(results_per_fieldname_multirun.accuracy_backprop_3), mean(results_per_fieldname_multirun.accuracy_backprop_4)];
+backprop_method.accuracy.std = [std(results_per_fieldname_multirun.accuracy_backprop_0), std(results_per_fieldname_multirun.accuracy_backprop_1), std(results_per_fieldname_multirun.accuracy_backprop_2), std(results_per_fieldname_multirun.accuracy_backprop_3), std(results_per_fieldname_multirun.accuracy_backprop_4)];
+backprop_method.duration.mean = [mean(results_per_fieldname_multirun.duration_backprop_0), mean(results_per_fieldname_multirun.duration_backprop_1), mean(results_per_fieldname_multirun.duration_backprop_2), mean(results_per_fieldname_multirun.duration_backprop_3), mean(results_per_fieldname_multirun.duration_backprop_4)];
+backprop_method.duration.std = [std(results_per_fieldname_multirun.duration_backprop_0), std(results_per_fieldname_multirun.duration_backprop_1), std(results_per_fieldname_multirun.duration_backprop_2), std(results_per_fieldname_multirun.duration_backprop_3), std(results_per_fieldname_multirun.duration_backprop_4)];
+
+% random_p_method.accuracy.mean = [mean(results_per_fieldname_multirun.accuracy_rp_0), mean(results_per_fieldname_multirun.accuracy_rp_1), mean(results_per_fieldname_multirun.accuracy_rp_2), mean(results_per_fieldname_multirun.accuracy_rp_3), mean(results_per_fieldname_multirun.accuracy_rp_4)];
+% random_p_method.accuracy.std = [std(results_per_fieldname_multirun.accuracy_rp_0), std(results_per_fieldname_multirun.accuracy_rp_1), std(results_per_fieldname_multirun.accuracy_rp_2), std(results_per_fieldname_multirun.accuracy_rp_3), std(results_per_fieldname_multirun.accuracy_rp_4)];
+% random_p_method.duration.mean = [mean(results_per_fieldname_multirun.duration_rp_0), mean(results_per_fieldname_multirun.duration_rp_1), mean(results_per_fieldname_multirun.duration_rp_2), mean(results_per_fieldname_multirun.duration_rp_3), mean(results_per_fieldname_multirun.duration_rp_4)];
+% random_p_method.duration.std = [std(results_per_fieldname_multirun.duration_rp_0), std(results_per_fieldname_multirun.duration_rp_1), std(results_per_fieldname_multirun.duration_rp_2), std(results_per_fieldname_multirun.duration_rp_3), std(results_per_fieldname_multirun.duration_rp_4)];
+
+num_layers_list = 1 : numel(proposed_method.accuracy.mean);
 
 figure,
+
+
+
+subplot(1,2,1)
 grid on;
 hold on;
 legend_cell_array = {};
-ciplot(proposed_method.mean - proposed_method.std, proposed_method.mean + proposed_method.std, num_layers_list, 'r'); legend_cell_array = [legend_cell_array, 'proposed method (std)'];
-ciplot(random_p_method.mean - random_p_method.std, random_p_method.mean + random_p_method.std, num_layers_list, 'b'); legend_cell_array = [legend_cell_array, 'random projection method (std)'];
 
-plot(num_layers_list, proposed_method.mean, '-r^', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'accuracy proposed method (mean)'];
-plot(num_layers_list, random_p_method.mean, '-b^', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'accuracy random projection method (mean)'];
+ciplot(proposed_method.accuracy.mean - proposed_method.accuracy.std, proposed_method.accuracy.mean + proposed_method.accuracy.std, num_layers_list, 'r'); legend_cell_array = [legend_cell_array, 'proposed method (std)'];
+ciplot(backprop_method.accuracy.mean - backprop_method.accuracy.std, backprop_method.accuracy.mean + backprop_method.accuracy.std, num_layers_list, 'b'); legend_cell_array = [legend_cell_array, 'backprop method (std)'];
+% ciplot(random_p_method.accuracy.mean - random_p_method.accuracy.std, random_p_method.accuracy.mean + random_p_method.accuracy.std, num_layers_list, 'b'); legend_cell_array = [legend_cell_array, 'random projection method (std)'];
+plot(num_layers_list, proposed_method.accuracy.mean, '-r^', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'accuracy proposed method (mean)'];
+plot(num_layers_list, backprop_method.accuracy.mean, '-b^', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'accuracy backprop method (mean)'];
+% plot(num_layers_list, random_p_method.accuracy.mean, '-b^', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'accuracy random projection method (mean)'];
 
+xticks(1 : numel(proposed_method.accuracy.mean));
 xlabel('# of Random Layers');
 ylabel('Accuracy (1-NN)');
 ylim([0,1.1]);
 hold off;
-title(sprintf('%s Accuracy Comparison', dataset));
+title('Accuracy Comparison');
 legend(legend_cell_array, 'Location','southwest');
 
 
 
+
+
+subplot(1,2,2)
+grid on;
+hold on;
+legend_cell_array = {};
+
+ciplot(proposed_method.duration.mean - proposed_method.duration.std, proposed_method.duration.mean + proposed_method.duration.std, num_layers_list, 'r'); legend_cell_array = [legend_cell_array, 'proposed method (std)'];
+ciplot(backprop_method.duration.mean - backprop_method.duration.std, backprop_method.duration.mean + backprop_method.duration.std, num_layers_list, 'b'); legend_cell_array = [legend_cell_array, 'backprop method (std)'];
+% ciplot(random_p_method.duration.mean - random_p_method.duration.std, random_p_method.duration.mean + random_p_method.duration.std, num_layers_list, 'b'); legend_cell_array = [legend_cell_array, 'random projection method (std)'];
+plot(num_layers_list, proposed_method.duration.mean, '-r^', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'duration proposed method (mean)'];
+plot(num_layers_list, backprop_method.duration.mean, '-b^', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'duration backprop method (mean)'];
+% plot(num_layers_list, random_p_method.duration.mean, '-b^', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'duration random projection method (mean)'];
+
+xticks(1 : numel(proposed_method.accuracy.mean));
+xlabel('# of Random Layers');
+ylabel('Time (sec)');
+hold off;
+title('Duration Comparison');
+legend(legend_cell_array, 'Location','northwest');
+
+suptitle(sprintf('%s - %d per layer', dataset, projected_dim));
