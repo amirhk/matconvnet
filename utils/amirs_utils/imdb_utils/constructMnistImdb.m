@@ -25,7 +25,7 @@ function imdb = constructMnistImdb(opts)
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
 
-  afprintf(sprintf('[INFO] Constructing MNIST imdb...\n'));
+  if opts.debug_flag; afprintf(sprintf('[INFO] Constructing MNIST imdb...\n')); end;
   % Preapre the imdb structure, returns image data with mean image subtracted
   files = {'train-images-idx3-ubyte', ...
            'train-labels-idx1-ubyte', ...
@@ -85,7 +85,7 @@ function imdb = constructMnistImdb(opts)
   imdb.meta.sets = {'train', 'val', 'test'};
   imdb.meta.classes = arrayfun(@(x)sprintf('%d',x),0:9,'uniformoutput',false);
   imdb.name = name;
-  afprintf(sprintf('done!\n\n'));
+  if opts.debug_flag; afprintf(sprintf('done!\n\n')); end;
   % keyboard
 
 

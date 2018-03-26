@@ -53,11 +53,17 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
      strcmp(dataset, 'spirals-10D-350-train-150-test')
     tmp_opts.dataset = dataset;
     imdb = loadSavedImdb(tmp_opts, false);
+  % elseif strcmp(dataset, 'mnist')
+  %   tmp_opts.dataset = 'mnist-784-multi-class-subsampled';
+  %   tmp_opts.posneg_balance = 'balanced-250';
+  %   imdb = loadSavedImdb(tmp_opts, false);
   else
     imdb = constructMultiClassImdbs(dataset, false);
     if strcmp(dataset, 'usps')
       imdb = createImdbWithBalance(dataset, imdb, 25, 25, false, false);
-      % imdb = createImdbWithBalance(dataset, imdb, 100, 100, false, false);
+    elseif strcmp(dataset, 'mnist-784')
+      % imdb = createImdbWithBalance(dataset, imdb, 25, 25, false, false);
+      imdb = createImdbWithBalance(dataset, imdb, 100, 100, false, false);
     elseif strcmp(dataset, 'uci-spam')
       imdb = createImdbWithBalance(dataset, imdb, 1000, 250, false, false);
     end
@@ -77,6 +83,9 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
   X_test = (X_test - min_x_train) ./ (max_x_train - min_x_train);
   X(isnan(X)) = 0;
   X_test(isnan(X_test)) = 0;
+  X(X > 1) = 1; % HACKY???
+  X_test(X_test > 1) = 1; % HACKY???
+
   % X = normc(X);
   % X_test = normc(X_test);
 
@@ -98,6 +107,8 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
   number_of_random_bases_for_labels = projected_dim;
 
   if strcmp(dataset, 'usps')
+    data_rbf_variance = 10e+0;
+  elseif strcmp(dataset, 'mnist-784')
     data_rbf_variance = 10e+0;
   elseif strcmp(dataset, 'uci-spam')
     data_rbf_variance = 10e+0;
@@ -393,9 +404,8 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
 
 
 
-
-
-
+  should_plot = false;
+  if should_plot; figure, end;
 
   X_original = X;
   X_test_original = X_test;
@@ -404,57 +414,71 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
   % D = 10; % number_of_random_basis_per_layer OR number_of_hidden_nodes_per_layer
   D = projected_dim; % number_of_random_basis_per_layer OR number_of_hidden_nodes_per_layer
 
-  % Y_plus_noise = Y;
-  Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+10;
+  Y_plus_noise = Y;
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 1;
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+2;
+  Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+5;
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+10;
 
-  [L_approx, psi, ~, ~] = getApproxKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance, D, -1);
-  fprintf('\n\t Rank L_approx: %d\n', rank(L_approx));
+  % [L_approx, psi, ~, ~] = getApproxKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance, D, -1);
+  % fprintf('\n\t Rank L_approx: %d\n', rank(L_approx));
 
 
-  % D = 16;
-  % figure
-
+  % % D = 16;
+  % % figure
   % [L_approx, psi, ~, ~] = getApproxKernel(Y, Y, label_rbf_variance, D, -1);
-  % rank(L_approx),
+  % % rank(L_approx),
   % subplot(1,2,1),
   % imshow(L_approx),
 
   % [L_approx, psi, ~, ~] = getApproxKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance, D, -1);
-  % rank(L_approx),
+  % % rank(L_approx),
   % subplot(1,2,2),
   % imshow(L_approx),
 
 
   time_start = tic;
+  [L_approx, psi, ~, ~] = getApproxKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance, D, -1);
   X = X;
   X_test = X_test;
   fprintf('\t [Layer 0] \t rank(X): %d \t rank(X_test): %d\n', rank(X), rank(X_test));
   output.accuracy_proposed_0 = getTestAccuracyFromMLP(X, Y, X_test, Y_test, [D]);
   output.duration_proposed_0 = toc(time_start);
+  if should_plot; subplot(1,5,1), plotPerClassTrainAndTestSamples(X, Y, X_test, Y_test), title('After 0 layers (proposed)'), end;
 
   time_start = tic;
+  [L_approx, psi, ~, ~] = getApproxKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance, D, -1);
   [X, X_test] = getProposedNNProjections(X, X_test, data_rbf_variance, number_of_random_bases_for_data, psi, H, 'approx');
   fprintf('\t [Layer 1] \t rank(X): %d \t rank(X_test): %d\n', rank(X), rank(X_test));
   output.accuracy_proposed_1 = getTestAccuracyFromMLP(X, Y, X_test, Y_test, [D]);
   output.duration_proposed_1 = toc(time_start);
+  if should_plot; subplot(1,5,2), plotPerClassTrainAndTestSamples(X, Y, X_test, Y_test), title('After 1 layers (proposed)'), end;
 
   time_start = tic;
+  [L_approx, psi, ~, ~] = getApproxKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance, D, -1);
   [X, X_test] = getProposedNNProjections(X, X_test, data_rbf_variance, number_of_random_bases_for_data, psi, H, 'approx');
   fprintf('\t [Layer 2] \t rank(X): %d \t rank(X_test): %d\n', rank(X), rank(X_test));
   output.accuracy_proposed_2 = getTestAccuracyFromMLP(X, Y, X_test, Y_test, [D]);
   output.duration_proposed_2 = toc(time_start);
+  if should_plot; subplot(1,5,3), plotPerClassTrainAndTestSamples(X, Y, X_test, Y_test), title('After 2 layers (proposed)'), end;
 
-  time_start = tic;
-  [X, X_test] = getProposedNNProjections(X, X_test, data_rbf_variance, number_of_random_bases_for_data, psi, H, 'approx');
-  fprintf('\t [Layer 3] \t rank(X): %d \t rank(X_test): %d\n', rank(X), rank(X_test));
-  output.accuracy_proposed_3 = getTestAccuracyFromMLP(X, Y, X_test, Y_test, [D]);
-  output.duration_proposed_3 = toc(time_start);
+  % time_start = tic;
+  % [L_approx, psi, ~, ~] = getApproxKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance, D, -1);
+  % [X, X_test] = getProposedNNProjections(X, X_test, data_rbf_variance, number_of_random_bases_for_data, psi, H, 'approx');
+  % fprintf('\t [Layer 3] \t rank(X): %d \t rank(X_test): %d\n', rank(X), rank(X_test));
+  % output.accuracy_proposed_3 = getTestAccuracyFromMLP(X, Y, X_test, Y_test, [D]);
+  % output.duration_proposed_3 = toc(time_start);
+  % if should_plot; subplot(1,5,4), plotPerClassTrainAndTestSamples(X, Y, X_test, Y_test), title('After 3 layers (proposed)'), end;
 
-  time_start = tic;
-  [X, X_test] = getProposedNNProjections(X, X_test, data_rbf_variance, number_of_random_bases_for_data, psi, H, 'approx');
-  fprintf('\t [Layer 4] \t rank(X): %d \t rank(X_test): %d\n', rank(X), rank(X_test));
-  output.accuracy_proposed_4 = getTestAccuracyFromMLP(X, Y, X_test, Y_test, [D]);
-  output.duration_proposed_4 = toc(time_start);
+  % time_start = tic;
+  % [L_approx, psi, ~, ~] = getApproxKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance, D, -1);
+  % [X, X_test] = getProposedNNProjections(X, X_test, data_rbf_variance, number_of_random_bases_for_data, psi, H, 'approx');
+  % fprintf('\t [Layer 4] \t rank(X): %d \t rank(X_test): %d\n', rank(X), rank(X_test));
+  % output.accuracy_proposed_4 = getTestAccuracyFromMLP(X, Y, X_test, Y_test, [D]);
+  % output.duration_proposed_4 = toc(time_start);
+  % if should_plot; subplot(1,5,5), plotPerClassTrainAndTestSamples(X, Y, X_test, Y_test), title('After 4 layers (proposed)'), end;
+
+  if should_plot; keyboard, end;
 
 
 
@@ -475,13 +499,13 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
   output.accuracy_backprop_2 = getTestAccuracyFromMLP(X_0, Y, X_test_0, Y_test, [D, D, D]);
   output.duration_backprop_2 = toc(time_start);
 
-  time_start = tic;
-  output.accuracy_backprop_3 = getTestAccuracyFromMLP(X_0, Y, X_test_0, Y_test, [D, D, D, D]);
-  output.duration_backprop_3 = toc(time_start);
+  % time_start = tic;
+  % output.accuracy_backprop_3 = getTestAccuracyFromMLP(X_0, Y, X_test_0, Y_test, [D, D, D, D]);
+  % output.duration_backprop_3 = toc(time_start);
 
-  time_start = tic;
-  output.accuracy_backprop_4 = getTestAccuracyFromMLP(X_0, Y, X_test_0, Y_test, [D, D, D, D, D]);
-  output.duration_backprop_4 = toc(time_start);
+  % time_start = tic;
+  % output.accuracy_backprop_4 = getTestAccuracyFromMLP(X_0, Y, X_test_0, Y_test, [D, D, D, D, D]);
+  % output.duration_backprop_4 = toc(time_start);
 
 
 
@@ -656,24 +680,42 @@ function x = relu(x)
 % -------------------------------------------------------------------------
 function plotPerClassTrainAndTestSamples(X_train, Y_train, X_test, Y_test);
 % -------------------------------------------------------------------------
+  size(X_train)
+  size(X_test)
+  assert(numel(unique(Y_train)) == numel(unique(Y_test)))
 
-  indices_train_class_1 = Y_train == 1;
-  indices_train_class_2 = Y_train == 2;
-  indices_test_class_1 = Y_test == 1;
-  indices_test_class_2 = Y_test == 2;
+  indices = {};
+  for i = 1:numel(unique(Y_train))
+    indices.train.(sprintf('class_%d',i)) = Y_train == i;
+    indices.test.(sprintf('class_%d',i)) = Y_test == i;
+  end
 
-  X_train_class_1 = X_train(:, indices_train_class_1);
-  X_train_class_2 = X_train(:, indices_train_class_2);
-  X_test_class_1 = X_test(:, indices_test_class_1);
-  X_test_class_2 = X_test(:, indices_test_class_2);
+  data_train_per_class = {};
+  data_test_per_class = {};
+  for i = 1:numel(unique(Y_train))
+    data_train_per_class.(sprintf('class_%d',i)) = X_train(:, indices.train.(sprintf('class_%d',i)));
+    data_test_per_class.(sprintf('class_%d',i)) = X_test(:, indices.test.(sprintf('class_%d',i)));
+  end
+
+  cmap = colormap(parula(10));
+  if numel(unique(Y_train)) == 2
+    cmap = [cmap(1,:); cmap(10,:)];
+  elseif numel(unique(Y_train)) == 3
+    cmap = [cmap(1,:); cmap(4,:); cmap(10,:)];
+  end
 
   hold on,
-  scatter(X_train_class_1(1,:), X_train_class_1(2,:),'bs', 'filled');
-  scatter(X_train_class_2(1,:), X_train_class_2(2,:),'rd', 'filled');
-  scatter(X_test_class_1(1,:), X_test_class_1(2,:),'bs');
-  scatter(X_test_class_2(1,:), X_test_class_2(2,:),'rd');
-  hold off
-
+  for i = 1:numel(unique(Y_train))
+    scatter( ...
+      data_train_per_class.(sprintf('class_%d',i))(1,:), ...
+      data_train_per_class.(sprintf('class_%d',i))(2,:), ...
+      'filled', 'MarkerFaceColor', cmap(i,:));
+    scatter( ...
+      data_train_per_class.(sprintf('class_%d',i))(1,:), ...
+      data_train_per_class.(sprintf('class_%d',i))(2,:), ...
+      'MarkerFaceColor', cmap(i,:));
+  end
+  hold off,
 
 
 % -------------------------------------------------------------------------

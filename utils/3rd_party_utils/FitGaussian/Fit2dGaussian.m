@@ -57,10 +57,18 @@ FitOrientation='fit';	% 'fit': fit for orientation, 'dont' fit for orientation
 
 %% ---Build numerical Grids---
 % Numerical Grid
-[x,y]=meshgrid(-n/2:n/2,-m/2:m/2); X=zeros(m+1,n+1,2); X(:,:,1)=x; X(:,:,2)=y;
+[x,y]=meshgrid(-n/2:n/2,-m/2:m/2);
+X=zeros(m+1,n+1,2);
+X(:,:,1)=x;
+X(:,:,2)=y;
+
 % X=ones(m+1,n+1,2);
 % High Resolution Grid
-h=3; [xh,yh]=meshgrid(-n/2:1/h:n/2,-m/2:1/h:m/2); Xh=zeros(h*m+1,h*n+1,2); Xh(:,:,1)=xh; Xh(:,:,2)=yh;
+h=3;
+[xh,yh]=meshgrid(-n/2:1/h:n/2,-m/2:1/h:m/2);
+Xh=zeros(h*m+1,h*n+1,2);
+Xh(:,:,1)=xh;
+Xh(:,:,2)=yh;
 
 %% ---Build Sample to be fitted---
 % Sample Parameters:
@@ -70,6 +78,7 @@ A_s = [2, 0, 7, 0, 4.5, pi/8]; % The original example
 
 % Build Sample data,
 S = f(A_s,X);
+keyboard
 % disp(X);
 % disp(S);
 
