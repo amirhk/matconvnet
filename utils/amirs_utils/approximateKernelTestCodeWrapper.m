@@ -13,14 +13,14 @@
 
 
 % projected_dim_list = [1,5:5:25,50:25:100]; dataset = 'usps';
-% projected_dim_list = [1:2:9,10:5:25,25:25:100,100:100:700]; dataset = 'mnist-784';
+projected_dim_list = [1:2:9,10:5:25,25:25:100,100:100:700]; dataset = 'mnist-784';
 % projected_dim_list = [1,5:5:25,50]; dataset = 'uci-spam';
 % projected_dim_list = [1,2:8:34]; dataset = 'uci-ion';
 % projected_dim_list = [1,2:4:34]; dataset = 'uci-ion';
 % projected_dim_list = [1,5:25:55,60]; dataset = 'uci-sonar';
 % projected_dim_list = 1:4;        dataset = 'uci-balance';
 % projected_dim_list = [1,2:4:10];        dataset = 'xor-10D-350-train-150-test';
-projected_dim_list = [1:10];        dataset = 'xor-10D-350-train-150-test';
+% projected_dim_list = [1:10];        dataset = 'xor-10D-350-train-150-test';
 % projected_dim_list = [1,2:4:10];        dataset = 'rings-10D-350-train-150-test';
 % projected_dim_list = [1,2:4:10];        dataset = 'spirals-10D-350-train-150-test';
 num_trials = 3;
