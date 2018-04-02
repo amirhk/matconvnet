@@ -196,6 +196,8 @@ function all_class_imdb = constructMultiClassImdbs(dataset, debug_flag)
       % all_class_imdb = constructSyntheticXORImdb(500, 20);
       % all_class_imdb = constructSyntheticXORImdb(250, 10);
       all_class_imdb = constructSyntheticXORImdb(100, 10);
+    case 'xor-10D-350-train-150-test'
+      all_class_imdb = constructSyntheticXORImdb(125, 10);
     case 'spirals-2D'
       all_class_imdb = constructSyntheticSpiralsImdb(2000);
     otherwise

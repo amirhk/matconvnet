@@ -13,14 +13,17 @@
 
 
 % projected_dim_list = [1,5:5:25,50:25:100]; dataset = 'usps';
+% projected_dim_list = [1:2:9,10:5:25,25:25:100,100:100:700]; dataset = 'mnist-784';
 % projected_dim_list = [1,5:5:25,50]; dataset = 'uci-spam';
 % projected_dim_list = [1,2:8:34]; dataset = 'uci-ion';
+% projected_dim_list = [1,2:4:34]; dataset = 'uci-ion';
 % projected_dim_list = [1,5:25:55,60]; dataset = 'uci-sonar';
 % projected_dim_list = 1:4;        dataset = 'uci-balance';
-projected_dim_list = [1,2:4:10];        dataset = 'xor-10D-350-train-150-test';
+% projected_dim_list = [1,2:4:10];        dataset = 'xor-10D-350-train-150-test';
+projected_dim_list = [1:10];        dataset = 'xor-10D-350-train-150-test';
 % projected_dim_list = [1,2:4:10];        dataset = 'rings-10D-350-train-150-test';
 % projected_dim_list = [1,2:4:10];        dataset = 'spirals-10D-350-train-150-test';
-num_trials = 10;
+num_trials = 3;
 
 
 
@@ -64,53 +67,64 @@ for i = 1:numel(projected_dim_list)
 end
 
 
+save(sprintf('%s', dataset), 'results_per_fieldname_multidim')
 
 
+% figure,
 
-figure,
-
-subplot(1,2,1)
-grid on;
-hold on;
-legend_cell_array = {};
-plot(projected_dim_list, results_per_fieldname_multidim.accuracy_spca_eigen.mean, '--mo', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'accuracy spca eigen (mean)'];
-plot(projected_dim_list, results_per_fieldname_multidim.accuracy_kspca_eigen.mean, '-r^', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'accuracy kspca eigen (mean)'];
-plot(projected_dim_list, results_per_fieldname_multidim.accuracy_spca_direct.mean, '--go', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'accuracy spca direct (mean)'];
-plot(projected_dim_list, results_per_fieldname_multidim.accuracy_kspca_direct.mean, '-b^', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'accuracy kspca direct (mean)'];
-plot(projected_dim_list, results_per_fieldname_multidim.accuracy_pca_direct.mean, '-.yo', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'accuracy pca direct (mean)'];
-plot(projected_dim_list, results_per_fieldname_multidim.accuracy_random_projection.mean, '-.c^', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'accuracy random projection (mean)'];
-xlabel('Projected Dimension');
-ylabel('Accuracy (1-NN)');
-hold off;
-ylim([0,1]);
-title('Accuracy Comparison');
-legend(legend_cell_array, 'Location','southeast');
+% subplot(1,2,1)
+% grid on;
+% hold on;
+% legend_cell_array = {};
+% plot(projected_dim_list, results_per_fieldname_multidim.accuracy_spca_eigen.mean, '--mo', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'accuracy spca eigen (mean)'];
+% plot(projected_dim_list, results_per_fieldname_multidim.accuracy_kspca_eigen.mean, '-r^', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'accuracy kspca eigen (mean)'];
+% plot(projected_dim_list, results_per_fieldname_multidim.accuracy_spca_direct.mean, '--go', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'accuracy spca direct (mean)'];
+% plot(projected_dim_list, results_per_fieldname_multidim.accuracy_kspca_direct.mean, '-b^', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'accuracy kspca direct (mean)'];
+% % plot(projected_dim_list, results_per_fieldname_multidim.accuracy_pca_direct.mean, '-.yo', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'accuracy pca direct (mean)'];
+% % plot(projected_dim_list, results_per_fieldname_multidim.accuracy_random_projection.mean, '-.c^', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'accuracy random projection (mean)'];
+% xlabel('Projected Dimension', 'FontSize', 16);
+% ylabel('Accuracy (1-NN)', 'FontSize', 16);
+% hold off;
+% ylim([0,1]);
+% title('Accuracy Comparison', 'FontSize', 16);
+% legend(legend_cell_array, 'Location', 'east', 'FontSize', 16);
 
 
-subplot(1,2,2)
-grid on;
-hold on;
-legend_cell_array = {};
-ciplot(results_per_fieldname_multidim.duration_spca_eigen.mean - results_per_fieldname_multidim.duration_spca_eigen.std, results_per_fieldname_multidim.duration_spca_eigen.mean + results_per_fieldname_multidim.duration_spca_eigen.std, projected_dim_list, 'm'); legend_cell_array = [legend_cell_array, 'duration spca eigen (std)'];
-ciplot(results_per_fieldname_multidim.duration_kspca_eigen.mean - results_per_fieldname_multidim.duration_kspca_eigen.std, results_per_fieldname_multidim.duration_kspca_eigen.mean + results_per_fieldname_multidim.duration_kspca_eigen.std, projected_dim_list, 'r'); legend_cell_array = [legend_cell_array, 'duration kspca eigen (std)'];
-ciplot(results_per_fieldname_multidim.duration_spca_direct.mean - results_per_fieldname_multidim.duration_spca_direct.std, results_per_fieldname_multidim.duration_spca_direct.mean + results_per_fieldname_multidim.duration_spca_direct.std, projected_dim_list, 'g'); legend_cell_array = [legend_cell_array, 'duration spca direct (std)'];
-ciplot(results_per_fieldname_multidim.duration_kspca_direct.mean - results_per_fieldname_multidim.duration_kspca_direct.std, results_per_fieldname_multidim.duration_kspca_direct.mean + results_per_fieldname_multidim.duration_kspca_direct.std, projected_dim_list, 'b'); legend_cell_array = [legend_cell_array, 'duration kspca direct (std)'];
-ciplot(results_per_fieldname_multidim.duration_pca_direct.mean - results_per_fieldname_multidim.duration_pca_direct.std, results_per_fieldname_multidim.duration_pca_direct.mean + results_per_fieldname_multidim.duration_pca_direct.std, projected_dim_list, 'y'); legend_cell_array = [legend_cell_array, 'duration pca direct (std)'];
-ciplot(results_per_fieldname_multidim.duration_random_projection.mean - results_per_fieldname_multidim.duration_random_projection.std, results_per_fieldname_multidim.duration_random_projection.mean + results_per_fieldname_multidim.duration_random_projection.std, projected_dim_list, 'c'); legend_cell_array = [legend_cell_array, 'duration random projection (std)'];
-plot(projected_dim_list, results_per_fieldname_multidim.duration_spca_eigen.mean, '--mo', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'duration spca eigen (mean)'];
-plot(projected_dim_list, results_per_fieldname_multidim.duration_kspca_eigen.mean, '-r^', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'duration kspca eigen (mean)'];
-plot(projected_dim_list, results_per_fieldname_multidim.duration_spca_direct.mean, '--go', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'duration spca direct (mean)'];
-plot(projected_dim_list, results_per_fieldname_multidim.duration_kspca_direct.mean, '-b^', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'duration kspca direct (mean)'];
-plot(projected_dim_list, results_per_fieldname_multidim.duration_pca_direct.mean, '-y^', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'duration pca direct (mean)'];
-plot(projected_dim_list, results_per_fieldname_multidim.duration_random_projection.mean, '-c^', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'duration random projection (mean)'];
-xlabel('Projected Dimension');
-ylabel('Duration (sec)');
-hold off;
-title('Duration Comparison');
-legend(legend_cell_array, 'Location','northwest');
+% subplot(1,2,2)
+% grid on;
+% hold on;
+% legend_cell_array = {};
+% % ciplot(results_per_fieldname_multidim.duration_spca_eigen.mean - results_per_fieldname_multidim.duration_spca_eigen.std, results_per_fieldname_multidim.duration_spca_eigen.mean + results_per_fieldname_multidim.duration_spca_eigen.std, projected_dim_list, 'm'); legend_cell_array = [legend_cell_array, 'duration spca eigen (std)'];
+% % ciplot(results_per_fieldname_multidim.duration_kspca_eigen.mean - results_per_fieldname_multidim.duration_kspca_eigen.std, results_per_fieldname_multidim.duration_kspca_eigen.mean + results_per_fieldname_multidim.duration_kspca_eigen.std, projected_dim_list, 'r'); legend_cell_array = [legend_cell_array, 'duration kspca eigen (std)'];
+% % ciplot(results_per_fieldname_multidim.duration_spca_direct.mean - results_per_fieldname_multidim.duration_spca_direct.std, results_per_fieldname_multidim.duration_spca_direct.mean + results_per_fieldname_multidim.duration_spca_direct.std, projected_dim_list, 'g'); legend_cell_array = [legend_cell_array, 'duration spca direct (std)'];
+% % ciplot(results_per_fieldname_multidim.duration_kspca_direct.mean - results_per_fieldname_multidim.duration_kspca_direct.std, results_per_fieldname_multidim.duration_kspca_direct.mean + results_per_fieldname_multidim.duration_kspca_direct.std, projected_dim_list, 'b'); legend_cell_array = [legend_cell_array, 'duration kspca direct (std)'];
+% % ciplot(results_per_fieldname_multidim.duration_pca_direct.mean - results_per_fieldname_multidim.duration_pca_direct.std, results_per_fieldname_multidim.duration_pca_direct.mean + results_per_fieldname_multidim.duration_pca_direct.std, projected_dim_list, 'y'); legend_cell_array = [legend_cell_array, 'duration pca direct (std)'];
+% % ciplot(results_per_fieldname_multidim.duration_random_projection.mean - results_per_fieldname_multidim.duration_random_projection.std, results_per_fieldname_multidim.duration_random_projection.mean + results_per_fieldname_multidim.duration_random_projection.std, projected_dim_list, 'c'); legend_cell_array = [legend_cell_array, 'duration random projection (std)'];
+% plot(projected_dim_list, results_per_fieldname_multidim.duration_spca_eigen.mean, '--mo', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'duration spca eigen (mean)'];
+% plot(projected_dim_list, results_per_fieldname_multidim.duration_kspca_eigen.mean, '-r^', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'duration kspca eigen (mean)'];
+% plot(projected_dim_list, results_per_fieldname_multidim.duration_spca_direct.mean, '--go', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'duration spca direct (mean)'];
+% plot(projected_dim_list, results_per_fieldname_multidim.duration_kspca_direct.mean, '-b^', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'duration kspca direct (mean)'];
+% % plot(projected_dim_list, results_per_fieldname_multidim.duration_pca_direct.mean, '-y^', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'duration pca direct (mean)'];
+% % plot(projected_dim_list, results_per_fieldname_multidim.duration_random_projection.mean, '-c^', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'duration random projection (mean)'];
+% xlabel('Projected Dimension', 'FontSize', 16);
+% ylabel('Duration (sec)', 'FontSize', 16);
+% hold off;
+% title('Duration Comparison', 'FontSize', 16);
+% legend(legend_cell_array, 'Location', 'west', 'FontSize', 16);
 
-suptitle(dataset)
+% h = suptitle(dataset)
+% set(h,'FontSize',20,'FontWeight','normal')
 
+
+% keyboard
+
+% for i = 1 : numel(all_fieldnames)
+%   fieldname = all_fieldnames{i};
+%   fprintf('\n%s\n', fieldname);
+%   for j = 1:numel(projected_dim_list)
+%     fprintf('[d = %d] \t [mean] %.4f \t [std] %.4f\n', projected_dim_list(j), results_per_fieldname_multidim.(fieldname).mean(j), results_per_fieldname_multidim.(fieldname).std(j));
+%   end
+% end
 
 
 
