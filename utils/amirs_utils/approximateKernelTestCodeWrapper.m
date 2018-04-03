@@ -12,8 +12,9 @@
 
 
 
-% projected_dim_list = [1,5:5:25,50:25:100]; dataset = 'usps';
-projected_dim_list = [1:2:9,10:5:25,25:25:100,100:100:700]; dataset = 'mnist-784';
+% projected_dim_list = [1:5,5:5:25,50:25:100]; dataset = 'usps';
+projected_dim_list = [1:2:9,10:5:25,25:25:100]; dataset = 'mnist-784';
+% projected_dim_list = [1:2:9,10:5:25,25:25:100,100:100:700]; dataset = 'mnist-784';
 % projected_dim_list = [1,5:5:25,50]; dataset = 'uci-spam';
 % projected_dim_list = [1,2:8:34]; dataset = 'uci-ion';
 % projected_dim_list = [1,2:4:34]; dataset = 'uci-ion';
@@ -23,7 +24,7 @@ projected_dim_list = [1:2:9,10:5:25,25:25:100,100:100:700]; dataset = 'mnist-784
 % projected_dim_list = [1:10];        dataset = 'xor-10D-350-train-150-test';
 % projected_dim_list = [1,2:4:10];        dataset = 'rings-10D-350-train-150-test';
 % projected_dim_list = [1,2:4:10];        dataset = 'spirals-10D-350-train-150-test';
-num_trials = 3;
+num_trials = 40;
 
 
 
@@ -33,12 +34,11 @@ num_trials = 3;
 % dummy run just to get fieldnames and initialize results arrays
 fprintf('Dummy iteration...\t');
 output = approximateKernelTestCode(false, 2, dataset);
-results_per_fieldname_multirun = {};
+results_per_fieldname_singledim_multirun = {};
 results_per_fieldname_multidim = {};
 all_fieldnames = fieldnames(output);
 for i = 1 : numel(all_fieldnames)
   fieldname = all_fieldnames{i};
-  results_per_fieldname_multirun.(fieldname) = [];
   results_per_fieldname_multidim.(fieldname).mean = [];
   results_per_fieldname_multidim.(fieldname).std = [];
 end
@@ -46,22 +46,29 @@ fprintf('done.\n\n\n');
 
 
 for i = 1:numel(projected_dim_list)
+
   projected_dim = projected_dim_list(i);
+
+  for i = 1 : numel(all_fieldnames)
+    fieldname = all_fieldnames{i};
+    results_per_fieldname_singledim_multirun.(fieldname) = [];
+  end
+
   for i = 1 : num_trials
     fprintf('Iteration #%02d/%02d...\t', i, num_trials);
     output = approximateKernelTestCode(false, projected_dim, dataset);
     for i = 1 : numel(all_fieldnames)
       fieldname = all_fieldnames{i};
-      results_per_fieldname_multirun.(fieldname)(end+1) = output.(fieldname);
+      results_per_fieldname_singledim_multirun.(fieldname)(end+1) = output.(fieldname);
     end
     fprintf('done.\n');
   end
 
   for i = 1 : numel(all_fieldnames)
     fieldname = all_fieldnames{i};
-    fprintf('Average %s (k = %d): \t %.4f +/- %.4f\n', strrep(fieldname, '_', ' '), projected_dim, mean(results_per_fieldname_multirun.(fieldname)), std(results_per_fieldname_multirun.(fieldname)));
-    results_per_fieldname_multidim.(fieldname).mean(end+1) = mean(results_per_fieldname_multirun.(fieldname));
-    results_per_fieldname_multidim.(fieldname).std(end+1) = std(results_per_fieldname_multirun.(fieldname));
+    fprintf('Average %s (k = %d): \t %.4f +/- %.4f\n', strrep(fieldname, '_', ' '), projected_dim, mean(results_per_fieldname_singledim_multirun.(fieldname)), std(results_per_fieldname_singledim_multirun.(fieldname)));
+    results_per_fieldname_multidim.(fieldname).mean(end+1) = mean(results_per_fieldname_singledim_multirun.(fieldname));
+    results_per_fieldname_multidim.(fieldname).std(end+1) = std(results_per_fieldname_singledim_multirun.(fieldname));
   end
 
 end
@@ -69,48 +76,60 @@ end
 
 save(sprintf('%s', dataset), 'results_per_fieldname_multidim')
 
+% keyboard
 
-% figure,
+% % projected_dim_list = [1:2:9,10:5:25,25:25:100]; dataset = 'mnist-784';
+% % projected_dim_list = [1,2:4:34]; dataset = 'uci-ion';
+% projected_dim_list = [1:10];        dataset = 'xor-10D-350-train-150-test';
+
+figure,
 
 % subplot(1,2,1)
-% grid on;
-% hold on;
-% legend_cell_array = {};
-% plot(projected_dim_list, results_per_fieldname_multidim.accuracy_spca_eigen.mean, '--mo', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'accuracy spca eigen (mean)'];
-% plot(projected_dim_list, results_per_fieldname_multidim.accuracy_kspca_eigen.mean, '-r^', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'accuracy kspca eigen (mean)'];
-% plot(projected_dim_list, results_per_fieldname_multidim.accuracy_spca_direct.mean, '--go', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'accuracy spca direct (mean)'];
-% plot(projected_dim_list, results_per_fieldname_multidim.accuracy_kspca_direct.mean, '-b^', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'accuracy kspca direct (mean)'];
-% % plot(projected_dim_list, results_per_fieldname_multidim.accuracy_pca_direct.mean, '-.yo', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'accuracy pca direct (mean)'];
-% % plot(projected_dim_list, results_per_fieldname_multidim.accuracy_random_projection.mean, '-.c^', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'accuracy random projection (mean)'];
-% xlabel('Projected Dimension', 'FontSize', 16);
-% ylabel('Accuracy (1-NN)', 'FontSize', 16);
-% hold off;
-% ylim([0,1]);
-% title('Accuracy Comparison', 'FontSize', 16);
-% legend(legend_cell_array, 'Location', 'east', 'FontSize', 16);
+grid on;
+hold on;
+legend_cell_array = {};
+plot(projected_dim_list, results_per_fieldname_multidim.accuracy_spca_eigen.mean, '--mo', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'Accuracy SPCA (mean)'];
+% plot(projected_dim_list, results_per_fieldname_multidim.accuracy_kspca_eigen.mean, '-r^', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'Accuracy KSPCA (mean)'];
+plot(projected_dim_list, results_per_fieldname_multidim.accuracy_spca_direct.mean, '--go', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'Accuracy SRP (mean)'];
+% plot(projected_dim_list, results_per_fieldname_multidim.accuracy_kspca_direct.mean, '-b^', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'Accuracy KSRP (mean)'];
+% plot(projected_dim_list, results_per_fieldname_multidim.accuracy_pca_direct.mean, '-.yo', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'Accuracy RPCA (mean)'];
+% plot(projected_dim_list, results_per_fieldname_multidim.accuracy_random_projection.mean, '-.c^', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'Accuracy Random Projection (mean)'];
+xlabel('Projected Dimension', 'FontSize', 16);
+ylabel('Accuracy (1-NN)', 'FontSize', 16);
+hold off;
+ylim([0,1]);
+title('Accuracy Comparison', 'FontSize', 16);
+legend(legend_cell_array, 'Location', 'east', 'FontSize', 16);
+
+saveas(gcf,sprintf('1nn_perf_%s', dataset),'epsc')
 
 
+figure
 % subplot(1,2,2)
-% grid on;
-% hold on;
-% legend_cell_array = {};
-% % ciplot(results_per_fieldname_multidim.duration_spca_eigen.mean - results_per_fieldname_multidim.duration_spca_eigen.std, results_per_fieldname_multidim.duration_spca_eigen.mean + results_per_fieldname_multidim.duration_spca_eigen.std, projected_dim_list, 'm'); legend_cell_array = [legend_cell_array, 'duration spca eigen (std)'];
-% % ciplot(results_per_fieldname_multidim.duration_kspca_eigen.mean - results_per_fieldname_multidim.duration_kspca_eigen.std, results_per_fieldname_multidim.duration_kspca_eigen.mean + results_per_fieldname_multidim.duration_kspca_eigen.std, projected_dim_list, 'r'); legend_cell_array = [legend_cell_array, 'duration kspca eigen (std)'];
-% % ciplot(results_per_fieldname_multidim.duration_spca_direct.mean - results_per_fieldname_multidim.duration_spca_direct.std, results_per_fieldname_multidim.duration_spca_direct.mean + results_per_fieldname_multidim.duration_spca_direct.std, projected_dim_list, 'g'); legend_cell_array = [legend_cell_array, 'duration spca direct (std)'];
-% % ciplot(results_per_fieldname_multidim.duration_kspca_direct.mean - results_per_fieldname_multidim.duration_kspca_direct.std, results_per_fieldname_multidim.duration_kspca_direct.mean + results_per_fieldname_multidim.duration_kspca_direct.std, projected_dim_list, 'b'); legend_cell_array = [legend_cell_array, 'duration kspca direct (std)'];
-% % ciplot(results_per_fieldname_multidim.duration_pca_direct.mean - results_per_fieldname_multidim.duration_pca_direct.std, results_per_fieldname_multidim.duration_pca_direct.mean + results_per_fieldname_multidim.duration_pca_direct.std, projected_dim_list, 'y'); legend_cell_array = [legend_cell_array, 'duration pca direct (std)'];
-% % ciplot(results_per_fieldname_multidim.duration_random_projection.mean - results_per_fieldname_multidim.duration_random_projection.std, results_per_fieldname_multidim.duration_random_projection.mean + results_per_fieldname_multidim.duration_random_projection.std, projected_dim_list, 'c'); legend_cell_array = [legend_cell_array, 'duration random projection (std)'];
-% plot(projected_dim_list, results_per_fieldname_multidim.duration_spca_eigen.mean, '--mo', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'duration spca eigen (mean)'];
-% plot(projected_dim_list, results_per_fieldname_multidim.duration_kspca_eigen.mean, '-r^', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'duration kspca eigen (mean)'];
-% plot(projected_dim_list, results_per_fieldname_multidim.duration_spca_direct.mean, '--go', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'duration spca direct (mean)'];
-% plot(projected_dim_list, results_per_fieldname_multidim.duration_kspca_direct.mean, '-b^', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'duration kspca direct (mean)'];
-% % plot(projected_dim_list, results_per_fieldname_multidim.duration_pca_direct.mean, '-y^', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'duration pca direct (mean)'];
-% % plot(projected_dim_list, results_per_fieldname_multidim.duration_random_projection.mean, '-c^', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'duration random projection (mean)'];
-% xlabel('Projected Dimension', 'FontSize', 16);
-% ylabel('Duration (sec)', 'FontSize', 16);
-% hold off;
-% title('Duration Comparison', 'FontSize', 16);
-% legend(legend_cell_array, 'Location', 'west', 'FontSize', 16);
+grid on;
+hold on;
+legend_cell_array = {};
+% ciplot(results_per_fieldname_multidim.duration_spca_eigen.mean - results_per_fieldname_multidim.duration_spca_eigen.std, results_per_fieldname_multidim.duration_spca_eigen.mean + results_per_fieldname_multidim.duration_spca_eigen.std, projected_dim_list, 'm'); legend_cell_array = [legend_cell_array, 'duration spca eigen (std)'];
+% ciplot(results_per_fieldname_multidim.duration_kspca_eigen.mean - results_per_fieldname_multidim.duration_kspca_eigen.std, results_per_fieldname_multidim.duration_kspca_eigen.mean + results_per_fieldname_multidim.duration_kspca_eigen.std, projected_dim_list, 'r'); legend_cell_array = [legend_cell_array, 'duration kspca eigen (std)'];
+% ciplot(results_per_fieldname_multidim.duration_spca_direct.mean - results_per_fieldname_multidim.duration_spca_direct.std, results_per_fieldname_multidim.duration_spca_direct.mean + results_per_fieldname_multidim.duration_spca_direct.std, projected_dim_list, 'g'); legend_cell_array = [legend_cell_array, 'duration spca direct (std)'];
+% ciplot(results_per_fieldname_multidim.duration_kspca_direct.mean - results_per_fieldname_multidim.duration_kspca_direct.std, results_per_fieldname_multidim.duration_kspca_direct.mean + results_per_fieldname_multidim.duration_kspca_direct.std, projected_dim_list, 'b'); legend_cell_array = [legend_cell_array, 'duration kspca direct (std)'];
+% ciplot(results_per_fieldname_multidim.duration_pca_direct.mean - results_per_fieldname_multidim.duration_pca_direct.std, results_per_fieldname_multidim.duration_pca_direct.mean + results_per_fieldname_multidim.duration_pca_direct.std, projected_dim_list, 'y'); legend_cell_array = [legend_cell_array, 'duration pca direct (std)'];
+% ciplot(results_per_fieldname_multidim.duration_random_projection.mean - results_per_fieldname_multidim.duration_random_projection.std, results_per_fieldname_multidim.duration_random_projection.mean + results_per_fieldname_multidim.duration_random_projection.std, projected_dim_list, 'c'); legend_cell_array = [legend_cell_array, 'duration random projection (std)'];
+plot(projected_dim_list, results_per_fieldname_multidim.duration_spca_eigen.mean, '--mo', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'Duration SPCA (mean)'];
+% plot(projected_dim_list, results_per_fieldname_multidim.duration_kspca_eigen.mean, '-r^', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'Duration KSPCA (mean)'];
+plot(projected_dim_list, results_per_fieldname_multidim.duration_spca_direct.mean, '--go', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'Duration SRP (mean)'];
+% plot(projected_dim_list, results_per_fieldname_multidim.duration_kspca_direct.mean, '-b^', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'Duration KSRP (mean)'];
+% plot(projected_dim_list, results_per_fieldname_multidim.duration_pca_direct.mean, '-y^', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'Duration RPCA (mean)'];
+% plot(projected_dim_list, results_per_fieldname_multidim.duration_random_projection.mean, '-c^', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'Duration Random Projection (mean)'];
+xlabel('Projected Dimension', 'FontSize', 16);
+ylabel('Duration (sec)', 'FontSize', 16);
+hold off;
+title('Duration Comparison', 'FontSize', 16);
+legend(legend_cell_array, 'Location', 'west', 'FontSize', 16);
+
+saveas(gcf,sprintf('time_perf_%s', dataset),'epsc')
+
+keyboard
 
 % h = suptitle(dataset)
 % set(h,'FontSize',20,'FontWeight','normal')
@@ -197,11 +216,11 @@ save(sprintf('%s', dataset), 'results_per_fieldname_multidim')
 % % dummy run just to get fieldnames and initialize results arrays
 % fprintf('Dummy iteration...\n');
 % output = approximateKernelTestCode(false, 2, dataset);
-% results_per_fieldname_multirun = {};
+% results_per_fieldname_singledim_multirun = {};
 % all_fieldnames = fieldnames(output);
 % for i = 1 : numel(all_fieldnames)
 %   fieldname = all_fieldnames{i};
-%   results_per_fieldname_multirun.(fieldname) = [];
+%   results_per_fieldname_singledim_multirun.(fieldname) = [];
 % end
 % fprintf('done.\n\n\n');
 
@@ -211,26 +230,26 @@ save(sprintf('%s', dataset), 'results_per_fieldname_multidim')
 %   output = approximateKernelTestCode(false, projected_dim, dataset);
 %   for i = 1 : numel(all_fieldnames)
 %     fieldname = all_fieldnames{i};
-%     results_per_fieldname_multirun.(fieldname)(end+1) = output.(fieldname);
+%     results_per_fieldname_singledim_multirun.(fieldname)(end+1) = output.(fieldname);
 %   end
 %   fprintf('done.\n');
 % end
 
 
-% proposed_method.accuracy.mean = [mean(results_per_fieldname_multirun.accuracy_proposed_0), mean(results_per_fieldname_multirun.accuracy_proposed_1), mean(results_per_fieldname_multirun.accuracy_proposed_2)]; % , mean(results_per_fieldname_multirun.accuracy_proposed_3), mean(results_per_fieldname_multirun.accuracy_proposed_4)];
-% proposed_method.accuracy.std = [std(results_per_fieldname_multirun.accuracy_proposed_0), std(results_per_fieldname_multirun.accuracy_proposed_1), std(results_per_fieldname_multirun.accuracy_proposed_2)]; % , std(results_per_fieldname_multirun.accuracy_proposed_3), std(results_per_fieldname_multirun.accuracy_proposed_4)];
-% proposed_method.duration.mean = [mean(results_per_fieldname_multirun.duration_proposed_0), mean(results_per_fieldname_multirun.duration_proposed_1), mean(results_per_fieldname_multirun.duration_proposed_2)]; % , mean(results_per_fieldname_multirun.duration_proposed_3), mean(results_per_fieldname_multirun.duration_proposed_4)];
-% proposed_method.duration.std = [std(results_per_fieldname_multirun.duration_proposed_0), std(results_per_fieldname_multirun.duration_proposed_1), std(results_per_fieldname_multirun.duration_proposed_2)]; % , std(results_per_fieldname_multirun.duration_proposed_3), std(results_per_fieldname_multirun.duration_proposed_4)];
+% proposed_method.accuracy.mean = [mean(results_per_fieldname_singledim_multirun.accuracy_proposed_0), mean(results_per_fieldname_singledim_multirun.accuracy_proposed_1), mean(results_per_fieldname_singledim_multirun.accuracy_proposed_2)]; % , mean(results_per_fieldname_singledim_multirun.accuracy_proposed_3), mean(results_per_fieldname_singledim_multirun.accuracy_proposed_4)];
+% proposed_method.accuracy.std = [std(results_per_fieldname_singledim_multirun.accuracy_proposed_0), std(results_per_fieldname_singledim_multirun.accuracy_proposed_1), std(results_per_fieldname_singledim_multirun.accuracy_proposed_2)]; % , std(results_per_fieldname_singledim_multirun.accuracy_proposed_3), std(results_per_fieldname_singledim_multirun.accuracy_proposed_4)];
+% proposed_method.duration.mean = [mean(results_per_fieldname_singledim_multirun.duration_proposed_0), mean(results_per_fieldname_singledim_multirun.duration_proposed_1), mean(results_per_fieldname_singledim_multirun.duration_proposed_2)]; % , mean(results_per_fieldname_singledim_multirun.duration_proposed_3), mean(results_per_fieldname_singledim_multirun.duration_proposed_4)];
+% proposed_method.duration.std = [std(results_per_fieldname_singledim_multirun.duration_proposed_0), std(results_per_fieldname_singledim_multirun.duration_proposed_1), std(results_per_fieldname_singledim_multirun.duration_proposed_2)]; % , std(results_per_fieldname_singledim_multirun.duration_proposed_3), std(results_per_fieldname_singledim_multirun.duration_proposed_4)];
 
-% backprop_method.accuracy.mean = [mean(results_per_fieldname_multirun.accuracy_backprop_0), mean(results_per_fieldname_multirun.accuracy_backprop_1), mean(results_per_fieldname_multirun.accuracy_backprop_2)]; % , mean(results_per_fieldname_multirun.accuracy_backprop_3), mean(results_per_fieldname_multirun.accuracy_backprop_4)];
-% backprop_method.accuracy.std = [std(results_per_fieldname_multirun.accuracy_backprop_0), std(results_per_fieldname_multirun.accuracy_backprop_1), std(results_per_fieldname_multirun.accuracy_backprop_2)]; % , std(results_per_fieldname_multirun.accuracy_backprop_3), std(results_per_fieldname_multirun.accuracy_backprop_4)];
-% backprop_method.duration.mean = [mean(results_per_fieldname_multirun.duration_backprop_0), mean(results_per_fieldname_multirun.duration_backprop_1), mean(results_per_fieldname_multirun.duration_backprop_2)]; % , mean(results_per_fieldname_multirun.duration_backprop_3), mean(results_per_fieldname_multirun.duration_backprop_4)];
-% backprop_method.duration.std = [std(results_per_fieldname_multirun.duration_backprop_0), std(results_per_fieldname_multirun.duration_backprop_1), std(results_per_fieldname_multirun.duration_backprop_2)]; % , std(results_per_fieldname_multirun.duration_backprop_3), std(results_per_fieldname_multirun.duration_backprop_4)];
+% backprop_method.accuracy.mean = [mean(results_per_fieldname_singledim_multirun.accuracy_backprop_0), mean(results_per_fieldname_singledim_multirun.accuracy_backprop_1), mean(results_per_fieldname_singledim_multirun.accuracy_backprop_2)]; % , mean(results_per_fieldname_singledim_multirun.accuracy_backprop_3), mean(results_per_fieldname_singledim_multirun.accuracy_backprop_4)];
+% backprop_method.accuracy.std = [std(results_per_fieldname_singledim_multirun.accuracy_backprop_0), std(results_per_fieldname_singledim_multirun.accuracy_backprop_1), std(results_per_fieldname_singledim_multirun.accuracy_backprop_2)]; % , std(results_per_fieldname_singledim_multirun.accuracy_backprop_3), std(results_per_fieldname_singledim_multirun.accuracy_backprop_4)];
+% backprop_method.duration.mean = [mean(results_per_fieldname_singledim_multirun.duration_backprop_0), mean(results_per_fieldname_singledim_multirun.duration_backprop_1), mean(results_per_fieldname_singledim_multirun.duration_backprop_2)]; % , mean(results_per_fieldname_singledim_multirun.duration_backprop_3), mean(results_per_fieldname_singledim_multirun.duration_backprop_4)];
+% backprop_method.duration.std = [std(results_per_fieldname_singledim_multirun.duration_backprop_0), std(results_per_fieldname_singledim_multirun.duration_backprop_1), std(results_per_fieldname_singledim_multirun.duration_backprop_2)]; % , std(results_per_fieldname_singledim_multirun.duration_backprop_3), std(results_per_fieldname_singledim_multirun.duration_backprop_4)];
 
-% % random_p_method.accuracy.mean = [mean(results_per_fieldname_multirun.accuracy_rp_0), mean(results_per_fieldname_multirun.accuracy_rp_1), mean(results_per_fieldname_multirun.accuracy_rp_2)]; % , mean(results_per_fieldname_multirun.accuracy_rp_3), mean(results_per_fieldname_multirun.accuracy_rp_4)];
-% % random_p_method.accuracy.std = [std(results_per_fieldname_multirun.accuracy_rp_0), std(results_per_fieldname_multirun.accuracy_rp_1), std(results_per_fieldname_multirun.accuracy_rp_2)]; % , std(results_per_fieldname_multirun.accuracy_rp_3), std(results_per_fieldname_multirun.accuracy_rp_4)];
-% % random_p_method.duration.mean = [mean(results_per_fieldname_multirun.duration_rp_0), mean(results_per_fieldname_multirun.duration_rp_1), mean(results_per_fieldname_multirun.duration_rp_2)]; % , mean(results_per_fieldname_multirun.duration_rp_3), mean(results_per_fieldname_multirun.duration_rp_4)];
-% % random_p_method.duration.std = [std(results_per_fieldname_multirun.duration_rp_0), std(results_per_fieldname_multirun.duration_rp_1), std(results_per_fieldname_multirun.duration_rp_2)]; % , std(results_per_fieldname_multirun.duration_rp_3), std(results_per_fieldname_multirun.duration_rp_4)];
+% % random_p_method.accuracy.mean = [mean(results_per_fieldname_singledim_multirun.accuracy_rp_0), mean(results_per_fieldname_singledim_multirun.accuracy_rp_1), mean(results_per_fieldname_singledim_multirun.accuracy_rp_2)]; % , mean(results_per_fieldname_singledim_multirun.accuracy_rp_3), mean(results_per_fieldname_singledim_multirun.accuracy_rp_4)];
+% % random_p_method.accuracy.std = [std(results_per_fieldname_singledim_multirun.accuracy_rp_0), std(results_per_fieldname_singledim_multirun.accuracy_rp_1), std(results_per_fieldname_singledim_multirun.accuracy_rp_2)]; % , std(results_per_fieldname_singledim_multirun.accuracy_rp_3), std(results_per_fieldname_singledim_multirun.accuracy_rp_4)];
+% % random_p_method.duration.mean = [mean(results_per_fieldname_singledim_multirun.duration_rp_0), mean(results_per_fieldname_singledim_multirun.duration_rp_1), mean(results_per_fieldname_singledim_multirun.duration_rp_2)]; % , mean(results_per_fieldname_singledim_multirun.duration_rp_3), mean(results_per_fieldname_singledim_multirun.duration_rp_4)];
+% % random_p_method.duration.std = [std(results_per_fieldname_singledim_multirun.duration_rp_0), std(results_per_fieldname_singledim_multirun.duration_rp_1), std(results_per_fieldname_singledim_multirun.duration_rp_2)]; % , std(results_per_fieldname_singledim_multirun.duration_rp_3), std(results_per_fieldname_singledim_multirun.duration_rp_4)];
 
 % num_layers_list = 1 : numel(proposed_method.accuracy.mean);
 
