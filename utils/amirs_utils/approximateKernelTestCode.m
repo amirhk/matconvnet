@@ -26,319 +26,6 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
 % POSSIBILITY OF SUCH DAMAGE.
 
 
-
-  dataset = 'xor-10D-350-train-150-test';
-  % dataset = 'usps';
-  % dataset = 'mnist-784';
-  % dataset = 'uci-sonar';
-
-
-  if strcmp(dataset, 'xor-10D-350-train-150-test')
-    projected_dim_list = [1:1:10];
-  elseif strcmp(dataset, 'usps')
-    % projected_dim_list = [1:1:256];
-    projected_dim_list = [1:15, 2.^[4:1:8]];
-  elseif strcmp(dataset, 'mnist-784')
-    projected_dim_list = 2.^[0:1:9];
-  elseif strcmp(dataset, 'uci-sonar')
-    projected_dim_list = [1:9,10:25:55,60];
-  end
-
-  repeat_count = 30;
-  average_per_dim_delta_pca_rpca = zeros(repeat_count, length(projected_dim_list));
-  average_per_dim_delta_pca_rpca_2 = zeros(repeat_count, length(projected_dim_list));
-  average_per_dim_delta_pca_rp = zeros(repeat_count, length(projected_dim_list));
-
-  for ii = 1:repeat_count
-
-    fprintf('[INFO] trial #%d\n', ii);
-
-    if strcmp(dataset, 'xor-10D-350-train-150-test')
-      tmp_opts.dataset = dataset;
-      imdb = loadSavedImdb(tmp_opts, false);
-    elseif strcmp(dataset, 'usps')
-      imdb = constructMultiClassImdbs(dataset, false);
-      imdb = createImdbWithBalance(dataset, imdb, 25, 25, false, false);
-    elseif strcmp(dataset, 'mnist-784')
-      imdb = constructMultiClassImdbs(dataset, false);
-      imdb = createImdbWithBalance(dataset, imdb, 25, 25, false, false);
-      % imdb = createImdbWithBalance(dataset, imdb, 500, 500, false, false);
-    elseif strcmp(dataset, 'uci-sonar')
-      imdb = constructMultiClassImdbs(dataset, false);
-    end
-
-    per_dim_delta_pca_rpca = [];
-    per_dim_delta_pca_rpca_2 = [];
-    per_dim_delta_pca_rp = [];
-
-    for projected_dim = projected_dim_list
-      % projected_dim = 2;
-
-      %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-      % Meta
-      %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-      vectorized_imdb = getVectorizedImdb(imdb);
-      indices_train = imdb.images.set == 1;
-      indices_test = imdb.images.set == 3;
-      % X = vectorized_imdb.images.data(indices_train,:)';
-      % Y = vectorized_imdb.images.labels(indices_train);
-      % X_test = vectorized_imdb.images.data(indices_test,:)';
-      % Y_test = vectorized_imdb.images.labels(indices_test);
-
-      X = [randn(2,3), randn(2,3) + 5];
-      Y = [1,1,1,2,2,2];
-      X_test = [randn(2,3), randn(2,3) + 5];
-      Y_test = [1,1,1,2,2,2];
-
-
-      %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-      % Compute PCA (on training data only)
-      %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-      tmp_X = X';
-      tmp_X = bsxfun(@minus, tmp_X, mean(tmp_X,1));           % zero-center
-      C = (tmp_X'*tmp_X)./(size(tmp_X,1)-1);                  %' cov(X)
-
-      [V D] = eig(C);
-      [D order] = sort(diag(D), 'descend');                   % sort cols high to low
-      V = V(:,order);
-      % [U D V] = svd(tmp_X');
-      % D_1 = D(1:2,1:2);
-
-      % n = length(Y);
-      % H = eye(n) - 1 / n * (ones(n,n));
-      % tmp = X * H * H * X';
-      % [U D V] = svd(tmp);
-      % D_2 = D;
-
-      % (diag(D_1)').^2
-      % diag(D_2)'
-      % assert(numel(find((diag(D_1)').^2 - diag(D_2)' > 10e-3)) == 0)
-
-      % (X * H)
-      % (X * H)'
-      % (U * D.^0.5)
-      % (U * D.^0.5)'
-      % (X * H) * (X * H)'
-      % (U * D.^0.5) * (U * D.^0.5)'
-      % % X * H = U * D.^0.5 up to a rotation
-      % % H * X'
-      % % D.^0.5 * U'
-      % D_inv_half = pinv(diag([diag(D); 0])).^0.5;
-      % U_1 = X * H * D_inv_half %  = U % X * H * D.^-0.5 = U
-      % U_1=U_1(:,1:2)
-
-      % U_2 = D_inv_half * H * X'
-      % (U * D.^0.5)'
-
-      % U' * U
-      % U_1' * U_1
-
-      % keyboard
-
-      U_pca_exact = V(:,1:projected_dim);
-      % U_pca_exact = U(:,1:projected_dim);
-      % U_pca_exact = real(V(:,1:projected_dim) * diag(D(1:projected_dim).^0.5));
-      projected_X_pca_exact = U_pca_exact' *  X;
-      projected_X_test_pca_exact = U_pca_exact' *  X_test;
-
-      tmp = squareform(pdist(projected_X_pca_exact'));
-      distance_matrix_pca_exact = tmp / max(tmp(:));
-
-
-      % %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-      % % Random PCA
-      % %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-      % n = length(Y);
-      % H = eye(n) - 1 / n * (ones(n,n));
-      % label_rbf_variance = 10e-10;
-      % number_of_random_bases_for_labels = 100;
-      % [L_approx_w_many_bases, psi_w_many_bases, ~, ~] = getApproxKernel(1:n, 1:n, label_rbf_variance, number_of_random_bases_for_labels, -1);
-
-      % tmp_projected_dim = projected_dim;
-      % tmp_psi = psi_w_many_bases';
-      % tmp_psi = bsxfun(@minus, tmp_psi, mean(tmp_psi,1));           % zero-center
-      % C = (tmp_psi'*tmp_psi)./(size(tmp_psi,1)-1);                  %' cov(X)
-      % [V D] = eig(C);
-      % [D order] = sort(diag(D), 'descend');                         % sort cols high to low
-      % V = V(:,order);
-      % psi_w_few_bases = V(:,1:tmp_projected_dim)' * psi_w_many_bases;
-
-      % % C = X * H * (psi_w_few_bases' * psi_w_few_bases) * H * X'./(size(tmp_X,1)-1);
-      % % [V D] = eig(C);
-      % % [D order] = sort(diag(D), 'descend');                   % sort cols high to low
-      % % V = real(V(:,order));
-
-      % % U_pca_random = V(:,1:projected_dim);
-      % U_pca_random = X * H * psi_w_few_bases';
-      % projected_X_pca_random = U_pca_random' * X;
-      % projected_X_test_pca_random = U_pca_random' * X_test;
-
-      % tmp = squareform(pdist(projected_X_pca_random'));
-      % distance_matrix_pca_random = tmp / max(tmp(:));
-
-      % % fprintf('Norm Diff PCA-RPCA: %.3f\n', norm(distance_matrix_pca_exact - distance_matrix_pca_random, 'fro'));
-
-
-
-      % %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-      % % Random PCA
-      % %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-      % n = length(Y);
-      % H = eye(n) - 1 / n * (ones(n,n));
-      % label_rbf_variance = 10e-10;
-      % number_of_random_bases_for_labels = projected_dim;
-      % [L_approx, psi, ~, ~] = getApproxKernel(1:n, 1:n, label_rbf_variance, number_of_random_bases_for_labels, -1);
-
-      % C = X * H * L_approx * H * X'./(size(tmp_X,1)-1);
-      % % C = X * H * eye(size(H,1)) * H * X'./(size(tmp_X,1)-1);
-
-      % [V D] = eig(C);
-      % [D order] = sort(diag(D), 'descend');                   % sort cols high to low
-      % keyboard
-      % V = real(V(:,order));
-
-      % U_pca_random = V(:,1:projected_dim);
-      % projected_X_pca_random = U_pca_random' * X;
-      % projected_X_test_pca_random = U_pca_random' * X_test;
-
-      % tmp = squareform(pdist(projected_X_pca_random'));
-      % distance_matrix_pca_random = tmp / max(tmp(:));
-
-      % % fprintf('Norm Diff PCA-RPCA: %.3f\n', norm(distance_matrix_pca_exact - distance_matrix_pca_random, 'fro'));
-
-
-
-      %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-      % Random PCA
-      %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-      n = length(Y);
-      H = eye(n) - 1 / n * (ones(n,n));
-      label_rbf_variance = 10e-10;
-      number_of_random_bases_for_labels = projected_dim;
-      [L_approx, psi, ~, ~] = getApproxKernel(1:n, 1:n, label_rbf_variance, number_of_random_bases_for_labels, -1);
-
-      % tmp = X * H * H * X';
-      % [U D V] = svd(tmp);
-      % inverse_D_to_the_half = diag(diag(D(1:projected_dim,1:projected_dim)).^(-.5)); % = inv(D(1:projected_dim,1:projected_dim).^(.5));
-      % % inverse_D_to_the_half = eye(projected_dim);
-      % % keyboard
-
-      % U_pca_random = X * H * psi' * inverse_D_to_the_half;
-      % U_pca_random = normc(X * H * psi');
-      U_pca_random = X * H * psi';
-      projected_X_pca_random = U_pca_random' * X;
-      projected_X_test_pca_random = U_pca_random' * X_test;
-
-      tmp = squareform(pdist(projected_X_pca_random'));
-      distance_matrix_pca_random = tmp / max(tmp(:));
-
-
-
-
-      %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-      % Random PCA
-      %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-      % n = length(Y);
-      % H = eye(n) - 1 / n * (ones(n,n));
-      % label_rbf_variance = 10e-10;
-      % number_of_random_bases_for_labels = projected_dim;
-      % [L_approx, psi, ~, ~] = getApproxKernel(1:n, 1:n, label_rbf_variance, number_of_random_bases_for_labels, -1);
-
-      tmp = X * H * H * X';
-      [U D V] = svd(tmp);
-      D_2 = D;
-      keyboard
-      inverse_D_to_the_half = diag(diag(D(1:projected_dim,1:projected_dim)).^(-.5)); % = inv(D(1:projected_dim,1:projected_dim).^(.5));
-      % inverse_D_to_the_half = eye(projected_dim);
-      % keyboard
-
-      U_pca_random = X * H * psi' * inverse_D_to_the_half;
-      % U_pca_random = normc(X * H * psi');
-      % U_pca_random = X * H * psi';
-      projected_X_pca_random = U_pca_random' * X;
-      projected_X_test_pca_random = U_pca_random' * X_test;
-
-      tmp = squareform(pdist(projected_X_pca_random'));
-      distance_matrix_pca_random_2 = tmp / max(tmp(:));
-
-
-
-
-
-
-
-      %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-      % Random Projection
-      %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-      w = 1 / sqrt(projected_dim) * randn(projected_dim, size(X,1));
-      projected_X = w * X;
-      projected_X_test = w * X_test;
-
-      projected_X_random_projection = projected_X;
-      projected_X_test_random_projection = projected_X_test;
-
-      tmp = squareform(pdist(projected_X_random_projection'));
-      distance_matrix_random_projection = tmp / max(tmp(:));
-
-
-
-      %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-      % Analysis
-      %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-      % figure,
-
-      % subplot(1,3,1),
-      % imshow(distance_matrix_pca_exact),
-
-      % subplot(1,3,2),
-      % imshow(distance_matrix_pca_random),
-
-      % subplot(1,3,3),
-      % imshow(distance_matrix_random_projection),
-
-      per_dim_delta_pca_rpca(end+1) = norm(distance_matrix_pca_exact - distance_matrix_pca_random, 'fro');
-      per_dim_delta_pca_rpca_2(end+1) = norm(distance_matrix_pca_exact - distance_matrix_pca_random_2, 'fro');
-      per_dim_delta_pca_rp(end+1) = norm(distance_matrix_pca_exact - distance_matrix_random_projection, 'fro');
-
-      % fprintf('[k = %d] |D_{PCA} - D_{RPCA}|_F = %.3f\n', projected_dim, per_dim_delta_pca_rpca(end));
-      % fprintf('[k = %d] |D_{PCA} - D_{RP}|_F = %.3f\n', projected_dim, per_dim_delta_pca_rp(end));
-
-    end
-    average_per_dim_delta_pca_rpca(ii,:) = per_dim_delta_pca_rpca;
-    average_per_dim_delta_pca_rpca_2(ii,:) = per_dim_delta_pca_rpca_2;
-    average_per_dim_delta_pca_rp(ii,:) = per_dim_delta_pca_rp;
-  end
-
-
-  legend_cell_array = {};
-  figure,
-  grid on,
-  hold on,
-  plot(projected_dim_list, mean(average_per_dim_delta_pca_rpca), 'LineWidth', 2); legend_cell_array = [legend_cell_array, '|D_{PCA} - D_{RPCA}|_F'];
-  plot(projected_dim_list, mean(average_per_dim_delta_pca_rpca_2), 'LineWidth', 2); legend_cell_array = [legend_cell_array, '|D_{PCA} - D_{RPCA_2}|_F'];
-  plot(projected_dim_list, mean(average_per_dim_delta_pca_rp), 'LineWidth', 2); legend_cell_array = [legend_cell_array, '|D_{PCA} - D_{RP}|_F'];
-  hold off,
-
-  set(gca, 'YLim', [0, get(gca, 'YLim') * [0; 1]])
-
-  xlabel('Projected Dimension');
-  ylabel('Delta in Frob Norm');
-  title(sprintf('%s - Comparison of RPCA vs RP (avg of %d)', dataset, repeat_count));
-  legend(legend_cell_array, 'Location','northeast');
-
-
-
-
-
-
-
-
-
-
-
-
-
-  keyboard
   % -----------------------------------------------------------------------------
   % Data setup
   % -----------------------------------------------------------------------------
@@ -351,57 +38,59 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
   % Y = [ones(1,n/2) * 1, ones(1,n/2) * 2];
   % Y_test = [ones(1,n/2) * 1, ones(1,n/2) * 2];
 
-  % [imdb, tmp] = setupExperimentsUsingProjectedImbds('uci-ion', 'whatever', false, false);
-  % [imdb, tmp] = setupExperimentsUsingProjectedImbds('uci-sonar', 'whatever', false, false);
-  % [imdb, tmp] = setupExperimentsUsingProjectedImbds('uci-spam', 'whatever', false, false); % TODO: create IMDB with 500 random samples... then test on that!??
-  % [imdb, tmp] = setupExperimentsUsingProjectedImbds('uci-balance', 'whatever', false, false); imdb = imdb.imdb;
-  % [imdb, tmp] = setupExperimentsUsingProjectedImbds('mnist-fashion-multi-class-subsampled', 'balanced-10', false, false);
-  % [imdb, tmp] = setupExperimentsUsingProjectedImbds('usps-multi-class-subsampled', 'whatever', false, false);
 
-
-  % if strcmp(dataset, 'xor-10D-350-train-150-test') || ...
-  %    strcmp(dataset, 'rings-10D-350-train-150-test') || ...
-  %    strcmp(dataset, 'spirals-10D-350-train-150-test')
-  %   tmp_opts.dataset = dataset;
-  %   imdb = loadSavedImdb(tmp_opts, false);
-  % % elseif strcmp(dataset, 'mnist')
-  % %   tmp_opts.dataset = 'mnist-784-multi-class-subsampled';
-  % %   tmp_opts.posneg_balance = 'balanced-250';
-  % %   imdb = loadSavedImdb(tmp_opts, false);
-  % else
+  should_load_saved_imdb = false;
+  if should_load_saved_imdb
+    tmp_opts.dataset = dataset;
+    if ~isSyntheticImdb(dataset) % NOT 'xor', 'rings', 'spirals'
+      tmp_opts.posneg_balance = 'balanced-250';
+    end
+    imdb = loadSavedImdb(tmp_opts, false);
+  else
     imdb = constructMultiClassImdbs(dataset, false);
+    % in case the dataset is large, shrink it.
     if strcmp(dataset, 'usps')
       imdb = createImdbWithBalance(dataset, imdb, 25, 25, false, false);
     elseif strcmp(dataset, 'mnist-784')
-      % imdb = createImdbWithBalance(dataset, imdb, 25, 25, false, false);
-      % imdb = createImdbWithBalance(dataset, imdb, 100, 100, false, false);
-      % imdb = createImdbWithBalance(dataset, imdb, 500, 500, false, false);
       imdb = createImdbWithBalance(dataset, imdb, 1000, 250, false, false);
-      % imdb = createImdbWithBalance(dataset, imdb, 2500, 500, false, false);
     elseif strcmp(dataset, 'uci-spam')
       imdb = createImdbWithBalance(dataset, imdb, 1000, 250, false, false);
     end
-  % end
+  end
+
   vectorized_imdb = getVectorizedImdb(imdb);
+  all_data = vectorized_imdb.images.data';
+  all_labels = vectorized_imdb.images.labels;
+
+  should_normalize = 1;
+  if should_normalize
+    X = all_data;
+    [p,n] = size(X);
+    X = (X - repmat(min(X')', 1, n)) ./ (repmat(max(X')', 1, n) - repmat(min(X')', 1, n));
+    nan_ind = find(isnan(X)==1);
+    X(nan_ind) = 0;
+    all_data = X;;
+  end
+
   indices_train = imdb.images.set == 1;
   indices_test = imdb.images.set == 3;
-  X = vectorized_imdb.images.data(indices_train,:)';
-  Y = vectorized_imdb.images.labels(indices_train);
-  X_test = vectorized_imdb.images.data(indices_test,:)';
-  Y_test = vectorized_imdb.images.labels(indices_test);
+  X = all_data(:,indices_train);
+  Y = all_labels(indices_train);
+  X_test = all_data(:,indices_test);
+  Y_test = all_labels(indices_test);
 
-  % normalize between 0-1
-  min_x_train = min(X')';
-  max_x_train = max(X')';
-  X = (X - min_x_train) ./ (max_x_train - min_x_train);
-  X_test = (X_test - min_x_train) ./ (max_x_train - min_x_train);
-  X(isnan(X)) = 0;
-  X_test(isnan(X_test)) = 0;
-  X(X > 1) = 1; % HACKY???
-  X_test(X_test > 1) = 1; % HACKY???
+  % % normalize between 0-1
+  % min_x_train = min(X')';
+  % max_x_train = max(X')';
+  % X = (X - min_x_train) ./ (max_x_train - min_x_train);
+  % X_test = (X_test - min_x_train) ./ (max_x_train - min_x_train);
+  % X(isnan(X)) = 0;
+  % X_test(isnan(X_test)) = 0;
+  % X(X > 1) = 1; % HACKY???
+  % X_test(X_test > 1) = 1; % HACKY???
 
-  % X = normc(X);
-  % X_test = normc(X_test);
+  % % X = normc(X);
+  % % X_test = normc(X_test);
 
 
 
@@ -417,7 +106,6 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
   data_rbf_variance = 10e-1;
   label_rbf_variance = 10e-10; % extremely small variance because we are approximating delta kernel
   number_of_random_bases_for_data = 1000;
-  % number_of_random_bases_for_labels = 2;
   number_of_random_bases_for_labels = projected_dim;
 
   if strcmp(dataset, 'usps')
@@ -442,6 +130,9 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
   fh_evaluation = @getTestAccuracyFrom1NN;
   % fh_evaluation = @getTestAccuracyFromLinearLeastSquares;
 
+  % fh_getApproxKernel = @getApproxKernelRKS;
+  fh_getApproxKernel = @getApproxKernelFastFood;
+
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % SPCA-eigen
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
@@ -465,39 +156,39 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
   projected_X_test_spca_eigen = projected_X_test;
 
 
-  % %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % % KSPCA-eigen
-  % %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % Y_plus_noise = Y;
-  % % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+5;
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % KSPCA-eigen
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  Y_plus_noise = Y;
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+5;
 
-  % time_start = tic;
-  % L_actual = getActualKernel(Y, Y, label_rbf_variance);
-  % K_train_actual = getActualKernel(X, X, data_rbf_variance);
-  % K_test_actual = getActualKernel(X, X_test, data_rbf_variance);
-  % tmp = H * L_actual * H * K_train_actual';
-  % [U D V] = svd(tmp); % TODO: is it OK to use SVD? or should I use eigendec which is broken??
-  % output.duration_kspca_eigen = toc(time_start);
-  % U = U(:,1:projected_dim);
-
-
-  % projected_X = U' * K_train_actual;
-  % projected_X_test = U' * K_test_actual;
-  % output.accuracy_kspca_eigen = fh_evaluation(projected_X, Y, projected_X_test, Y_test);
+  time_start = tic;
+  L_actual = getActualKernel(Y, Y, label_rbf_variance);
+  K_train_actual = getActualKernel(X, X, data_rbf_variance);
+  K_test_actual = getActualKernel(X, X_test, data_rbf_variance);
+  tmp = H * L_actual * H * K_train_actual';
+  [U D V] = svd(tmp); % TODO: is it OK to use SVD? or should I use eigendec which is broken??
+  output.duration_kspca_eigen = toc(time_start);
+  U = U(:,1:projected_dim);
 
 
-  % projected_X_kspca_eigen = projected_X;
-  % projected_X_test_kspca_eigen = projected_X_test;
+  projected_X = U' * K_train_actual;
+  projected_X_test = U' * K_test_actual;
+  output.accuracy_kspca_eigen = fh_evaluation(projected_X, Y, projected_X_test, Y_test);
+
+
+  projected_X_kspca_eigen = projected_X;
+  projected_X_test_kspca_eigen = projected_X_test;
 
 
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % SPCA-direct
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % Y_plus_noise = Y;
-  Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+5;
+  Y_plus_noise = Y;
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+5;
 
   time_start = tic;
-  [L_approx, psi, ~, ~] = getApproxKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance, number_of_random_bases_for_labels, projected_dim);
+  [L_approx, psi, ~, ~] = fh_getApproxKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance, number_of_random_bases_for_labels);
   output.duration_spca_direct = toc(time_start);
   U = X * H * psi';
   % U = X * psi';
@@ -511,31 +202,31 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
   projected_X_test_spca_direct = projected_X_test;
 
 
-  % %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % % KSPCA-direct
-  % %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % Y_plus_noise = Y;
-  % % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+5;
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % KSPCA-direct
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  Y_plus_noise = Y;
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+5;
 
-  % time_start = tic;
-  % [L_approx, psi, ~, ~] = getApproxKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance, number_of_random_bases_for_labels, projected_dim);
-  % [K_train_approx, ~, ~, random_weight_matrix] = getApproxKernel(X, X, data_rbf_variance, number_of_random_bases_for_data, projected_dim);
-  % [K_test_approx, ~, ~, ~] = getApproxKernel(X, X_test, data_rbf_variance, number_of_random_bases_for_data, projected_dim, random_weight_matrix);
-  % output.duration_kspca_direct = toc(time_start);
+  time_start = tic;
+  [L_approx, psi, ~, ~] = fh_getApproxKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance, number_of_random_bases_for_labels);
+  [K_train_approx, ~, ~, params] = fh_getApproxKernel(X, X, data_rbf_variance, number_of_random_bases_for_data);
+  [K_test_approx, ~, ~, ~] = fh_getApproxKernel(X, X_test, data_rbf_variance, number_of_random_bases_for_data, params);
+  output.duration_kspca_direct = toc(time_start);
 
-  % % projected_X = psi * H * K_train_approx * K_train_approx;
-  % % projected_X_test = psi * H * K_train_approx * K_test_approx;
-  % % projected_X = psi * H * K_train_approx * K_train_approx;
-  % % projected_X_test = psi * H * K_train_approx * K_test_approx;
-  % projected_X = psi * H * K_train_approx;
-  % projected_X_test = psi * H * K_test_approx;
-  % % projected_X = psi * K_train_approx;
-  % % projected_X_test = psi * K_test_approx;
-  % output.accuracy_kspca_direct = fh_evaluation(projected_X, Y, projected_X_test, Y_test);
+  % projected_X = psi * H * K_train_approx * K_train_approx;
+  % projected_X_test = psi * H * K_train_approx * K_test_approx;
+  % projected_X = psi * H * K_train_approx * K_train_approx;
+  % projected_X_test = psi * H * K_train_approx * K_test_approx;
+  projected_X = psi * H * K_train_approx;
+  projected_X_test = psi * H * K_test_approx;
+  % projected_X = psi * K_train_approx;
+  % projected_X_test = psi * K_test_approx;
+  output.accuracy_kspca_direct = fh_evaluation(projected_X, Y, projected_X_test, Y_test);
 
 
-  % projected_X_kspca_direct = projected_X;
-  % projected_X_test_kspca_direct = projected_X_test;
+  projected_X_kspca_direct = projected_X;
+  projected_X_test_kspca_direct = projected_X_test;
 
 
 
@@ -545,7 +236,7 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
   % Y_plus_noise = 1:length(Y); % so no information whatsoever
 
   % time_start = tic;
-  % [L_approx, psi, ~, ~] = getApproxKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance, number_of_random_bases_for_labels, projected_dim);
+  % [L_approx, psi, ~, ~] = fh_getApproxKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance, number_of_random_bases_for_labels);
   % U = X * H * psi';
   % output.duration_pca_direct = toc(time_start);
 
@@ -625,276 +316,6 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
 
 
 
-  % -----------------------------------------------------------------------------
-  % Compare Hierarchies
-  % -----------------------------------------------------------------------------
-
-
-
-
-
-
-
-  % fh_evaluation = @getTestAccuracyFrom1NN;
-  % fh_evaluation = @getTestAccuracyFromLinearLeastSquares;
-
-
-  % % D = size(X, 1); % number_of_random_basis;
-  % D = 2; % number_of_random_basis_per_layer OR number_of_hidden_nodes_per_layer
-  % s = data_rbf_variance;
-
-  % % ----------------------------------------------------------------------------
-  % nonlin = @cos;
-  % % ----------------------------------------------------------------------------
-
-  % X_0 = X;
-  % X_test_0 = X_test;
-
-  % tmp_matrix = randn(D, size(X_0, 1)) / s;
-  % X_1 = sqrt(1/D) * nonlin(tmp_matrix * X_0);
-  % X_test_1 = sqrt(1/D) * nonlin(tmp_matrix * X_test_0);
-
-  % tmp_matrix = randn(D, size(X_1, 1)) / s;
-  % X_2 = sqrt(1/D) * nonlin(tmp_matrix * X_1);
-  % X_test_2 = sqrt(1/D) * nonlin(tmp_matrix * X_test_1);
-
-  % tmp_matrix = randn(D, size(X_2, 1)) / s;
-  % X_3 = sqrt(1/D) * nonlin(tmp_matrix * X_2);
-  % X_test_3 = sqrt(1/D) * nonlin(tmp_matrix * X_test_2);
-
-  % tmp_matrix = randn(D, size(X_3, 1)) / s;
-  % X_4 = sqrt(1/D) * nonlin(tmp_matrix * X_3);
-  % X_test_4 = sqrt(1/D) * nonlin(tmp_matrix * X_test_3);
-
-
-
-  % [K_test_approx, psi_train, psi_test, ~] = getApproxKernel(X_0, X_test_0, s, D, -1);
-
-  % X_1 = psi_train; % * X_0;
-  % X_test_1 = psi_test; % * X_test_0;
-
-  % [K_test_approx, psi_train, psi_test, ~] = getApproxKernel(X_1, X_test_1, s, D, -1);
-
-  % X_2 = psi_train; % * X_1;
-  % X_test_2 = psi_test; % * X_test_1;
-
-  % [K_test_approx, psi_train, psi_test, ~] = getApproxKernel(X_2, X_test_2, s, D, -1);
-
-  % X_3 = psi_train; % * X_2;
-  % X_test_3 = psi_test; % * X_test_2;
-
-  % [K_test_approx, psi_train, psi_test, ~] = getApproxKernel(X_3, X_test_3, s, D, -1);
-
-  % X_4 = psi_train; % * X_3;
-  % X_test_4 = psi_test; % * X_test_3;
-
-
-
-  % projected_dim = 100;
-  % [K_train_approx, psi_train, ~, random_weight_matrix] = getApproxKernel(X_0, X_0, data_rbf_variance, number_of_random_bases_for_data, projected_dim);
-  % [K_test_approx, psi_train, psi_test, ~] = getApproxKernel(X_0, X_test_0, data_rbf_variance, number_of_random_bases_for_data, projected_dim, random_weight_matrix);
-
-  % X_1 = psi_train; % * X_0;
-  % X_test_1 = psi_test'; % * X_test_0;
-
-  % [K_train_approx, psi_train, ~, random_weight_matrix] = getApproxKernel(X_1, X_1, data_rbf_variance, number_of_random_bases_for_data, projected_dim);
-  % [K_test_approx, psi_train, psi_test, ~] = getApproxKernel(X_1, X_test_1, data_rbf_variance, number_of_random_bases_for_data, projected_dim, random_weight_matrix);
-
-  % X_2 = psi_train; % * X_1;
-  % X_test_2 = psi_test'; % * X_test_1;
-
-  % [K_train_approx, psi_train, ~, random_weight_matrix] = getApproxKernel(X_2, X_2, data_rbf_variance, number_of_random_bases_for_data, projected_dim);
-  % [K_test_approx, psi_train, psi_test, ~] = getApproxKernel(X_2, X_test_2, data_rbf_variance, number_of_random_bases_for_data, projected_dim, random_weight_matrix);
-
-  % X_3 = psi_train; % * X_2;
-  % X_test_3 = psi_test'; % * X_test_2;
-
-  % [K_train_approx, psi_train, ~, random_weight_matrix] = getApproxKernel(X_3, X_3, data_rbf_variance, number_of_random_bases_for_data, projected_dim);
-  % [K_test_approx, psi_train, psi_test, ~] = getApproxKernel(X_3, X_test_3, data_rbf_variance, number_of_random_bases_for_data, projected_dim, random_weight_matrix);
-
-  % X_4 = psi_train; % * X_3;
-  % X_test_4 = psi_test'; % * X_test_3;
-
-  % output.accuracy_proposed_0 = fh_evaluation(X_0, Y, X_test_0, Y_test);
-  % output.accuracy_proposed_1 = fh_evaluation(X_1, Y, X_test_1, Y_test);
-  % output.accuracy_proposed_2 = fh_evaluation(X_2, Y, X_test_2, Y_test);
-  % output.accuracy_proposed_3 = fh_evaluation(X_3, Y, X_test_3, Y_test);
-  % output.accuracy_proposed_4 = fh_evaluation(X_4, Y, X_test_4, Y_test);
-
-  % % figure,
-
-  % % subplot(2,5,1), plotPerClassTrainAndTestSamples(X_0, Y, X_test_0, Y_test), title('After 0 layers (cos)'),
-  % % subplot(2,5,2), plotPerClassTrainAndTestSamples(X_1, Y, X_test_1, Y_test), title('After 1 layers (cos)'),
-  % % subplot(2,5,3), plotPerClassTrainAndTestSamples(X_2, Y, X_test_2, Y_test), title('After 2 layers (cos)'),
-  % % subplot(2,5,4), plotPerClassTrainAndTestSamples(X_3, Y, X_test_3, Y_test), title('After 3 layers (cos)'),
-  % % subplot(2,5,5), plotPerClassTrainAndTestSamples(X_4, Y, X_test_4, Y_test), title('After 4 layers (cos)'),
-
-
-
-
-  % % ----------------------------------------------------------------------------
-  % nonlin = @relu;
-  % % ----------------------------------------------------------------------------
-
-  % X_0 = X;
-  % X_test_0 = X_test;
-
-  % tmp_matrix = randn(D, size(X_0, 1)) / s;
-  % X_1 = sqrt(1/D) * nonlin(tmp_matrix * X_0);
-  % X_test_1 = sqrt(1/D) * nonlin(tmp_matrix * X_test_0);
-
-  % tmp_matrix = randn(D, size(X_1, 1)) / s;
-  % X_2 = sqrt(1/D) * nonlin(tmp_matrix * X_1);
-  % X_test_2 = sqrt(1/D) * nonlin(tmp_matrix * X_test_1);
-
-  % tmp_matrix = randn(D, size(X_2, 1)) / s;
-  % X_3 = sqrt(1/D) * nonlin(tmp_matrix * X_2);
-  % X_test_3 = sqrt(1/D) * nonlin(tmp_matrix * X_test_2);
-
-  % tmp_matrix = randn(D, size(X_3, 1)) / s;
-  % X_4 = sqrt(1/D) * nonlin(tmp_matrix * X_3);
-  % X_test_4 = sqrt(1/D) * nonlin(tmp_matrix * X_test_3);
-
-  % output.accuracy_rp_0 = fh_evaluation(X_0, Y, X_test_0, Y_test);
-  % output.accuracy_rp_1 = fh_evaluation(X_1, Y, X_test_1, Y_test);
-  % output.accuracy_rp_2 = fh_evaluation(X_2, Y, X_test_2, Y_test);
-  % output.accuracy_rp_3 = fh_evaluation(X_3, Y, X_test_3, Y_test);
-  % output.accuracy_rp_4 = fh_evaluation(X_4, Y, X_test_4, Y_test);
-
-  % % subplot(2,5,6), plotPerClassTrainAndTestSamples(X_0, Y, X_test_0, Y_test), title('After 0 layers (relu)'),
-  % % subplot(2,5,7), plotPerClassTrainAndTestSamples(X_1, Y, X_test_1, Y_test), title('After 1 layers (relu)'),
-  % % subplot(2,5,8), plotPerClassTrainAndTestSamples(X_2, Y, X_test_2, Y_test), title('After 2 layers (relu)'),
-  % % subplot(2,5,9), plotPerClassTrainAndTestSamples(X_3, Y, X_test_3, Y_test), title('After 3 layers (relu)'),
-  % % subplot(2,5,10), plotPerClassTrainAndTestSamples(X_4, Y, X_test_4, Y_test), title('After 4 layers (relu)'),
-
-  % % suptitle(dataset)
-
-  % % keyboard
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  % should_plot_visu = false;
-  % if should_plot_visu; figure, end;
-
-  % X_original = X;
-  % X_test_original = X_test;
-
-
-  % % D = 10; % number_of_random_basis_per_layer OR number_of_hidden_nodes_per_layer
-  % D = projected_dim; % number_of_random_basis_per_layer OR number_of_hidden_nodes_per_layer
-
-  % Y_plus_noise = Y;
-  % % Y_plus_noise = Y + randn(1, size(Y, 2)) / 1;
-  % % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+2;
-  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+5;
-  % % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+10;
-
-  % % [L_approx, psi, ~, ~] = getApproxKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance, D, -1);
-  % % fprintf('\n\t Rank L_approx: %d\n', rank(L_approx));
-  % % keyboard
-
-  % % % D = 16;
-  % % % figure
-  % % [L_approx, psi, ~, ~] = getApproxKernel(Y, Y, label_rbf_variance, D, -1);
-  % % % rank(L_approx),
-  % % subplot(1,2,1),
-  % % imshow(L_approx),
-
-  % % [L_approx, psi, ~, ~] = getApproxKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance, D, -1);
-  % % % rank(L_approx),
-  % % subplot(1,2,2),
-  % % imshow(L_approx),
-
-
-  % time_start = tic;
-  % [L_approx, psi, ~, ~] = getApproxKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance, D, -1);
-  % X = X;
-  % X_test = X_test;
-  % % fprintf('\t [Layer 0] \t rank(X): %d \t rank(X_test): %d\n', rank(X), rank(X_test));
-  % output.accuracy_proposed_0 = getTestAccuracyFromMLP(X, Y, X_test, Y_test, [D]);
-  % output.duration_proposed_0 = toc(time_start);
-  % if should_plot_visu; subplot(1,5,1), plotPerClassTrainAndTestSamples(X, Y, X_test, Y_test), title('After 0 layers (proposed)'), end;
-
-  % time_start = tic;
-  % [L_approx, psi, ~, ~] = getApproxKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance, D, -1);
-  % [X, X_test] = getProposedNNProjections(X, X_test, data_rbf_variance, number_of_random_bases_for_data, psi, H, 'approx');
-  % % fprintf('\t [Layer 1] \t rank(X): %d \t rank(X_test): %d\n', rank(X), rank(X_test));
-  % output.accuracy_proposed_1 = getTestAccuracyFromMLP(X, Y, X_test, Y_test, [D]);
-  % output.duration_proposed_1 = toc(time_start);
-  % if should_plot_visu; subplot(1,5,2), plotPerClassTrainAndTestSamples(X, Y, X_test, Y_test), title('After 1 layers (proposed)'), end;
-
-  % time_start = tic;
-  % [L_approx, psi, ~, ~] = getApproxKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance, D, -1);
-  % [X, X_test] = getProposedNNProjections(X, X_test, data_rbf_variance, number_of_random_bases_for_data, psi, H, 'approx');
-  % % fprintf('\t [Layer 2] \t rank(X): %d \t rank(X_test): %d\n', rank(X), rank(X_test));
-  % output.accuracy_proposed_2 = getTestAccuracyFromMLP(X, Y, X_test, Y_test, [D]);
-  % output.duration_proposed_2 = toc(time_start);
-  % if should_plot_visu; subplot(1,5,3), plotPerClassTrainAndTestSamples(X, Y, X_test, Y_test), title('After 2 layers (proposed)'), end;
-
-  % % time_start = tic;
-  % % [L_approx, psi, ~, ~] = getApproxKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance, D, -1);
-  % % [X, X_test] = getProposedNNProjections(X, X_test, data_rbf_variance, number_of_random_bases_for_data, psi, H, 'approx');
-  % % % fprintf('\t [Layer 3] \t rank(X): %d \t rank(X_test): %d\n', rank(X), rank(X_test));
-  % % output.accuracy_proposed_3 = getTestAccuracyFromMLP(X, Y, X_test, Y_test, [D]);
-  % % output.duration_proposed_3 = toc(time_start);
-  % % if should_plot_visu; subplot(1,5,4), plotPerClassTrainAndTestSamples(X, Y, X_test, Y_test), title('After 3 layers (proposed)'), end;
-
-  % % time_start = tic;
-  % % [L_approx, psi, ~, ~] = getApproxKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance, D, -1);
-  % % [X, X_test] = getProposedNNProjections(X, X_test, data_rbf_variance, number_of_random_bases_for_data, psi, H, 'approx');
-  % % % fprintf('\t [Layer 4] \t rank(X): %d \t rank(X_test): %d\n', rank(X), rank(X_test));
-  % % output.accuracy_proposed_4 = getTestAccuracyFromMLP(X, Y, X_test, Y_test, [D]);
-  % % output.duration_proposed_4 = toc(time_start);
-  % % if should_plot_visu; subplot(1,5,5), plotPerClassTrainAndTestSamples(X, Y, X_test, Y_test), title('After 4 layers (proposed)'), end;
-
-  % if should_plot_visu; keyboard, end;
-
-
-
-
-
-  % X_0 = X_original;
-  % X_test_0 = X_test_original;
-
-  % time_start = tic;
-  % output.accuracy_backprop_0 = getTestAccuracyFromMLP(X_0, Y, X_test_0, Y_test, [D]);
-  % output.duration_backprop_0 = toc(time_start);
-
-  % time_start = tic;
-  % output.accuracy_backprop_1 = getTestAccuracyFromMLP(X_0, Y, X_test_0, Y_test, [D, D]);
-  % output.duration_backprop_1 = toc(time_start);
-
-  % time_start = tic;
-  % output.accuracy_backprop_2 = getTestAccuracyFromMLP(X_0, Y, X_test_0, Y_test, [D, D, D]);
-  % output.duration_backprop_2 = toc(time_start);
-
-  % % time_start = tic;
-  % % output.accuracy_backprop_3 = getTestAccuracyFromMLP(X_0, Y, X_test_0, Y_test, [D, D, D, D]);
-  % % output.duration_backprop_3 = toc(time_start);
-
-  % % time_start = tic;
-  % % output.accuracy_backprop_4 = getTestAccuracyFromMLP(X_0, Y, X_test_0, Y_test, [D, D, D, D, D]);
-  % % output.duration_backprop_4 = toc(time_start);
-
-
 
 
 
@@ -920,7 +341,7 @@ function L_actual = getActualKernel(data_1, data_2, rbf_variance)
 
 
 % -------------------------------------------------------------------------
-function [L_approx, psi_data_1, psi_data_2, random_weight_matrix] = getApproxKernel(data_1, data_2, rbf_variance, number_of_random_bases, projected_dim, w);
+function [L_approx, psi_data_1, psi_data_2, params] = getApproxKernelRKS(data_1, data_2, rbf_variance, number_of_random_bases, params);
   % data consists of 1 sample per column
 % -------------------------------------------------------------------------
   assert(size(data_1, 1) == size(data_2, 1));
@@ -928,28 +349,75 @@ function [L_approx, psi_data_1, psi_data_2, random_weight_matrix] = getApproxKer
   D = number_of_random_bases;
   s = rbf_variance;
 
-  if nargin == 6
-    w = w; % when random weight matrix passed in, use it instead of generating new random matrix: e.g., for constructing K_train & K_test
+  if nargin == 5
+    w = params.w; % when random weight matrix passed in, use it instead of generating new random matrix: e.g., for constructing K_train & K_test
   else
     w = randn(D, d) / s; % make sure the w is shared between the 2 lines below! do not create w in <each> line below separately.
   end
-  random_weight_matrix = w;
+  params.w = w; % random_weight_matrix
 
   psi_data_1 = sqrt(1 / D) * cos(w * data_1);
   psi_data_2 = sqrt(1 / D) * cos(w * data_2);
 
   L_approx = psi_data_1' * psi_data_2;
 
-  % if size(L_approx, 1) == size(L_approx, 2)
-  %   [a,b] = eig(L_approx);
-  %   b = sort(diag(b),'descend');
-  %   b(1:10)
-  % end
 
-  % k = projected_dim;
-  % [U D V] = svd(L_approx);
-  % psi_data_1 = (U(:,1:k) * D(1:k,1:k).^0.5)';
-  % psi_data_2 = (D(1:k,1:k).^0.5 * V(:,1:k)')';
+  % EARLIER MATERIAL
+  % data_1 = data_1 + randn(1, size(data_1, 2)) / 10;
+  % data_2 = data_2 + randn(1, size(data_2, 2)) / 10;
+
+  % % WRONG!!!
+  % %       --> gamma should be 1/(rbf_variance ^ 2) without a 1/2!
+  % %       --> also, no need for b.
+  % % gamma = 1 / (2 * rbf_variance ^ 2);
+  % % w = randn(number_of_random_bases, d);
+  % % b = 2 * pi * rand(number_of_random_bases, 1);
+  % % tmp_1 = gamma * w * data_1 + b * ones(1, size(data_1, 2));
+  % % tmp_2 = gamma * w * data_2 + b * ones(1, size(data_2, 2));
+
+  % w = randn(D, d) / s; % w = normrnd(0, 1 / rbf_variance, [number_of_random_bases, d]);
+  % projected_data_1 = cos(w * data_1);
+  % projected_data_2 = cos(w * data_2);
+
+  % % % TODO: do we need the sin as well???
+  % % % projected_data_1 = [cos(w * data_1); sin(w * data_1)];
+  % % % projected_data_2 = [cos(w * data_2); sin(w * data_2)];
+
+  % psi_data_1 = sqrt(1 / D) * projected_data_1;
+  % psi_data_2 = sqrt(1 / D) * projected_data_2;
+
+
+% -------------------------------------------------------------------------
+function [L_approx, psi_data_1, psi_data_2, params] = getApproxKernelFastFood(data_1, data_2, rbf_variance, number_of_random_bases, params);
+  % data consists of 1 sample per column
+% -------------------------------------------------------------------------
+  assert(size(data_1, 1) == size(data_2, 1));
+  d = size(data_1, 1);
+  D = number_of_random_bases;
+  s = rbf_variance;
+
+  try
+    % test whether we can use Spiral package
+    fwht_spiral([1; 1]);
+    use_spiral = 1;
+  catch
+      % display('Cannot perform Walsh-Hadamard transform using Spiral WHT package.');
+      % display('Use Matlab function fwht instead, which is slow for large-scale data.')
+      use_spiral = 0;
+  end
+
+  if nargin == 5
+    params = params;
+  else
+    params = FastfoodPara(D, d);
+  end
+
+  psi_data_1 = FastfoodForKernel(data_1, params, s, use_spiral);
+  psi_data_2 = FastfoodForKernel(data_2, params, s, use_spiral);
+  L_approx = psi_data_1' * psi_data_2;
+
+
+
 
 
 
@@ -995,6 +463,7 @@ function test_accuracy = getTestAccuracyFromLinearLeastSquares(projected_X, Y, p
   test_accuracy = sum(b_test == test_predictions) / length(b_test);
 
 
+
 % -------------------------------------------------------------------------
 function test_accuracy = getTestAccuracyFromMLP(projected_X, Y, projected_X_test, Y_test, layers)
 % -------------------------------------------------------------------------
@@ -1029,39 +498,6 @@ function x = relu(x)
 
 
 
-
-
-
-
-
-
-
-
-  % data_1 = data_1 + randn(1, size(data_1, 2)) / 10;
-  % data_2 = data_2 + randn(1, size(data_2, 2)) / 10;
-
-  % % WRONG!!!
-  % %       --> gamma should be 1/(rbf_variance ^ 2) without a 1/2!
-  % %       --> also, no need for b.
-  % % gamma = 1 / (2 * rbf_variance ^ 2);
-  % % w = randn(number_of_random_bases, d);
-  % % b = 2 * pi * rand(number_of_random_bases, 1);
-  % % tmp_1 = gamma * w * data_1 + b * ones(1, size(data_1, 2));
-  % % tmp_2 = gamma * w * data_2 + b * ones(1, size(data_2, 2));
-
-  % w = randn(D, d) / s; % w = normrnd(0, 1 / rbf_variance, [number_of_random_bases, d]);
-  % projected_data_1 = cos(w * data_1);
-  % projected_data_2 = cos(w * data_2);
-
-  % % % TODO: do we need the sin as well???
-  % % % projected_data_1 = [cos(w * data_1); sin(w * data_1)];
-  % % % projected_data_2 = [cos(w * data_2); sin(w * data_2)];
-
-  % psi_data_1 = sqrt(1 / D) * projected_data_1;
-  % psi_data_2 = sqrt(1 / D) * projected_data_2;
-
-
-
 % -------------------------------------------------------------------------
 function [projected_X, projected_X_test] = getProposedNNProjections(X, X_test, data_rbf_variance, number_of_random_bases_for_data, psi, H, kernel_type);
 % -------------------------------------------------------------------------
@@ -1071,46 +507,13 @@ function [projected_X, projected_X_test] = getProposedNNProjections(X, X_test, d
     X = psi * H * K_train_actual;
     X_test = psi * H * K_test_actual;
   elseif strcmp(kernel_type, 'approx');
-    [K_train_approx, ~, ~, random_weight_matrix] = getApproxKernel(X, X, data_rbf_variance, number_of_random_bases_for_data, -1);
-    [K_test_approx, ~, ~, ~] = getApproxKernel(X, X_test, data_rbf_variance, number_of_random_bases_for_data, -1, random_weight_matrix);
+    [K_train_approx, ~, ~, random_weight_matrix] = getApproxKernelRKS(X, X, data_rbf_variance, number_of_random_bases_for_data, -1);
+    [K_test_approx, ~, ~, ~] = getApproxKernelRKS(X, X_test, data_rbf_variance, number_of_random_bases_for_data, -1, random_weight_matrix);
     X = psi * H * K_train_approx;
     X_test = psi * H * K_test_approx;
   end
   projected_X = X;
   projected_X_test = X_test;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

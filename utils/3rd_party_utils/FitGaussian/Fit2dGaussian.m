@@ -78,7 +78,7 @@ A_s = [2, 0, 7, 0, 4.5, pi/8]; % The original example
 
 % Build Sample data,
 S = f(A_s,X);
-keyboard
+% keyboard
 % disp(X);
 % disp(S);
 
@@ -97,6 +97,7 @@ switch FitOrientation
     otherwise, error('invalid entry');
 end
 disp(output); % display summary of LSQ algorithm
+% keyboard
 
 %% ---Plot Data---
 % Plot 3D Data and Fitted curve
@@ -107,6 +108,7 @@ switch FitOrientation
 end
 surface(x,y,S,'EdgeColor','none'); alpha(0.5);
 colormap('pink'); view(-60,20); grid on; hold off
+keyboard
 
 % Plot Sample Pixels data
 hf2=figure(2); set(hf2,'Position',[20 20 800 800]);

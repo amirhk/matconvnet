@@ -36,65 +36,65 @@ function LPB_dad()
     Dt = 1;
 
     % Ambient Conditions
-    Tini_scalar=20;                                % Initial temperature [C]
-    Tamb_scalar=20;                                % Ambient temperature [C]
-    hc=20;                                  % Convective heat transfer coefficint [W/m^2.C]
-    Sigma=5.669e-8;                         % Estefan-Boltzmann Const. W/m^2.K^4
+    Tini_scalar = 20;                                % Initial temperature [C]
+    Tamb_scalar = 20;                                % Ambient temperature [C]
+    hc = 20;                                  % Convective heat transfer coefficint [W/m^2.C]
+    Sigma = 5.669e-8;                         % Estefan-Boltzmann Const. W/m^2.K^4
 
     % LASER
-    P_L=200;                                % Laser power [W]
-    R_L=1e-3;                               % Laser spot diamter (on the powder surface) [m^2]
-    V_L=1e-3;                               % Laser scanning velocity [m/s]
+    P_L = 200;                                % Laser power [W]
+    R_L = 1e-3;                               % Laser spot diamter (on the powder surface) [m^2]
+    V_L = 1e-3;                               % Laser scanning velocity [m/s]
 
     % MELT
-    Beta=0.35;                              % Surface absrbtivity
-    % Tmelt=1400;                             % Powder melting point [C]
-    Tmelt=140;                             % Powder melting point [C]
-    Tboil=7000;                             % Boiling temperature [C]
-    Lambda_SL=204500;                       % Powder latent heat of fusion [J/kg
-    Lambda_LV=Lambda_SL;                    % CHANGE THIS LATER
+    Beta = 0.35;                              % Surface absrbtivity
+    % Tmelt = 1400;                             % Powder melting point [C]
+    Tmelt = 140;                             % Powder melting point [C]
+    Tboil = 7000;                             % Boiling temperature [C]
+    Lambda_SL = 204500;                       % Powder latent heat of fusion [J/kg
+    Lambda_LV = Lambda_SL;                    % CHANGE THIS LATER
 
 
-    % DIMENSIONS (Laser beam position initially at the intesections of Lw, Le, Ln, Ls and at z=0)
-    Lw=4*R_L;
-    Le=6*R_L;
-    Ln=4*R_L;
-    Ls=4*R_L;
+    % DIMENSIONS (Laser beam position initially at the intesections of Lw, Le, Ln, Ls and at z = 0)
+    Lw = 5 * R_L;
+    Le = 5 * R_L;
+    Ln = 5 * R_L;
+    Ls = 5 * R_L;
 
-    Length=Le+Lw;
-    Width=Ln+Ls;
-    Height=1e-3;
+    Length = Le + Lw;
+    Width = Ln + Ls;
+    Height = 1e-3;
 
     % BED PROPERTIES
-    Rho_P=8440;                             % powder density [kg/m^3]
-    Rho_A=1;                                % Inert gas density [kg/m^3]
-    Cp_P=410;                               % Powder specific heat [J/kg.C]
-    Cp_A=1000;                              % Inert gas specific heat [J/kg.C]
-    k_P=10;                                 % Powder thermal conductivity [W/m.C]
-    k_A=0.02;                               % Inert gas thermal conductivity [W/m.C]
-    Phi=0.5;                                % Powder porosoity [%]
+    Rho_P = 8440;                             % powder density [kg/m^3]
+    Rho_A = 1;                                % Inert gas density [kg/m^3]
+    Cp_P = 410;                               % Powder specific heat [J/kg.C]
+    Cp_A = 1000;                              % Inert gas specific heat [J/kg.C]
+    k_P = 10;                                 % Powder thermal conductivity [W/m.C]
+    k_A = 0.02;                               % Inert gas thermal conductivity [W/m.C]
+    Phi = 0.5;                                % Powder porosoity [%]
 
     % BULK (POWDER + INERT GAS) PROPERTIES
-    Rho_B=Rho_P*(1-Phi)+Rho_A*Phi;          % Bulk density [kg/m^3]
-    Cp_B=Cp_P*(1-Phi)+Cp_A*Phi;             % Bulk specific [J/kg.C]
-    k_B=k_P*(1-Phi)+k_A*Phi;                % Bulk thermal conductivity [W/m.C]
-    Alfa_B=k_B/(Rho_B*Cp_B);                % Bulk thermal diffusivity [m^2/s]
+    Rho_B = Rho_P * (1-Phi) + Rho_A * Phi;    % Bulk density [kg/m^3]
+    Cp_B = Cp_P * (1-Phi) + Cp_A * Phi;       % Bulk specific [J/kg.C]
+    k_B = k_P * (1-Phi) + k_A * Phi;          % Bulk thermal conductivity [W/m.C]
+    Alfa_B = k_B / (Rho_B * Cp_B);            % Bulk thermal diffusivity [m^2/s]
 
     % No of increments in each direction
-    nx = 10; % 20;
-    ny = 10; % 14;
+    nx = 20; % 20;
+    ny = 20; % 14;
     nz = 3; % 10;
 
-    Dx=Length/nx;
-    Dy=Width/ny;
-    Dz=Height/nz;
+    Dx = Length / nx;
+    Dy = Width / ny;
+    Dz = Height / nz;
 
     % Total No of nodes in the domain
-    Nx=nx+1;
-    Ny=ny+1;
-    Nz=nz+1;
+    Nx = nx + 1;
+    Ny = ny + 1;
+    Nz = nz + 1;
 
-    A_L=pi*R_L^2;                           % Laser spot area [m^2]
+    A_L = pi * R_L^2;                           % Laser spot area [m^2]
 
 
     % INITIALIZATION (TEMPERATURES, HEAT SOURCES, AND STATE OF PHASE)
@@ -119,6 +119,9 @@ function LPB_dad()
     t_Process = 1;
     N_Dt = 1;
     Dt = t_Process / N_Dt;
+
+    scale_factor_alpha = (nx + 1 - 1) / Length;
+    scale_factor_beta = (ny + 1 - 1) / Width;
 
     for t = 1:2,
 
@@ -147,9 +150,9 @@ function LPB_dad()
 
                     R_Ros = sqrt(Kisi^2 + Eta^2 + Zeta^2);
 
-    %                 if R_Ros < 1e-9,
-    %                     R_Ros=Dz/10;
-    %                 end;
+                    % if R_Ros < 1e-9,
+                    %   R_Ros=Dz/10;
+                    % end;
 
                     % ------------------------------------------------------------------
                     % Energy flux / distribution delivered to bed. (Watt / m^2)
@@ -161,67 +164,53 @@ function LPB_dad()
                     % ------------------------------------------------------------------
                     T_Ros(i,j,k) = T_ini(i,j,k) + P_L * Beta / (2 * pi * k_B * R_Ros) * exp(- V_L * (Kisi + R_Ros) / (2 * Alfa_B));
 
-    %                 if counter == 116
-    %                     T_Ros
-    %                     keyboard
-    %                 end
                     % ------------------------------------------------------------------
                     % T Gauss
                     % ------------------------------------------------------------------
-
-
-                    % num=19;
-                    % TTTT = Int_2D(num,Le,Lw,Ls,Ln,V_L,R_L,R_Ros,Kisi,Eta,Zeta, Alfa_B)
-
-                    % TXY=TTTT
-                    % keyboard
-
-
-                    % constant = P_L * Beta / (pi^2 * k_B * R_L^2);
-                    % fun_R = @(alpha_, beta_) sqrt( (x - (x_L_fin + alpha_)).^2 + (y - beta_).^2 + z.^2);
-                    % fun_kolli = @(alpha_, beta_) 1 ./ fun_R(alpha_, beta_) .* exp(-2 .* (alpha_.^2 + beta_.^2) / R_L.^2) .* exp(- V_L .* (x - (x_L_fin + alpha_) + fun_R(alpha_, beta_)) / (2*Alfa_B));
-
                     constant = 1;
                     fun_R = @(alpha_, beta_) sqrt( (x - (x_L_fin + alpha_)).^2 + (y - beta_).^2 + z.^2);
                     % fun_Q = @(alpha_, beta_) 10e6;
                     fun_Q = @(alpha_, beta_) params(1) * exp( -((alpha_ - params(2)) .^ 2 / (2 * params(3) ^ 2) + (beta_ - params(4)) .^ 2 / (2 * params(5) ^ 2)) );
                     fun_I = @(alpha_, beta_) 2 * P_L * Beta / (pi * R_L^2) .* exp(-2 .* (alpha_.^2 + beta_.^2) / R_L.^2);
-                    fun_I_modified = @(alpha_, beta_) (fun_I(alpha_, beta_) - fun_Q(alpha_*1000, beta_*1000));
+                    fun_I_modified = @(alpha_, beta_) (fun_I(alpha_, beta_) - fun_Q(alpha_ * scale_factor_alpha, beta_ * scale_factor_beta));
                     fun_kolli = @(alpha_, beta_) ...
                         fun_I_modified(alpha_, beta_) .* ...
                         (1 / (2 * pi * k_B)) ./ fun_R(alpha_, beta_) .* exp(- V_L .* (x - (x_L_fin + alpha_) + fun_R(alpha_, beta_)) / (2*Alfa_B));
 
-
+                    % IMPORTANT: The bounds below work because we're assuming the laser starts at the origin!
+                    %            So we're taking integral in a circle of radius R_L around the origin...
+                    %            hmmm... but how does this consider the final location of the laser???
                     alpha_min = - R_L;
                     alpha_max = R_L;
                     beta_min = @(alpha_) - sqrt(R_L.^2 - alpha_.^2);
                     beta_max = @(alpha_) + sqrt(R_L.^2 - alpha_.^2);
-    %                 alpha_min = - Lw;
-    %                 alpha_max = Le;
-    %                 beta_min = -Ls;
-    %                 beta_max = Ln;
+                    % alpha_min = - Lw;
+                    % alpha_max = Le;
+                    % beta_min = -Ls;
+                    % beta_max = Ln;
 
-                    T_Gauss(i,j,k) = T_ini(i,j,k) + constant * integral2(fun_kolli,alpha_min,alpha_max,beta_min,beta_max);
+                    T_Gauss(i,j,k) = T_ini(i,j,k) + constant * integral2(fun_kolli, alpha_min, alpha_max, beta_min, beta_max);
 
                     % ------------------------------------------------------------------
                     % Others....
                     % ------------------------------------------------------------------
-    %                 if T_Gauss(i,j,k) > Tmelt,
-    %                     Qsens = Rho_B * Dx * Dy * Dz * Cp_B * (T_Gauss(i,j,k) - Tmelt);
-    %                     Qlat = Rho_B * Dx * Dy * Dz * Lambda_SL;
-    %                     T_Gauss(i,j,k) = Tmelt + (Qsens - Qlat) /(Rho_B * Dx * Dy * Dz * Cp_B);
-        % %                 if T_Gauss(i,j,k) > Tboil,
-        % %                     Qsens = Rho_B * Dx * Dy * Dz * Cp_B * (T_Gauss(i,j,k) - Tboil);
-        % %                     Qlat = Rho_B * Dx * Dy * Dz * Lambda_LV;
-        % %                     T_Gauss(i,j,k) = Tboil + (Qsens - Qlat) /(Rho_B * Dx * Dy * Dz * Cp_B);
-    %     % %                 end;
-    %                 end;
+                    % if T_Gauss(i,j,k) > Tmelt,
+                    %     Qsens = Rho_B * Dx * Dy * Dz * Cp_B * (T_Gauss(i,j,k) - Tmelt);
+                    %     Qlat = Rho_B * Dx * Dy * Dz * Lambda_SL;
+                    %     T_Gauss(i,j,k) = Tmelt + (Qsens - Qlat) /(Rho_B * Dx * Dy * Dz * Cp_B);
+                    %       if T_Gauss(i,j,k) > Tboil,
+                    %           Qsens = Rho_B * Dx * Dy * Dz * Cp_B * (T_Gauss(i,j,k) - Tboil);
+                    %           Qlat = Rho_B * Dx * Dy * Dz * Lambda_LV;
+                    %           T_Gauss(i,j,k) = Tboil + (Qsens - Qlat) /(Rho_B * Dx * Dy * Dz * Cp_B);
+                    %         end;
+                    % end;
 
-                    Sum_E1 = Sum_E1 + Rho_B * Cp_B * Dx * Dy * Dz * (T_Ros(i,j,k) - Tini_scalar) * Dt;
-                    Sum_E2 = Sum_E2 + Rho_B * Cp_B * Dx * Dy * Dz * (T_Gauss(i,j,k) - Tini_scalar) * Dt;
-
-                    fprintf('Iteration #%03d/%03d \t \t %.3f \t %.3f \t \t %.3f \t \t %.3f\n', counter, total_count, t, Sum_E1, Sum_E2, Sum_E1/Sum_E2);
+                    % Sum_E1 = Sum_E1 + Rho_B * Cp_B * Dx * Dy * Dz * (T_Ros(i,j,k) - Tini_scalar) * Dt;
+                    % Sum_E2 = Sum_E2 + Rho_B * Cp_B * Dx * Dy * Dz * (T_Gauss(i,j,k) - Tini_scalar) * Dt;
+                    % fprintf('Iteration #%03d/%03d \t \t %.3f \t %.3f \t \t %.3f \t \t %.3f\n', counter, total_count, t, Sum_E1, Sum_E2, Sum_E1/Sum_E2);
                     % [Sum_E1 Sum_E2 Sum_E1/Sum_E2];
+
+                    fprintf('Iteration #%03d/%03d\n', counter, total_count);
                     counter = counter + 1;
                 end
             end
@@ -232,7 +221,7 @@ function LPB_dad()
 
     end
 
-    [xx,yy]=meshgrid(linspace(-Lw,Le,Nx),linspace(-Ls,Ln,Ny));
+    [xx, yy] = meshgrid(linspace(-Lw, Le, Nx), linspace(-Ls, Ln, Ny));
     figure,
     subplot(2,2,1);
     surfc(xx,yy,T_Ros(:,:,1)')
@@ -278,7 +267,7 @@ function LPB_dad()
     for x = unique(xx(1,:))
         j = 1;
         for y = unique(yy(:,:))'
-            tmp_1(j,i) = fun_Q(x*1000,y*1000);
+            tmp_1(j,i) = fun_Q(x * scale_factor_alpha,y * scale_factor_beta);
             tmp_2(j,i) = fun_I(x,y);
             tmp_3(j,i) = fun_I_modified(x,y);
             j = j + 1;
@@ -288,10 +277,10 @@ function LPB_dad()
 
 
 
-    subplot(2,2,1), surf(xx, yy, Q_Comb), title('Q Comb');
-    subplot(2,2,2), surf(xx, yy, tmp_1),  title('Q Fit');
-    subplot(2,2,3), surf(xx, yy, tmp_2),  title('I');
-    subplot(2,2,4), surf(xx, yy, tmp_3),  title('I modified');
+    subplot(2,2,1), surf(xx, yy, Q_Comb), zlim([-5e6,5e7]), title('Q Comb');
+    subplot(2,2,2), surf(xx, yy, tmp_1),  zlim([-5e6,5e7]), title('Q Fit');
+    subplot(2,2,3), surf(xx, yy, tmp_2),  zlim([-5e6,5e7]), title('I');
+    subplot(2,2,4), surf(xx, yy, tmp_3),  zlim([-5e6,5e7]), title('I modified');
 
 
 
