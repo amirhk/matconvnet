@@ -1,20 +1,83 @@
-n = 8;
-d = 3;
-k = 2;
+n = 3;
+d = 2;
 
 X = randn(d,n) + 2;
 H = eye(n) - 1 / n * (ones(n,n));
 
-% Z=rand(25,5)*10 + 5; % TODO: test me as well; in this case:
-% size(M) = [3,25] and size(N) = [3,3]... which means that M can be rotated from
-% 25D into 3D if a bunch of the terms go to the null space... so I expect say
-% only 3 values on the diagonal of R'*R or something like that???
+Q = (X * H) * (X * H)';
+M = (X * H);
 
-Q=X*H'*(X*H')';
-M=X*H';
+[U S V] = svd(Q);
+N = U * S .^ .5;
 
-[U S V]=svd(Q);
-N=U*S^.5;
+% U_un_trunc = [U, zeros(d,n-d)];
+% S_un_trunc = diag([diag(S); zeros(n-d,1)]);
+% V_un_trunc = [V, zeros(d,n-d)];
+
+% tmp_1 = U * S * V';
+% tmp_2 = U_un_trunc * S_un_trunc * V_un_trunc';
+% assert(numel(find(abs(tmp_1 - tmp_2) > 10e-3)) == 0);
+
+assert(numel(find(abs(M * M' - N * N') > 10e-3)) == 0);
+
+disp('norm of cols of M & N should NOT be equal')
+sqrt(sum(M.^2, 1))
+sqrt(sum(N.^2, 1))
+
+
+disp('norm of cols of M^T & N^T should be equal')
+sqrt(sum(M.^2, 2))
+sqrt(sum(N.^2, 2))
+
+sqrt(sum((N * R').^2, 1))
+sqrt(sum((N * R').^2, 2))
+
+
+
+R = M' / N';
+R' * R
+
+R = M / M;
+R' *  R
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 % M * M' = N * N'; % this means that M' and N' are rotations of one another, but
                    % M and N are not rotations of one another.

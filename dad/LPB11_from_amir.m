@@ -32,7 +32,7 @@ function LPB_dad()
 
 
     %DESIGN & OPERATING CONDITIONS
-    Time = 1;
+    Time = 1e-2;
     Dt = 1;
 
     % Ambient Conditions
@@ -43,8 +43,14 @@ function LPB_dad()
 
     % LASER
     P_L = 200;                                % Laser power [W]
-    R_L = 1e-3;                               % Laser spot diamter (on the powder surface) [m^2]
-    V_L = 4e-3;                               % Laser scanning velocity [m/s]
+    R_L = 100e-6;                               % Laser spot diamter (on the powder surface) [m^2]
+    V_L = 100e-3;                               % Laser scanning velocity [m/s]
+
+    % ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
+    Time = 1;
+    R_L = 1e-3;
+    V_L = 4e-3;
+    % ===== ===== ===== ===== ===== ===== ===== ===== ===== =====
 
     % MELT
     Beta = 0.35;                              % Surface absrbtivity
@@ -81,9 +87,9 @@ function LPB_dad()
     Alfa_B = k_B / (Rho_B * Cp_B);            % Bulk thermal diffusivity [m^2/s]
 
     % No of increments in each direction
-    nx = 3 * round(Length / R_L);
-    ny = 3 * round(Width / R_L);
-    nz = 4;
+    nx = 2 * round(Length / R_L);
+    ny = 2 * round(Width / R_L);
+    nz = 3;
 
     Dx = Length / nx;
     Dy = Width / ny;
@@ -125,20 +131,30 @@ function LPB_dad()
     scale_factor_alpha = (nx + 1 - 1) / Length;
     scale_factor_beta = (ny + 1 - 1) / Width;
 
-    for t = 1:2,
+    for t = 1:10,
 
         counter = 1;
         total_count = Nz * Ny * Nx;
 
         Q_Conv(:,:) = hc * (T_Gauss(:,:,1) - T_amb(:,:,1));
-        Q_Rad(:,:) = Sigma * Beta * ((T_Gauss(:,:,1) + 273.15).^4 - (T_amb(:,:,1)+273.15).^4);
+        Q_Rad(:,:) = Sigma * Beta * ((T_Gauss(:,:,1) + 273.15).^4 - (T_amb(:,:,1) + 273.15).^4);
         Q_melt(:,:) = sum(T_Gauss > Tmelt, 3) * Lambda_SL * Rho_B * Dz;
         Q_Comb(:,:) = Q_Conv + Q_Rad + Q_melt;
+
         if t == 1
-            params = [0,0,0,0,0];
+            fun_Q = @(alpha_, beta_) alpha_ .* 0 + beta_ .* 0 ;
+            % fun_Q = @(alpha_, beta_) 0;
         else
-            params = fit2DGaussianToQ(Q_Comb', 2 * P_L * Beta / (pi * R_L^2), 'local', x_bins, y_bins)
+            fun_Q = getAnalyticFitToQ(Q_Comb', 2 * P_L * Beta / (pi * R_L^2), 'all_separate', x_bins, y_bins)
+            % fun_Q = getAnalyticFitToQ(Q_Comb', 2 * P_L * Beta / (pi * R_L^2), 'local', x_bins, y_bins)
         end
+
+        alpha_min = - Lw;
+        alpha_max = Le;
+        beta_min = - Ls;
+        beta_max = Ln;
+        volume_under_Q_Comb_fit = integral2(fun_Q, alpha_min, alpha_max, beta_min, beta_max);
+        volume_under_Q_Comb_ori = Dx * Dy * sum(Q_Comb(:));
 
         for k = 1:Nz,
             for j = 1:Ny,
@@ -176,10 +192,8 @@ function LPB_dad()
                     % ------------------------------------------------------------------
                     constant = 1;
                     fun_R = @(alpha_, beta_) sqrt( (x - (x_L_fin + alpha_)).^2 + (y - beta_).^2 + z.^2);
-                    % fun_Q = @(alpha_, beta_) 10e6;
-                    fun_Q = @(alpha_, beta_) params(1) * exp( -((alpha_ - params(2)) .^ 2 / (2 * params(3) ^ 2) + (beta_ - params(4)) .^ 2 / (2 * params(5) ^ 2)) );
-                    fun_I = @(alpha_, beta_) 2 * P_L * Beta / (pi * R_L^2) .* exp(-2 .* (alpha_.^2 + beta_.^2) / R_L.^2);
-                    fun_I_modified = @(alpha_, beta_) (fun_I(alpha_, beta_) - fun_Q(alpha_, beta_));
+                    fun_I_original = @(alpha_, beta_) 2 * (P_L)                           * Beta / (pi * R_L^2) .* exp(-2 .* (alpha_.^2 + beta_.^2) / R_L.^2);
+                    fun_I_modified = @(alpha_, beta_) 2 * (P_L - volume_under_Q_Comb_ori) * Beta / (pi * R_L^2) .* exp(-2 .* (alpha_.^2 + beta_.^2) / R_L.^2);
                     fun_kolli = @(alpha_, beta_) ...
                         fun_I_modified(alpha_, beta_) .* ...
                         (1 / (2 * pi * k_B)) ./ fun_R(alpha_, beta_) .* exp(- V_L .* (x - (x_L_fin + alpha_) + fun_R(alpha_, beta_)) / (2*Alfa_B));
@@ -195,7 +209,6 @@ function LPB_dad()
                     % alpha_max = Le;
                     % beta_min = -Ls;
                     % beta_max = Ln;
-
                     T_Gauss(i,j,k) = T_ini(i,j,k) + constant * integral2(fun_kolli, alpha_min, alpha_max, beta_min, beta_max);
 
                     % ------------------------------------------------------------------
@@ -267,20 +280,21 @@ function LPB_dad()
     pbaspect([Length / Width 1 1]);
 
     tmp_1 = fun_Q(xx, yy);
-    tmp_2 = fun_I(xx, yy);
+    tmp_2 = fun_I_original(xx, yy);
     tmp_3 = fun_I_modified(xx, yy);
 
     figure,
-    subplot(2,2,1), surf(xx, yy, Q_Comb'), title('Q Comb'),     % zlim([-5e6,5e6]),
-    subplot(2,2,2), surf(xx, yy, tmp_1),   title('Q Fit'),      % zlim([-5e6,5e6]),
-    subplot(2,2,3), surf(xx, yy, tmp_2),   title('I'),          % zlim([-1e7,5e7]),
-    subplot(2,2,4), surf(xx, yy, tmp_3),   title('I modified'), % zlim([-1e7,5e7]),
+    subplot(2,2,1), surf(xx, yy, Q_Comb'), title(sprintf('Q Comb Ori - Vol: %.3f', volume_under_Q_Comb_ori)),
+    subplot(2,2,2), surf(xx, yy, tmp_1),   title(sprintf('Q Comb Fit - Vol: %.3f', volume_under_Q_Comb_fit)),
+    subplot(2,2,3), surf(xx, yy, tmp_2),   title('I original'),
+    subplot(2,2,4), surf(xx, yy, tmp_3),   title('I modified'),
 
 
 
 
 % --------------------------------------------------------------------
-function params = fit2DGaussianToQ(Q_original, initial_guess_magnitude, fit_type, x_bins, y_bins)
+% function params = fit2DGaussianToQ(Q_original, initial_guess_magnitude, fit_type, x_bins, y_bins)
+function fun_Q = getAnalyticFitToQ(Q_original, initial_guess_magnitude, fit_type, x_bins, y_bins)
 % --------------------------------------------------------------------
 
     % IMPORTANT: Q_original should be as follows
@@ -302,10 +316,11 @@ function params = fit2DGaussianToQ(Q_original, initial_guess_magnitude, fit_type
 
     Q_local = Q_original;
     Q_local(Q_local < 0.4 * max(Q_local(:))) = 0;
-    drop_ratio = sum(Q_local(:)) / sum(Q_original(:));
-    if isnan(drop_ratio) % for first iteration when Q_original is all zeros
-        drop_ratio = 1;
-    end
+    Q_residual = Q_original - Q_local;
+    % drop_ratio = sum(Q_local(:)) / sum(Q_original(:));
+    % if isnan(drop_ratio) % for first iteration when Q_original is all zeros
+    %     drop_ratio = 1;
+    % end
 
     initial_guess_magnitude = max(Q_original(:));
     [row_max, col_max] = find(ismember(Q_original, max(Q_original(:))));
@@ -315,18 +330,38 @@ function params = fit2DGaussianToQ(Q_original, initial_guess_magnitude, fit_type
     [params_all, Q_fit_all] = fit2DGaussianToMatrix(Q_original, initial_guess_magnitude, initial_guess_x, initial_guess_y, x_bins, y_bins);
     [params_local, Q_fit_local] = fit2DGaussianToMatrix(Q_local, initial_guess_magnitude, initial_guess_x, initial_guess_y, x_bins, y_bins);
 
+    % IMPORTANT: find new max location for residual part
+    initial_guess_magnitude = max(Q_residual(:));
+    [row_max, col_max] = find(ismember(Q_residual, max(Q_residual(:))));
+    initial_guess_x = x_bins(col_max);
+    initial_guess_y = y_bins(row_max);
+
+    [params_residual, Q_fit_residual] = fit2DGaussianToMatrix(Q_residual, initial_guess_magnitude, initial_guess_x, initial_guess_y, x_bins, y_bins);
+
+
     [xx, yy] = meshgrid(x_bins, y_bins);
     figure,
-    subplot(1,3,1), surf(xx, yy, Q_original), title('Q Comb')
-    subplot(1,3,2), surf(xx, yy, Q_fit_all), title('Q fit all')
-    subplot(1,3,3), surf(xx, yy, Q_fit_local), title('Q fit local')
+    subplot(1,4,1), surf(xx, yy, Q_original), title('Q Comb')
+    subplot(1,4,2), surf(xx, yy, Q_fit_all), title('Q fit all')
+    subplot(1,4,3), surf(xx, yy, Q_fit_local), title('Q fit local')
+    subplot(1,4,4), surf(xx, yy, Q_fit_local + Q_fit_residual), title('Q fit all (separate)')
     suptitle('Fitting Process')
 
-    if strcmp(fit_type, 'all')
+    if strcmp(fit_type, 'all_together')
         params = params_all;
+        fun_Q = @(alpha_, beta_) params(1) * exp( -((alpha_ - params(2)) .^ 2 / (2 * params(3) ^ 2) + (beta_ - params(4)) .^ 2 / (2 * params(5) ^ 2)) );
     elseif strcmp(fit_type, 'local')
         params = params_local;
+        fun_Q = @(alpha_, beta_) params(1) * exp( -((alpha_ - params(2)) .^ 2 / (2 * params(3) ^ 2) + (beta_ - params(4)) .^ 2 / (2 * params(5) ^ 2)) );
+    elseif strcmp(fit_type, 'all_separate')
+        params_1 = params_local;
+        params_2 = params_residual;
+        fun_Q = @(alpha_, beta_) ...
+            params_1(1) * exp( -((alpha_ - params_1(2)) .^ 2 / (2 * params_1(3) ^ 2) + (beta_ - params_1(4)) .^ 2 / (2 * params_1(5) ^ 2)) ) + ...
+            params_2(1) * exp( -((alpha_ - params_2(2)) .^ 2 / (2 * params_2(3) ^ 2) + (beta_ - params_2(4)) .^ 2 / (2 * params_2(5) ^ 2)) );
     end
+
+
 
 
 % --------------------------------------------------------------------

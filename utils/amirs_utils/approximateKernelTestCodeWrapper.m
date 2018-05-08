@@ -14,6 +14,8 @@
 
 % projected_dim_list = [1:5,5:5:25,50:25:100]; dataset = 'usps';
 % projected_dim_list = [1:2:9,10:5:25,25:25:100]; dataset = 'mnist-784';
+% projected_dim_list = [25:25:100]; dataset = 'mnist-784';
+% projected_dim_list = [25:25:100]; dataset = 'mnist-784';
 % projected_dim_list = [1:2:9,10:5:25,25:25:100,100:100:700]; dataset = 'mnist-784';
 % projected_dim_list = [1,5:5:25,50]; dataset = 'uci-spam';
 projected_dim_list = [1,2:8:34]; dataset = 'uci-ion';
@@ -23,7 +25,7 @@ projected_dim_list = [1,2:8:34]; dataset = 'uci-ion';
 % projected_dim_list = [1,2:4:10];        dataset = 'xor-10D-350-train-150-test';
 % projected_dim_list = [1,2:4:10];        dataset = 'rings-10D-350-train-150-test';
 % projected_dim_list = [1,2:4:10];        dataset = 'spirals-10D-350-train-150-test';
-num_trials = 10;
+num_trials = 3;
 
 
 
@@ -88,9 +90,9 @@ grid on;
 hold on;
 legend_cell_array = {};
 plot(projected_dim_list, results_per_fieldname_multidim.accuracy_spca_eigen.mean, '--mo', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'Accuracy SPCA (mean)'];
-plot(projected_dim_list, results_per_fieldname_multidim.accuracy_kspca_eigen.mean, '-r^', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'Accuracy KSPCA (mean)'];
+% plot(projected_dim_list, results_per_fieldname_multidim.accuracy_kspca_eigen.mean, '-r^', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'Accuracy KSPCA (mean)'];
 plot(projected_dim_list, results_per_fieldname_multidim.accuracy_spca_direct.mean, '--go', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'Accuracy SRP (mean)'];
-plot(projected_dim_list, results_per_fieldname_multidim.accuracy_kspca_direct.mean, '-b^', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'Accuracy KSRP (mean)'];
+% plot(projected_dim_list, results_per_fieldname_multidim.accuracy_kspca_direct.mean, '-b^', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'Accuracy KSRP (mean)'];
 % plot(projected_dim_list, results_per_fieldname_multidim.accuracy_pca_direct.mean, '-.yo', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'Accuracy RPCA (mean)'];
 % plot(projected_dim_list, results_per_fieldname_multidim.accuracy_random_projection.mean, '-.c^', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'Accuracy Random Projection (mean)'];
 xlabel('Projected Dimension', 'FontSize', 16);
@@ -115,9 +117,9 @@ legend_cell_array = {};
 % ciplot(results_per_fieldname_multidim.duration_pca_direct.mean - results_per_fieldname_multidim.duration_pca_direct.std, results_per_fieldname_multidim.duration_pca_direct.mean + results_per_fieldname_multidim.duration_pca_direct.std, projected_dim_list, 'y'); legend_cell_array = [legend_cell_array, 'duration pca direct (std)'];
 % ciplot(results_per_fieldname_multidim.duration_random_projection.mean - results_per_fieldname_multidim.duration_random_projection.std, results_per_fieldname_multidim.duration_random_projection.mean + results_per_fieldname_multidim.duration_random_projection.std, projected_dim_list, 'c'); legend_cell_array = [legend_cell_array, 'duration random projection (std)'];
 plot(projected_dim_list, results_per_fieldname_multidim.duration_spca_eigen.mean, '--mo', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'Duration SPCA (mean)'];
-plot(projected_dim_list, results_per_fieldname_multidim.duration_kspca_eigen.mean, '-r^', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'Duration KSPCA (mean)'];
+% plot(projected_dim_list, results_per_fieldname_multidim.duration_kspca_eigen.mean, '-r^', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'Duration KSPCA (mean)'];
 plot(projected_dim_list, results_per_fieldname_multidim.duration_spca_direct.mean, '--go', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'Duration SRP (mean)'];
-plot(projected_dim_list, results_per_fieldname_multidim.duration_kspca_direct.mean, '-b^', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'Duration KSRP (mean)'];
+% plot(projected_dim_list, results_per_fieldname_multidim.duration_kspca_direct.mean, '-b^', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'Duration KSRP (mean)'];
 % plot(projected_dim_list, results_per_fieldname_multidim.duration_pca_direct.mean, '-y^', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'Duration RPCA (mean)'];
 % plot(projected_dim_list, results_per_fieldname_multidim.duration_random_projection.mean, '-c^', 'LineWidth', 2); legend_cell_array = [legend_cell_array, 'Duration Random Projection (mean)'];
 xlabel('Projected Dimension', 'FontSize', 16);

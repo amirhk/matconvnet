@@ -1,5 +1,5 @@
 function [Y,X1,v,Psi] = pca(X,numvecs, options)
-
+digits
 % pca - compute the principal component analysis.
 %
 %   [Y,X1,v,Psi] = pca(X,numvecs)
