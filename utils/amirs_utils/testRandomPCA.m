@@ -25,14 +25,14 @@ function testRandomPCA()
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
 
-  % n = 250;
-  % d = 100;
+  % % n = 250;
+  % % d = 100;
 
   % n = 100;
   % d = 25;
 
-  % n = 25;
-  % d = 10;
+  % % n = 25;
+  % % d = 10;
 
   n = 5;
   d = 3;
@@ -40,17 +40,21 @@ function testRandomPCA()
   X = randn(d, n) + 2; % NO STRUCTURE
   % X = [randn(d-2, n) + 2; randn(2, n) * 3]; % SOME STRUCTURE
   % X = [randn(d-2, n) + 2; randn(1, n) * 3; randn(1, n) * 10]; % MORE STRUCTURE
-  X = [randn(d-20, n) + 2; randn(10, n) * 3; randn(10, n) * 10]; % MORE STRUCTURE
+  % X = [randn(d-20, n) + 2; randn(10, n) * 3; randn(10, n) * 10]; % MORE STRUCTURE
 
 
 
-  % n = 250; % number of samples
-  % d = 100;  % total space dims
-  % p = 25;   % subspace dims
+  % % n = 250; % number of samples
+  % % d = 100;  % total space dims
+  % % p = 25;   % subspace dims
 
   % % n = 100; % number of samples
   % % d = 25;  % total space dims
   % % p = 25;   % subspace dims
+
+  % n = 10; % number of samples
+  % d = 5;  % total space dims
+  % p = 5;   % subspace dims
 
   % % n = 5; % number of samples
   % % d = 3;  % total space dims
@@ -68,11 +72,11 @@ function testRandomPCA()
 
 
 
-  % dataset = 'xor-10D-350-train-150-test';
-  % % dataset = 'uci-sonar';
-  % % dataset = 'uci-ion';
-  % tmp_opts.dataset = dataset;
-  % imdb = loadSavedImdb(tmp_opts, false);
+  % % dataset = 'xor-10D-350-train-150-test';
+  % % % dataset = 'uci-sonar';
+  % % % dataset = 'uci-ion';
+  % % tmp_opts.dataset = dataset;
+  % % imdb = loadSavedImdb(tmp_opts, false);
 
   % dataset = 'mnist-784';
   % imdb = constructMultiClassImdbs(dataset, false);
@@ -91,7 +95,7 @@ function testRandomPCA()
 
   H = eye(n) - 1 / n * (ones(n,n));
   X = X * H;
-  mean(X')
+  % mean(X') % IMP: means are NOT completely 0,... they're on the order of 1.0e-3
 
 
 
@@ -99,9 +103,9 @@ function testRandomPCA()
   % EVALUATION
   %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %% %%
 
-  % evaluateVisualization(X);
-  evaluatePDistDifference(X);
   % evaluateSandbox(X);
+  evaluatePDistDifference(X);
+
 
 
 
@@ -114,29 +118,29 @@ function [X_pca, U_pca] = getPCAProjection(X, k)
   % X is << d by n >>
 % -------------------------------------------------------------------------
   [U, S, V] = svd(X * X');
-  U_pca = U(:,1:k)';
-  % U_pca = (U(:,1:k) * S(1:k,1:k))';
-  % U_pca = U_pca ./ repmat(sqrt(sum(U_pca.^2, 2)), [1,size(U_pca,2)]);
-  X_pca = U_pca * X;
+  U_pca = U(:,1:k);
+  X_pca = U_pca' * X;
+  % X_pca = U_pca * U_pca' * X;
 
 
 % -------------------------------------------------------------------------
-function [X_rpca, phi] = getRPCAProjection(X, d, k)
+function [X_rpca, U_rpca] = getRPCAProjection(X, d, k)
   % X is << d by n >>
 % -------------------------------------------------------------------------
   [~, phi, ~, ~] = getApproxKernelRKS(1:d, 1:d, 10e-10, k);
-  % [~, phi, ~, ~] = getApproxKernelRKS(X', X', 10e-10, k);
-  % phi = phi ./ repmat(sqrt(sum(phi.^2, 2)), [1,size(phi,2)]);
-  X_rpca = phi * X;
+  U_rpca = phi';
+  X_rpca = U_rpca' * X;
+  % X_rpca = U_rpca * U_rpca' * X;
 
 
 % -------------------------------------------------------------------------
-function [X_rp, W] = getRPProjection(X, k)
+function [X_rp, U_rp] = getRPProjection(X, k)
   % X is << d by n >>
 % -------------------------------------------------------------------------
-  W = 1 / sqrt(k) * randn(k, size(X, 1));
-  % W = W ./ repmat(sqrt(sum(W.^2, 2)), [1,size(W,2)]);
-  X_rp = W * X;
+  W = 1 / sqrt(k) * randn(size(X, 1), k);
+  U_rp = W;
+  X_rp = U_rp' * X;
+  % X_rp = U_rp * U_rp' * X;
 
 
 % -------------------------------------------------------------------------
@@ -146,8 +150,8 @@ function projected_pdist = getNormalizedPDistFromProjectedData(projected_X)
   % tmp = squareform(pdist(projected_X'));
   % % projected_pdist = tmp / max(tmp(:));
   % projected_pdist = tmp;
-  projected_pdist = L2_distance(projected_X,projected_X);
-  % projected_pdist = L2_distance(projected_X,projected_X) .^ 2;
+  % projected_pdist = L2_distance(projected_X,projected_X);
+  projected_pdist = L2_distance(projected_X,projected_X) .^ 2;
   % projected_pdist = L2_distance(real(projected_X),real(projected_X));
 
 
@@ -196,21 +200,6 @@ function [L_approx, psi_data_1, psi_data_2, params] = getApproxKernelRKS(data_1,
 
 
 
-% -------------------------------------------------------------------------
-function evaluateVisualization(X)
-  % X is << d by n >>
-% -------------------------------------------------------------------------
-  [d, n] = size(X);
-  k = 2;
-  [X_pca, ~] = getPCAProjection(X, k);
-  [X_rpca, ~] = getRPCAProjection(X, d, k);
-  [X_rp, ~] = getRPProjection(X, k);
-  figure,
-  subplot(1,3,1), scatter(X_pca(1,:), X_pca(2,:));
-  subplot(1,3,2), scatter(X_rpca(1,:), X_rpca(2,:));
-  subplot(1,3,3), scatter(X_rp(1,:), X_rp(2,:));
-
-
 
 
 % -------------------------------------------------------------------------
@@ -218,6 +207,19 @@ function evaluateSandbox(X)
   % X is << d by n >>
 % -------------------------------------------------------------------------
   [d, n] = size(X);
+
+
+  % [d, n] = size(X);
+  % k = 2;
+  % [X_pca, ~] = getPCAProjection(X, k);
+  % [X_rpca, ~] = getRPCAProjection(X, d, k);
+  % [X_rp, ~] = getRPProjection(X, k);
+  % figure,
+  % subplot(1,3,1), scatter(X_pca(1,:), X_pca(2,:));
+  % subplot(1,3,2), scatter(X_rpca(1,:), X_rpca(2,:));
+  % subplot(1,3,3), scatter(X_rp(1,:), X_rp(2,:));
+
+
 
   % k = 40;
 
@@ -287,64 +289,6 @@ function evaluateSandbox(X)
 
 
 
-
-% % -------------------------------------------------------------------------
-% function evaluatePDistDifference(X)
-%   % X is << d by n >>
-% % -------------------------------------------------------------------------
-%   [d, n] = size(X);
-
-%   all_dim_avg_delta_pca_rpca = [];
-%   all_dim_avg_delta_pca_rp = [];
-
-%   projected_dim_list = 1:d;
-%   repeat_count = 10;
-
-%   for k = projected_dim_list
-
-%     for ii = 1:repeat_count
-
-%       one_dim_all_delta_pca_rpca = [];
-%       one_dim_all_delta_pca_rp = [];
-
-%       % PCA
-%       [X_pca, ~] = getPCAProjection(X, k);
-%       pdist_pca = getNormalizedPDistFromProjectedData(X_pca);
-
-%       % RPCA
-%       [X_rpca, ~] = getRPCAProjection(X, d, k);
-%       pdist_rpca = getNormalizedPDistFromProjectedData(X_rpca);
-
-%       % RP
-%       [X_rp, ~] = getRPProjection(X, k);
-%       pdist_rp = getNormalizedPDistFromProjectedData(X_rp);
-
-%       one_dim_all_delta_pca_rpca(end+1) = norm(pdist_pca - pdist_rpca, 'fro');
-%       one_dim_all_delta_pca_rp(end+1) = norm(pdist_pca - pdist_rp, 'fro');
-
-%     end
-
-%     all_dim_avg_delta_pca_rpca(end+1) = mean(one_dim_all_delta_pca_rpca);
-%     all_dim_avg_delta_pca_rp(end+1) = mean(one_dim_all_delta_pca_rp);
-
-%   end
-
-%   legend_cell_array = {};
-%   figure,
-%   grid on,
-%   hold on,
-%   plot(projected_dim_list, all_dim_avg_delta_pca_rpca, 'LineWidth', 2); legend_cell_array = [legend_cell_array, '|D_{PCA} - D_{RPCA}|_F'];
-%   plot(projected_dim_list, all_dim_avg_delta_pca_rp, 'LineWidth', 2); legend_cell_array = [legend_cell_array, '|D_{PCA} - D_{RP}|_F'];
-%   hold off,
-
-%   set(gca, 'YLim', [0, get(gca, 'YLim') * [0; 1]]);
-
-%   xlabel('Projected Dimension', 'FontSize', 14);
-%   ylabel('Delta in Frob Norm', 'FontSize', 14);
-%   title(sprintf('Comparison of RPCA vs RP (avg of %d)', repeat_count), 'FontSize', 14);
-%   legend(legend_cell_array, 'Location','northeast', 'FontSize', 14);
-
-
 % -------------------------------------------------------------------------
 function evaluatePDistDifference(X)
   % X is << d by n >>
@@ -355,10 +299,16 @@ function evaluatePDistDifference(X)
   all_dim_avg_delta_rpca_original = [];
   all_dim_avg_delta_rp_original = [];
 
-  % projected_dim_list = 1:min(d,100);
-  projected_dim_list = 1:5:min(d,101);
-  repeat_count = 10;
-  % repeat_count = 10000;
+  if n <= 50
+    projected_dim_list = 1:min(d,100);
+    repeat_count = 100;
+  elseif n <= 250
+    projected_dim_list = 1:2:min(d,100);
+    repeat_count = 30;
+  else
+    projected_dim_list = 1:5:min(d,100);
+    repeat_count = 10;
+  end
 
   pdist_original = getNormalizedPDistFromProjectedData(X);
 
@@ -388,40 +338,40 @@ function evaluatePDistDifference(X)
       one_dim_all_delta_rpca_original(end+1) = norm(pdist_rpca - pdist_original, 'fro');
       one_dim_all_delta_rp_original(end+1) = norm(pdist_rp - pdist_original, 'fro');
 
-      if k == 2
+      % if k == 2
 
-        % if norm(pdist_pca - pdist_original, 'fro') > norm(pdist_rpca - pdist_original, 'fro')
+      %   % if norm(pdist_pca - pdist_original, 'fro') > norm(pdist_rpca - pdist_original, 'fro')
 
-        %   k
-        %   ii
-        %   norm(pdist_pca - pdist_original, 'fro')
-        %   norm(pdist_rpca - pdist_original, 'fro')
-        %   figure,
-        %   subplot(1,4,1), scatter3(X(1,:), X(2,:), X(3,:)), title('X original'),
-        %   subplot(1,4,2), scatter3(X_pca(1,:), X_pca(2,:), ones(1,size(X_pca, 2))), title('X pca'),
-        %   subplot(1,4,3), scatter3(X_rpca(1,:), X_rpca(2,:), ones(1,size(X_rpca, 2))), title('X rpca'),
-        %   subplot(1,4,4), scatter3(X_rp(1,:), X_rp(2,:), ones(1,size(X_rp, 2))), title('X rp'),
+      %   %   k
+      %   %   ii
+      %   %   norm(pdist_pca - pdist_original, 'fro')
+      %   %   norm(pdist_rpca - pdist_original, 'fro')
+      %   %   figure,
+      %   %   subplot(1,4,1), scatter3(X(1,:), X(2,:), X(3,:)), title('X original'),
+      %   %   subplot(1,4,2), scatter3(X_pca(1,:), X_pca(2,:), ones(1,size(X_pca, 2))), title('X pca'),
+      %   %   subplot(1,4,3), scatter3(X_rpca(1,:), X_rpca(2,:), ones(1,size(X_rpca, 2))), title('X rpca'),
+      %   %   subplot(1,4,4), scatter3(X_rp(1,:), X_rp(2,:), ones(1,size(X_rp, 2))), title('X rp'),
 
-        %   keyboard
+      %   %   keyboard
 
-        % else
-        % if norm(pdist_pca - pdist_original, 'fro') > norm(pdist_rp - pdist_original, 'fro')
+      %   % else
+      %   if norm(pdist_pca - pdist_original, 'fro') > norm(pdist_rp - pdist_original, 'fro')
 
-        %   k
-        %   ii
-        %   norm(pdist_pca - pdist_original, 'fro')
-        %   norm(pdist_rp - pdist_original, 'fro')
-        %   figure,
-        %   subplot(1,4,1), scatter3(X(1,:), X(2,:), X(3,:)), title('X original'),
-        %   subplot(1,4,2), scatter3(X_pca(1,:), X_pca(2,:), ones(1,size(X_pca, 2))), title('X pca'),
-        %   subplot(1,4,3), scatter3(X_rpca(1,:), X_rpca(2,:), ones(1,size(X_rpca, 2))), title('X rpca'),
-        %   subplot(1,4,4), scatter3(X_rp(1,:), X_rp(2,:), ones(1,size(X_rp, 2))), title('X rp'),
+      %     k
+      %     ii
+      %     norm(pdist_pca - pdist_original, 'fro')
+      %     norm(pdist_rp - pdist_original, 'fro')
+      %     figure,
+      %     subplot(1,4,1), scatter3(X(1,:), X(2,:), X(3,:)), title('X original'),
+      %     subplot(1,4,2), scatter3(X_pca(1,:), X_pca(2,:), ones(1,size(X_pca, 2))), title('X pca'),
+      %     subplot(1,4,3), scatter3(X_rpca(1,:), X_rpca(2,:), ones(1,size(X_rpca, 2))), title('X rpca'),
+      %     subplot(1,4,4), scatter3(X_rp(1,:), X_rp(2,:), ones(1,size(X_rp, 2))), title('X rp'),
 
-        %   keyboard
+      %     keyboard
 
-        % end
+      %   end
 
-      end
+      % end
 
     end
 
