@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function [projected_data, approximate_kernel] = getApproximateRBFDataKernel(data, number_of_basis, rbf_variance)
+function [U_approx, S_approx, V_approx] = approxSVD(X, k)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -25,17 +25,47 @@ function [projected_data, approximate_kernel] = getApproximateRBFDataKernel(data
 % ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 % POSSIBILITY OF SUCH DAMAGE.
 
+  % implementation from slide 9 of https://amath.colorado.edu/faculty/martinss/Talks/2010_mmds_martinsson.pdf
 
-  % http://www.argmin.net/2017/12/05/kitchen-sinks/
-  % TODO: must use same basis for both data_train and data_test
+  A = X;
 
-  data_dim = size(data, 1);
-  number_of_samples = size(data, 2);
+  [d,n] = size(A);
 
-  gamma = 1 / (2 * rbf_variance ^ 2);
-  w = randn(number_of_basis, data_dim);
-  b = 2 * pi * rand(number_of_basis, 1);
+  Omega = randn(n,k);
+  Y = A * Omega;
+  [Q, R] = qr(Y); % Q now has orthonormal columns % NOT Q = randn(d,k);
+  B = Q' * A;
 
-  projected_data = cos(gamma * w * data + b * ones(1, number_of_samples));
+  [U,S,V] = svd(B);
 
-  projected_data = projected_data' * projected_data;
+  U_approx = U;
+  S_approx = S;
+  V_approx = V;
+
+
+
+
+% % n = 250;
+% % d = 100;
+% % A = randn(d,n);
+% % A = (A * A')^2 * A;
+
+% A = X;
+% [d,n] = size(A);
+% % mu = mean(A, 2);
+% % A = bsxfun(@minus, A, mu);
+
+% [U_1,S_1,V_1] = svd(A);
+
+% k = 10;
+% Omega = randn(n,k);
+% Y = A * Omega;
+% [Q, R] = qr(Y); % Q now has orthonormal columns
+% % Q = randn(d,k);
+% B = Q' * A;
+
+% [U_2,S_2,V_2] = svd(B);
+
+% norm(U_1 * S_1 * V_1' - A, 'fro')
+% norm(Q * U_2 * S_2 * V_2' - A, 'fro')
+% norm(Q * Q' * A - A, 'fro')

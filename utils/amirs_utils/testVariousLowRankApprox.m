@@ -1,3 +1,4 @@
+
 n = 25; % number of samples
 d = 10; % input space dimensionality
 % k = 10000; % embedding space dimensionality
@@ -16,7 +17,8 @@ X = ...
     0.9114    0.7777    1.2953    0.0607   -0.8540    1.9378   -0.5431   -0.8159   -1.9033    1.2149   -1.3264    0.3271   -1.5510   -0.6242    1.5347   -1.0559   -0.5543   -0.9658   -1.2648    0.6122    1.5263    0.3107    0.1099   -1.1802   -1.4937;
    -0.1146   -0.5232    0.3694    0.0146    1.8325    0.6620    0.5606   -1.7088    1.3448    0.1951   -1.5425   -0.7235   -0.1529    1.3353   -1.5948   -1.3390    0.1149   -0.7745   -0.4364   -0.6045    1.9477    1.7257    0.3311    1.2968   -0.8311];
 
-k_list = 3 .^ [0:7];
+
+k_list = 4 .^ [0:5];
 % k_list = 10 .^ [0:3];
 
 i = 1;
@@ -24,24 +26,31 @@ figure,
 
 for k = k_list
 
-  K_actual = X' * X;
+  Psi = 1/sqrt(k) * randn(k, d);
+  subplot(numel(k_list), 4, i);
+  i = i + 1;
+  imagesc(Psi' * Psi), colorbar,
+  title(sprintf('N(0,1) (k = %d) - Delta w/ eye(): %.4f', k, norm(Psi' * Psi - eye(d), 'fro')));
+
+
+  Psi = 1/sqrt(k) * sign(randn(k, d));
+  subplot(numel(k_list), 4, i);
+  i = i + 1;
+  imagesc(Psi' * Psi), colorbar,
+  title(sprintf('{-1,+1} (k = %d) - Delta w/ eye(): %.4f', k, norm(Psi' * Psi - eye(d), 'fro')));
+
+
+  [~, Psi, ~, ~] = getApproximateRBFKernel(1:d, 1:d, 10e-10, k);
+  subplot(numel(k_list), 4, i);
+  i = i + 1;
+  imagesc(Psi' * Psi), colorbar,
+  title(sprintf('RPCA_1 (k = %d) - Delta w/ eye(): %.4f', k, norm(Psi' * Psi - eye(d), 'fro')));
+
+
   [Psi, ~, K_approx] = getApproximateLinearKernel(X, k);
-
-  subplot(numel(k_list), 3, i);
+  subplot(numel(k_list), 4, i);
   i = i + 1;
-  imagesc(K_actual),
-  title('K Actual');
-  subplot(numel(k_list), 3, i);
-  i = i + 1;
-  imagesc(K_approx),
-  title('K Approx');
-  subplot(numel(k_list), 3, i);
-  i = i + 1;
-  imagesc(Psi' * Psi),
-  colorbar
-  title(sprintf('Psi^{T} * Psi (k = %d)', k));
-
-  K_diff = (K_approx - K_actual).^2;
-  fprintf('\n[INFO] (k = %04d) |K actual - K approx|_F = %.3f\n\n', k, sqrt(sum(K_diff(:))));
+  imagesc(Psi' * Psi), colorbar,
+  title(sprintf('RPCA_2 (k = %d) - Delta w/ eye(): %.4f', k, norm(Psi' * Psi - eye(d), 'fro')));
 
 end
