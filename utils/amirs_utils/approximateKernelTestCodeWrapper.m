@@ -14,8 +14,8 @@
 
 % projected_dim_list = [1:5,5:5:25,50:25:100]; dataset = 'usps';
 % projected_dim_list = [1:2:9,10:5:25,25:25:100]; dataset = 'mnist-784';
-projected_dim_list = [25:25:100]; dataset = 'mnist-784';
-% projected_dim_list = [1:10]; dataset = 'mnist-784';
+% projected_dim_list = [25:25:100]; dataset = 'mnist-784';
+projected_dim_list = [1:10]; dataset = 'mnist-784';
 % projected_dim_list = [1:2:9,10:5:25,25:25:100,100:100:700]; dataset = 'mnist-784';
 % projected_dim_list = [1,5:5:25,50]; dataset = 'uci-spam';
 % projected_dim_list = [1,2:8:34]; dataset = 'uci-ion';
