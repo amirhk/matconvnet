@@ -30,7 +30,9 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
   % Data setup
   % -----------------------------------------------------------------------------
 
+  afprintf('[INFO] Loading data...\n');
   should_load_saved_imdb = false;
+  % should_load_saved_imdb = true;
   if should_load_saved_imdb
     tmp_opts.dataset = dataset;
     if ~isSyntheticImdb(dataset) % NOT 'xor', 'rings', 'spirals'
@@ -43,12 +45,20 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
     if strcmp(dataset, 'usps')
       imdb = createImdbWithBalance(dataset, imdb, 25, 25, false, false);
     elseif strcmp(dataset, 'mnist-784')
-      imdb = createImdbWithBalance(dataset, imdb, 100, 25, false, false);
-      % imdb = createImdbWithBalance(dataset, imdb, 250, 100, false, false);
+      % imdb = createImdbWithBalance(dataset, imdb, 100, 25, false, false);
+      imdb = createImdbWithBalance(dataset, imdb, 250, 100, false, false);
+      subset_indices = ...
+        imdb.images.labels == 1 | ...
+        imdb.images.labels == 4 | ...
+        imdb.images.labels == 7;
+      imdb.images.data = imdb.images.data(:,:,:,subset_indices);
+      imdb.images.labels = imdb.images.labels(subset_indices);
+      imdb.images.set = imdb.images.set(subset_indices);
     elseif strcmp(dataset, 'uci-spam')
       imdb = createImdbWithBalance(dataset, imdb, 1000, 250, false, false);
     end
   end
+  afprintf('[INFO] Done.\n');
 
   vectorized_imdb = getVectorizedImdb(imdb);
   all_data = vectorized_imdb.images.data';
@@ -73,6 +83,25 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
 
 
   % -----------------------------------------------------------------------------
+  % t-SNE
+  % -----------------------------------------------------------------------------
+
+  initial_dims = 30;
+  if initial_dims >= d
+    initial_dims = d;
+  end
+
+  perplexity_list = [5, 15, 30, 50];
+
+  figure,
+  for i = 1:4
+    subplot(1,4,i),
+    mappedX = tsne(X', [], 2, initial_dims, perplexity_list(i));
+    gscatter(mappedX(:,1), mappedX(:,2), Y);
+  end
+
+
+  % -----------------------------------------------------------------------------
   % Meta-params
   % -----------------------------------------------------------------------------
   output = {};
@@ -82,7 +111,7 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
   H = eye(n) - 1 / n * (ones(n,n));
   projected_dim = projected_dim;
   data_rbf_variance = 10e-1;
-  label_rbf_variance = 10e-10; % extremely small variance because we are approximating delta kernel
+  label_rbf_variance = 1e-10; % extremely small variance because we are approximating delta kernel
   number_of_random_bases_for_data = 1000;
   number_of_random_bases_for_labels = projected_dim;
 
@@ -114,8 +143,15 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % SPCA-eigen
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % Y_plus_noise = Y;
-  Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+5;
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+5;
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+6;
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+8;
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+6; % for MNIST
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+10; % for RINGS
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+8; % for XOR
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+9; % for XOR
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+10; % for XOR
+  Y_plus_noise = Y;
 
   time_start = tic;
   L_actual = getActualKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance);
@@ -129,15 +165,81 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
   projected_X_test = U' * X_test;
 
   output.accuracy_spca_eigen = fh_evaluation(projected_X, Y, projected_X_test, Y_test);
+  output.rank_spca_eigen_X = rank(projected_X);
+  output.rank_spca_eigen_X_test = rank(projected_X_test);
   projected_X_spca_eigen = projected_X;
   projected_X_test_spca_eigen = projected_X_test;
+
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % SPCA-aeigen
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+5;
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+6;
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+8;
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+6; % for MNIST
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+10; % for RINGS
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+8; % for XOR
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+9; % for XOR
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+10; % for XOR
+  Y_plus_noise = Y;
+
+  time_start = tic;
+  L_actual = getActualKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance);
+  tmp = X * H * L_actual * H * X';
+  [U D V] = approxSVD(tmp, projected_dim);
+  output.duration_spca_aeigen = toc(time_start);
+  U = U(:,1:projected_dim);
+
+  projected_X = U' * X;
+  projected_X_test = U' * X_test;
+
+  output.accuracy_spca_aeigen = fh_evaluation(projected_X, Y, projected_X_test, Y_test);
+  output.rank_spca_aeigen_X = rank(projected_X);
+  output.rank_spca_aeigen_X_test = rank(projected_X_test);
+  projected_X_spca_aeigen = projected_X;
+  projected_X_test_spca_aeigen = projected_X_test;
+
+
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % SPCA-direct
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+5;
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+6;
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+8;
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+6; % for MNIST
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+10; % for RINGS
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+8; % for XOR
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+9; % for XOR
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+10; % for XOR
+  Y_plus_noise = Y;
+
+  time_start = tic;
+  [~, psi, ~, ~] = fh_getApproxKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance, number_of_random_bases_for_labels);
+  output.duration_spca_direct = toc(time_start);
+  U = X * H * psi';
+
+  projected_X = U' * X;
+  projected_X_test = U' * X_test;
+
+  output.accuracy_spca_direct = fh_evaluation(projected_X, Y, projected_X_test, Y_test);
+  output.rank_spca_direct_X = rank(projected_X);
+  output.rank_spca_direct_X_test = rank(projected_X_test);
+  projected_X_spca_direct = projected_X;
+  projected_X_test_spca_direct = projected_X_test;
 
 
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % KSPCA-eigen
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % Y_plus_noise = Y;
-  Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+5;
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+5;
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+6;
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+8;
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+6; % for MNIST
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+10; % for RINGS
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+8; % for XOR
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+9; % for XOR
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+10; % for XOR
+  Y_plus_noise = Y;
 
   time_start = tic;
   L_actual = getActualKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance);
@@ -152,36 +254,24 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
   projected_X_test = U' * K_test_actual;
 
   output.accuracy_kspca_eigen = fh_evaluation(projected_X, Y, projected_X_test, Y_test);
+  output.rank_kspca_eigen_X = rank(projected_X);
+  output.rank_kspca_eigen_X_test = rank(projected_X_test);
   projected_X_kspca_eigen = projected_X;
   projected_X_test_kspca_eigen = projected_X_test;
 
 
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % SPCA-aeigen
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % Y_plus_noise = Y;
-  Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+5;
-
-  time_start = tic;
-  L_actual = getActualKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance);
-  tmp = X * H * L_actual * H * X';
-  [U D V] = approxSVD(tmp, projected_dim);
-  output.duration_spca_aeigen = toc(time_start);
-  U = U(:,1:projected_dim);
-
-  projected_X = U' * X;
-  projected_X_test = U' * X_test;
-
-  output.accuracy_spca_aeigen = fh_evaluation(projected_X, Y, projected_X_test, Y_test);
-  projected_X_spca_aeigen = projected_X;
-  projected_X_test_spca_aeigen = projected_X_test;
-
-
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % KSPCA-aeigen
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % Y_plus_noise = Y;
-  Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+5;
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+5;
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+6;
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+8;
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+6; % for MNIST
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+10; % for RINGS
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+8; % for XOR
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+9; % for XOR
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+10; % for XOR
+  Y_plus_noise = Y;
 
   time_start = tic;
   L_actual = getActualKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance);
@@ -196,39 +286,29 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
   projected_X_test = U' * K_test_actual;
 
   output.accuracy_kspca_aeigen = fh_evaluation(projected_X, Y, projected_X_test, Y_test);
+  output.rank_kspca_aeigen_X = rank(projected_X);
+  output.rank_kspca_aeigen_X_test = rank(projected_X_test);
   projected_X_kspca_aeigen = projected_X;
   projected_X_test_kspca_aeigen = projected_X_test;
 
 
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % SPCA-direct
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % Y_plus_noise = Y;
-  Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+5;
-
-  time_start = tic;
-  [L_approx, psi, ~, ~] = fh_getApproxKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance, number_of_random_bases_for_labels);
-  output.duration_spca_direct = toc(time_start);
-  U = X * H * psi';
-
-  projected_X = U' * X;
-  projected_X_test = U' * X_test;
-
-  output.accuracy_spca_direct = fh_evaluation(projected_X, Y, projected_X_test, Y_test);
-  projected_X_spca_direct = projected_X;
-  projected_X_test_spca_direct = projected_X_test;
-
-
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
   % KSPCA-direct
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % Y_plus_noise = Y;
-  Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+5;
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+5;
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+6;
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+8;
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+6; % for MNIST
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+10; % for RINGS
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+8; % for XOR
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+9; % for XOR
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+10; % for XOR
+  Y_plus_noise = Y;
 
   time_start = tic;
-  % [L_approx, psi, ~, ~] = fh_getApproxKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance, number_of_random_bases_for_labels * 100);
-  [L_approx, psi, ~, ~] = fh_getApproxKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance, number_of_random_bases_for_labels);
-  % [L_approx, psi, ~, ~] = fh_getApproxKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance, size(X,2));
+  % [~, psi, ~, ~] = fh_getApproxKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance, number_of_random_bases_for_labels * 100);
+  [~, psi, ~, ~] = fh_getApproxKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance, number_of_random_bases_for_labels);
+  % [~, psi, ~, ~] = fh_getApproxKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance, size(X,2));
   [K_train_approx, ~, ~, params] = fh_getApproxKernel(X, X, data_rbf_variance, number_of_random_bases_for_data);
   [K_test_approx, ~, ~, ~] = fh_getApproxKernel(X, X_test, data_rbf_variance, number_of_random_bases_for_data, params);
   output.duration_kspca_direct = toc(time_start);
@@ -247,6 +327,8 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
   % projected_X_test = U(:,1:projected_dim)' * projected_X_test;
 
   output.accuracy_kspca_direct = fh_evaluation(projected_X, Y, projected_X_test, Y_test);
+  output.rank_kspca_direct_X = rank(projected_X);
+  output.rank_kspca_direct_X_test = rank(projected_X_test);
   projected_X_kspca_direct = projected_X;
   projected_X_test_kspca_direct = projected_X_test;
 
@@ -257,7 +339,7 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
   % Y_plus_noise = 1:length(Y); % so no information whatsoever
 
   % time_start = tic;
-  % [L_approx, psi, ~, ~] = fh_getApproxKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance, number_of_random_bases_for_labels);
+  % [~, psi, ~, ~] = fh_getApproxKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance, number_of_random_bases_for_labels);
   % U = X * H * psi';
   % output.duration_pca_direct = toc(time_start);
 
@@ -288,21 +370,29 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
 
   % figure,
 
-  % subplot(2,2,1)
+  % subplot(2,3,1)
   % plotPerClassTrainAndTestSamples(projected_X_spca_eigen, Y, projected_X_test_spca_eigen, Y_test);
-  % title(sprintf('spca eigen - acc: %.3f', output.accuracy_spca_eigen)),
+  % title(sprintf('spca - acc: %.3f', output.accuracy_spca_eigen)),
 
-  % subplot(2,2,2)
-  % plotPerClassTrainAndTestSamples(projected_X_kspca_eigen, Y, projected_X_test_kspca_eigen, Y_test);
-  % title(sprintf('kspca eigen - acc: %.3f', output.accuracy_kspca_eigen)),
+  % subplot(2,3,2)
+  % plotPerClassTrainAndTestSamples(projected_X_spca_aeigen, Y, projected_X_test_spca_aeigen, Y_test);
+  % title(sprintf('spca-x - acc: %.3f', output.accuracy_spca_aeigen)),
 
-  % subplot(2,2,3)
+  % subplot(2,3,3)
   % plotPerClassTrainAndTestSamples(projected_X_spca_direct, Y, projected_X_test_spca_direct, Y_test);
-  % title(sprintf('spca direct - acc: %.3f', output.accuracy_spca_direct)),
+  % title(sprintf('srp - acc: %.3f', output.accuracy_spca_direct)),
 
-  % subplot(2,2,4)
+  % subplot(2,3,4)
+  % plotPerClassTrainAndTestSamples(projected_X_kspca_eigen, Y, projected_X_test_kspca_eigen, Y_test);
+  % title(sprintf('kspca - acc: %.3f', output.accuracy_kspca_eigen)),
+
+  % subplot(2,3,5)
+  % plotPerClassTrainAndTestSamples(projected_X_kspca_aeigen, Y, projected_X_test_kspca_aeigen, Y_test);
+  % title(sprintf('kspca-x - acc: %.3f', output.accuracy_kspca_aeigen)),
+
+  % subplot(2,3,6)
   % plotPerClassTrainAndTestSamples(projected_X_kspca_direct, Y, projected_X_test_kspca_direct, Y_test);
-  % title(sprintf('kspca direct - acc: %.3f', output.accuracy_kspca_direct)),
+  % title(sprintf('ksrp - acc: %.3f', output.accuracy_kspca_direct)),
 
   % % subplot(3,2,5)
   % % plotPerClassTrainAndTestSamples(projected_X_pca_direct, Y, projected_X_test_pca_direct, Y_test);

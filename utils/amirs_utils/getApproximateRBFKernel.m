@@ -45,3 +45,10 @@ function [L_approx, psi_data_1, psi_data_2, params] = getApproximateRBFKernel(da
 
   L_approx = psi_data_1' * psi_data_2;
 
+  % important detail: doubling has a wierd effect:
+  % rank(L_approx) = rank(psi_data_1' * psi_data_2)
+  % rank(double(L_approx)) ?? rank(double(psi_data_1)' * double(psi_data_2))
+  L_approx = double(L_approx);
+  psi_data_1 = double(psi_data_1);
+  psi_data_2 = double(psi_data_2);
+

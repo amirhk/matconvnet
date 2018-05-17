@@ -28,27 +28,27 @@ function plotPerClassTrainAndTestSamples(X_train, Y_train, X_test, Y_test)
   assert(numel(unique(Y_train)) == numel(unique(Y_test)));
 
   indices = {};
-  for i = 1:numel(unique(Y_train))
+  % for i = 1:numel(unique(Y_train))
+  for i = unique(Y_train)
     indices.train.(sprintf('class_%d',i)) = Y_train == i;
     indices.test.(sprintf('class_%d',i)) = Y_test == i;
   end
 
   data_train_per_class = {};
   data_test_per_class = {};
-  for i = 1:numel(unique(Y_train))
+  % for i = 1:numel(unique(Y_train))
+  for i = unique(Y_train)
     data_train_per_class.(sprintf('class_%d',i)) = X_train(:, indices.train.(sprintf('class_%d',i)));
     data_test_per_class.(sprintf('class_%d',i)) = X_test(:, indices.test.(sprintf('class_%d',i)));
   end
 
   cmap = colormap(parula(10));
-  if numel(unique(Y_train)) == 2
-    cmap = [cmap(1,:); cmap(10,:)];
-  elseif numel(unique(Y_train)) == 3
-    cmap = [cmap(1,:); cmap(4,:); cmap(10,:)];
-  end
+  cmap = [cmap(1,:); cmap(10,:); cmap(4,:); cmap(2:3,:); cmap(5:9,:)]; % reordering... so better coloured plots for 2 class datasets
+
+  legend_cell_array = {};
 
   hold on,
-  for i = 1:numel(unique(Y_train))
+  for i = unique(Y_train)
     scatter( ...
       data_train_per_class.(sprintf('class_%d',i))(1,:), ...
       data_train_per_class.(sprintf('class_%d',i))(2,:), ...
@@ -57,5 +57,7 @@ function plotPerClassTrainAndTestSamples(X_train, Y_train, X_test, Y_test)
       data_train_per_class.(sprintf('class_%d',i))(1,:), ...
       data_train_per_class.(sprintf('class_%d',i))(2,:), ...
       'MarkerFaceColor', cmap(i,:));
+    legend_cell_array = [legend_cell_array, sprintf('class %d',i)];
   end
   hold off,
+  legend(legend_cell_array)
