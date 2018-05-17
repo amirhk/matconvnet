@@ -83,25 +83,6 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
 
 
   % -----------------------------------------------------------------------------
-  % t-SNE
-  % -----------------------------------------------------------------------------
-
-  initial_dims = 30;
-  if initial_dims >= d
-    initial_dims = d;
-  end
-
-  perplexity_list = [5, 15, 30, 50];
-
-  figure,
-  for i = 1:4
-    subplot(1,4,i),
-    mappedX = tsne(X', [], 2, initial_dims, perplexity_list(i));
-    gscatter(mappedX(:,1), mappedX(:,2), Y);
-  end
-
-
-  % -----------------------------------------------------------------------------
   % Meta-params
   % -----------------------------------------------------------------------------
   output = {};
@@ -366,6 +347,25 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
   % projected_X_random_projection = projected_X;
   % projected_X_test_random_projection = projected_X_test;
 
+
+
+  % % -----------------------------------------------------------------------------
+  % % t-SNE
+  % % -----------------------------------------------------------------------------
+
+  % initial_dims = 30;
+  % if initial_dims >= d
+  %   initial_dims = d;
+  % end
+
+  % perplexity_list = [5, 15, 30, 50];
+
+  % figure,
+  % for i = 1:4
+  %   subplot(1,4,i),
+  %   mappedX = tsne(X', [], 2, initial_dims, perplexity_list(i));
+  %   gscatter(mappedX(:,1), mappedX(:,2), Y);
+  % end
 
 
   % figure,
