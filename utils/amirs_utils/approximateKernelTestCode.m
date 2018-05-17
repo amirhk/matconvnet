@@ -45,8 +45,8 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
       imdb = createImdbWithBalance(dataset, imdb, 25, 25, false, false);
     elseif strcmp(dataset, 'mnist-784')
       % imdb = createImdbWithBalance(dataset, imdb, 100, 25, false, false);
-      imdb = createImdbWithBalance(dataset, imdb, 250, 100, false, false);
-      % imdb = createImdbWithBalance(dataset, imdb, 2500, 250, false, false);
+      % imdb = createImdbWithBalance(dataset, imdb, 250, 100, false, false);
+      imdb = createImdbWithBalance(dataset, imdb, 2500, 250, false, false);
       % subset_indices = ...
       %   imdb.images.labels == 1 | ...
       %   imdb.images.labels == 3 | ...
