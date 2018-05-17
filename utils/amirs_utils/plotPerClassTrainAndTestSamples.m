@@ -1,5 +1,5 @@
 % -------------------------------------------------------------------------
-function plotPerClassTrainAndTestSamples(X_train, Y_train, X_test, Y_test)
+function legend_cell_array = plotPerClassTrainAndTestSamples(X_train, Y_train, X_test, Y_test)
 % -------------------------------------------------------------------------
 % Copyright (c) 2017, Amir-Hossein Karimi
 % All rights reserved.
@@ -43,7 +43,7 @@ function plotPerClassTrainAndTestSamples(X_train, Y_train, X_test, Y_test)
   end
 
   cmap = colormap(parula(10));
-  cmap = [cmap(1,:); cmap(10,:); cmap(4,:); cmap(2:3,:); cmap(5:9,:)]; % reordering... so better coloured plots for 2 class datasets
+  cmap = [cmap(1,:); cmap(4,:); cmap(9,:); cmap(2:3,:); cmap(5:8,:); cmap(10,:)]; % reordering... so better coloured plots for 2 class datasets
 
   legend_cell_array = {};
 
@@ -52,12 +52,18 @@ function plotPerClassTrainAndTestSamples(X_train, Y_train, X_test, Y_test)
     scatter( ...
       data_train_per_class.(sprintf('class_%d',i))(1,:), ...
       data_train_per_class.(sprintf('class_%d',i))(2,:), ...
-      'filled', 'MarkerFaceColor', cmap(i,:));
-    scatter( ...
-      data_train_per_class.(sprintf('class_%d',i))(1,:), ...
-      data_train_per_class.(sprintf('class_%d',i))(2,:), ...
+      'MarkerEdgeColor', cmap(i,:), ...
       'MarkerFaceColor', cmap(i,:));
-    legend_cell_array = [legend_cell_array, sprintf('class %d',i)];
+    legend_cell_array = [legend_cell_array, sprintf('class %d - train',i)];
+    scatter( ...
+      data_test_per_class.(sprintf('class_%d',i))(1,:), ...
+      data_test_per_class.(sprintf('class_%d',i))(2,:), ...
+      'MarkerEdgeColor', cmap(i,:), ...
+      'MarkerFaceColor', [1,1,1]);
+    legend_cell_array = [legend_cell_array, sprintf('class %d - test',i)];
   end
   hold off,
-  legend(legend_cell_array)
+  axis off,
+
+  % legend(legend_cell_array,'Location','Best');
+  % legend(legend_cell_array,'Location','BestOutside');
