@@ -35,8 +35,8 @@ num_trials = 10;
 
 % dummy run just to get fieldnames and initialize results arrays
 fprintf('Dummy iteration...\t');
-output = approximateKernelTestCode(false, 2, dataset);
-% output = approximateKernelTestCode(false, 10, dataset);
+% output = approximateKernelTestCode(false, 2, dataset);
+output = approximateKernelTestCode(false, 10, dataset);
 results_per_fieldname_singledim_multirun = {};
 results_per_fieldname_multidim = {};
 all_fieldnames = fieldnames(output);
