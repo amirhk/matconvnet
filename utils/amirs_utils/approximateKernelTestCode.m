@@ -168,41 +168,41 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
   projected_X_test_spca_eigen = projected_X_test;
 
 
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % SPCA-direct
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % % SPCA-direct
+  % %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-  oversample = false;
+  % oversample = false;
 
-  if ~oversample
+  % if ~oversample
 
-    time_start = tic;
-    [~, psi, ~, ~] = fh_getApproxKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance, number_of_random_bases_for_labels);
-    output.duration_spca_direct = toc(time_start);
-    U = X * H * psi';
+  %   time_start = tic;
+  %   [~, psi, ~, ~] = fh_getApproxKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance, number_of_random_bases_for_labels);
+  %   output.duration_spca_direct = toc(time_start);
+  %   U = X * H * psi';
 
-    projected_X = U' * X;
-    projected_X_test = U' * X_test;
+  %   projected_X = U' * X;
+  %   projected_X_test = U' * X_test;
 
-  else
+  % else
 
-    time_start = tic;
-    [~, psi, ~, ~] = fh_getApproxKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance, number_of_random_bases_for_labels * 100);
-    output.duration_spca_direct = toc(time_start);
-    U = X * H * psi';
+  %   time_start = tic;
+  %   [~, psi, ~, ~] = fh_getApproxKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance, number_of_random_bases_for_labels * 100);
+  %   output.duration_spca_direct = toc(time_start);
+  %   U = X * H * psi';
 
-    projected_X = U' * X;
-    projected_X_test = U' * X_test;
+  %   projected_X = U' * X;
+  %   projected_X_test = U' * X_test;
 
-    [U,S,V] = svd(projected_X);
-    projected_X = U(:,1:projected_dim)' * projected_X;
-    projected_X_test = U(:,1:projected_dim)' * projected_X_test;
+  %   [U,S,V] = svd(projected_X);
+  %   projected_X = U(:,1:projected_dim)' * projected_X;
+  %   projected_X_test = U(:,1:projected_dim)' * projected_X_test;
 
-  end
+  % end
 
-  output.accuracy_spca_direct = fh_evaluation(projected_X, Y, projected_X_test, Y_test);
-  projected_X_spca_direct = projected_X;
-  projected_X_test_spca_direct = projected_X_test;
+  % output.accuracy_spca_direct = fh_evaluation(projected_X, Y, projected_X_test, Y_test);
+  % projected_X_spca_direct = projected_X;
+  % projected_X_test_spca_direct = projected_X_test;
 
 
   % %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
