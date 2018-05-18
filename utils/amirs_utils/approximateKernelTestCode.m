@@ -148,61 +148,61 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
   % fh_getApproxKernel = @getApproxKernelFastFood;
 
 
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % SPCA-eigen
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-
-  time_start = tic;
-  L_actual = getActualKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance);
-  tmp = X * H * L_actual * H * X';
-  [U D V] = svd(tmp);
-  output.duration_spca_eigen = toc(time_start);
-  U = U(:,1:projected_dim);
-  % U = U(:,1:projected_dim) * D(1:projected_dim,1:projected_dim).^0.5;
-
-  projected_X = U' * X;
-  projected_X_test = U' * X_test;
-
-  output.accuracy_spca_eigen = fh_evaluation(projected_X, Y, projected_X_test, Y_test);
-  projected_X_spca_eigen = projected_X;
-  projected_X_test_spca_eigen = projected_X_test;
-
-
   % %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % % SPCA-direct
+  % % SPCA-eigen
   % %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-  % oversample = false;
+  % time_start = tic;
+  % L_actual = getActualKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance);
+  % tmp = X * H * L_actual * H * X';
+  % [U D V] = svd(tmp);
+  % output.duration_spca_eigen = toc(time_start);
+  % U = U(:,1:projected_dim);
+  % % U = U(:,1:projected_dim) * D(1:projected_dim,1:projected_dim).^0.5;
 
-  % if ~oversample
+  % projected_X = U' * X;
+  % projected_X_test = U' * X_test;
 
-  %   time_start = tic;
-  %   [~, psi, ~, ~] = fh_getApproxKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance, number_of_random_bases_for_labels);
-  %   output.duration_spca_direct = toc(time_start);
-  %   U = X * H * psi';
+  % output.accuracy_spca_eigen = fh_evaluation(projected_X, Y, projected_X_test, Y_test);
+  % projected_X_spca_eigen = projected_X;
+  % projected_X_test_spca_eigen = projected_X_test;
 
-  %   projected_X = U' * X;
-  %   projected_X_test = U' * X_test;
 
-  % else
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % SPCA-direct
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-  %   time_start = tic;
-  %   [~, psi, ~, ~] = fh_getApproxKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance, number_of_random_bases_for_labels * 100);
-  %   output.duration_spca_direct = toc(time_start);
-  %   U = X * H * psi';
+  oversample = false;
 
-  %   projected_X = U' * X;
-  %   projected_X_test = U' * X_test;
+  if ~oversample
 
-  %   [U,S,V] = svd(projected_X);
-  %   projected_X = U(:,1:projected_dim)' * projected_X;
-  %   projected_X_test = U(:,1:projected_dim)' * projected_X_test;
+    time_start = tic;
+    [~, psi, ~, ~] = fh_getApproxKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance, number_of_random_bases_for_labels);
+    output.duration_spca_direct = toc(time_start);
+    U = X * H * psi';
 
-  % end
+    projected_X = U' * X;
+    projected_X_test = U' * X_test;
 
-  % output.accuracy_spca_direct = fh_evaluation(projected_X, Y, projected_X_test, Y_test);
-  % projected_X_spca_direct = projected_X;
-  % projected_X_test_spca_direct = projected_X_test;
+  else
+
+    time_start = tic;
+    [~, psi, ~, ~] = fh_getApproxKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance, number_of_random_bases_for_labels * 100);
+    output.duration_spca_direct = toc(time_start);
+    U = X * H * psi';
+
+    projected_X = U' * X;
+    projected_X_test = U' * X_test;
+
+    [U,S,V] = svd(projected_X);
+    projected_X = U(:,1:projected_dim)' * projected_X;
+    projected_X_test = U(:,1:projected_dim)' * projected_X_test;
+
+  end
+
+  output.accuracy_spca_direct = fh_evaluation(projected_X, Y, projected_X_test, Y_test);
+  projected_X_spca_direct = projected_X;
+  projected_X_test_spca_direct = projected_X_test;
 
 
   % %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
