@@ -58,6 +58,10 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
       % imdb.images.set = imdb.images.set(subset_indices);
     elseif strcmp(dataset, 'imagenet-tiny')
       % imdb = createImdbWithBalance(dataset, imdb, 10, 5, false, false);
+      subset_indices = imdb.images.labels <= 100;
+      imdb.images.data = imdb.images.data(:,:,:,subset_indices);
+      imdb.images.labels = imdb.images.labels(subset_indices);
+      imdb.images.set = imdb.images.set(subset_indices);
     elseif strcmp(dataset, 'uci-spam')
       imdb = createImdbWithBalance(dataset, imdb, 1000, 250, false, false);
     end
