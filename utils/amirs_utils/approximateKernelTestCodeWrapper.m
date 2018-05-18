@@ -13,20 +13,22 @@
 
 
 % projected_dim_list = [1:5,5:5:25,50:25:100]; dataset = 'usps';
+% projected_dim_list = [1:10]; dataset = 'usps';
 % projected_dim_list = [1:2:9,10:5:25,25:25:100]; dataset = 'mnist-784';
 % projected_dim_list = [25:25:100]; dataset = 'mnist-784';
-projected_dim_list = [1:10]; dataset = 'mnist-784';
+% projected_dim_list = [1:10]; dataset = 'mnist-784';
+projected_dim_list = [1:5,10:5:25,50:25:200]; dataset = 'imagenet-tiny';
 % projected_dim_list = [1:2:9,10:5:25,25:25:100,100:100:700]; dataset = 'mnist-784';
 % projected_dim_list = [1,5:5:25,50]; dataset = 'uci-spam';
 % projected_dim_list = [1,2:8:34]; dataset = 'uci-ion';
-% projected_dim_list = [1,2:4:34]; dataset = 'uci-ion';
+% projected_dim_list = [1,2:2:34]; dataset = 'uci-ion';
 % projected_dim_list = [1:34]; dataset = 'uci-ion';
 % projected_dim_list = [1,5:10:55,60]; dataset = 'uci-sonar';
 % projected_dim_list = 1:4;        dataset = 'uci-balance';
 % projected_dim_list = [1,2:2:10];        dataset = 'xor-10D-350-train-150-test';
 % projected_dim_list = [1,2:4:10];        dataset = 'rings-10D-350-train-150-test';
 % projected_dim_list = [1,2:4:10];        dataset = 'spirals-10D-350-train-150-test';
-num_trials = 10;
+num_trials = 3;
 
 
 
@@ -36,7 +38,6 @@ num_trials = 10;
 % dummy run just to get fieldnames and initialize results arrays
 fprintf('Dummy iteration...\t');
 output = approximateKernelTestCode(false, 2, dataset);
-% output = approximateKernelTestCode(false, 10, dataset);
 results_per_fieldname_singledim_multirun = {};
 results_per_fieldname_multidim = {};
 all_fieldnames = fieldnames(output);
@@ -104,7 +105,7 @@ ylabel('Accuracy (1-NN)', 'FontSize', 16);
 hold off;
 ylim([0,1]);
 title('Accuracy Comparison', 'FontSize', 16);
-legend(legend_cell_array, 'Location', 'east', 'FontSize', 16);
+legend(legend_cell_array, 'Location', 'east', 'FontSize', 12);
 
 % saveas(gcf,sprintf('1nn_perf_%s', dataset),'epsc')
 
@@ -132,28 +133,28 @@ xlabel('Projected Dimension', 'FontSize', 16);
 ylabel('Duration (sec)', 'FontSize', 16);
 hold off;
 title('Duration Comparison', 'FontSize', 16);
-legend(legend_cell_array, 'Location', 'west', 'FontSize', 16);
+legend(legend_cell_array, 'Location', 'west', 'FontSize', 12);
 
 
-disp(' -- -- -- -- -- -- -- ')
-results_per_fieldname_multidim.rank_spca_eigen_X.mean
-results_per_fieldname_multidim.rank_spca_eigen_X_test.mean
-disp(' -- -- -- -- -- -- -- ')
-results_per_fieldname_multidim.rank_spca_aeigen_X.mean
-results_per_fieldname_multidim.rank_spca_aeigen_X_test.mean
-disp(' -- -- -- -- -- -- -- ')
-results_per_fieldname_multidim.rank_spca_direct_X.mean
-results_per_fieldname_multidim.rank_spca_direct_X_test.mean
-disp(' -- -- -- -- -- -- -- ')
-results_per_fieldname_multidim.rank_kspca_eigen_X.mean
-results_per_fieldname_multidim.rank_kspca_eigen_X_test.mean
-disp(' -- -- -- -- -- -- -- ')
-results_per_fieldname_multidim.rank_kspca_aeigen_X.mean
-results_per_fieldname_multidim.rank_kspca_aeigen_X_test.mean
-disp(' -- -- -- -- -- -- -- ')
-results_per_fieldname_multidim.rank_kspca_direct_X.mean
-results_per_fieldname_multidim.rank_kspca_direct_X_test.mean
-disp(' -- -- -- -- -- -- -- ')
+% disp(' -- -- -- -- -- -- -- ')
+% results_per_fieldname_multidim.rank_spca_eigen_X.mean
+% results_per_fieldname_multidim.rank_spca_eigen_X_test.mean
+% disp(' -- -- -- -- -- -- -- ')
+% results_per_fieldname_multidim.rank_spca_aeigen_X.mean
+% results_per_fieldname_multidim.rank_spca_aeigen_X_test.mean
+% disp(' -- -- -- -- -- -- -- ')
+% results_per_fieldname_multidim.rank_spca_direct_X.mean
+% results_per_fieldname_multidim.rank_spca_direct_X_test.mean
+% disp(' -- -- -- -- -- -- -- ')
+% results_per_fieldname_multidim.rank_kspca_eigen_X.mean
+% results_per_fieldname_multidim.rank_kspca_eigen_X_test.mean
+% disp(' -- -- -- -- -- -- -- ')
+% results_per_fieldname_multidim.rank_kspca_aeigen_X.mean
+% results_per_fieldname_multidim.rank_kspca_aeigen_X_test.mean
+% disp(' -- -- -- -- -- -- -- ')
+% results_per_fieldname_multidim.rank_kspca_direct_X.mean
+% results_per_fieldname_multidim.rank_kspca_direct_X_test.mean
+% disp(' -- -- -- -- -- -- -- ')
 
 % saveas(gcf,sprintf('time_perf_%s', dataset),'epsc')
 

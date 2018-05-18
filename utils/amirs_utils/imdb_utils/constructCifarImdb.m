@@ -45,7 +45,7 @@ function imdb = constructCifarImdb(opts)
   for fi = 1:numel(files)
     fd = load(files{fi});
     data{fi} = permute(reshape(fd.data',32,32,3,[]),[2 1 3 4]);
-    labels{fi} = fd.labels' + 1; % Index from 1
+    labels{fi} = (fd.labels)' + 1; % Index from 1
     sets{fi} = repmat(file_set(fi), size(labels{fi}));
   end
 
