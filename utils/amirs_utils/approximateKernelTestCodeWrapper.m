@@ -22,13 +22,13 @@ projected_dim_list = [1:5,10:5:25,50:25:200]; dataset = 'imagenet-tiny';
 % projected_dim_list = [1,5:5:25,50]; dataset = 'uci-spam';
 % projected_dim_list = [1,2:8:34]; dataset = 'uci-ion';
 % projected_dim_list = [1,2:2:34]; dataset = 'uci-ion';
-% projected_dim_list = [1:34]; dataset = 'uci-ion';
+% projected_dim_list = [1:2:34]; dataset = 'uci-ion';
 % projected_dim_list = [1,5:10:55,60]; dataset = 'uci-sonar';
 % projected_dim_list = 1:4;        dataset = 'uci-balance';
 % projected_dim_list = [1,2:2:10];        dataset = 'xor-10D-350-train-150-test';
 % projected_dim_list = [1,2:4:10];        dataset = 'rings-10D-350-train-150-test';
 % projected_dim_list = [1,2:4:10];        dataset = 'spirals-10D-350-train-150-test';
-num_trials = 3;
+num_trials = 10;
 
 
 

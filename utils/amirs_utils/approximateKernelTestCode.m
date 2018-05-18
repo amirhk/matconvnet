@@ -57,7 +57,7 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
       % imdb.images.labels = imdb.images.labels(subset_indices);
       % imdb.images.set = imdb.images.set(subset_indices);
     elseif strcmp(dataset, 'imagenet-tiny')
-      imdb = createImdbWithBalance(dataset, imdb, 10, 5, false, false);
+      % imdb = createImdbWithBalance(dataset, imdb, 10, 5, false, false);
     elseif strcmp(dataset, 'uci-spam')
       imdb = createImdbWithBalance(dataset, imdb, 1000, 250, false, false);
     end
@@ -84,6 +84,9 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
   Y = all_labels(indices_train);
   X_test = all_data(:,indices_test);
   Y_test = all_labels(indices_test);
+
+  Y = Y(:)'; % 1 by n_train
+  Y_test = Y_test(:)'; % 1 by n_test
 
 
   % -----------------------------------------------------------------------------
@@ -116,7 +119,7 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
     data_rbf_variance = 3*10e-2;
   end
 
-  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+5;
+  Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+5; % for UCI-Ion
   % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+6;
   % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+7;
   % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+8;
@@ -125,7 +128,7 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
   % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+8; % for XOR
   % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+9; % for XOR
   % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+10; % for XOR
-  Y_plus_noise = Y;
+  % Y_plus_noise = Y;
 
 
   % -----------------------------------------------------------------------------
@@ -196,26 +199,26 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
   projected_X_test_spca_direct = projected_X_test;
 
 
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % KSPCA-eigen
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % % KSPCA-eigen
+  % %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-  time_start = tic;
-  L_actual = getActualKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance);
-  K_train_actual = getActualKernel(X, X, data_rbf_variance);
-  K_test_actual = getActualKernel(X, X_test, data_rbf_variance);
-  tmp = H * L_actual * H * K_train_actual';
-  [U D V] = svd(tmp);
-  output.duration_kspca_eigen = toc(time_start);
-  U = U(:,1:projected_dim);
-  % U = U(:,1:projected_dim) * D(1:projected_dim,1:projected_dim).^0.5;
+  % time_start = tic;
+  % L_actual = getActualKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance);
+  % K_train_actual = getActualKernel(X, X, data_rbf_variance);
+  % K_test_actual = getActualKernel(X, X_test, data_rbf_variance);
+  % tmp = H * L_actual * H * K_train_actual';
+  % [U D V] = svd(tmp);
+  % output.duration_kspca_eigen = toc(time_start);
+  % U = U(:,1:projected_dim);
+  % % U = U(:,1:projected_dim) * D(1:projected_dim,1:projected_dim).^0.5;
 
-  projected_X = U' * K_train_actual;
-  projected_X_test = U' * K_test_actual;
+  % projected_X = U' * K_train_actual;
+  % projected_X_test = U' * K_test_actual;
 
-  output.accuracy_kspca_eigen = fh_evaluation(projected_X, Y, projected_X_test, Y_test);
-  projected_X_kspca_eigen = projected_X;
-  projected_X_test_kspca_eigen = projected_X_test;
+  % output.accuracy_kspca_eigen = fh_evaluation(projected_X, Y, projected_X_test, Y_test);
+  % projected_X_kspca_eigen = projected_X;
+  % projected_X_test_kspca_eigen = projected_X_test;
 
 
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
@@ -453,30 +456,30 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
   output
   keyboard
 
-  figure,
+  % figure,
 
-  subplot(1,2,1)
-  plotPerClassTrainAndTestSamples(projected_X_kspca_eigen, Y, projected_X_test_kspca_eigen, Y_test);
-  title('KSPCA'),
+  % subplot(1,2,1)
+  % plotPerClassTrainAndTestSamples(projected_X_kspca_eigen, Y, projected_X_test_kspca_eigen, Y_test);
+  % title('KSPCA'),
 
-  subplot(1,2,2)
-  legend_cell_array = plotPerClassTrainAndTestSamples(projected_X_kspca_direct, Y, projected_X_test_kspca_direct, Y_test);
-  title('KSRP'),
+  % subplot(1,2,2)
+  % legend_cell_array = plotPerClassTrainAndTestSamples(projected_X_kspca_direct, Y, projected_X_test_kspca_direct, Y_test);
+  % title('KSRP'),
 
-  % hL = legend([line1,line2,line3,line4],{'Data Axes 1','Data Axes 2','Data Axes 3','Data Axes 4'});
-  hL = legend(legend_cell_array);
-  % Programatically move the Legend
-  new_position = [0.43 0.43 0.2 0.2];
-  new_units = 'normalized';
-  set(hL,'Position', new_position,'Units', new_units);
-
-
+  % % hL = legend([line1,line2,line3,line4],{'Data Axes 1','Data Axes 2','Data Axes 3','Data Axes 4'});
+  % hL = legend(legend_cell_array);
+  % % Programatically move the Legend
+  % new_position = [0.43 0.43 0.2 0.2];
+  % new_units = 'normalized';
+  % set(hL,'Position', new_position,'Units', new_units);
 
 
 
-  % % saveas(gcf, sprintf('visualization_%s', dataset), 'epsc')
 
-  % keyboard
+
+  % % % saveas(gcf, sprintf('visualization_%s', dataset), 'epsc')
+
+  % % keyboard
 
 
 
