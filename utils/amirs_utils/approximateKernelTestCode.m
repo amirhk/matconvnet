@@ -64,7 +64,7 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
 
   if strcmp(dataset, 'imagenet-tiny')
     % imdb = createImdbWithBalance(dataset, imdb, 10, 5, false, false);
-    subset_indices = imdb.images.labels <= 100;
+    subset_indices = imdb.images.labels <= 50;
     imdb.images.data = imdb.images.data(:,:,:,subset_indices);
     imdb.images.labels = imdb.images.labels(subset_indices);
     imdb.images.set = imdb.images.set(subset_indices);
