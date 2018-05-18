@@ -30,8 +30,8 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
   % -----------------------------------------------------------------------------
 
   fprintf('\t[INFO] Loading data... ');
-  should_load_saved_imdb = false;
-  % should_load_saved_imdb = true;
+  % should_load_saved_imdb = false;
+  should_load_saved_imdb = true;
   if should_load_saved_imdb
     tmp_opts.dataset = dataset;
     if ~isSyntheticImdb(dataset) % NOT 'xor', 'rings', 'spirals'
