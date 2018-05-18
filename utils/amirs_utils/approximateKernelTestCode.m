@@ -64,7 +64,7 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
 
   if strcmp(dataset, 'imagenet-tiny')
     % imdb = createImdbWithBalance(dataset, imdb, 10, 5, false, false);
-    subset_indices = imdb.images.labels <= 10;
+    subset_indices = imdb.images.labels <= 100;
     imdb.images.data = imdb.images.data(:,:,:,subset_indices);
     imdb.images.labels = imdb.images.labels(subset_indices);
     imdb.images.set = imdb.images.set(subset_indices);
@@ -114,7 +114,7 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
   elseif strcmp(dataset, 'mnist-784')
     data_rbf_variance = 10e+0;
   elseif strcmp(dataset, 'imagenet-tiny')
-    data_rbf_variance = 10e+0;
+    data_rbf_variance = 3;
   elseif strcmp(dataset, 'uci-spam')
     data_rbf_variance = 10e+0;
   elseif strcmp(dataset, 'xor-10D-350-train-150-test')
@@ -148,24 +148,24 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
   % fh_getApproxKernel = @getApproxKernelFastFood;
 
 
-  % %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % % SPCA-eigen
-  % %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % SPCA-eigen
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-  % time_start = tic;
-  % L_actual = getActualKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance);
-  % tmp = X * H * L_actual * H * X';
-  % [U D V] = svd(tmp);
-  % output.duration_spca_eigen = toc(time_start);
-  % U = U(:,1:projected_dim);
-  % % U = U(:,1:projected_dim) * D(1:projected_dim,1:projected_dim).^0.5;
+  time_start = tic;
+  L_actual = getActualKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance);
+  tmp = X * H * L_actual * H * X';
+  [U D V] = svd(tmp);
+  output.duration_spca_eigen = toc(time_start);
+  U = U(:,1:projected_dim);
+  % U = U(:,1:projected_dim) * D(1:projected_dim,1:projected_dim).^0.5;
 
-  % projected_X = U' * X;
-  % projected_X_test = U' * X_test;
+  projected_X = U' * X;
+  projected_X_test = U' * X_test;
 
-  % output.accuracy_spca_eigen = fh_evaluation(projected_X, Y, projected_X_test, Y_test);
-  % projected_X_spca_eigen = projected_X;
-  % projected_X_test_spca_eigen = projected_X_test;
+  output.accuracy_spca_eigen = fh_evaluation(projected_X, Y, projected_X_test, Y_test);
+  projected_X_spca_eigen = projected_X;
+  projected_X_test_spca_eigen = projected_X_test;
 
 
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
@@ -227,43 +227,43 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
   % projected_X_test_kspca_eigen = projected_X_test;
 
 
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % KSPCA-direct
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % % KSPCA-direct
+  % %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-  oversample = false;
+  % oversample = false;
 
-  if ~oversample
+  % if ~oversample
 
-    time_start = tic;
-    [~, psi, ~, ~] = fh_getApproxKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance, number_of_random_bases_for_labels);
-    [K_train_approx, ~, ~, params] = fh_getApproxKernel(X, X, data_rbf_variance, number_of_random_bases_for_data);
-    [K_test_approx, ~, ~, ~] = fh_getApproxKernel(X, X_test, data_rbf_variance, number_of_random_bases_for_data, params);
-    output.duration_kspca_direct = toc(time_start);
+  %   time_start = tic;
+  %   [~, psi, ~, ~] = fh_getApproxKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance, number_of_random_bases_for_labels);
+  %   [K_train_approx, ~, ~, params] = fh_getApproxKernel(X, X, data_rbf_variance, number_of_random_bases_for_data);
+  %   [K_test_approx, ~, ~, ~] = fh_getApproxKernel(X, X_test, data_rbf_variance, number_of_random_bases_for_data, params);
+  %   output.duration_kspca_direct = toc(time_start);
 
-    projected_X = psi * H * K_train_approx;
-    projected_X_test = psi * H * K_test_approx;
+  %   projected_X = psi * H * K_train_approx;
+  %   projected_X_test = psi * H * K_test_approx;
 
-  else
+  % else
 
-    time_start = tic;
-    [~, psi, ~, ~] = fh_getApproxKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance, number_of_random_bases_for_labels * 100);
-    [K_train_approx, ~, ~, params] = fh_getApproxKernel(X, X, data_rbf_variance, number_of_random_bases_for_data);
-    [K_test_approx, ~, ~, ~] = fh_getApproxKernel(X, X_test, data_rbf_variance, number_of_random_bases_for_data, params);
-    output.duration_kspca_direct = toc(time_start);
+  %   time_start = tic;
+  %   [~, psi, ~, ~] = fh_getApproxKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance, number_of_random_bases_for_labels * 100);
+  %   [K_train_approx, ~, ~, params] = fh_getApproxKernel(X, X, data_rbf_variance, number_of_random_bases_for_data);
+  %   [K_test_approx, ~, ~, ~] = fh_getApproxKernel(X, X_test, data_rbf_variance, number_of_random_bases_for_data, params);
+  %   output.duration_kspca_direct = toc(time_start);
 
-    projected_X = psi * H * K_train_approx;
-    projected_X_test = psi * H * K_test_approx;
+  %   projected_X = psi * H * K_train_approx;
+  %   projected_X_test = psi * H * K_test_approx;
 
-    [U,S,V] = svd(projected_X);
-    projected_X = U(:,1:projected_dim)' * projected_X;
-    projected_X_test = U(:,1:projected_dim)' * projected_X_test;
+  %   [U,S,V] = svd(projected_X);
+  %   projected_X = U(:,1:projected_dim)' * projected_X;
+  %   projected_X_test = U(:,1:projected_dim)' * projected_X_test;
 
-  end
+  % end
 
-  output.accuracy_kspca_direct = fh_evaluation(projected_X, Y, projected_X_test, Y_test);
-  projected_X_kspca_direct = projected_X;
-  projected_X_test_kspca_direct = projected_X_test;
+  % output.accuracy_kspca_direct = fh_evaluation(projected_X, Y, projected_X_test, Y_test);
+  % projected_X_kspca_direct = projected_X;
+  % projected_X_test_kspca_direct = projected_X_test;
 
 
 
