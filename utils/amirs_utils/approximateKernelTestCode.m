@@ -227,43 +227,43 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
   % projected_X_test_kspca_eigen = projected_X_test;
 
 
-  % %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % % KSPCA-direct
-  % %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % KSPCA-direct
+  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-  % oversample = false;
+  oversample = false;
 
-  % if ~oversample
+  if ~oversample
 
-  %   time_start = tic;
-  %   [~, psi, ~, ~] = fh_getApproxKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance, number_of_random_bases_for_labels);
-  %   [K_train_approx, ~, ~, params] = fh_getApproxKernel(X, X, data_rbf_variance, number_of_random_bases_for_data);
-  %   [K_test_approx, ~, ~, ~] = fh_getApproxKernel(X, X_test, data_rbf_variance, number_of_random_bases_for_data, params);
-  %   output.duration_kspca_direct = toc(time_start);
+    time_start = tic;
+    [~, psi, ~, ~] = fh_getApproxKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance, number_of_random_bases_for_labels);
+    [K_train_approx, ~, ~, params] = fh_getApproxKernel(X, X, data_rbf_variance, number_of_random_bases_for_data);
+    [K_test_approx, ~, ~, ~] = fh_getApproxKernel(X, X_test, data_rbf_variance, number_of_random_bases_for_data, params);
+    output.duration_kspca_direct = toc(time_start);
 
-  %   projected_X = psi * H * K_train_approx;
-  %   projected_X_test = psi * H * K_test_approx;
+    projected_X = psi * H * K_train_approx;
+    projected_X_test = psi * H * K_test_approx;
 
-  % else
+  else
 
-  %   time_start = tic;
-  %   [~, psi, ~, ~] = fh_getApproxKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance, number_of_random_bases_for_labels * 100);
-  %   [K_train_approx, ~, ~, params] = fh_getApproxKernel(X, X, data_rbf_variance, number_of_random_bases_for_data);
-  %   [K_test_approx, ~, ~, ~] = fh_getApproxKernel(X, X_test, data_rbf_variance, number_of_random_bases_for_data, params);
-  %   output.duration_kspca_direct = toc(time_start);
+    time_start = tic;
+    [~, psi, ~, ~] = fh_getApproxKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance, number_of_random_bases_for_labels * 100);
+    [K_train_approx, ~, ~, params] = fh_getApproxKernel(X, X, data_rbf_variance, number_of_random_bases_for_data);
+    [K_test_approx, ~, ~, ~] = fh_getApproxKernel(X, X_test, data_rbf_variance, number_of_random_bases_for_data, params);
+    output.duration_kspca_direct = toc(time_start);
 
-  %   projected_X = psi * H * K_train_approx;
-  %   projected_X_test = psi * H * K_test_approx;
+    projected_X = psi * H * K_train_approx;
+    projected_X_test = psi * H * K_test_approx;
 
-  %   [U,S,V] = svd(projected_X);
-  %   projected_X = U(:,1:projected_dim)' * projected_X;
-  %   projected_X_test = U(:,1:projected_dim)' * projected_X_test;
+    [U,S,V] = svd(projected_X);
+    projected_X = U(:,1:projected_dim)' * projected_X;
+    projected_X_test = U(:,1:projected_dim)' * projected_X_test;
 
-  % end
+  end
 
-  % output.accuracy_kspca_direct = fh_evaluation(projected_X, Y, projected_X_test, Y_test);
-  % projected_X_kspca_direct = projected_X;
-  % projected_X_test_kspca_direct = projected_X_test;
+  output.accuracy_kspca_direct = fh_evaluation(projected_X, Y, projected_X_test, Y_test);
+  projected_X_kspca_direct = projected_X;
+  projected_X_test_kspca_direct = projected_X_test;
 
 
 
