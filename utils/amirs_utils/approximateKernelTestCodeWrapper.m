@@ -28,7 +28,7 @@ projected_dim_list = [1:5:25,50]; dataset = 'imagenet-tiny';
 % projected_dim_list = [1,2:2:10];        dataset = 'xor-10D-350-train-150-test';
 % projected_dim_list = [1,2:4:10];        dataset = 'rings-10D-350-train-150-test';
 % projected_dim_list = [1,2:4:10];        dataset = 'spirals-10D-350-train-150-test';
-num_trials = 3;
+num_trials = 1;
 
 
 

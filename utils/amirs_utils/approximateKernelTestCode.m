@@ -148,24 +148,24 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
   % fh_getApproxKernel = @getApproxKernelFastFood;
 
 
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
-  % SPCA-eigen
-  %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+  % % SPCA-eigen
+  % %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
 
-  time_start = tic;
-  L_actual = getActualKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance);
-  tmp = X * H * L_actual * H * X';
-  [U D V] = svd(tmp);
-  output.duration_spca_eigen = toc(time_start);
-  U = U(:,1:projected_dim);
-  % U = U(:,1:projected_dim) * D(1:projected_dim,1:projected_dim).^0.5;
+  % time_start = tic;
+  % L_actual = getActualKernel(Y_plus_noise, Y_plus_noise, label_rbf_variance);
+  % tmp = X * H * L_actual * H * X';
+  % [U D V] = svd(tmp);
+  % output.duration_spca_eigen = toc(time_start);
+  % U = U(:,1:projected_dim);
+  % % U = U(:,1:projected_dim) * D(1:projected_dim,1:projected_dim).^0.5;
 
-  projected_X = U' * X;
-  projected_X_test = U' * X_test;
+  % projected_X = U' * X;
+  % projected_X_test = U' * X_test;
 
-  output.accuracy_spca_eigen = fh_evaluation(projected_X, Y, projected_X_test, Y_test);
-  projected_X_spca_eigen = projected_X;
-  projected_X_test_spca_eigen = projected_X_test;
+  % output.accuracy_spca_eigen = fh_evaluation(projected_X, Y, projected_X_test, Y_test);
+  % projected_X_spca_eigen = projected_X;
+  % projected_X_test_spca_eigen = projected_X_test;
 
 
   %% -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
@@ -459,8 +459,8 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
 
 
 
-  output
-  keyboard
+  % output
+  % keyboard
 
   % figure,
 
