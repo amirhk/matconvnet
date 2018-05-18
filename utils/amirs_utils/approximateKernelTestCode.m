@@ -125,7 +125,7 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
     data_rbf_variance = 3*10e-2;
   end
 
-  Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+5; % for UCI-Ion
+  % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+5; % for UCI-Ion
   % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+6;
   % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+7;
   % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+8;
@@ -134,7 +134,7 @@ function output = approximateKernelTestCode(debug_flag, projected_dim, dataset)
   % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+8; % for XOR
   % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+9; % for XOR
   % Y_plus_noise = Y + randn(1, size(Y, 2)) / 10e+10; % for XOR
-  % Y_plus_noise = Y;
+  Y_plus_noise = Y;
 
 
   % -----------------------------------------------------------------------------
